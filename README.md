@@ -31,5 +31,5 @@ Bilgimi global standartlarda kanıtlamaya inanıyorum. Profilimin temeli bu sert
 
 ## 📬 Benimle İletişime Geçin
 
-* **LinkedIn:** https://www.linkedin.com/in/emirhuseyininci/
+* **LinkedIn:** * **LinkedIn:** [linkedin.com/in/emirhuseyininci](https://www.linkedin.com/in/emirhuseyininci)
 * **Profesyonel E-posta:** `emirhuseyin@emirhuseyin.tech` *
