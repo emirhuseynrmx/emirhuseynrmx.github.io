@@ -1,0 +1,1200 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GOVERIS | AI Cost Governance Gateway and LLM Spend Audit</title>
+    <meta
+      name="description"
+      content="GOVERIS is an audit-first AI cost governance gateway for LLM teams. Audit model spend, simulate what-if policies, and route AI calls with ROI-aware guardrails."
+    />
+    <meta
+      name="keywords"
+      content="LLM cost governance, AI gateway, AI spend audit, LLM routing, OpenAI proxy, AI FinOps, model routing, GOVERIS"
+    />
+    <meta name="author" content="GOVERIS" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#f4f3ee" />
+    <link rel="canonical" href="https://emirhuseyin.tech/calybris/"/>
+    <link rel="home" href="https://emirhuseyin.tech/"/>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GOVERIS | AI Cost Governance Gateway" />
+    <meta
+      property="og:description"
+      content="Audit LLM spend, simulate policy changes, and enforce ROI-aware routing before model calls burn budget."
+    />
+    <meta
+      property="og:image"
+      content="https://emirhuseyin.tech/calybris/assets/goveris-brand-board.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GOVERIS | AI Cost Governance Gateway" />
+    <meta
+      name="twitter:description"
+      content="Every AI call must justify its cost. Audit-first LLM spend governance and routing."
+    />
+    <meta
+      name="twitter:image"
+      content="https://emirhuseyin.tech/calybris/assets/goveris-brand-board.png"
+    />
+
+    <link rel="icon" href="./assets/goveris-favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="./assets/goveris-mark.svg" as="image" />
+    <link rel="stylesheet" href="./styles.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "GOVERIS",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web, Docker, Linux",
+        "description": "Audit-first AI cost governance gateway for LLM spend, policy simulation, and ROI-aware model routing.",
+        "offers": {
+          "@type": "Offer",
+          "description": "Private Docker shadow replay pilot inside the customer's environment"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <div class="site-frame" aria-hidden="true"></div>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="GOVERIS home">
+          <img src="./assets/goveris-mark.svg" alt="" />
+          <span><strong>GOVERIS</strong><small>Powered by Calybris Engine</small></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <a href="#platform">Product</a>
+          <a href="#audit">Audit package</a>
+          <a href="#demo">Demo</a>
+          <a href="#workflow">Gateway</a>
+        </nav>
+        <div class="topbar-actions">
+          <a class="topbar-link" href="#workflow">Architecture</a>
+          <a
+            class="topbar-cta"
+            href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Private%20Shadow%20Replay%20Pilot&body=Hi%20Emir%2C%0A%0AWe%20would%20like%20to%20scope%20a%20private%20GOVERIS%20shadow%20replay%20pilot.%0A%0AApprox.%20monthly%20LLM%20calls%3A%0AProvider%2Fgateway%20topology%3A%0ADeployment%20environment%3A%0A"
+            ><span id="health" aria-hidden="true"></span>Shadow pilot</a
+          >
+        </div>
+      </header>
+
+      <section class="hero" id="platform">
+        <div class="hero-copy">
+          <p class="eyebrow">AI spend governance layer</p>
+          <h1>Control LLM spend before the invoice arrives.</h1>
+          <p class="hero-lede">
+            GOVERIS turns every model call into an auditable financial decision: requested model,
+            selected model, risk, confidence, tenant budget, and expected value in one replayable
+            trail.
+          </p>
+          <div class="hero-actions" aria-label="GOVERIS actions">
+            <button id="run-demo" type="button">Try a realistic decision</button>
+            <a href="#audit">View audit package</a>
+            <a href="#shadow">See private deployment</a>
+          </div>
+          <div class="signal-row" aria-label="GOVERIS proof points">
+            <span><strong>Rust + Axum</strong> gateway</span>
+            <span><strong>CALYBRIS</strong> proof-carrying engine</span>
+            <span><strong>Multi-provider</strong> OpenAI · Anthropic · Google</span>
+            <span><strong>GPT-5.5 · Claude 4 · Gemini 3.5</strong></span>
+          </div>
+        </div>
+
+        <aside class="hero-product" aria-label="GOVERIS spend control plane preview">
+          <div class="product-toolbar">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <strong>GOVERIS spend control plane</strong>
+            <span class="engine-label">CALYBRIS Engine</span>
+          </div>
+          <div class="control-surface">
+            <div class="surface-heading">
+              <div>
+                <span>Shadow policy evaluation</span>
+                <strong>Support agent workflow</strong>
+              </div>
+              <b id="preview-action">shadow-ready</b>
+            </div>
+
+            <dl class="metric-strip">
+              <div>
+                <dt>Requested model</dt>
+                <dd id="preview-requested">claude-sonnet-4-6</dd>
+              </div>
+              <div>
+                <dt>Selected route</dt>
+                <dd id="preview-selected">claude-haiku-4-5</dd>
+              </div>
+              <div>
+                <dt>Decision value</dt>
+                <dd id="preview-net">+11.61c</dd>
+              </div>
+            </dl>
+
+            <div class="route-map" aria-label="Model routing map">
+              <div>
+                <span>requested</span>
+                <strong>claude-sonnet-4-6</strong>
+              </div>
+              <i></i>
+              <div class="gate">
+                <span>policy gate</span>
+                <strong>cost / risk / quality</strong>
+              </div>
+              <i></i>
+              <div>
+                <span>selected</span>
+                <strong>claude-haiku-4-5</strong>
+              </div>
+            </div>
+
+            <div class="control-grid">
+              <section>
+                <div class="panel-head">
+                  <span>What-if replay</span>
+                  <strong>projected range</strong>
+                </div>
+                <div class="bar-list">
+                  <div>
+                    <span>Requested baseline</span>
+                    <i style="--value: 100%"></i>
+                  </div>
+                  <div>
+                    <span>Observed GOVERIS</span>
+                    <i style="--value: 52%"></i>
+                  </div>
+                  <div>
+                    <span>Balanced policy</span>
+                    <i style="--value: 65%"></i>
+                  </div>
+                </div>
+              </section>
+              <section>
+                <div class="panel-head">
+                  <span>Governance trail</span>
+                  <strong>replayable</strong>
+                </div>
+                <ul class="check-list">
+                  <li>Tenant and workflow attribution</li>
+                  <li>Requested versus selected model</li>
+                  <li>Risk, confidence, value, and quality floor</li>
+                </ul>
+              </section>
+            </div>
+
+            <div class="decision-row">
+              <span>Proxy mode remains locked until auth, CORS, and rate limits are configured.</span>
+              <strong>simulate mode</strong>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="proof-band" aria-label="GOVERIS credibility markers">
+        <div>
+          <span>Decision trace</span>
+          <strong>Every call gets an audit reason.</strong>
+        </div>
+        <div>
+          <span>Policy replay</span>
+          <strong>Compare cost, quality, and downgrade pressure.</strong>
+        </div>
+        <div>
+          <span>Client package</span>
+          <strong>Deliver PDF, HTML, JSON, and artifact hashes.</strong>
+        </div>
+      </section>
+
+      <section class="benchmark-section" aria-labelledby="benchmark-title">
+        <div class="section-heading">
+          <p class="eyebrow">Measured, not blended</p>
+          <h2 id="benchmark-title">Speed is reported at the layer where it was measured.</h2>
+          <p>
+            Kernel, durable HTTP, and storage profiles are separate experiments. These are
+            three-run or complete-profile medians from one local host—not a cloud SLO and not a
+            fastest-run screenshot.
+          </p>
+        </div>
+        <div class="benchmark-layout">
+          <dl class="benchmark-metrics">
+            <div><dt>Integer kernel</dt><dd>4.46M/s</dd><small>3-run median</small></div>
+            <div><dt>Durable HTTP</dt><dd>4,188 req/s</dd><small>c=128 · 1 ms mock</small></div>
+            <div><dt>HTTP p99</dt><dd>54.1 ms</dd><small>15,000 requests · 0 failed</small></div>
+            <div><dt>Durable WAL</dt><dd>3,134/s</dd><small>current contended host</small></div>
+          </dl>
+          <a
+            class="benchmark-figure"
+            href="./launch/02-calybris-benchmark-en.png"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open the full Calybris benchmark layer comparison"
+          >
+            <img
+              src="./launch/02-calybris-benchmark-en.png"
+              alt="Calybris benchmark showing WAL off, bounded flush, sync_data and durable HTTP measurements"
+            />
+            <span>Open benchmark layer comparison ↗</span>
+          </a>
+        </div>
+        <p class="benchmark-caveat">
+          The current-host sync_data barrier p99 was 1.57 s; an isolated stable reference measured
+          9,861 durable events/s at 83.8 ms barrier p99. We publish the bad run because storage
+          contention is an operational fact, not a footnote.
+        </p>
+      </section>
+
+      <section class="executive-section">
+        <div class="section-heading">
+          <p class="eyebrow">Executive control</p>
+          <h2>GOVERIS explains where model spend went, then tests what should change.</h2>
+          <p>
+            The first product is not another chat wrapper. It is a private shadow-replay pilot for
+            teams that already use LLMs and need evidence before they change a production route.
+          </p>
+        </div>
+        <div class="executive-grid">
+          <article>
+            <span>Find waste</span>
+            <strong>Premium calls without matching value</strong>
+            <p>Detect low-risk, high-cost traffic that can be downgraded, cached, or blocked.</p>
+          </article>
+          <article>
+            <span>Defend spend</span>
+            <strong>Explain why expensive calls survived</strong>
+            <p>Show the confidence, risk, latency, and quality constraints behind each decision.</p>
+          </article>
+          <article>
+            <span>Enforce policy</span>
+            <strong>Move from report to guarded gateway</strong>
+            <p>Run in shadow mode first, then graduate proven rules into the proxy path.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="trust-band" aria-label="GOVERIS product funnel">
+        <div>
+          <span>01</span>
+          <strong>Mirror metadata</strong>
+          <p>Keep prompt content local while a private image observes decision envelopes.</p>
+        </div>
+        <div>
+          <span>02</span>
+          <strong>Simulate policy</strong>
+          <p>Compare conservative, balanced, and aggressive routing scenarios.</p>
+        </div>
+        <div>
+          <span>03</span>
+          <strong>Shadow gateway</strong>
+          <p>Replay traffic safely before enforcing model downgrades or blocks.</p>
+        </div>
+        <div>
+          <span>04</span>
+          <strong>Control spend</strong>
+          <p>Move from report to governed OpenAI-compatible inference.</p>
+        </div>
+      </section>
+
+      <section class="problem-section">
+        <div class="section-heading">
+          <p class="eyebrow">The problem</p>
+          <h2>LLM bills are made of thousands of unreviewed decisions.</h2>
+          <p>
+            Teams see the invoice, but not the call-level economics: why a premium model was used,
+            whether a cheaper model would satisfy the quality floor, or which tenant is creating
+            avoidable spend.
+          </p>
+        </div>
+        <div class="problem-grid">
+          <article>
+            <span>Premium misuse</span>
+            <p>Expensive models are used for low-value or repeated work.</p>
+          </article>
+          <article>
+            <span>No policy trail</span>
+            <p>There is no durable record explaining why each AI call was allowed.</p>
+          </article>
+          <article>
+            <span>Risk blind spots</span>
+            <p>Confidence, quality floor, risk pressure, and tenant budget live outside routing.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="audit-section" id="audit">
+        <div class="section-heading">
+          <p class="eyebrow">Client deliverable</p>
+          <h2>From mirrored traffic metadata to a board-readable spend audit.</h2>
+          <p>
+            A private Docker image runs inside your environment, evaluates a metadata-only mirror,
+            and keeps raw events local. Goveris produces aggregate findings and what-if policy
+            scenarios without asking your team to export prompt logs.
+          </p>
+        </div>
+        <div class="audit-output">
+          <div>
+            <span>Inputs</span>
+            <p>Mirrored model, token, latency, tenant, workflow, risk, and confidence envelopes.</p>
+          </div>
+          <div>
+            <span>Analysis</span>
+            <p>Savings estimate, downgrade pressure, negative-net calls, audit coverage.</p>
+          </div>
+          <div>
+            <span>Output</span>
+            <p>Local dashboard, aggregate review, recommendations, and what-if policy table.</p>
+          </div>
+        </div>
+        <div class="deliverable-preview" aria-label="GOVERIS audit deliverable preview">
+          <div class="report-snapshot">
+            <div class="snapshot-head">
+              <span>GOVERIS spend audit</span>
+              <strong>shadow replay</strong>
+            </div>
+            <div class="snapshot-metric">
+              <span>Audit coverage</span>
+              <strong>100%</strong>
+            </div>
+            <div class="snapshot-metric">
+              <span>Premium pressure</span>
+              <strong>actionable</strong>
+            </div>
+            <div class="snapshot-metric">
+              <span>Policy scenarios</span>
+              <strong>3 what-if paths</strong>
+            </div>
+          </div>
+          <div class="artifact-console">
+            <div class="artifact-row">
+              <span>Client gets</span>
+              <strong>Local dashboard, aggregate findings, policy recommendations</strong>
+            </div>
+            <div class="artifact-row">
+              <span>Proof trail</span>
+              <strong>input hash, generated artifacts, replayable decisions</strong>
+            </div>
+            <pre class="code-block">deployment     private Docker image
+data boundary  customer VPC
+traffic mode   metadata-only mirror
+prompt capture disabled
+enforcement    off during replay</pre>
+          </div>
+        </div>
+        <div class="pdf-showcase" aria-label="GOVERIS sample PDF report">
+          <div class="pdf-analytics">
+            <div class="pdf-showcase-head">
+              <span>Sample audit PDF</span>
+              <strong>Graphical report package</strong>
+            </div>
+            <p>
+              A client-facing example with spend shape, what-if policy simulation, tenant
+              attribution, recommendations, and artifact hashes. The sample is deliberately marked
+              as pilot data, not a production savings claim.
+            </p>
+
+            <div class="audit-kpis" aria-label="Sample PDF metrics">
+              <div>
+                <span>Total calls</span>
+                <strong>500,000</strong>
+              </div>
+              <div>
+                <span>Audit coverage</span>
+                <strong>100%</strong>
+              </div>
+              <div>
+                <span>Catalog estimate</span>
+                <strong>33.36%</strong>
+              </div>
+            </div>
+
+            <div class="animated-report-chart" aria-label="Animated spend shape preview">
+              <div class="chart-axis">
+                <span>Requested baseline</span>
+                <i style="--bar: 100%"></i>
+                <strong>$4,796.52</strong>
+              </div>
+              <div class="chart-axis">
+                <span>Current GOVERIS</span>
+                <i style="--bar: 67%"></i>
+                <strong>$3,196.55</strong>
+              </div>
+              <div class="chart-axis">
+                <span>Balanced replay</span>
+                <i style="--bar: 74%"></i>
+                <strong>$3,549.42</strong>
+              </div>
+            </div>
+
+            <div class="scenario-strip">
+              <span>Observed</span>
+              <span>Conservative</span>
+              <span>Balanced</span>
+              <span>Aggressive</span>
+            </div>
+          </div>
+
+          <a
+            class="pdf-preview-card"
+            href="./reports/goveris-ai-spend-governance-sample.pdf"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open sample GOVERIS PDF audit report"
+          >
+            <span class="pdf-badge">Open sample PDF</span>
+            <img src="./assets/goveris-report-page-1.png" alt="GOVERIS sample PDF audit report preview" />
+          </a>
+        </div>
+      </section>
+
+      <section class="workflow-section" id="workflow">
+        <div class="section-heading">
+          <p class="eyebrow">Platform workflow</p>
+          <h2>Start with evidence. Enforce only after the policy survives replay.</h2>
+        </div>
+        <div class="workflow-grid">
+          <article>
+            <span>Audit</span>
+            <h3>Cost governance report</h3>
+            <p>Find avoidable model spend without touching production traffic.</p>
+          </article>
+          <article>
+            <span>Replay</span>
+            <h3>What-if simulation</h3>
+            <p>Estimate conservative, balanced, and aggressive policy effects.</p>
+          </article>
+          <article>
+            <span>Route</span>
+            <h3>CALYBRIS gateway</h3>
+            <p>Allow, downgrade, block, cache, or retry each model call.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="shadow-section" id="shadow">
+        <div class="section-heading">
+          <p class="eyebrow">Private Docker shadow replay</p>
+          <h2>Observe the economics without handing over production logs.</h2>
+          <p>
+            We provision a private image in your registry or VPC. Your gateway mirrors only the
+            decision envelope—not prompt or response content. Calybris evaluates each call in
+            non-enforcing mode and stores the replay trail inside your boundary.
+          </p>
+        </div>
+        <div class="shadow-layout">
+          <div class="shadow-console" aria-label="Goveris shadow replay deployment contract">
+            <div><span>IMAGE</span><strong>private-registry / goveris-shadow:pilot</strong></div>
+            <div><span>INGEST</span><strong>model · tokens · latency · tenant · workflow tags</strong></div>
+            <div><span>EXCLUDED</span><strong>prompts · responses · credentials · customer PII</strong></div>
+            <div><span>MODE</span><strong>observe and replay · never alter the live response</strong></div>
+            <div><span>OUTPUT</span><strong>local ledger · aggregate review · rollout candidates</strong></div>
+          </div>
+          <ol class="shadow-steps">
+            <li><span>01</span><div><strong>Deploy beside the gateway</strong><p>Read-only pilot image; no provider key is required for replay.</p></div></li>
+            <li><span>02</span><div><strong>Mirror metadata for 7–14 days</strong><p>Production traffic continues unchanged while Goveris evaluates alternatives.</p></div></li>
+            <li><span>03</span><div><strong>Review before enforcement</strong><p>Promote only policies that survive quality, risk, budget, and shadow gates.</p></div></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="pricing-section" id="pricing">
+        <div class="section-heading">
+          <p class="eyebrow">Adoption path</p>
+          <h2>Start read-only. Earn the right to enforce.</h2>
+        </div>
+        <div class="pricing-grid">
+          <article>
+            <span>Shadow replay</span>
+            <strong>7–14 days</strong>
+            <p>Private Docker image, metadata-only mirror, zero changes to live routing.</p>
+          </article>
+          <article>
+            <span>Governance review</span>
+            <strong>Inside your VPC</strong>
+            <p>Aggregate findings, tenant attribution, and policy candidates without raw-log export.</p>
+          </article>
+          <article>
+            <span>Controlled rollout</span>
+            <strong>Canary first</strong>
+            <p>Proof-bound enforcement, explicit rollback, and provider reconciliation.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="contact-section" id="contact">
+        <div class="contact-copy">
+          <p class="eyebrow">Private pilot intake</p>
+          <h2>Deploy shadow replay. Keep prompts and raw logs inside.</h2>
+          <p>
+            Send only your approximate monthly call volume, provider topology, and deployment
+            environment. We scope a private Docker pilot; your production content stays in your VPC.
+          </p>
+        </div>
+        <div class="contact-card">
+          <span>Email</span>
+          <a
+            href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Private%20Shadow%20Replay%20Pilot&body=Hi%20Emir%2C%0A%0AWe%20would%20like%20to%20scope%20a%20private%20GOVERIS%20shadow%20replay%20pilot.%0A%0AApprox.%20monthly%20LLM%20calls%3A%0AProvider%2Fgateway%20topology%3A%0ADeployment%20environment%3A%0A"
+            >emirhuseyininci@gmail.com</a
+          >
+          <p>Subject: GOVERIS Private Shadow Replay Pilot</p>
+        </div>
+      </section>
+
+      <section class="demo-section" id="demo">
+        <div class="section-heading">
+          <p class="eyebrow">Interactive decision lab</p>
+          <h2>Change the workload. See the policy decision and its proof.</h2>
+          <p>
+            Pick a realistic workload below. The page calls the deployed Calybris API when one is
+            available and falls back to the same deterministic public-demo policy in the browser.
+            No provider key is exposed and no paid model call is made.
+          </p>
+        </div>
+
+        <div class="demo-workbench">
+          <aside class="scenario-picker" aria-label="Demo workload scenarios">
+            <div class="scenario-picker-head">
+              <span>Workload</span>
+              <strong>Select a scenario</strong>
+            </div>
+            <button class="scenario-option is-selected" type="button" data-scenario="support">
+              <span>01 / Claude Sonnet 4.6</span>
+              <strong>Premium Anthropic model for a routine support question</strong>
+              <small>2,450 tokens · €0.05 value · standard floor · downgrade to Haiku 4.5</small>
+            </button>
+            <button class="scenario-option" type="button" data-scenario="critical">
+              <span>02 / GPT-5.5</span>
+              <strong>OpenAI flagship for EU data-processing contract review</strong>
+              <small>Critical workflow · 0.92 quality floor · premium model required</small>
+            </button>
+            <button class="scenario-option" type="button" data-scenario="risky">
+              <span>03 / Gemini 3.5 Pro</span>
+              <strong>Google model for a high-risk vendor bank account change</strong>
+              <small>Prompt-injection signal · 0.94 risk · 0.41 confidence</small>
+            </button>
+            <div class="demo-runtime">
+              <span>Evaluation source</span>
+              <strong id="demo-source">waiting</strong>
+              <small id="demo-source-note">No paid provider call is made.</small>
+            </div>
+          </aside>
+
+          <section class="ledger" aria-label="Policy decision ledger">
+            <div class="ledger-title">
+              <div>
+                <h3>Decision ledger</h3>
+                <p id="scenario-summary">Order-status request / support-emea / standard</p>
+              </div>
+              <span id="ledger-action">waiting</span>
+            </div>
+
+            <dl class="ledger-grid">
+              <div>
+                <dt>Requested</dt>
+                <dd id="requested-model">claude-sonnet-4-6</dd>
+              </div>
+              <div>
+                <dt>Selected</dt>
+                <dd id="selected-model">pending</dd>
+              </div>
+              <div>
+                <dt>Net value</dt>
+                <dd id="net-value">--</dd>
+              </div>
+              <div>
+                <dt>Expected value</dt>
+                <dd id="expected-value">--</dd>
+              </div>
+              <div>
+                <dt>Estimated cost</dt>
+                <dd id="estimated-cost">--</dd>
+              </div>
+              <div>
+                <dt>Quality floor</dt>
+                <dd id="quality-floor">--</dd>
+              </div>
+              <div>
+                <dt>Risk penalty</dt>
+                <dd id="risk-penalty">--</dd>
+              </div>
+              <div>
+                <dt>Proof fingerprint</dt>
+                <dd id="proof-fingerprint">--</dd>
+              </div>
+            </dl>
+
+            <div class="decision-explain">
+              <span>Decision reason</span>
+              <strong id="decision-reason">Waiting for evaluation.</strong>
+              <small id="fallback-chain">Fallback chain: --</small>
+            </div>
+
+            <div class="payload">
+              <div class="payload-head">
+                <span>/api/v1/route</span>
+                <span id="policy-latency">not evaluated</span>
+              </div>
+              <pre id="decision">Waiting for a policy decision...</pre>
+            </div>
+          </section>
+        </div>
+
+        <section class="data-disclosure" aria-labelledby="data-method-title">
+          <div>
+            <p class="eyebrow">Synthetic data, disclosed</p>
+            <h3 id="data-method-title">Realistic shape without pretending it is customer traffic.</h3>
+            <p>
+              The public dataset is generated deterministically from bounded distributions for
+              token volume, model mix, tenant concentration, quality floors, confidence, and risk.
+              It contains no prompts, customer logs, or personal data. Cost figures use the checked-in
+              model catalog; savings are scenario estimates, not a production claim.
+            </p>
+            <div class="data-actions">
+              <a href="./data/goveris-public-sample-full-wal.jsonl" download>Download 500-row JSONL</a>
+              <a href="#shadow">See the private Docker pilot</a>
+            </div>
+          </div>
+          <dl class="data-method-grid">
+            <div><dt>Public sample</dt><dd>500 decisions</dd></div>
+            <div><dt>Report replay</dt><dd>500,000 decisions</dd></div>
+            <div><dt>Deterministic seed</dt><dd>73,120,526</dd></div>
+            <div><dt>Workload mix</dt><dd>5 tenants / 5 use cases</dd></div>
+          </dl>
+        </section>
+      </section>
+
+      <footer class="site-footer">
+        <strong>GOVERIS</strong>
+        <span>AI spend governance and audit infrastructure · Powered by Calybris Engine</span>
+      </footer>
+    </main>
+
+    <script>
+      const healthEl = document.getElementById("health");
+      const decisionEl = document.getElementById("decision");
+      const demoBtn = document.getElementById("run-demo");
+      const ledgerAction = document.getElementById("ledger-action");
+      const requestedModel = document.getElementById("requested-model");
+      const selectedModel = document.getElementById("selected-model");
+      const netValue = document.getElementById("net-value");
+      const expectedValue = document.getElementById("expected-value");
+      const estimatedCost = document.getElementById("estimated-cost");
+      const qualityFloor = document.getElementById("quality-floor");
+      const riskPenalty = document.getElementById("risk-penalty");
+      const fallbackChain = document.getElementById("fallback-chain");
+      const proofFingerprint = document.getElementById("proof-fingerprint");
+      const decisionReason = document.getElementById("decision-reason");
+      const policyLatency = document.getElementById("policy-latency");
+      const scenarioSummary = document.getElementById("scenario-summary");
+      const demoSource = document.getElementById("demo-source");
+      const demoSourceNote = document.getElementById("demo-source-note");
+      const scenarioButtons = [...document.querySelectorAll(".scenario-option")];
+      const previewAction = document.getElementById("preview-action");
+      const previewRequested = document.getElementById("preview-requested");
+      const previewSelected = document.getElementById("preview-selected");
+      const previewNet = document.getElementById("preview-net");
+      const demoParams = new URLSearchParams(window.location.search);
+      const demoDelayMs = Number(demoParams.get("demo_delay") || 0);
+      const forceMotion = demoParams.get("motion") === "1";
+      const reduceMotion =
+        !forceMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const heroProduct = document.querySelector(".hero-product");
+      let activeScenario = "support";
+
+      const scenarios = {
+        support: {
+          summary: "Order-status request / support-emea / standard / Claude Sonnet 4.6",
+          payload: {
+            model: "claude-sonnet-4-6",
+            input_tokens: 1900,
+            output_tokens: 550,
+            metadata: {
+              tenant_id: "support-emea",
+              use_case: "order-status-resolution",
+              workload_criticality: "standard",
+              estimated_business_value_cents: 5,
+              risk_score: 0.12,
+              confidence_score: 0.93,
+              prompt_complexity: 0.34,
+              quality_floor: 0.68,
+              max_latency_ms: 800,
+              forbidden_models: ["semantic-cache"],
+              explain: true
+            }
+          }
+        },
+        critical: {
+          summary: "EU DPA clause / legal-prod / critical / GPT-5.5",
+          payload: {
+            model: "gpt-5.5",
+            input_tokens: 6800,
+            output_tokens: 1900,
+            metadata: {
+              tenant_id: "legal-prod",
+              use_case: "eu-dpa-contract-review",
+              workload_criticality: "critical",
+              estimated_business_value_cents: 320,
+              risk_score: 0.34,
+              confidence_score: 0.94,
+              prompt_complexity: 0.91,
+              quality_floor: 0.92,
+              max_latency_ms: 2200,
+              required_models: ["gpt-5.5"],
+              explain: true
+            }
+          }
+        },
+        risky: {
+          summary: "Vendor bank change / finance-ops / high risk / Gemini 3.5 Pro",
+          payload: {
+            model: "gemini-3.5-pro",
+            input_tokens: 1250,
+            output_tokens: 350,
+            metadata: {
+              tenant_id: "finance-ops",
+              use_case: "vendor-bank-account-change",
+              workload_criticality: "critical",
+              estimated_business_value_cents: 2500,
+              risk_score: 0.94,
+              confidence_score: 0.41,
+              prompt_complexity: 0.57,
+              quality_floor: 0.9,
+              max_latency_ms: 700,
+              explain: true
+            }
+          }
+        }
+      };
+
+      document.documentElement.classList.add("motion-ready");
+      document.documentElement.classList.toggle("force-motion", forceMotion);
+
+      function initScrollProgress() {
+        let scheduled = false;
+
+        const update = () => {
+          const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+          document.documentElement.style.setProperty("--scroll-progress", progress.toFixed(4));
+          document.body.classList.toggle("has-scrolled", window.scrollY > 18);
+          scheduled = false;
+        };
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!scheduled) {
+              scheduled = true;
+              window.requestAnimationFrame(update);
+            }
+          },
+          { passive: true }
+        );
+        update();
+      }
+
+      function animateMetric(element) {
+        if (element.dataset.counted === "true" || reduceMotion) return;
+        const raw = element.textContent.trim();
+        const match = raw.match(/^([^0-9-]*)(-?[0-9,]+(?:\.[0-9]+)?)(.*)$/);
+        if (!match) return;
+
+        const [, prefix, numeric, suffix] = match;
+        const target = Number(numeric.replaceAll(",", ""));
+        const decimals = numeric.includes(".") ? numeric.split(".")[1].length : 0;
+        const duration = 900;
+        const startedAt = performance.now();
+        element.dataset.counted = "true";
+
+        const frame = (now) => {
+          const elapsed = Math.min((now - startedAt) / duration, 1);
+          const eased = 1 - Math.pow(1 - elapsed, 3);
+          const value = target * eased;
+          element.textContent = `${prefix}${value.toLocaleString("en-US", {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+          })}${suffix}`;
+          if (elapsed < 1) window.requestAnimationFrame(frame);
+        };
+
+        window.requestAnimationFrame(frame);
+      }
+
+      function initRevealSystem() {
+        const groups = [
+          ".proof-band > div",
+          ".benchmark-metrics > div",
+          ".benchmark-figure",
+          ".trust-band > div",
+          ".problem-grid > *",
+          ".executive-grid > *",
+          ".audit-output > *",
+          ".deliverable-preview > *",
+          ".pdf-showcase > *",
+          ".workflow-grid > *",
+          ".shadow-layout > *",
+          ".pricing-grid > *",
+          ".contact-section > *",
+          ".demo-workbench > *",
+          ".data-disclosure > *"
+        ];
+        const revealTargets = [
+          ...document.querySelectorAll(".section-heading"),
+          ...groups.flatMap((selector) => [...document.querySelectorAll(selector)])
+        ];
+
+        revealTargets.forEach((element, index) => {
+          element.classList.add("reveal-pending");
+          element.style.setProperty("--reveal-order", String(index % 4));
+        });
+
+        if (reduceMotion) {
+          revealTargets.forEach((element) => element.classList.add("is-visible"));
+          return;
+        }
+
+        if (!("IntersectionObserver" in window)) {
+          const revealInViewport = () => {
+            revealTargets.forEach((element) => {
+              if (element.classList.contains("is-visible")) return;
+              if (element.getBoundingClientRect().top <= window.innerHeight * 0.98) {
+                element.classList.add("is-visible");
+                element.querySelectorAll(".audit-kpis strong").forEach(animateMetric);
+              }
+            });
+          };
+          window.addEventListener("scroll", revealInViewport, { passive: true });
+          revealInViewport();
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("is-visible");
+              entry.target.querySelectorAll(".audit-kpis strong").forEach(animateMetric);
+              observer.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.14, rootMargin: "0px 0px -7% 0px" }
+        );
+
+        revealTargets.forEach((element) => observer.observe(element));
+      }
+
+      function initProductTilt() {
+        if (
+          reduceMotion ||
+          !heroProduct ||
+          !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+        ) {
+          return;
+        }
+
+        heroProduct.addEventListener("pointermove", (event) => {
+          const bounds = heroProduct.getBoundingClientRect();
+          const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+          const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+          heroProduct.style.setProperty("--tilt-x", `${(-y * 2.4).toFixed(2)}deg`);
+          heroProduct.style.setProperty("--tilt-y", `${(x * 3.2).toFixed(2)}deg`);
+          heroProduct.style.setProperty("--panel-x", `${(x * 10).toFixed(1)}px`);
+          heroProduct.style.setProperty("--panel-y", `${(y * 8).toFixed(1)}px`);
+        });
+
+        heroProduct.addEventListener("pointerleave", () => {
+          heroProduct.style.setProperty("--tilt-x", "0deg");
+          heroProduct.style.setProperty("--tilt-y", "0deg");
+          heroProduct.style.setProperty("--panel-x", "0px");
+          heroProduct.style.setProperty("--panel-y", "0px");
+        });
+      }
+
+      function initActiveNavigation() {
+        const links = [...document.querySelectorAll(".primary-nav a[href^='#']")];
+        const sections = links
+          .map((link) => document.querySelector(link.getAttribute("href")))
+          .filter(Boolean);
+        if (!sections.length) return;
+
+        const setActive = (section) => {
+          links.forEach((link) => {
+            link.classList.toggle(
+              "is-active",
+              link.getAttribute("href") === `#${section.id}`
+            );
+          });
+        };
+
+        if (!("IntersectionObserver" in window)) {
+          const updateActive = () => {
+            const current = sections
+              .filter((section) => section.getBoundingClientRect().top <= window.innerHeight * 0.42)
+              .at(-1);
+            if (current) setActive(current);
+          };
+          window.addEventListener("scroll", updateActive, { passive: true });
+          updateActive();
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+            if (!visible) return;
+            setActive(visible.target);
+          },
+          { threshold: [0.2, 0.45], rootMargin: "-18% 0px -58% 0px" }
+        );
+        sections.forEach((section) => observer.observe(section));
+      }
+
+      async function refreshHealth() {
+        try {
+          const res = await fetch("./health");
+          if (!res.ok) throw new Error(`Health endpoint unavailable (${res.status})`);
+          const data = await res.json();
+          healthEl.dataset.state = data.status;
+        } catch {
+          healthEl.dataset.state = "offline";
+        }
+      }
+
+      function updateLedger(decision) {
+        ledgerAction.textContent = decision.action;
+        ledgerAction.dataset.action = decision.action;
+        requestedModel.textContent = decision.requested_model;
+        selectedModel.textContent = decision.selected_model;
+        netValue.textContent = `${decision.net_value_cents.toFixed(4)} cents`;
+        expectedValue.textContent = `${decision.expected_value_cents.toFixed(2)} cents`;
+        estimatedCost.textContent = `${decision.estimated_cost_cents.toFixed(4)} cents`;
+        qualityFloor.textContent = decision.quality_floor.toFixed(2);
+        riskPenalty.textContent = `${decision.risk_penalty_cents.toFixed(2)} cents`;
+        fallbackChain.textContent = `Fallback chain: ${(decision.fallback_chain || []).join(" → ") || "none"}`;
+        proofFingerprint.textContent = `${decision.proof?.decision_fingerprint?.slice(0, 12) || "unavailable"}…`;
+        decisionReason.textContent = decision.reason;
+        policyLatency.textContent = `${decision.policy_latency_micros} us`;
+        previewAction.textContent = decision.action;
+        previewRequested.textContent = decision.requested_model;
+        previewSelected.textContent = decision.selected_model;
+        previewNet.textContent = `${decision.net_value_cents.toFixed(2)}c`;
+      }
+
+      async function digestPayload(payload) {
+        const canonical = JSON.stringify(payload);
+        if (!window.crypto?.subtle) {
+          let hash = 2166136261;
+          for (const char of canonical) {
+            hash ^= char.charCodeAt(0);
+            hash = Math.imul(hash, 16777619);
+          }
+          return Math.abs(hash >>> 0).toString(16).padStart(8, "0").repeat(8);
+        }
+        const bytes = new TextEncoder().encode(canonical);
+        const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+        return [...new Uint8Array(digest)]
+          .map((byte) => byte.toString(16).padStart(2, "0"))
+          .join("");
+      }
+
+      function modelCostCents(model, inputTokens, outputTokens) {
+        const catalog = {
+          "semantic-cache": [0, 0],
+          "local-small": [2, 5],
+          "gemini-3.1-flash": [15, 60],
+          "gpt-4o-mini": [15, 60],
+          "claude-haiku-4-5": [80, 400],
+          "claude-sonnet-4-6": [300, 1500],
+          "gpt-4o": [250, 1000],
+          "gemini-3.5-pro": [125, 1000],
+          "gpt-5.5": [500, 1500],
+          "claude-opus-4-8": [1500, 7500]
+        };
+        if (model === "blocked") return 0;
+        const [inputPrice, outputPrice] = catalog[model] || catalog["gemini-3.1-flash"];
+        return (inputTokens * inputPrice + outputTokens * outputPrice) / 1_000_000;
+      }
+
+      async function evaluateLocally(payload) {
+        const metadata = payload.metadata;
+        const hardBlock = metadata.risk_score >= 0.86 || metadata.confidence_score < 0.52;
+        const preservePremium =
+          metadata.workload_criticality === "critical" ||
+          metadata.quality_floor >= 0.88 ||
+          metadata.required_models?.includes(payload.model);
+
+        const downgradeMap = {
+          "claude-sonnet-4-6": "claude-haiku-4-5",
+          "claude-opus-4-8": "claude-sonnet-4-6",
+          "gpt-5.5": "gpt-4o-mini",
+          "gpt-4o": "gpt-4o-mini",
+          "gemini-3.5-pro": "gemini-3.1-flash",
+        };
+        const cheapFallback = downgradeMap[payload.model] || "gemini-3.1-flash";
+
+        const action = hardBlock ? "block" : preservePremium ? "allow" : "downgrade";
+        const selectedModel =
+          action === "block" ? "blocked" : action === "downgrade" ? cheapFallback : payload.model;
+        const estimatedCost = modelCostCents(
+          selectedModel,
+          payload.input_tokens,
+          payload.output_tokens
+        );
+        const riskPenalty =
+          metadata.estimated_business_value_cents * metadata.risk_score * 0.35;
+        const netValue = metadata.estimated_business_value_cents - estimatedCost - riskPenalty;
+        const fingerprint = await digestPayload({ payload, action, selectedModel });
+        const reason = hardBlock
+          ? "A high-risk financial action and low confidence breached the admission boundary."
+          : preservePremium
+            ? `Critical workflow with ${metadata.quality_floor} quality floor requires the approved premium model (${payload.model}).`
+            : `${metadata.use_case} fits ${cheapFallback} without breaching quality or latency floor. Downgraded from ${payload.model}.`;
+
+        return {
+          request_id: `public-${fingerprint.slice(0, 12)}`,
+          engine: "calybris",
+          policy_version: "public-demo-v1",
+          action,
+          requested_model: payload.model,
+          selected_model: selectedModel,
+          reason,
+          tenant_id: metadata.tenant_id,
+          use_case: metadata.use_case,
+          workload_criticality: metadata.workload_criticality,
+          input_tokens: payload.input_tokens,
+          output_tokens: payload.output_tokens,
+          estimated_cost_cents: estimatedCost,
+          expected_value_cents: metadata.estimated_business_value_cents,
+          risk_penalty_cents: riskPenalty,
+          net_value_cents: netValue,
+          confidence_score: metadata.confidence_score,
+          quality_floor: metadata.quality_floor,
+          fallback_chain:
+            action === "block"
+              ? []
+              : preservePremium
+                ? [selectedModel]
+                : [selectedModel, "local-small"],
+          policy_latency_micros: 84 + ((payload.input_tokens + payload.output_tokens) % 37),
+          proof: {
+            proof_version: "public-demo-v1",
+            decision_id: `public-${fingerprint.slice(0, 16)}`,
+            request_payload_digest: await digestPayload(payload),
+            decision_fingerprint: fingerprint,
+            invariants: [
+              { name: "risk_hard_limit", passed: metadata.risk_score < 0.86 },
+              { name: "minimum_confidence", passed: metadata.confidence_score >= 0.52 },
+              { name: "quality_floor", passed: true },
+              { name: "budget_constraint", passed: true }
+            ]
+          }
+        };
+      }
+
+      function publicDecisionView(decision) {
+        return {
+          action: decision.action,
+          tenant_id: decision.tenant_id,
+          use_case: decision.use_case,
+          requested_model: decision.requested_model,
+          selected_model: decision.selected_model,
+          input_tokens: decision.input_tokens,
+          output_tokens: decision.output_tokens,
+          reason: decision.reason,
+          estimated_cost_cents: Number(decision.estimated_cost_cents.toFixed(6)),
+          expected_value_cents: Number(decision.expected_value_cents.toFixed(4)),
+          risk_penalty_cents: Number(decision.risk_penalty_cents.toFixed(4)),
+          net_value_cents: Number(decision.net_value_cents.toFixed(4)),
+          quality_floor: decision.quality_floor,
+          fallback_chain: decision.fallback_chain,
+          policy_latency_micros: decision.policy_latency_micros,
+          proof: {
+            version: decision.proof?.proof_version,
+            decision_id: decision.proof?.decision_id,
+            request_payload_digest: decision.proof?.request_payload_digest,
+            decision_fingerprint: decision.proof?.decision_fingerprint,
+            invariants: decision.proof?.invariants
+          }
+        };
+      }
+
+      function selectScenario(name) {
+        activeScenario = name;
+        scenarioButtons.forEach((button) => {
+          const selected = button.dataset.scenario === name;
+          button.classList.toggle("is-selected", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+        scenarioSummary.textContent = scenarios[name].summary;
+      }
+
+      async function runDemo() {
+        demoBtn.disabled = true;
+        heroProduct?.classList.add("is-evaluating");
+        ledgerAction.textContent = "evaluating";
+        ledgerAction.dataset.action = "evaluating";
+        decisionEl.textContent = "Evaluating request against CALYBRIS policy...";
+        const payload = JSON.parse(JSON.stringify(scenarios[activeScenario].payload));
+        let decision;
+
+        try {
+          if (demoDelayMs > 0) {
+            await new Promise((resolve) => setTimeout(resolve, demoDelayMs));
+          }
+          const res = await fetch("./api/v1/route", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error(`API unavailable (${res.status})`);
+          const data = await res.json();
+          decision = data.goveris;
+          if (!decision) throw new Error("No decision returned");
+          demoSource.textContent = "Deployed Calybris API";
+          demoSourceNote.textContent = "Server-authored policy decision; no paid upstream call.";
+        } catch {
+          decision = await evaluateLocally(payload);
+          demoSource.textContent = "Deterministic browser replay";
+          demoSourceNote.textContent = "Same public-demo rules; clearly synthetic and offline.";
+        } finally {
+          if (decision) {
+            updateLedger(decision);
+            decisionEl.textContent = JSON.stringify(
+              { goveris: publicDecisionView({ ...decision, engine: "calybris" }) },
+              null,
+              2
+            );
+          }
+          demoBtn.disabled = false;
+          heroProduct?.classList.remove("is-evaluating");
+        }
+      }
+
+      scenarioButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.classList.contains("is-selected")));
+        button.addEventListener("click", async () => {
+          selectScenario(button.dataset.scenario);
+          await runDemo();
+        });
+      });
+      demoBtn.addEventListener("click", async () => {
+        document.getElementById("demo").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        await runDemo();
+      });
+      initScrollProgress();
+      initRevealSystem();
+      initProductTilt();
+      initActiveNavigation();
+      refreshHealth();
+      if (demoParams.get("autorun") !== "0") {
+        setTimeout(runDemo, 450);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">GOVERIS AI spend governance</title>
+  <desc id="desc">Editorial preview for the GOVERIS audit-first AI cost governance platform.</desc>
+  <rect width="1200" height="630" fill="#f4f3ee"/>
+  <rect x="52" y="48" width="1096" height="534" rx="8" fill="#ffffff" stroke="#d8dce2"/>
+  <rect x="52" y="48" width="1096" height="8" fill="#b13a32"/>
+  <g transform="translate(92 90)">
+    <path d="M0 0h34v30L17 40 34 50v30H0V0Z" fill="#15171a"/>
+    <path d="M76 0H42v30l17 10-17 10v30h34V0Z" fill="#15171a"/>
+    <path d="M34 30 42 25v30l-8-5V30Z" fill="#b13a32"/>
+  </g>
+  <text x="190" y="128" fill="#15171a" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" letter-spacing="4">GOVERIS</text>
+  <text x="190" y="158" fill="#626973" font-family="Arial, Helvetica, sans-serif" font-size="16">AI SPEND GOVERNANCE / CALYBRIS ENGINE</text>
+  <text x="92" y="275" fill="#15171a" font-family="Arial, Helvetica, sans-serif" font-size="66" font-weight="700">Control LLM spend</text>
+  <text x="92" y="349" fill="#15171a" font-family="Arial, Helvetica, sans-serif" font-size="66" font-weight="700">before the invoice arrives.</text>
+  <text x="92" y="403" fill="#5f6670" font-family="Arial, Helvetica, sans-serif" font-size="25">Audit model spend. Simulate policy. Enforce reviewed controls.</text>
+  <g transform="translate(92 467)">
+    <rect width="280" height="64" rx="6" fill="#15171a"/>
+    <text x="28" y="40" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">AUDIT EVERY CALL</text>
+  </g>
+  <g transform="translate(844 104)">
+    <rect width="244" height="330" rx="8" fill="#f0f2f6" stroke="#bdc3cc"/>
+    <text x="24" y="42" fill="#b13a32" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700">POLICY VERDICT</text>
+    <text x="24" y="86" fill="#15171a" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700">COST LEAKAGE</text>
+    <line x1="24" y1="108" x2="220" y2="108" stroke="#bdc3cc"/>
+    <text x="24" y="150" fill="#626973" font-family="Arial, Helvetica, sans-serif" font-size="14">Requested</text>
+    <text x="24" y="178" fill="#15171a" font-family="monospace" font-size="19">gpt-4o</text>
+    <text x="24" y="222" fill="#626973" font-family="Arial, Helvetica, sans-serif" font-size="14">Selected</text>
+    <text x="24" y="250" fill="#15171a" font-family="monospace" font-size="19">gpt-4o-mini</text>
+    <rect x="24" y="283" width="196" height="12" fill="#d8dce2"/>
+    <rect x="24" y="283" width="132" height="12" fill="#176b63"/>
+  </g>
+</svg>

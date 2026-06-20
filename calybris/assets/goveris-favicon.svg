@@ -1,0 +1,7 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">GOVERIS</title>
+  <rect width="64" height="64" rx="14" fill="#15171A"/>
+  <path fill="#F5F3ED" d="M8 9 29 18v11l-8 3 8 4v11L8 55Z"/>
+  <path fill="#F5F3ED" d="m37 19 19-8v42l-19-7Z"/>
+  <path fill="#B13A32" d="m29 29 8-4v17l-8-6Z"/>
+</svg>

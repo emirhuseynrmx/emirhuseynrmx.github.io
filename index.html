@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Emir H. Inci — Calybris Ecosystem · Causal ML · Quant Research</title>
+  <meta name="description" content="Calybris-powered decision infrastructure: AI cost governance, quant signal audit, prescriptive analytics, and causal ML research."/>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <link rel="canonical" href="https://emirhuseyin.tech/"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+  <canvas id="grid-canvas" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
+
+  <nav class="nav">
+    <span class="nav-loc" id="coords">41.0082°N 28.9784°E</span>
+    <div class="nav-links">
+      <a href="#engine">engine</a>
+      <a href="#products">products</a>
+      <a href="#research">research</a>
+      <a href="#certs">credentials</a>
+      <a href="#contact">contact</a>
+    </div>
+    <span class="nav-clock" id="clock"></span>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <header class="hero">
+    <div class="hero-identity">
+      <p class="hero-tag">Decision Infrastructure Engineer</p>
+      <h1>Emir Hüseyin<br/>İnci</h1>
+      <p class="hero-desc">I build <strong>proof-carrying decision engines</strong>. Every decision — AI model call, trading signal, churn intervention — must carry auditable evidence of its expected value.</p>
+      <div class="hero-status">
+        <div class="status-dot"></div>
+        <span>Calybris Engine powers everything below</span>
+      </div>
+      <div class="hero-links">
+        <a href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener">Kaggle</a>
+        <a href="mailto:emirhuseyininci@gmail.com">Email</a>
+      </div>
+    </div>
+
+    <div class="hero-terminal">
+      <div class="term-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="term-title">emirh@calybris ~ </span>
+      </div>
+      <div class="term-body">
+        <p class="term-line"><span class="prompt">$</span> <span class="cmd" id="typed"></span><span class="cursor">_</span></p>
+        <div class="term-output" id="term-output"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── CALYBRIS ENGINE ── -->
+  <section class="engine" id="engine">
+    <div class="section-label"><span>00</span> Core Engine</div>
+    <div class="engine-hero">
+      <div class="engine-text">
+        <h2><a href="./engine/" style="color:#c8a03c;transition:opacity .2s">Calybris Engine</a></h2>
+        <p class="engine-sub">Proof-carrying, domain-neutral prescriptive decision engine. Rust. Every decision gets a fingerprint, cost estimate, risk penalty, quality floor, and replayable audit trail.</p>
+        <div class="engine-stats">
+          <div><span>kernel</span><strong>4.46M decisions/s</strong></div>
+          <div><span>http gateway</span><strong>4,188 req/s</strong></div>
+          <div><span>p99 latency</span><strong>54.1ms</strong></div>
+          <div><span>durable WAL</span><strong>3,134/s</strong></div>
+        </div>
+      </div>
+      <div class="engine-orbit">
+        <div class="orbit-center">CALYBRIS</div>
+        <div class="orbit-ring ring-1">
+          <a href="#goveris" class="orbit-node node-amber">GOVERIS</a>
+          <a href="#lucethemis" class="orbit-node node-violet">LuceThemis</a>
+        </div>
+        <div class="orbit-ring ring-2">
+          <a href="#aera" class="orbit-node node-blue">AeraCFO</a>
+          <a href="#aegis" class="orbit-node node-teal">Aegis</a>
+          <a href="#nexus" class="orbit-node node-red">NexusAlpha</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MARQUEE ── -->
+  <div class="marquee-band" aria-hidden="true">
+    <div class="marquee-track">
+      <span>CALYBRIS</span><span>·</span>
+      <span>GOVERIS</span><span>·</span>
+      <span>LUCETHEMIS</span><span>·</span>
+      <span>RUST</span><span>·</span>
+      <span>PYTHON</span><span>·</span>
+      <span>CAUSAL ML</span><span>·</span>
+      <span>UPLIFT MODELING</span><span>·</span>
+      <span>MDL AUDIT</span><span>·</span>
+      <span>QUANT RESEARCH</span><span>·</span>
+      <span>PRESCRIPTIVE ANALYTICS</span><span>·</span>
+      <span>CALYBRIS</span><span>·</span>
+      <span>GOVERIS</span><span>·</span>
+      <span>LUCETHEMIS</span><span>·</span>
+      <span>RUST</span><span>·</span>
+      <span>PYTHON</span><span>·</span>
+      <span>CAUSAL ML</span><span>·</span>
+      <span>UPLIFT MODELING</span><span>·</span>
+      <span>MDL AUDIT</span><span>·</span>
+      <span>QUANT RESEARCH</span><span>·</span>
+      <span>PRESCRIPTIVE ANALYTICS</span><span>·</span>
+    </div>
+  </div>
+
+  <!-- ── PRODUCTS ── -->
+  <section class="products" id="products">
+    <div class="section-label"><span>01</span> Calybris Products</div>
+
+    <article class="project project-xl" id="goveris">
+      <div class="project-index">001</div>
+      <div class="project-badge">Calybris-powered</div>
+      <div class="project-content">
+        <div class="project-tags">
+          <span class="ptag ptag-rust">Rust</span>
+          <span class="ptag ptag-infra">Gateway</span>
+          <span class="ptag ptag-live">Live Demo</span>
+        </div>
+        <h2><a href="./calybris/">GOVERIS</a></h2>
+        <p>AI cost governance gateway. Every LLM call must justify its cost. Routes, downgrades, blocks, caches across <strong>OpenAI · Anthropic · Google</strong> based on expected value, risk, confidence, and tenant budget.</p>
+        <div class="project-grid">
+          <div class="pgrid-cell"><span>models</span><strong>GPT-5.5 · Claude 4 · Gemini 3.5</strong></div>
+          <div class="pgrid-cell"><span>mode</span><strong>Shadow replay → Enforce</strong></div>
+          <div class="pgrid-cell"><span>output</span><strong>PDF + HTML + JSON audit</strong></div>
+          <div class="pgrid-cell"><span>deploy</span><strong>Private Docker / VPC</strong></div>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="./calybris/" class="btn-primary">Live Demo</a>
+        <a href="https://github.com/emirhuseynrmx/norn" target="_blank" rel="noopener" class="btn-ghost">Source</a>
+      </div>
+    </article>
+
+    <article class="project project-xl" id="lucethemis">
+      <div class="project-index">002</div>
+      <div class="project-badge">Calybris-powered</div>
+      <div class="project-content">
+        <div class="project-tags">
+          <span class="ptag ptag-rust">Rust</span>
+          <span class="ptag ptag-quant">Quant Audit</span>
+          <span class="ptag ptag-ml">MDL</span>
+        </div>
+        <h2><a href="./lucethemis/">LuceThemis</a></h2>
+        <p>Quant signal evidence audit layer. Not a trading bot — a falsification engine. Tests whether signals survive cost, leakage, overfit, walk-forward, and complexity pressure before capital goes in. MDL-inspired proxy: more complex signal requires stronger evidence.</p>
+        <div class="project-grid">
+          <div class="pgrid-cell"><span>pilot result</span><strong>Holdout +8.98%</strong></div>
+          <div class="pgrid-cell"><span>win rate</span><strong>84% (N=25)</strong></div>
+          <div class="pgrid-cell"><span>profit factor</span><strong>5.509</strong></div>
+          <div class="pgrid-cell"><span>candidates audited</span><strong>215,233</strong></div>
+        </div>
+        <div class="project-quote">"The market needs a reliable evidence standard, not more backtests."</div>
+      </div>
+    </article>
+
+    <div class="project-pair">
+      <article class="project" id="aera">
+        <div class="project-index">003</div>
+        <div class="project-content">
+          <div class="project-tags">
+            <span class="ptag ptag-rust">Rust</span>
+            <span class="ptag ptag-ai">AI Agent</span>
+          </div>
+          <h3><a href="./aera/">AeraCFO</a></h3>
+          <p>AI finance reporting for SMEs. 3-agent pipeline (Planner → Executor → Critic), Holt forecasting, anomaly detection, incentive matching, PDF generation. Gemini 3.5 Flash.</p>
+          <div class="project-grid project-grid-sm">
+            <div class="pgrid-cell"><span>engine</span><strong>Axum + Polars</strong></div>
+            <div class="pgrid-cell"><span>tests</span><strong>63/63</strong></div>
+          </div>
+          <a href="./aera/" class="project-thumb">
+            <img src="assets/aera-hero.png" alt="AeraCFO" loading="lazy"/>
+          </a>
+        </div>
+        <a href="./aera/" class="project-arrow">&nearr;</a>
+      </article>
+
+      <article class="project" id="aegis">
+        <div class="project-index">004</div>
+        <div class="project-content">
+          <div class="project-tags">
+            <span class="ptag ptag-python">Python</span>
+            <span class="ptag ptag-ml">Causal ML</span>
+            <span class="ptag ptag-live">Live Demo</span>
+          </div>
+          <h3><a href="./aegis/">Aegis</a></h3>
+          <p>Prescriptive churn engine. Prediction → SHAP explanation → DiCE counterfactual prescription → DoWhy causal analysis → NPV decisioning → T-Learner CATE → Backtesting.</p>
+          <div class="project-grid project-grid-sm">
+            <div class="pgrid-cell"><span>tests</span><strong>173/173</strong></div>
+            <div class="pgrid-cell"><span>coverage</span><strong>94%</strong></div>
+          </div>
+        </div>
+        <a href="./aegis/" class="project-arrow">&nearr;</a>
+      </article>
+    </div>
+
+    <article class="project" id="nexus">
+      <div class="project-index">005</div>
+      <div class="project-content">
+        <div class="project-tags">
+          <span class="ptag ptag-rust">Rust</span>
+          <span class="ptag ptag-quant">Quant</span>
+          <span class="ptag ptag-wip">Private / WIP</span>
+        </div>
+        <h3>NexusAlpha</h3>
+        <p>Private low-latency quant research infra. Market-data handling, strict evaluation primitives, reproducible experiments. Rust rewrite in progress.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- ── RESEARCH ── -->
+  <section class="research" id="research">
+    <div class="section-label"><span>02</span> Research &amp; Notebooks</div>
+
+    <div class="research-grid">
+      <article class="research-card research-featured">
+        <div class="research-meta">
+          <span class="ptag ptag-python">Python</span>
+          <span class="ptag ptag-ml">Benchmark</span>
+        </div>
+        <h3><a href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">Criteo Uplift Modeling Benchmark</a></h3>
+        <p>7M-row benchmark: S-Learner, T-Learner, X-Learner, DR-Learner, Causal Forest. S-Learner won.</p>
+        <div class="research-stats">
+          <div><span>AUUC</span><strong>3,405.48</strong></div>
+          <div><span>top-decile</span><strong>6.23x</strong></div>
+          <div><span>incremental</span><strong>~6,865</strong></div>
+        </div>
+      </article>
+
+      <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener" class="research-card kaggle-card">
+        <div class="kaggle-icon">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M18.825 23.859c-.022.092-.117.141-.281.141h-3.139c-.187 0-.351-.082-.492-.248l-5.178-6.589-1.448 1.374v5.111c0 .235-.117.352-.351.352H5.505c-.236 0-.354-.117-.354-.352V.353c0-.233.118-.353.354-.353h2.431c.234 0 .351.12.351.353v14.343l6.203-6.272c.165-.165.33-.246.495-.246h3.239c.144 0 .236.06.281.18.046.141.021.246-.07.316L12.076 15l6.819 8.563c.068.09.09.186.068.296z" fill="#20BEFF"/></svg>
+        </div>
+        <div>
+          <h4>Kaggle Notebooks</h4>
+          <ul class="kaggle-list">
+            <li><strong>S&amp;P 500 Stress-Aware Stock Ranking with Causal ML</strong> <span class="vote-count">6</span></li>
+            <li><strong>A Deep Dive into Uplift Modeling (7M Scale)</strong> <span class="vote-count">3</span></li>
+            <li><strong>FinLLM QLoRA Fine-Tuning on Kaggle T4</strong> <span class="vote-count">1</span></li>
+          </ul>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ── STACK ── -->
+  <section class="stack-section" id="stack">
+    <div class="section-label"><span>03</span> Stack</div>
+    <div class="stack-grid-new">
+      <div class="stack-card" data-tier="primary">
+        <svg class="stack-icon" viewBox="0 0 32 32"><path d="M16.555 2.372a.53.53 0 0 0-.443-.015L1.632 8.677a.557.557 0 0 0-.025 1.007l14.48 7.397a.53.53 0 0 0 .486 0l14.48-7.397a.557.557 0 0 0-.024-1.007zm13.542 10.456l-2.475-1.196-11.1 5.672a1.6 1.6 0 0 1-1.459 0L4.06 11.632l-2.475 1.196a.555.555 0 0 0-.024 1.006l14.48 7.397a.53.53 0 0 0 .485 0l14.48-7.397a.555.555 0 0 0-.024-1.006zm0 5.388l-2.475-1.196-11.1 5.672a1.6 1.6 0 0 1-1.459 0L4.06 17.02l-2.475 1.196a.555.555 0 0 0-.024 1.006l14.48 7.397a.53.53 0 0 0 .485 0l14.48-7.397a.555.555 0 0 0-.024-1.006z" fill="#dea584"/></svg>
+        <div class="stack-info"><strong>Rust</strong><span>Axum · Tokio · Polars · ed25519</span></div>
+      </div>
+      <div class="stack-card" data-tier="primary">
+        <svg class="stack-icon" viewBox="0 0 32 32"><path d="M11.372 5.55A12.2 12.2 0 0 0 5.1 12.963a12.15 12.15 0 0 0 .873 9.876 12.2 12.2 0 0 0 9.964 6.359v-4.878a7.37 7.37 0 0 1-5.079-14.52A7.37 7.37 0 0 1 15.937 9.8V4.91a12.2 12.2 0 0 0-4.565.64z" fill="#ffd43b"/><path d="M20.563 5.55a12.2 12.2 0 0 1 5.774 7.13 12.15 12.15 0 0 1-.873 9.876 12.2 12.2 0 0 1-9.964 6.359v-4.878a7.37 7.37 0 0 0 5.079-14.52A7.37 7.37 0 0 0 15.998 9.8V4.91a12.2 12.2 0 0 1 4.565.64z" fill="#306998"/></svg>
+        <div class="stack-info"><strong>Python</strong><span>LightGBM · XGBoost · PyTorch</span></div>
+      </div>
+      <div class="stack-card">
+        <svg class="stack-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="#c084fc" stroke-width="2"/><path d="M10 16h12M16 10v12" stroke="#c084fc" stroke-width="2"/></svg>
+        <div class="stack-info"><strong>Causal ML</strong><span>DoWhy · EconML · SHAP · DiCE</span></div>
+      </div>
+      <div class="stack-card">
+        <svg class="stack-icon" viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="4" fill="none" stroke="#4ade80" stroke-width="2"/><path d="M10 22V14M16 22V10M22 22V16" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="stack-info"><strong>Data</strong><span>Polars · PostgreSQL · Redis</span></div>
+      </div>
+      <div class="stack-card">
+        <svg class="stack-icon" viewBox="0 0 32 32"><path d="M16 4L4 10v12l12 6 12-6V10z" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linejoin="round"/><path d="M4 10l12 6 12-6M16 16v12" stroke="#60a5fa" stroke-width="1.5"/></svg>
+        <div class="stack-info"><strong>Infra</strong><span>Docker · FastAPI · Git</span></div>
+      </div>
+      <div class="stack-card">
+        <svg class="stack-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#f97316" stroke-width="2"/><circle cx="16" cy="16" r="4" fill="#f97316"/><line x1="16" y1="2" x2="16" y2="6" stroke="#f97316" stroke-width="2"/><line x1="16" y1="26" x2="16" y2="30" stroke="#f97316" stroke-width="2"/><line x1="2" y1="16" x2="6" y2="16" stroke="#f97316" stroke-width="2"/><line x1="26" y1="16" x2="30" y2="16" stroke="#f97316" stroke-width="2"/></svg>
+        <div class="stack-info"><strong>ML Ops</strong><span>Drift monitoring · Typed configs</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CREDENTIALS ── -->
+  <section class="certs" id="certs">
+    <div class="section-label"><span>04</span> Credentials</div>
+    <div class="cert-scroll">
+      <div class="cert"><div class="cert-org">Google</div><h4>The Power of Statistics</h4><time>Jun 2026</time><code>SHAZAO1AST7J</code></div>
+      <div class="cert"><div class="cert-org">TestDome</div><h4>Python Data Science</h4><time>Jun 2026</time></div>
+      <div class="cert"><div class="cert-org">HackerRank</div><h4>Problem Solving (Intermediate)</h4><time>May 2026</time><code>35E81C28E1A8</code></div>
+      <div class="cert"><div class="cert-org">UPenn</div><h4>Computational Thinking for Problem Solving</h4><time>Nov 2025</time><code>YJ7DMHD90WRS</code></div>
+      <div class="cert"><div class="cert-org">IBM</div><h4>Python Project for Data Engineering</h4><time>Oct 2025</time><code>S4QYUCTATVLY</code></div>
+      <div class="cert"><div class="cert-org">Coursera</div><h4>Python for Data Science and AI</h4><time>Oct 2025</time></div>
+      <div class="cert"><div class="cert-org">J.P. Morgan · Forage</div><h4>Quantitative Research Simulation</h4><time>Oct 2025</time><code>caXP3ioKZp2zsmdCY</code></div>
+      <div class="cert"><div class="cert-org">Google · Coursera</div><h4>Data Analytics Professional Certificate (v2)</h4><time>Oct 2025</time></div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section class="contact" id="contact">
+    <div class="section-label"><span>05</span> Contact</div>
+    <div class="contact-body">
+      <p>Open to applied ML, causal inference, quant research, and analytics-engineering collaborations.</p>
+      <div class="contact-grid">
+        <a href="mailto:emirhuseyininci@gmail.com" class="contact-card"><span>email</span><strong>emirhuseyininci@gmail.com</strong></a>
+        <a href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener" class="contact-card"><span>linkedin</span><strong>/in/emirhuseyininci</strong></a>
+        <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener" class="contact-card"><span>github</span><strong>emirhuseynrmx</strong></a>
+        <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener" class="contact-card"><span>kaggle</span><strong>emirhseyinnci</strong></a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <span>&copy; 2025–2026 Emir H. Inci · Calybris Engine</span>
+    <div class="footer-links">
+      <a href="./calybris/">GOVERIS</a>
+      <a href="./lucethemis/">LuceThemis</a>
+      <a href="./aera/">AeraCFO</a>
+      <a href="./aegis/">Aegis</a>
+      <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+
+<script>
+(function(){
+  var clockEl=document.getElementById('clock');
+  function tick(){clockEl.textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+  tick();setInterval(tick,1000);
+
+  var canvas=document.getElementById('grid-canvas'),ctx=canvas.getContext('2d');
+  var mouseX=0,mouseY=0,W,H;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  document.addEventListener('mousemove',function(e){mouseX=e.clientX;mouseY=e.clientY;});
+  function drawGrid(){
+    ctx.clearRect(0,0,W,H);
+    var step=60,maxDist=260;
+    for(var x=0;x<W;x+=step){
+      for(var y=-(window.scrollY%step);y<H;y+=step){
+        var dx=x-mouseX,dy=y-mouseY,dist=Math.sqrt(dx*dx+dy*dy);
+        var intensity=Math.max(0,1-dist/maxDist);
+        if(intensity>0.02){
+          ctx.beginPath();ctx.arc(x,y,1.5+intensity*3,0,Math.PI*2);
+          ctx.fillStyle='rgba(200,160,60,'+intensity*0.4+')';ctx.fill();
+        }else{
+          ctx.beginPath();ctx.arc(x,y,0.5,0,Math.PI*2);
+          ctx.fillStyle='rgba(255,255,255,0.03)';ctx.fill();
+        }
+      }
+    }
+    requestAnimationFrame(drawGrid);
+  }
+  requestAnimationFrame(drawGrid);
+
+  var commands=[
+    {cmd:'calybris --version',out:'calybris-engine v1.0.0 (Rust 1.87, ed25519, WAL, proof-carrying)'},
+    {cmd:'calybris products',out:'001 GOVERIS    AI cost governance    [live]\n002 LuceThemis Quant signal audit    [pilot]\n003 AeraCFO    AI finance reporting  [MIT]\n004 Aegis      Prescriptive churn    [MIT]\n005 NexusAlpha Quant research infra  [private]'},
+    {cmd:'calybris bench --kernel',out:'kernel throughput:  4,460,000 decisions/s\nhttp gateway:       4,188 req/s (c=128)\nhttp p99:           54.1ms (15,000 req, 0 failed)\ndurable WAL:        3,134 events/s'},
+    {cmd:'whoami',out:'emir_huseyin_inci\nrole: decision infrastructure engineer\nfocus: causal ML · prescriptive analytics · quant research'},
+  ];
+  var typedEl=document.getElementById('typed'),outputEl=document.getElementById('term-output');
+  var cursorEl=document.querySelector('.cursor');
+  function typeCommand(i){
+    if(i>=commands.length)i=0;
+    var c=commands[i];typedEl.textContent='';cursorEl.style.display='inline';
+    var j=0;
+    function tc(){
+      if(j<c.cmd.length){typedEl.textContent+=c.cmd[j];j++;setTimeout(tc,30+Math.random()*40);}
+      else{cursorEl.style.display='none';setTimeout(function(){
+        var d=document.createElement('div');d.className='term-result';
+        d.innerHTML='<span class="prompt">$</span> '+c.cmd+'\n'+c.out;
+        outputEl.prepend(d);if(outputEl.children.length>3)outputEl.removeChild(outputEl.lastChild);
+        typedEl.textContent='';cursorEl.style.display='inline';
+        setTimeout(function(){typeCommand(i+1);},2200);
+      },350);}
+    }
+    tc();
+  }
+  setTimeout(function(){typeCommand(0);},500);
+
+  var nav=document.querySelector('.nav'),lastY=0;
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY;
+    nav.classList.toggle('nav-up',y>100&&y>lastY);
+    nav.classList.toggle('nav-bg',y>60);lastY=y;
+  },{passive:true});
+
+  var revealEls=document.querySelectorAll('.project,.cert,.metric,.stack-card,.contact-card,.research-card,.engine-stats>div');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+    },{threshold:0.08,rootMargin:'0px 0px -5% 0px'});
+    revealEls.forEach(function(el,i){el.style.setProperty('--delay',i%8*0.06+'s');io.observe(el);});
+  }else{revealEls.forEach(function(el){el.classList.add('in');});}
+
+  var navLinks=[].slice.call(document.querySelectorAll('.nav-links a'));
+  var secs=navLinks.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
+  if('IntersectionObserver' in window){
+    var so=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){if(e.isIntersecting){
+        navLinks.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id);});
+      }});
+    },{threshold:0.15,rootMargin:'-15% 0px -65% 0px'});
+    secs.forEach(function(s){so.observe(s);});
+  }
+})();
+</script>
+</body>
+</html>

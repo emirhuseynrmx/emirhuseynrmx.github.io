@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Calybris Engine | Proof-Carrying Prescriptive Decision Engine</title>
+  <meta name="description" content="Calybris is a domain-neutral, proof-carrying prescriptive decision engine written in Rust. Every decision gets a fingerprint, cost estimate, risk penalty, quality floor, and replayable audit trail."/>
+  <meta name="keywords" content="decision engine, proof-carrying, prescriptive analytics, Rust, Axum, audit trail, WAL, ed25519, Calybris"/>
+  <meta name="author" content="Emir H. Inci"/>
+  <meta name="robots" content="index, follow"/>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <link rel="canonical" href="https://emirhuseyin.tech/engine/"/>
+  <link rel="home" href="https://emirhuseyin.tech/"/>
+
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Calybris Engine | Proof-Carrying Decision Engine"/>
+  <meta property="og:description" content="Domain-neutral prescriptive decision engine. Every decision carries auditable proof of its expected value."/>
+  <meta name="twitter:card" content="summary"/>
+  <meta name="twitter:title" content="Calybris Engine"/>
+  <meta name="twitter:description" content="Proof-carrying prescriptive decision engine written in Rust."/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --card: #0e0e0e;
+      --border: #1a1a1a;
+      --gold: #c8a03c;
+      --gold-dim: rgba(200, 160, 60, 0.15);
+      --gold-glow: rgba(200, 160, 60, 0.08);
+      --text: #e0e0e0;
+      --text-dim: #888;
+      --text-muted: #555;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: var(--gold);
+      color: var(--bg);
+    }
+
+    a { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
+    a:hover { opacity: 0.8; }
+
+    /* ── Noise overlay ── */
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      transition: background 0.3s;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-brand .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      font-size: 0.78rem;
+      text-transform: lowercase;
+      letter-spacing: 0.03em;
+    }
+
+    .nav-links a:hover { color: var(--gold); opacity: 1; }
+
+    .nav-back {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    /* ── Section layout ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    section {
+      padding: 6rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--mono);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--text-dim);
+      max-width: 640px;
+      margin-bottom: 2.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 56px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: var(--mono);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-tagline {
+      font-family: var(--mono);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-sub {
+      color: var(--text-dim);
+      font-size: 1.05rem;
+      max-width: 680px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-sub strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+    }
+
+    .btn-primary:hover {
+      background: #d4ac44;
+      opacity: 1;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      opacity: 1;
+    }
+
+    /* ── Benchmarks ── */
+    .bench-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .bench-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .bench-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .bench-value {
+      font-family: var(--mono);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+
+    .bench-unit {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 0.5rem;
+    }
+
+    .bench-label {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .bench-note {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+
+    .bench-note strong {
+      color: var(--text);
+    }
+
+    /* ── Products ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.3s, transform 0.3s;
+      text-decoration: none;
+    }
+
+    .product-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      opacity: 1;
+    }
+
+    .product-name {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .product-type {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+
+    .product-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .product-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+
+    .product-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 0.2rem 0.5rem;
+    }
+
+    /* ── Architecture ── */
+    .arch-diagram {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2.5rem;
+      overflow-x: auto;
+    }
+
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .arch-node {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      white-space: nowrap;
+    }
+
+    .arch-node.highlight {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .arch-arrow {
+      font-family: var(--mono);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .arch-sub {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .arch-sub-arrow {
+      font-family: var(--mono);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .arch-constraints {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .arch-constraint {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--gold);
+      padding: 0.4rem 0.8rem;
+      border: 1px solid var(--gold-dim);
+      border-radius: 3px;
+      background: var(--gold-glow);
+    }
+
+    .arch-outcomes {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 0.25rem;
+    }
+
+    .arch-outcome {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      padding: 0.35rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+    }
+
+    /* ── Tech ── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .tech-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem;
+      transition: border-color 0.3s;
+    }
+
+    .tech-item:hover {
+      border-color: var(--gold);
+    }
+
+    .tech-name {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+
+    .tech-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+    }
+
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+
+    .footer-links a {
+      color: var(--text-dim);
+    }
+
+    .footer-links a:hover {
+      color: var(--gold);
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.35s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav { padding: 0 1rem; }
+      .nav-links { display: none; }
+      .container { padding: 0 1.25rem; }
+      section { padding: 4rem 0; }
+      .hero { min-height: auto; padding: 8rem 0 4rem; }
+      .bench-grid { grid-template-columns: 1fr 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .arch-flow { flex-direction: column; }
+      .arch-arrow { transform: rotate(90deg); }
+      .arch-diagram { padding: 1.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .bench-grid { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <a class="nav-brand" href="/engine/">
+      <span class="dot"></span>
+      CALYBRIS ENGINE
+    </a>
+    <div class="nav-links">
+      <a href="#benchmarks">benchmarks</a>
+      <a href="#products">products</a>
+      <a href="#architecture">architecture</a>
+      <a href="#tech">tech</a>
+    </div>
+    <a class="nav-back" href="/">&larr; portfolio</a>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero" id="top">
+    <div class="container hero-content">
+      <p class="hero-eyebrow reveal">Rust &middot; proof-carrying &middot; domain-neutral</p>
+      <h1 class="reveal reveal-delay-1">Calybris Engine</h1>
+      <p class="hero-tagline reveal reveal-delay-2">Proof-Carrying Prescriptive Decision Engine</p>
+      <p class="hero-sub reveal reveal-delay-3">
+        Domain-neutral. Every decision &mdash; AI model call, trading signal, churn intervention &mdash;
+        gets a <strong>fingerprint</strong>, <strong>cost estimate</strong>, <strong>risk penalty</strong>,
+        <strong>quality floor</strong>, and <strong>replayable audit trail</strong>.
+      </p>
+      <div class="hero-actions reveal reveal-delay-4">
+        <a class="btn btn-primary" href="/calybris/">View GOVERIS Demo</a>
+        <a class="btn btn-secondary" href="mailto:emirhuseyininci@gmail.com?subject=Calybris%20Engine%20Inquiry">Contact</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 01 Benchmarks ── -->
+  <section id="benchmarks">
+    <div class="container">
+      <p class="section-label reveal">01 &mdash; Benchmarks</p>
+      <h2 class="section-title reveal">Measured, not estimated</h2>
+      <p class="section-desc reveal">All numbers from a single-node run. No cluster, no load balancer, no warm cache.</p>
+
+      <div class="bench-grid">
+        <div class="bench-card reveal">
+          <div class="bench-value">4.46M</div>
+          <div class="bench-unit">decisions / sec</div>
+          <div class="bench-label">Kernel throughput</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-1">
+          <div class="bench-value">4,188</div>
+          <div class="bench-unit">req / sec</div>
+          <div class="bench-label">Durable HTTP (c=128, 1ms mock)</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-2">
+          <div class="bench-value">54.1ms</div>
+          <div class="bench-unit">p99 latency</div>
+          <div class="bench-label">HTTP p99 (15,000 req, 0 failed)</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-3">
+          <div class="bench-value">3,134</div>
+          <div class="bench-unit">events / sec</div>
+          <div class="bench-label">Durable WAL write throughput</div>
+        </div>
+      </div>
+
+      <div class="bench-note reveal">
+        <strong>Transparency note:</strong> The current-host <code>sync_data</code> barrier p99 was 1.57s;
+        an isolated stable reference measured 9,861 durable events/s at 83.8ms barrier p99.
+        We publish the bad run because storage contention is an operational fact, not a footnote.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 02 Products ── -->
+  <section id="products">
+    <div class="container">
+      <p class="section-label reveal">02 &mdash; Products</p>
+      <h2 class="section-title reveal">Powered by Calybris</h2>
+      <p class="section-desc reveal">Four products, one engine. Each domain plugs its own policy vocabulary; the proof machinery is shared.</p>
+
+      <div class="product-grid">
+        <a class="product-card reveal" href="/calybris/">
+          <div class="product-name">GOVERIS</div>
+          <div class="product-type">AI Cost Governance</div>
+          <div class="product-desc">Audit-first gateway that turns every LLM call into an auditable financial decision with cost, risk, and ROI evidence.</div>
+          <div class="product-tags">
+            <span class="product-tag">GPT-5.5</span>
+            <span class="product-tag">Claude 4</span>
+            <span class="product-tag">Gemini 2.5</span>
+          </div>
+        </a>
+        <a class="product-card reveal reveal-delay-1" href="/lucethemis/">
+          <div class="product-name">LuceThemis</div>
+          <div class="product-type">Quant Signal Audit</div>
+          <div class="product-desc">Evidence trail for quantitative trading signals. MDL-inspired complexity penalties prevent overfitting in production.</div>
+          <div class="product-tags">
+            <span class="product-tag">MDL-inspired</span>
+            <span class="product-tag">signal evidence</span>
+          </div>
+        </a>
+        <a class="product-card reveal reveal-delay-2" href="/aera/">
+          <div class="product-name">AeraCFO</div>
+          <div class="product-type">AI Finance Reporting</div>
+          <div class="product-desc">Three-agent pipeline for AI-augmented financial reporting with proof-carrying cost attribution per generated artifact.</div>
+          <div class="product-tags">
+            <span class="product-tag">3-agent pipeline</span>
+            <span class="product-tag">cost attribution</span>
+          </div>
+        </a>
+        <a class="product-card reveal reveal-delay-3" href="/aegis/">
+          <div class="product-name">Aegis</div>
+          <div class="product-type">Prescriptive Churn Analytics</div>
+          <div class="product-desc">Prescriptive churn analytics combining SHAP explanations, DiCE counterfactuals, and CATE treatment effects.</div>
+          <div class="product-tags">
+            <span class="product-tag">SHAP</span>
+            <span class="product-tag">DiCE</span>
+            <span class="product-tag">CATE</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 Architecture ── -->
+  <section id="architecture">
+    <div class="container">
+      <p class="section-label reveal">03 &mdash; Architecture</p>
+      <h2 class="section-title reveal">Decision flow</h2>
+      <p class="section-desc reveal">Every request passes through the same pipeline. Domain-specific logic lives in the Policy Gate; everything else is engine infrastructure.</p>
+
+      <div class="arch-diagram reveal">
+        <div class="arch-flow">
+          <span class="arch-node">Request</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node highlight">Policy Gate</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node">Decision</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node highlight">Proof</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node">WAL</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node">Audit Trail</span>
+        </div>
+
+        <div class="arch-sub">
+          <span class="arch-sub-arrow">&darr; Policy Gate evaluates</span>
+          <div class="arch-constraints">
+            <span class="arch-constraint">cost</span>
+            <span class="arch-constraint">risk</span>
+            <span class="arch-constraint">quality</span>
+            <span class="arch-constraint">budget</span>
+            <span class="arch-constraint">confidence</span>
+          </div>
+          <span class="arch-sub-arrow">&darr; Possible outcomes</span>
+          <div class="arch-outcomes">
+            <span class="arch-outcome">allow</span>
+            <span class="arch-outcome">downgrade</span>
+            <span class="arch-outcome">block</span>
+            <span class="arch-outcome">cache</span>
+            <span class="arch-outcome">retry</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 04 Tech ── -->
+  <section id="tech">
+    <div class="container">
+      <p class="section-label reveal">04 &mdash; Tech Stack</p>
+      <h2 class="section-title reveal">Infrastructure</h2>
+
+      <div class="tech-grid">
+        <div class="tech-item reveal">
+          <div class="tech-name">Rust + Axum + Tokio</div>
+          <div class="tech-desc">Async runtime, zero-cost abstractions, no GC pauses</div>
+        </div>
+        <div class="tech-item reveal reveal-delay-1">
+          <div class="tech-name">ed25519 Signatures</div>
+          <div class="tech-desc">Every proof is cryptographically signed for tamper detection</div>
+        </div>
+        <div class="tech-item reveal reveal-delay-2">
+          <div class="tech-name">Write-Ahead Log</div>
+          <div class="tech-desc">Durable event log guarantees no decision is lost</div>
+        </div>
+        <div class="tech-item reveal reveal-delay-3">
+          <div class="tech-name">SHA-256 Fingerprints</div>
+          <div class="tech-desc">Content-addressed decision identity for deduplication and replay</div>
+        </div>
+        <div class="tech-item reveal reveal-delay-1">
+          <div class="tech-name">OpenAI-Compatible API</div>
+          <div class="tech-desc">Drop-in proxy for existing LLM integrations</div>
+        </div>
+        <div class="tech-item reveal reveal-delay-2">
+          <div class="tech-name">Docker Deployment</div>
+          <div class="tech-desc">Single container, environment-variable config, no external dependencies</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="container">
+      <p class="footer-copy">&copy; 2025&ndash;2026 Emir H. Inci</p>
+      <div class="footer-links">
+        <a href="/">Portfolio</a>
+        <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ── Scroll reveal ── */
+    (function () {
+      const els = document.querySelectorAll('.reveal');
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12 }
+      );
+      els.forEach((el) => io.observe(el));
+    })();
+
+    /* ── Nav background on scroll ── */
+    (function () {
+      const nav = document.querySelector('.nav');
+      let ticking = false;
+      window.addEventListener('scroll', function () {
+        if (!ticking) {
+          requestAnimationFrame(function () {
+            if (window.scrollY > 80) {
+              nav.style.background = 'rgba(10, 10, 10, 0.95)';
+            } else {
+              nav.style.background = 'rgba(10, 10, 10, 0.85)';
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

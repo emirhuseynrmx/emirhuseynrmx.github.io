@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AeraCFO — Cockpit</title>
+  <meta name="theme-color" content="#0a0a0a"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --bg: #0a0a0a;
+      --sidebar: #080808;
+      --main: #0d0d0d;
+      --card: #111111;
+      --border: #1a1a1a;
+      --border-hover: #2a2a2a;
+      --accent: #00c2a8;
+      --accent-dim: rgba(0,194,168,0.12);
+      --accent-glow: rgba(0,194,168,0.25);
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.15);
+      --yellow: #f59e0b;
+      --yellow-dim: rgba(245,158,11,0.15);
+      --blue: #3b82f6;
+      --blue-dim: rgba(59,130,246,0.15);
+      --text: #e5e5e5;
+      --text-dim: #777;
+      --text-muted: #555;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', sans-serif;
+      --sidebar-w: 220px;
+      --topbar-h: 44px;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      display: flex;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 1.25rem 1rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-brand .logo {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+    .sidebar-brand .logo-sub {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar-section {
+      padding: 1rem 0.75rem 0.5rem;
+    }
+    .sidebar-section-title {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      padding-left: 0.25rem;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+      text-align: left;
+      margin-bottom: 2px;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+    .nav-btn.active { background: var(--accent-dim); color: var(--accent); }
+    .nav-btn .icon { font-size: 0.9rem; width: 1.2rem; text-align: center; }
+
+    .demo-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+    .demo-btn:hover { border-color: var(--accent); color: var(--text); }
+    .demo-btn.loaded { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .demo-btn .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .demo-btn.loaded .dot { background: var(--accent); }
+
+    .sidebar-action {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+    .sidebar-action:hover { border-color: var(--accent); color: var(--text); }
+    .sidebar-action .icon { font-size: 0.85rem; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      padding: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-decoration: none;
+      padding: 0.4rem 0.25rem;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    /* ── MAIN AREA ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: var(--main);
+      overflow: hidden;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: var(--topbar-h);
+      min-height: var(--topbar-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--sidebar);
+    }
+    .topbar-title {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34,197,94,0.5);
+    }
+    .lang-toggle {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      padding: 0.25rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lang-toggle:hover { border-color: var(--accent); color: var(--text); }
+
+    /* ── CONTENT AREA ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .view { display: none; height: 100%; }
+    .view.active { display: flex; flex-direction: column; }
+
+    /* ── CHAT VIEW ── */
+    .chat-view { display: none; flex-direction: column; height: 100%; }
+    .chat-view.active { display: flex; }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chat-welcome {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+    .welcome-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,194,168,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .welcome-title {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .welcome-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      max-width: 380px;
+      line-height: 1.6;
+    }
+    .quick-prompts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+    .quick-prompt {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 0.4rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .quick-prompt:hover { border-color: var(--accent); color: var(--accent); }
+
+    .msg {
+      max-width: 720px;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      line-height: 1.65;
+      animation: msgIn 0.3s ease;
+    }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg-user {
+      align-self: flex-end;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,194,168,0.2);
+      color: var(--text);
+    }
+    .msg-bot {
+      align-self: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .msg-bot .msg-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .msg-bot .bot-avatar {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .msg-bot .bot-name {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .msg-bot .msg-body {
+      white-space: pre-wrap;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .tool-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.75rem;
+    }
+    .tool-badge {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.2);
+      color: var(--blue);
+    }
+
+    .chat-input-bar {
+      padding: 0.75rem 1.25rem 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .chat-input::placeholder { color: var(--text-muted); }
+    .chat-input:focus { border-color: var(--accent); }
+    .send-btn {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: var(--accent-dim);
+      color: var(--accent);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .send-btn:hover { background: var(--accent); color: #000; }
+
+    /* ── DASHBOARD VIEW ── */
+    .dash-view { padding: 1.25rem; overflow-y: auto; }
+
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .metric-card:hover { border-color: var(--border-hover); }
+    .metric-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+    .metric-value {
+      font-family: var(--mono);
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+    }
+    .metric-value.accent { color: var(--accent); }
+    .metric-value.red { color: var(--red); }
+    .metric-value.yellow { color: var(--yellow); }
+    .metric-sub {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .chart-title {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+    .chart-subtitle {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .chart-legend {
+      display: flex;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+    }
+    .legend-dot {
+      width: 8px; height: 8px; border-radius: 2px;
+    }
+    .legend-dot.revenue { background: var(--accent); }
+    .legend-dot.expense { background: var(--red); }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 200px;
+      padding-top: 10px;
+    }
+    .bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .bars {
+      display: flex;
+      gap: 2px;
+      align-items: flex-end;
+      width: 100%;
+      justify-content: center;
+      flex: 1;
+    }
+    .bar {
+      width: 45%;
+      max-width: 24px;
+      border-radius: 3px 3px 0 0;
+      transition: height 0.6s ease;
+      min-height: 2px;
+      position: relative;
+    }
+    .bar.revenue { background: var(--accent); }
+    .bar.expense { background: var(--red); opacity: 0.7; }
+    .bar:hover { opacity: 1; filter: brightness(1.2); }
+    .bar-label {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      white-space: nowrap;
+    }
+
+    /* ── DASH EMPTY STATE ── */
+    .dash-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 400px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      text-align: center;
+      gap: 0.75rem;
+    }
+    .dash-empty .icon { font-size: 2rem; opacity: 0.4; }
+
+    /* ── INCENTIVES VIEW ── */
+    .inc-view { padding: 1.25rem; overflow-y: auto; }
+
+    .inc-header {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+    .inc-subheader {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .inc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .inc-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      transition: border-color 0.2s;
+    }
+    .inc-card:hover { border-color: var(--accent); }
+    .inc-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .inc-name {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .inc-type {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(0,194,168,0.2);
+    }
+    .inc-amount {
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    .inc-link {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .inc-link:hover { color: var(--accent); }
+
+    .inc-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 400px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      text-align: center;
+      gap: 0.75rem;
+    }
+    .inc-empty .icon { font-size: 2rem; opacity: 0.4; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text);
+      z-index: 1000;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    @keyframes toastIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .metrics-strip { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .sidebar { width: 180px; min-width: 180px; }
+      .metrics-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* ── TYPING INDICATOR ── */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+    .typing-indicator span {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.4;
+      animation: typeBlink 1.2s infinite;
+    }
+    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typeBlink { 0%,80%,100% { opacity:0.4; } 40% { opacity:1; } }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">&Lambda; E R &Lambda;</div>
+      <div class="logo-sub">Autonomous AI CFO</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Navigation</div>
+      <button class="nav-btn active" data-view="chat">
+        <span class="icon">&#9993;</span> Chat
+      </button>
+      <button class="nav-btn" data-view="dashboard">
+        <span class="icon">&#9632;</span> Dashboard
+      </button>
+      <button class="nav-btn" data-view="incentives">
+        <span class="icon">&#9733;</span> Incentives
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Demo Data</div>
+      <button class="demo-btn" data-demo="kobi">
+        <span class="dot"></span> KOB&#304; Demo
+      </button>
+      <button class="demo-btn" data-demo="restoran">
+        <span class="dot"></span> Restoran Demo
+      </button>
+      <button class="demo-btn" data-demo="eticaret">
+        <span class="dot"></span> E-Ticaret Demo
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <button class="sidebar-action" id="uploadBtn">
+        <span class="icon">&#8682;</span> Upload CSV
+      </button>
+      <button class="sidebar-action" id="exportBtn">
+        <span class="icon">&#8615;</span> Export PDF
+      </button>
+    </div>
+
+    <div class="sidebar-bottom">
+      <a href="../" class="back-link">&larr; Back to landing</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Chat</div>
+      <div class="topbar-right">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          DEMO MODE
+        </div>
+        <button class="lang-toggle" id="langToggle">EN</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- CHAT VIEW -->
+      <div class="chat-view view active" id="viewChat">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-welcome" id="chatWelcome">
+            <div class="welcome-icon">&#9674;</div>
+            <div class="welcome-title">Welcome to AeraCFO</div>
+            <div class="welcome-desc">Load demo data or upload your CSV to begin financial analysis.</div>
+            <div class="quick-prompts">
+              <button class="quick-prompt" data-prompt="Analyze my cash flow">Analyze my cash flow</button>
+              <button class="quick-prompt" data-prompt="What's my burn rate?">What's my burn rate?</button>
+              <button class="quick-prompt" data-prompt="Find matching incentives">Find matching incentives</button>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-bar">
+          <input type="text" class="chat-input" id="chatInput" placeholder="Ask AeraCFO..." autocomplete="off"/>
+          <button class="send-btn" id="sendBtn">&#8593;</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD VIEW -->
+      <div class="dash-view view" id="viewDashboard">
+        <div id="dashContent">
+          <div class="dash-empty" id="dashEmpty">
+            <div class="icon">&#9632;</div>
+            <div>No data loaded</div>
+            <div style="font-size:0.7rem;">Load a demo dataset from the sidebar to see dashboard.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INCENTIVES VIEW -->
+      <div class="inc-view view" id="viewIncentives">
+        <div id="incContent">
+          <div class="inc-empty" id="incEmpty">
+            <div class="icon">&#9733;</div>
+            <div>No incentives matched</div>
+            <div style="font-size:0.7rem;">Load demo data to see matching incentive programs.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ═════════════════════════════════════════
+       DEMO DATA
+       ═════════════════════════════════════════ */
+    const DEMOS = {
+      kobi: {
+        name: "KOBİ (General SME)",
+        monthly: [
+          {ay:"Jan 2024",gelir:104086,gider:85432},
+          {ay:"Feb 2024",gelir:98234,gider:79821},
+          {ay:"Mar 2024",gelir:112450,gider:88945},
+          {ay:"Apr 2024",gelir:95670,gider:82134},
+          {ay:"May 2024",gelir:118920,gider:91567},
+          {ay:"Jun 2024",gelir:125340,gider:95234},
+          {ay:"Jul 2024",gelir:108760,gider:87654},
+          {ay:"Aug 2024",gelir:99870,gider:83210},
+          {ay:"Sep 2024",gelir:132450,gider:98765},
+          {ay:"Oct 2024",gelir:141230,gider:102340},
+          {ay:"Nov 2024",gelir:128900,gider:96780},
+          {ay:"Dec 2024",gelir:155670,gider:108430}
+        ],
+        chatResponse: "Financial analysis complete.\n\n• Annual revenue shows positive trend, Q4 strongest quarter.\n• Expense/revenue ratio at 78% — sector average is 82%, you’re well positioned.\n• Personnel costs represent ~40% of total expenses.\n• Last 3 months show average 8.2% monthly cash growth.\n\nRisk level: LOW\nHealth score: B (74/100)\n\nRecommendation: Consider KOSGEB Technology Development Grant (300K TL) for R&D expansion.",
+        tools: ["analyze_cash_flow", "get_health_score", "search_incentives", "predict_cashflow"],
+        metrics: {net:158420, risk:"LOW", burn:91500, runway:6.2, health:74, grade:"B"},
+        incentives: [
+          {name:"KOSGEB Technology Development Grant", amount:"300,000 TL", type:"Grant", url:"kosgeb.gov.tr"},
+          {name:"TÜBİTAK 1501 Industry R&D", amount:"1,500,000 TL", type:"Grant + Credit", url:"tubitak.gov.tr"},
+          {name:"KOSGEB SME Credit Support", amount:"500,000 TL", type:"Low-interest Credit", url:"kosgeb.gov.tr"}
+        ]
+      },
+      restoran: {
+        name: "Restaurant",
+        monthly: [
+          {ay:"Jan 2024",gelir:78450,gider:62340},
+          {ay:"Feb 2024",gelir:72100,gider:58900},
+          {ay:"Mar 2024",gelir:85670,gider:67230},
+          {ay:"Apr 2024",gelir:92340,gider:71450},
+          {ay:"May 2024",gelir:98760,gider:74320},
+          {ay:"Jun 2024",gelir:115230,gider:82100},
+          {ay:"Jul 2024",gelir:128450,gider:89670},
+          {ay:"Aug 2024",gelir:132100,gider:91230},
+          {ay:"Sep 2024",gelir:108900,gider:79450},
+          {ay:"Oct 2024",gelir:95670,gider:73210},
+          {ay:"Nov 2024",gelir:88340,gider:69870},
+          {ay:"Dec 2024",gelir:142560,gider:98340}
+        ],
+        chatResponse: "Restaurant financial overview:\n\n• Strong seasonal pattern — June-August peak (summer tourism).\n• Food cost ratio at 38% of revenue — industry benchmark is 30-35%.\n• December holiday surge: +61% vs November.\n• Rent at 11% of revenue — manageable.\n\nRisk level: MEDIUM\nHealth score: C+ (62/100)\n\nRecommendation: Optimize food procurement costs. Consider bulk purchasing agreements with suppliers.",
+        tools: ["analyze_cash_flow", "get_health_score", "analyze_expense_categories"],
+        metrics: {net:80620, risk:"MEDIUM", burn:76510, runway:3.8, health:62, grade:"C+"},
+        incentives: [
+          {name:"KOSGEB Micro-Enterprise Grant", amount:"100,000 TL", type:"Grant", url:"kosgeb.gov.tr"},
+          {name:"Tourism Development Fund", amount:"250,000 TL", type:"Low-interest Credit", url:"kultur.gov.tr"}
+        ]
+      },
+      eticaret: {
+        name: "E-Commerce",
+        monthly: [
+          {ay:"Jan 2024",gelir:245000,gider:198000},
+          {ay:"Feb 2024",gelir:218000,gider:178000},
+          {ay:"Mar 2024",gelir:267000,gider:212000},
+          {ay:"Apr 2024",gelir:289000,gider:225000},
+          {ay:"May 2024",gelir:312000,gider:241000},
+          {ay:"Jun 2024",gelir:298000,gider:234000},
+          {ay:"Jul 2024",gelir:275000,gider:218000},
+          {ay:"Aug 2024",gelir:258000,gider:208000},
+          {ay:"Sep 2024",gelir:345000,gider:265000},
+          {ay:"Oct 2024",gelir:378000,gider:289000},
+          {ay:"Nov 2024",gelir:425000,gider:318000},
+          {ay:"Dec 2024",gelir:512000,gider:385000}
+        ],
+        chatResponse: "E-Commerce financial analysis:\n\n• Strong year-end growth trajectory — Nov-Dec up 67% vs annual average.\n• Marketing spend at 12% of revenue — healthy for growth stage.\n• COGS at 61% — consider supplier negotiations.\n• Shipping costs growing faster than revenue (+23% vs +18%).\n\nRisk level: LOW\nHealth score: A- (82/100)\n\nRecommendation: Focus on logistics optimization. TÜBİTAK e-commerce digitalization grant covers tech infrastructure.",
+        tools: ["analyze_cash_flow", "get_health_score", "predict_cashflow", "search_incentives"],
+        metrics: {net:642000, risk:"LOW", burn:264250, runway:8.4, health:82, grade:"A-"},
+        incentives: [
+          {name:"TÜBİTAK Digital SME Grant", amount:"400,000 TL", type:"Grant", url:"tubitak.gov.tr"},
+          {name:"E-Export Support Program", amount:"200,000 TL", type:"Grant", url:"ticaret.gov.tr"},
+          {name:"KOSGEB Technology Investment", amount:"700,000 TL", type:"Grant + Credit", url:"kosgeb.gov.tr"}
+        ]
+      }
+    };
+
+    /* ═════════════════════════════════════════
+       FOLLOW-UP RESPONSES
+       ═════════════════════════════════════════ */
+    const FOLLOWUPS = {
+      "cash flow": "Based on the loaded data, your net cash flow for the trailing 12 months shows a positive trend.\n\nMonthly average net: {avg} TL\nBest month: {best}\nWeakest month: {worst}\n\nYour cash conversion cycle appears healthy relative to sector benchmarks.",
+      "burn rate": "Current monthly burn rate: {burn} TL\n\nAt this rate, your runway is approximately {runway} months.\n\nBreakdown estimate:\n• Fixed costs (rent, salaries): ~60%\n• Variable costs (materials, logistics): ~30%\n• Discretionary (marketing, R&D): ~10%",
+      "incentive": "Based on your company profile, I found {count} matching programs:\n\n{list}\n\nSwitch to the Incentives tab for details and application links.",
+      "forecast": "Running Holt exponential smoothing on your revenue data...\n\nNext 3-month forecast:\n• Month +1: {f1} TL\n• Month +2: {f2} TL\n• Month +3: {f3} TL\n\nTrend: {trend}\nConfidence interval: ±12% based on historical variance.",
+      "default": "I can help you with:\n• Cash flow analysis\n• Burn rate and runway calculations\n• Expense category breakdowns\n• Revenue forecasting (Holt method)\n• Incentive program matching\n\nTry asking a specific question about your financial data."
+    };
+
+    /* ═════════════════════════════════════════
+       STATE
+       ═════════════════════════════════════════ */
+    let currentView = 'chat';
+    let currentDemo = null;
+    let lang = 'EN';
+
+    /* ═════════════════════════════════════════
+       DOM REFS
+       ═════════════════════════════════════════ */
+    const $chatMessages = document.getElementById('chatMessages');
+    const $chatWelcome = document.getElementById('chatWelcome');
+    const $chatInput = document.getElementById('chatInput');
+    const $sendBtn = document.getElementById('sendBtn');
+    const $topbarTitle = document.getElementById('topbarTitle');
+    const $dashContent = document.getElementById('dashContent');
+    const $dashEmpty = document.getElementById('dashEmpty');
+    const $incContent = document.getElementById('incContent');
+    const $incEmpty = document.getElementById('incEmpty');
+    const $langToggle = document.getElementById('langToggle');
+
+    /* ═════════════════════════════════════════
+       VIEW SWITCHING
+       ═════════════════════════════════════════ */
+    const viewNames = { chat:'Chat', dashboard:'Dashboard', incentives:'Incentives' };
+
+    document.querySelectorAll('.nav-btn[data-view]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        switchView(this.getAttribute('data-view'));
+      });
+    });
+
+    function switchView(view) {
+      currentView = view;
+      document.querySelectorAll('.nav-btn[data-view]').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-view') === view);
+      });
+      document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+      var viewEl = document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1));
+      if (viewEl) viewEl.classList.add('active');
+      $topbarTitle.textContent = viewNames[view] || view;
+    }
+
+    /* ═════════════════════════════════════════
+       DEMO LOADING
+       ═════════════════════════════════════════ */
+    document.querySelectorAll('.demo-btn[data-demo]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = this.getAttribute('data-demo');
+        loadDemo(key);
+      });
+    });
+
+    function loadDemo(key) {
+      var demo = DEMOS[key];
+      if (!demo) return;
+      currentDemo = demo;
+
+      // Update sidebar buttons
+      document.querySelectorAll('.demo-btn').forEach(function(b) {
+        b.classList.toggle('loaded', b.getAttribute('data-demo') === key);
+      });
+
+      // Switch to chat and show response
+      switchView('chat');
+
+      // Hide welcome, clear messages
+      $chatWelcome.style.display = 'none';
+      clearMessages();
+
+      // Add user message
+      addMessage('user', 'Load ' + demo.name + ' demo data and analyze.');
+
+      // Show typing then bot response
+      showTypingThenRespond(demo.chatResponse, demo.tools);
+
+      // Update dashboard
+      renderDashboard(demo);
+
+      // Update incentives
+      renderIncentives(demo);
+
+      showToast('Loaded: ' + demo.name);
+    }
+
+    /* ═════════════════════════════════════════
+       CHAT FUNCTIONS
+       ═════════════════════════════════════════ */
+    function clearMessages() {
+      var msgs = $chatMessages.querySelectorAll('.msg, .typing-indicator');
+      msgs.forEach(function(m) { m.remove(); });
+    }
+
+    function addMessage(type, text, tools) {
+      var div = document.createElement('div');
+      div.className = 'msg msg-' + type;
+
+      if (type === 'bot') {
+        var header = document.createElement('div');
+        header.className = 'msg-header';
+        header.innerHTML = '<div class="bot-avatar">Λ</div><span class="bot-name">AeraCFO</span>';
+        div.appendChild(header);
+
+        var body = document.createElement('div');
+        body.className = 'msg-body';
+        body.textContent = text;
+        div.appendChild(body);
+
+        if (tools && tools.length > 0) {
+          var badges = document.createElement('div');
+          badges.className = 'tool-badges';
+          tools.forEach(function(t) {
+            var badge = document.createElement('span');
+            badge.className = 'tool-badge';
+            badge.textContent = t;
+            badges.appendChild(badge);
+          });
+          div.appendChild(badges);
+        }
+      } else {
+        div.textContent = text;
+      }
+
+      $chatMessages.appendChild(div);
+      $chatMessages.scrollTop = $chatMessages.scrollHeight;
+    }
+
+    function showTypingThenRespond(text, tools) {
+      var typing = document.createElement('div');
+      typing.className = 'typing-indicator';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      $chatMessages.appendChild(typing);
+      $chatMessages.scrollTop = $chatMessages.scrollHeight;
+
+      setTimeout(function() {
+        typing.remove();
+        addMessage('bot', text, tools);
+      }, 1200);
+    }
+
+    function getFollowUpResponse(input) {
+      var lower = input.toLowerCase();
+      var demo = currentDemo;
+      if (!demo) return FOLLOWUPS["default"];
+
+      if (lower.indexOf('cash') !== -1 || lower.indexOf('flow') !== -1 || lower.indexOf('analyze') !== -1) {
+        var monthly = demo.monthly;
+        var nets = monthly.map(function(m) { return m.gelir - m.gider; });
+        var avg = Math.round(nets.reduce(function(a,b){return a+b;},0) / nets.length);
+        var maxIdx = nets.indexOf(Math.max.apply(null, nets));
+        var minIdx = nets.indexOf(Math.min.apply(null, nets));
+        return FOLLOWUPS["cash flow"]
+          .replace('{avg}', avg.toLocaleString())
+          .replace('{best}', monthly[maxIdx].ay)
+          .replace('{worst}', monthly[minIdx].ay);
+      }
+
+      if (lower.indexOf('burn') !== -1 || lower.indexOf('rate') !== -1 || lower.indexOf('runway') !== -1) {
+        return FOLLOWUPS["burn rate"]
+          .replace('{burn}', demo.metrics.burn.toLocaleString())
+          .replace('{runway}', demo.metrics.runway);
+      }
+
+      if (lower.indexOf('incentive') !== -1 || lower.indexOf('grant') !== -1 || lower.indexOf('matching') !== -1) {
+        var list = demo.incentives.map(function(i) { return '• ' + i.name + ' (' + i.amount + ')'; }).join('\n');
+        return FOLLOWUPS["incentive"]
+          .replace('{count}', demo.incentives.length)
+          .replace('{list}', list);
+      }
+
+      if (lower.indexOf('forecast') !== -1 || lower.indexOf('predict') !== -1 || lower.indexOf('project') !== -1) {
+        var last3 = demo.monthly.slice(-3);
+        var avgRev = Math.round(last3.reduce(function(a,m){return a+m.gelir;},0) / 3);
+        var growth = 1.03;
+        var trend = demo.metrics.risk === 'LOW' ? 'Upward' : 'Stable';
+        return FOLLOWUPS["forecast"]
+          .replace('{f1}', Math.round(avgRev * growth).toLocaleString())
+          .replace('{f2}', Math.round(avgRev * growth * growth).toLocaleString())
+          .replace('{f3}', Math.round(avgRev * growth * growth * growth).toLocaleString())
+          .replace('{trend}', trend);
+      }
+
+      return FOLLOWUPS["default"];
+    }
+
+    function getToolsForQuery(input) {
+      var lower = input.toLowerCase();
+      var tools = [];
+      if (lower.indexOf('cash') !== -1 || lower.indexOf('flow') !== -1 || lower.indexOf('analyze') !== -1) tools.push('analyze_cash_flow');
+      if (lower.indexOf('burn') !== -1 || lower.indexOf('rate') !== -1 || lower.indexOf('runway') !== -1) tools.push('calculate_burn_rate');
+      if (lower.indexOf('incentive') !== -1 || lower.indexOf('grant') !== -1) tools.push('search_incentives');
+      if (lower.indexOf('forecast') !== -1 || lower.indexOf('predict') !== -1) tools.push('predict_cashflow');
+      if (lower.indexOf('health') !== -1 || lower.indexOf('score') !== -1) tools.push('get_health_score');
+      if (tools.length === 0) tools.push('analyze_cash_flow');
+      return tools;
+    }
+
+    function handleSend() {
+      var text = $chatInput.value.trim();
+      if (!text) return;
+      $chatInput.value = '';
+
+      // Hide welcome if visible
+      $chatWelcome.style.display = 'none';
+
+      addMessage('user', text);
+
+      if (!currentDemo) {
+        showTypingThenRespond('Please load a demo dataset first. Click one of the demo buttons in the sidebar to begin.', []);
+        return;
+      }
+
+      var response = getFollowUpResponse(text);
+      var tools = getToolsForQuery(text);
+      showTypingThenRespond(response, tools);
+    }
+
+    $sendBtn.addEventListener('click', handleSend);
+    $chatInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') handleSend();
+    });
+
+    // Quick prompts
+    document.querySelectorAll('.quick-prompt').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        $chatInput.value = this.getAttribute('data-prompt');
+        handleSend();
+      });
+    });
+
+    /* ═════════════════════════════════════════
+       DASHBOARD RENDER
+       ═════════════════════════════════════════ */
+    function renderDashboard(demo) {
+      var m = demo.metrics;
+      var riskColor = m.risk === 'LOW' ? 'accent' : m.risk === 'MEDIUM' ? 'yellow' : 'red';
+      var healthColor = m.health >= 75 ? 'accent' : m.health >= 60 ? 'yellow' : 'red';
+
+      var maxVal = 0;
+      demo.monthly.forEach(function(mon) {
+        if (mon.gelir > maxVal) maxVal = mon.gelir;
+        if (mon.gider > maxVal) maxVal = mon.gider;
+      });
+
+      var barsHTML = demo.monthly.map(function(mon) {
+        var rH = Math.round((mon.gelir / maxVal) * 100);
+        var eH = Math.round((mon.gider / maxVal) * 100);
+        var label = mon.ay.split(' ')[0];
+        return '<div class="bar-group">' +
+          '<div class="bars">' +
+            '<div class="bar revenue" style="height:' + rH + '%" title="Revenue: ' + mon.gelir.toLocaleString() + ' TL"></div>' +
+            '<div class="bar expense" style="height:' + eH + '%" title="Expense: ' + mon.gider.toLocaleString() + ' TL"></div>' +
+          '</div>' +
+          '<div class="bar-label">' + label + '</div>' +
+        '</div>';
+      }).join('');
+
+      $dashContent.innerHTML =
+        '<div class="metrics-strip">' +
+          '<div class="metric-card"><div class="metric-label">Net Cash</div><div class="metric-value accent">' + m.net.toLocaleString() + '</div><div class="metric-sub">TL</div></div>' +
+          '<div class="metric-card"><div class="metric-label">Risk Level</div><div class="metric-value ' + riskColor + '">' + m.risk + '</div><div class="metric-sub">&nbsp;</div></div>' +
+          '<div class="metric-card"><div class="metric-label">Burn Rate</div><div class="metric-value">' + m.burn.toLocaleString() + '</div><div class="metric-sub">TL / month</div></div>' +
+          '<div class="metric-card"><div class="metric-label">Runway</div><div class="metric-value accent">' + m.runway + '</div><div class="metric-sub">months</div></div>' +
+          '<div class="metric-card"><div class="metric-label">Health Score</div><div class="metric-value ' + healthColor + '">' + m.grade + '</div><div class="metric-sub">' + m.health + ' / 100</div></div>' +
+        '</div>' +
+        '<div class="chart-card">' +
+          '<div class="chart-title">Monthly Revenue vs Expenses</div>' +
+          '<div class="chart-subtitle">' + demo.name + ' — Jan 2024 to Dec 2024</div>' +
+          '<div class="chart-legend">' +
+            '<div class="legend-item"><div class="legend-dot revenue"></div> Revenue</div>' +
+            '<div class="legend-item"><div class="legend-dot expense"></div> Expenses</div>' +
+          '</div>' +
+          '<div class="bar-chart">' + barsHTML + '</div>' +
+        '</div>';
+    }
+
+    /* ═════════════════════════════════════════
+       INCENTIVES RENDER
+       ═════════════════════════════════════════ */
+    function renderIncentives(demo) {
+      var cards = demo.incentives.map(function(inc) {
+        return '<div class="inc-card">' +
+          '<div class="inc-card-header">' +
+            '<div class="inc-name">' + inc.name + '</div>' +
+            '<div class="inc-type">' + inc.type + '</div>' +
+          '</div>' +
+          '<div class="inc-amount">' + inc.amount + '</div>' +
+          '<a class="inc-link" href="https://' + inc.url + '" target="_blank" rel="noopener">' + inc.url + ' →</a>' +
+        '</div>';
+      }).join('');
+
+      $incContent.innerHTML =
+        '<div class="inc-header">Matched Incentive Programs</div>' +
+        '<div class="inc-subheader">' + demo.incentives.length + ' programs matched for ' + demo.name + '</div>' +
+        '<div class="inc-list">' + cards + '</div>';
+    }
+
+    /* ═════════════════════════════════════════
+       UPLOAD & EXPORT
+       ═════════════════════════════════════════ */
+    document.getElementById('uploadBtn').addEventListener('click', function() {
+      showToast('Demo mode: upload simulated. Load a demo dataset to explore.');
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', function() {
+      if (!currentDemo) {
+        showToast('No data loaded. Load a demo first.');
+        return;
+      }
+      showToast('Demo mode: PDF export simulated for ' + currentDemo.name + '.');
+    });
+
+    /* ═════════════════════════════════════════
+       LANG TOGGLE
+       ═════════════════════════════════════════ */
+    $langToggle.addEventListener('click', function() {
+      lang = lang === 'EN' ? 'TR' : 'EN';
+      $langToggle.textContent = lang;
+      showToast('Language: ' + (lang === 'EN' ? 'English' : 'Türkçe'));
+    });
+
+    /* ═════════════════════════════════════════
+       TOAST
+       ═════════════════════════════════════════ */
+    function showToast(msg) {
+      var existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      var t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function() { if (t.parentNode) t.remove(); }, 3000);
+    }
+  </script>
+</body>
+</html>
