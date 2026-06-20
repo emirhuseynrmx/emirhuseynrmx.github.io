@@ -606,8 +606,10 @@
             obs.unobserve(e.target);
           }
         });
-      }, {threshold:0.5});
+      }, {threshold:0.1});
       stats.forEach(function(el){ obs.observe(el); });
+
+      setTimeout(function(){ stats.forEach(function(el){ if(el.textContent === '0' || el.textContent.trim() === '0') animateCount(el); }); }, 2000);
 
       function animateCount(el){
         var target = parseInt(el.getAttribute('data-target'));
