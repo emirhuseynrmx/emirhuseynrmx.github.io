@@ -91,12 +91,12 @@
             Get your LLM spend audit in 7 days. GOVERIS deploys a private Docker image inside your VPC, observes model call metadata, and produces a board-readable audit with what-if policy scenarios. No prompt capture. No log export.
           </p>
           <div class="hero-actions" aria-label="GOVERIS actions">
-            <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%207-Day%20Audit&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A" class="hero-actions a" style="border-color:transparent;background:var(--ink);color:var(--brand-ink);font-weight:800;box-shadow:0 14px 34px rgba(21,23,26,0.14)">Get your spend audit in 7 days</a>
+            <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%207-Day%20Audit&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Get your spend audit in 7 days</a>
             <a href="#demo">Try interactive demo</a>
             <a href="#audit">View sample PDF</a>
           </div>
           <div class="signal-row" aria-label="GOVERIS proof points">
-            <span><strong>Rust + Axum</strong> gateway</span>
+            <span><strong>20–40%</strong> typical avoidable spend identified</span>
             <span><strong>CALYBRIS</strong> proof-carrying engine</span>
             <span><strong>231 tests</strong> fault injection + proptest + loom</span>
             <span><strong>OpenAI · Anthropic · Google</strong> compatible</span>
@@ -518,22 +518,45 @@ enforcement    off during replay</pre>
         <div class="section-heading">
           <p class="eyebrow">Adoption path</p>
           <h2>Choose your audit depth.</h2>
+          <p>
+            Typical teams identify 20–40% avoidable LLM spend in the first replay.
+            No upfront commitment. Start read-only, enforce only after evidence.
+          </p>
         </div>
         <div class="pricing-grid">
           <article>
             <span>Starter audit</span>
             <strong>$75–150</strong>
             <p>Same-day triage from anonymized logs. Markdown memo, JSON summary, top savings opportunities.</p>
+            <ul class="check-list">
+              <li>Delivery: same day</li>
+              <li>Minimum: 100 LLM calls</li>
+              <li>Output: Markdown + JSON</li>
+            </ul>
           </article>
           <article>
             <span>Standard replay</span>
             <strong>$250–750</strong>
-            <p>7–14 day private Docker pilot. Shadow replay, tenant breakdown, what-if policy simulation, PDF audit package.</p>
+            <p>Private Docker pilot in your VPC. Shadow replay, tenant breakdown, what-if scenarios, PDF audit.</p>
+            <ul class="check-list">
+              <li>Setup: under 30 minutes</li>
+              <li>Duration: 7–14 days</li>
+              <li>Minimum: 500 calls</li>
+              <li>Output: PDF + HTML + JSON</li>
+              <li>3 policy scenarios included</li>
+            </ul>
           </article>
           <article>
             <span>Gateway review</span>
             <strong>$1,000+</strong>
-            <p>Full proxy mode evaluation. WAL tracing, shadow traffic review, canary rollout plan, controlled enforcement.</p>
+            <p>Full proxy mode evaluation. WAL tracing, shadow traffic, canary rollout plan, enforcement roadmap.</p>
+            <ul class="check-list">
+              <li>Duration: 14–30 days</li>
+              <li>Includes: proxy mode + shadow</li>
+              <li>Minimum: 5,000 calls</li>
+              <li>Output: full audit + rollout plan</li>
+              <li>Dedicated Slack/email support</li>
+            </ul>
           </article>
         </div>
       </section>
@@ -596,8 +619,8 @@ enforcement    off during replay</pre>
         <div class="demo-workbench">
           <aside class="scenario-picker" aria-label="Demo workload scenarios">
             <div class="scenario-picker-head">
-              <span>Workload</span>
-              <strong>Select a scenario</strong>
+              <span>5 real-world scenarios · 4 tenants · 3 providers</span>
+              <strong>Pick a workload</strong>
             </div>
             <button class="scenario-option is-selected" type="button" data-scenario="support">
               <span>01 / Claude Opus 4.8 → Sonnet</span>
