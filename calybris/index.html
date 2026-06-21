@@ -85,17 +85,15 @@
 
       <section class="hero" id="platform">
         <div class="hero-copy">
-          <p class="eyebrow">AI spend governance layer</p>
+          <p class="eyebrow">GOVERIS — AI spend governance product · Powered by CALYBRIS engine</p>
           <h1>Control LLM spend before the invoice arrives.</h1>
           <p class="hero-lede">
-            GOVERIS turns every model call into an auditable financial decision: requested model,
-            selected model, risk, confidence, tenant budget, and expected value in one replayable
-            trail.
+            Get your LLM spend audit in 7 days. GOVERIS deploys a private Docker image inside your VPC, observes model call metadata, and produces a board-readable audit with what-if policy scenarios. No prompt capture. No log export.
           </p>
           <div class="hero-actions" aria-label="GOVERIS actions">
-            <button id="run-demo" type="button">Try a realistic decision</button>
-            <a href="#audit">View audit package</a>
-            <a href="#shadow">See private deployment</a>
+            <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%207-Day%20Audit&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A" class="hero-actions a" style="border-color:transparent;background:var(--ink);color:var(--brand-ink);font-weight:800;box-shadow:0 14px 34px rgba(21,23,26,0.14)">Get your spend audit in 7 days</a>
+            <a href="#demo">Try interactive demo</a>
+            <a href="#audit">View sample PDF</a>
           </div>
           <div class="signal-row" aria-label="GOVERIS proof points">
             <span><strong>Rust + Axum</strong> gateway</span>
@@ -249,18 +247,18 @@
         </p>
       </section>
 
-      <section class="proof-band" aria-label="Quality proof">
+      <section class="proof-band" aria-label="Engineering proof">
         <div>
-          <span>231 tests</span>
-          <strong>WAL fault injection, proptest invariants, loom concurrency.</strong>
+          <span>Engineering proof</span>
+          <strong>231 tests · fault injection · proptest · loom exhaustive concurrency</strong>
         </div>
         <div>
-          <span>10 bug fixes</span>
-          <strong>WAL deadlock, NaN bypass, key timing leak, CORS hardening.</strong>
+          <span>Hardened</span>
+          <strong>10 critical fixes: WAL deadlock, NaN bypass, timing leak, CORS</strong>
         </div>
         <div>
-          <span>Live audit API</span>
-          <strong>GET /api/v1/audit/report returns instant spend analysis.</strong>
+          <span>Instant audit</span>
+          <strong>GET /api/v1/audit/report → JSON + Markdown spend analysis</strong>
         </div>
       </section>
 
@@ -519,23 +517,23 @@ enforcement    off during replay</pre>
       <section class="pricing-section" id="pricing">
         <div class="section-heading">
           <p class="eyebrow">Adoption path</p>
-          <h2>Start read-only. Earn the right to enforce.</h2>
+          <h2>Choose your audit depth.</h2>
         </div>
         <div class="pricing-grid">
           <article>
-            <span>Shadow replay</span>
-            <strong>7–14 days</strong>
-            <p>Private Docker image, metadata-only mirror, zero changes to live routing.</p>
+            <span>Starter audit</span>
+            <strong>$75–150</strong>
+            <p>Same-day triage from anonymized logs. Markdown memo, JSON summary, top savings opportunities.</p>
           </article>
           <article>
-            <span>Governance review</span>
-            <strong>Inside your VPC</strong>
-            <p>Aggregate findings, tenant attribution, and policy candidates without raw-log export.</p>
+            <span>Standard replay</span>
+            <strong>$250–750</strong>
+            <p>7–14 day private Docker pilot. Shadow replay, tenant breakdown, what-if policy simulation, PDF audit package.</p>
           </article>
           <article>
-            <span>Controlled rollout</span>
-            <strong>Canary first</strong>
-            <p>Proof-bound enforcement, explicit rollback, and provider reconciliation.</p>
+            <span>Gateway review</span>
+            <strong>$1,000+</strong>
+            <p>Full proxy mode evaluation. WAL tracing, shadow traffic review, canary rollout plan, controlled enforcement.</p>
           </article>
         </div>
       </section>
@@ -568,10 +566,10 @@ enforcement    off during replay</pre>
 
       <section class="contact-section" id="contact">
         <div class="contact-copy">
-          <p class="eyebrow">Private pilot intake</p>
-          <h2>Request a 7-day shadow replay pilot.</h2>
+          <p class="eyebrow">Start here</p>
+          <h2>Get your LLM spend audit in 7 days.</h2>
           <p>
-            Send your monthly LLM call volume, provider stack, and deployment environment. I'll scope a private Docker pilot and return an audit package. No prompt capture. No log export. Metadata-only observation inside your VPC.
+            Send your monthly call volume and provider stack. I'll deploy a private Docker pilot in your VPC and return a board-readable audit package. No prompt capture. Metadata-only observation.
           </p>
         </div>
         <div class="contact-card">
@@ -1175,7 +1173,7 @@ enforcement    off during replay</pre>
       }
 
       async function runDemo() {
-        demoBtn.disabled = true;
+        if (demoBtn) demoBtn.disabled = true;
         heroProduct?.classList.add("is-evaluating");
         ledgerAction.textContent = "evaluating";
         ledgerAction.dataset.action = "evaluating";
@@ -1211,7 +1209,7 @@ enforcement    off during replay</pre>
               2
             );
           }
-          demoBtn.disabled = false;
+          if (demoBtn) demoBtn.disabled = false;
           heroProduct?.classList.remove("is-evaluating");
         }
       }
@@ -1223,10 +1221,12 @@ enforcement    off during replay</pre>
           await runDemo();
         });
       });
-      demoBtn.addEventListener("click", async () => {
-        document.getElementById("demo").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-        await runDemo();
-      });
+      if (demoBtn) {
+        demoBtn.addEventListener("click", async () => {
+          document.getElementById("demo").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+          await runDemo();
+        });
+      }
       initScrollProgress();
       initRevealSystem();
       initProductTilt();
