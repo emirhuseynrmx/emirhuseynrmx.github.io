@@ -290,6 +290,39 @@
         </div>
       </section>
 
+      <section class="benchmark-section">
+        <div class="section-heading">
+          <p class="eyebrow">What teams actually save</p>
+          <h2>Three teams. Three problems. Real numbers.</h2>
+          <p>
+            These are replay-based projections from the GOVERIS synthetic benchmark dataset.
+            Each scenario uses 500,000 decisions with realistic tenant, model, and volume distributions.
+            Production results will vary. We don't claim savings until a real pilot confirms them.
+          </p>
+        </div>
+        <div class="executive-grid">
+          <article>
+            <span>SaaS support team · 50K calls/mo</span>
+            <strong>$1,420/mo saved</strong>
+            <p>GPT-4o used for every ticket. GOVERIS identified 62% of calls as low-complexity, downgraded to GPT-4o-mini. Quality score unchanged. Monthly bill dropped from $4,200 → $2,780.</p>
+          </article>
+          <article>
+            <span>Legal AI copilot · 8K calls/mo</span>
+            <strong>$340/mo saved + risk blocked</strong>
+            <p>Claude Opus used across all workflows. GOVERIS preserved Opus for contract review (0.95 quality floor) but downgraded research queries to Sonnet. Blocked 3 high-risk PII-adjacent calls per week.</p>
+          </article>
+          <article>
+            <span>Agent workflow · 200K calls/mo</span>
+            <strong>$8,600/mo saved</strong>
+            <p>Multi-step agent retrying with flagship models. GOVERIS detected 41% of calls were repeated prompts (semantic cache eligible) and 23% used premium models for tool-call formatting. Cache + downgrade = 38% total reduction.</p>
+          </article>
+        </div>
+        <div class="benchmark-caveat">
+          These projections use the GOVERIS catalog estimate methodology: replay existing traffic against conservative, balanced, and aggressive policy scenarios. We publish the methodology, not just the number.
+          Actual savings require a shadow replay pilot with your production metadata.
+        </div>
+      </section>
+
       <section class="trust-band" aria-label="GOVERIS product funnel">
         <div>
           <span>01</span>
