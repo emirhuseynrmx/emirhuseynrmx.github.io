@@ -123,11 +123,11 @@
             <dl class="metric-strip">
               <div>
                 <dt>Requested model</dt>
-                <dd id="preview-requested">claude-sonnet-4-6</dd>
+                <dd id="preview-requested">claude-opus-4-8</dd>
               </div>
               <div>
                 <dt>Selected route</dt>
-                <dd id="preview-selected">claude-haiku-4-5</dd>
+                <dd id="preview-selected">claude-sonnet-4-6</dd>
               </div>
               <div>
                 <dt>Decision value</dt>
@@ -138,7 +138,7 @@
             <div class="route-map" aria-label="Model routing map">
               <div>
                 <span>requested</span>
-                <strong>claude-sonnet-4-6</strong>
+                <strong>claude-opus-4-8</strong>
               </div>
               <i></i>
               <div class="gate">
@@ -148,7 +148,7 @@
               <i></i>
               <div>
                 <span>selected</span>
-                <strong>claude-haiku-4-5</strong>
+                <strong>claude-sonnet-4-6</strong>
               </div>
             </div>
 
@@ -600,19 +600,29 @@ enforcement    off during replay</pre>
               <strong>Select a scenario</strong>
             </div>
             <button class="scenario-option is-selected" type="button" data-scenario="support">
-              <span>01 / Claude Sonnet 4.6</span>
-              <strong>Premium Anthropic model for a routine support question</strong>
-              <small>2,450 tokens · €0.05 value · standard floor · downgrade to Haiku 4.5</small>
+              <span>01 / Claude Opus 4.8 → Sonnet</span>
+              <strong>Customer refund request routed through your most expensive model</strong>
+              <small>$15/$75 per 1M tokens · $0.42 value · standard floor · GOVERIS downgrades to Sonnet 4.6</small>
             </button>
             <button class="scenario-option" type="button" data-scenario="critical">
-              <span>02 / GPT-5.5</span>
-              <strong>OpenAI flagship for EU data-processing contract review</strong>
-              <small>Critical workflow · 0.92 quality floor · premium model required</small>
+              <span>02 / Claude Opus 4.8 — kept</span>
+              <strong>SOC2 compliance review requires reasoning-grade output</strong>
+              <small>Critical · 0.95 quality floor · Opus preserved · $8.20 business value justifies cost</small>
+            </button>
+            <button class="scenario-option" type="button" data-scenario="coding">
+              <span>03 / GPT-5.5 → GPT-4o</span>
+              <strong>Internal code review bot using flagship when mid-tier suffices</strong>
+              <small>4,200 tokens · 0.72 quality floor · $0.18 value doesn't justify $0.84 cost</small>
             </button>
             <button class="scenario-option" type="button" data-scenario="risky">
-              <span>03 / Gemini 3.5 Pro</span>
-              <strong>Google model for a high-risk vendor bank account change</strong>
-              <small>Prompt-injection signal · 0.94 risk · 0.41 confidence</small>
+              <span>04 / Gemini 3.5 Pro — blocked</span>
+              <strong>Accounts payable automation requests vendor bank change</strong>
+              <small>Prompt-injection signal · 0.94 risk · 0.41 confidence · hard block</small>
+            </button>
+            <button class="scenario-option" type="button" data-scenario="cache">
+              <span>05 / Claude Sonnet → Cache</span>
+              <strong>Identical FAQ question asked 200 times/day across tenants</strong>
+              <small>Semantic cache eligible · $0.02 value · repeated prompt hash detected</small>
             </button>
             <div class="demo-runtime">
               <span>Evaluation source</span>
@@ -633,7 +643,7 @@ enforcement    off during replay</pre>
             <dl class="ledger-grid">
               <div>
                 <dt>Requested</dt>
-                <dd id="requested-model">claude-sonnet-4-6</dd>
+                <dd id="requested-model">claude-opus-4-8</dd>
               </div>
               <div>
                 <dt>Selected</dt>
@@ -745,49 +755,69 @@ enforcement    off during replay</pre>
 
       const scenarios = {
         support: {
-          summary: "Order-status request / support-emea / standard / Claude Sonnet 4.6",
+          summary: "Customer refund / support-emea / standard / Opus 4.8 → Sonnet downgrade",
           payload: {
-            model: "claude-sonnet-4-6",
-            input_tokens: 1900,
-            output_tokens: 550,
+            model: "claude-opus-4-8",
+            input_tokens: 2400,
+            output_tokens: 680,
             metadata: {
               tenant_id: "support-emea",
-              use_case: "order-status-resolution",
+              use_case: "customer-refund-request",
               workload_criticality: "standard",
-              estimated_business_value_cents: 5,
-              risk_score: 0.12,
-              confidence_score: 0.93,
-              prompt_complexity: 0.34,
-              quality_floor: 0.68,
-              max_latency_ms: 800,
+              estimated_business_value_cents: 42,
+              risk_score: 0.08,
+              confidence_score: 0.96,
+              prompt_complexity: 0.28,
+              quality_floor: 0.62,
+              max_latency_ms: 1200,
               forbidden_models: ["semantic-cache"],
               explain: true
             }
           }
         },
         critical: {
-          summary: "EU DPA clause / legal-prod / critical / GPT-5.5",
+          summary: "SOC2 compliance review / legal-prod / critical / Opus 4.8 preserved",
           payload: {
-            model: "gpt-5.5",
-            input_tokens: 6800,
-            output_tokens: 1900,
+            model: "claude-opus-4-8",
+            input_tokens: 12000,
+            output_tokens: 3800,
             metadata: {
               tenant_id: "legal-prod",
-              use_case: "eu-dpa-contract-review",
+              use_case: "soc2-compliance-review",
               workload_criticality: "critical",
-              estimated_business_value_cents: 320,
-              risk_score: 0.34,
-              confidence_score: 0.94,
-              prompt_complexity: 0.91,
-              quality_floor: 0.92,
-              max_latency_ms: 2200,
-              required_models: ["gpt-5.5"],
+              estimated_business_value_cents: 820,
+              risk_score: 0.22,
+              confidence_score: 0.97,
+              prompt_complexity: 0.94,
+              quality_floor: 0.95,
+              max_latency_ms: 5000,
+              required_models: ["claude-opus-4-8"],
+              explain: true
+            }
+          }
+        },
+        coding: {
+          summary: "Internal code review / eng-platform / standard / GPT-5.5 → GPT-4o downgrade",
+          payload: {
+            model: "gpt-5.5",
+            input_tokens: 3200,
+            output_tokens: 1000,
+            metadata: {
+              tenant_id: "eng-platform",
+              use_case: "internal-code-review-bot",
+              workload_criticality: "standard",
+              estimated_business_value_cents: 18,
+              risk_score: 0.15,
+              confidence_score: 0.89,
+              prompt_complexity: 0.52,
+              quality_floor: 0.72,
+              max_latency_ms: 3000,
               explain: true
             }
           }
         },
         risky: {
-          summary: "Vendor bank change / finance-ops / high risk / Gemini 3.5 Pro",
+          summary: "Vendor bank change / finance-ops / high risk / Gemini 3.5 Pro blocked",
           payload: {
             model: "gemini-3.5-pro",
             input_tokens: 1250,
@@ -802,6 +832,26 @@ enforcement    off during replay</pre>
               prompt_complexity: 0.57,
               quality_floor: 0.9,
               max_latency_ms: 700,
+              explain: true
+            }
+          }
+        },
+        cache: {
+          summary: "Repeated FAQ / support-global / standard / Sonnet → semantic cache",
+          payload: {
+            model: "claude-sonnet-4-6",
+            input_tokens: 480,
+            output_tokens: 220,
+            metadata: {
+              tenant_id: "support-global",
+              use_case: "faq-repeated-question",
+              workload_criticality: "standard",
+              estimated_business_value_cents: 2,
+              risk_score: 0.02,
+              confidence_score: 0.99,
+              prompt_complexity: 0.08,
+              quality_floor: 0.40,
+              max_latency_ms: 200,
               explain: true
             }
           }
@@ -1070,15 +1120,20 @@ enforcement    off during replay</pre>
         const downgradeMap = {
           "claude-sonnet-4-6": "claude-haiku-4-5",
           "claude-opus-4-8": "claude-sonnet-4-6",
-          "gpt-5.5": "gpt-4o-mini",
+          "gpt-5.5": "gpt-4o",
           "gpt-4o": "gpt-4o-mini",
           "gemini-3.5-pro": "gemini-3.1-flash",
         };
         const cheapFallback = downgradeMap[payload.model] || "gemini-3.1-flash";
 
-        const action = hardBlock ? "block" : preservePremium ? "allow" : "downgrade";
-        const selectedModel =
-          action === "block" ? "blocked" : action === "downgrade" ? cheapFallback : payload.model;
+        const cacheEligible = metadata.prompt_complexity < 0.15 && metadata.quality_floor < 0.50
+          && metadata.confidence_score > 0.95 && metadata.estimated_business_value_cents <= 5;
+
+        const action = hardBlock ? "block" : cacheEligible ? "downgrade" : preservePremium ? "allow" : "downgrade";
+        const selectedModel = hardBlock ? "blocked"
+          : cacheEligible ? "semantic-cache"
+          : action === "downgrade" ? cheapFallback
+          : payload.model;
         const estimatedCost = modelCostCents(
           selectedModel,
           payload.input_tokens,
@@ -1089,10 +1144,12 @@ enforcement    off during replay</pre>
         const netValue = metadata.estimated_business_value_cents - estimatedCost - riskPenalty;
         const fingerprint = await digestPayload({ payload, action, selectedModel });
         const reason = hardBlock
-          ? "A high-risk financial action and low confidence breached the admission boundary."
+          ? `High-risk ${metadata.use_case} blocked: risk ${metadata.risk_score} exceeds 0.86 threshold or confidence ${metadata.confidence_score} below 0.52.`
+          : cacheEligible
+            ? `Repeated low-complexity prompt (${metadata.prompt_complexity} complexity, ${metadata.quality_floor} floor). Routed to semantic cache, saving ${modelCostCents(payload.model, payload.input_tokens, payload.output_tokens).toFixed(4)}¢ per call.`
           : preservePremium
-            ? `Critical workflow with ${metadata.quality_floor} quality floor requires the approved premium model (${payload.model}).`
-            : `${metadata.use_case} fits ${cheapFallback} without breaching quality or latency floor. Downgraded from ${payload.model}.`;
+            ? `${metadata.use_case} requires ${payload.model}: quality floor ${metadata.quality_floor} and criticality "${metadata.workload_criticality}" justify premium cost of ${estimatedCost.toFixed(4)}¢. Business value ${metadata.estimated_business_value_cents}¢ exceeds cost.`
+            : `${metadata.use_case} downgraded ${payload.model} → ${cheapFallback}. Quality floor ${metadata.quality_floor} satisfied by cheaper model. Saving ${(modelCostCents(payload.model, payload.input_tokens, payload.output_tokens) - estimatedCost).toFixed(4)}¢ per call.`;
 
         return {
           request_id: `public-${fingerprint.slice(0, 12)}`,
