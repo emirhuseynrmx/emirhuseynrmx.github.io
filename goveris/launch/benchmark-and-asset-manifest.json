@@ -1,0 +1,95 @@
+{
+  "release": "1.0.0",
+  "generated_assets": [
+    {
+      "path": "01-calybris-v1-cover-en.png",
+      "sha256": "0d9c885998d054238851eafac00426de1d4aef6c6bc64bb1d0b40c1f0a8de1d3"
+    },
+    {
+      "path": "02-calybris-benchmark-en.png",
+      "sha256": "5166e8aec566b6dddd3f1e3f0974ce5c8efa2f18ba0205f6cc00eb88cd7f82c7"
+    },
+    {
+      "path": "03-calybris-proof-loop-en.png",
+      "sha256": "0317612dbd51c4b5ea617f79c9bc4af01df12c50605b730176dd3fe7b803a64d"
+    },
+    {
+      "path": "01-calybris-v1-cover-tr.png",
+      "sha256": "f504562c4b489aad746223c0acd46e3d4581c70a9581b729644ff36d48d2cf5e"
+    },
+    {
+      "path": "02-calybris-benchmark-tr.png",
+      "sha256": "6dc9c5520ddf110ea5418ade0c1fc823374e3a20edf83efd246d0a7f02c32cbe"
+    },
+    {
+      "path": "03-calybris-proof-loop-tr.png",
+      "sha256": "f87264031397bd213d0e4a89dc988d60c71b8ba81c3b448b8d37d75fd05fc559"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "budgets.jsonl",
+      "sha256": "92c7158ac7b23e5e5774c2597c45dd4423ff7b92fa59505935f82adac8b54490"
+    },
+    {
+      "path": "decision-verification.json",
+      "sha256": "7d343045fa39e22c1226fff8097315ca2cb2097f99e53fe7de0afba34be55b7e"
+    },
+    {
+      "path": "decisions.jsonl",
+      "sha256": "514de6e3b937ac378c668134de377382cae993da53bfcd90194f0822ddd47914"
+    },
+    {
+      "path": "executions.jsonl",
+      "sha256": "f5491fc47067782d9fc8298ba32db774e3ee0dc284874243ebd4c6683e9380eb"
+    },
+    {
+      "path": "gateway.err.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "gateway.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "loadgen.log",
+      "sha256": "0fe0dd9de24e1491378e6c9b3b9330ed4f540dd3bbe3962c9155e27216f657d4"
+    },
+    {
+      "path": "outcomes.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "provider.err.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "provider.log",
+      "sha256": "c6a0bf9a305c63fe2d7e97c492cf8afcd860aa8c0be018ecee3ae12ebbd1b6bb"
+    }
+  ],
+  "headline_metrics": {
+    "kernel_median_decisions_per_second": 4461519,
+    "kernel_median_mean_latency_ns": 224.14,
+    "http_three_run_median_requests_per_second": 4188,
+    "http_three_run_median_latency_ms": {
+      "p50": 28.445,
+      "p95": 44.496,
+      "p99": 54.052,
+      "max": 66.302
+    },
+    "http_measured_requests": 15000,
+    "http_failed_requests": 0,
+    "current_host_wal": {
+      "core_only_per_second": 20037.87,
+      "bounded_flush_per_second": 12036.1,
+      "sync_data_per_second": 3134.39,
+      "sync_data_barrier_p99_ms": 1570.803
+    },
+    "isolated_stable_wal_reference": {
+      "sync_data_per_second": 9860.95,
+      "sync_data_barrier_p99_ms": 83.76
+    }
+  },
+  "claim_boundary": "Local synthetic evidence. Provider internet latency, managed database/KMS latency, customer traffic and multi-region SLOs are not claimed."
+}

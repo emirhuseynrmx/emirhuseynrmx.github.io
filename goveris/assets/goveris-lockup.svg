@@ -1,0 +1,11 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 96" role="img" aria-labelledby="title desc">
+  <title id="title">GOVERIS</title>
+  <desc id="desc">GOVERIS AI spend governance horizontal lockup.</desc>
+  <g transform="translate(2 2) scale(.96)">
+    <path fill="#15171A" d="M10 10 45 25v16L31 48l14 7v16L10 86Z"/>
+    <path fill="#15171A" d="m57 26 29-13v70L57 70Z"/>
+    <path fill="#B13A32" d="m45 41 12-6v27l-12-7Z"/>
+  </g>
+  <text x="116" y="51" fill="#15171A" font-family="Inter,Arial,sans-serif" font-size="37" font-weight="650" letter-spacing="7">GOVERIS</text>
+  <text x="118" y="76" fill="#626973" font-family="Inter,Arial,sans-serif" font-size="11" font-weight="600" letter-spacing="4">AI SPEND GOVERNANCE</text>
+</svg>

@@ -1,0 +1,11 @@
+{
+  "sample_type": "synthetic_goveris_decision_wal",
+  "verdict": "ACTIONABLE_COST_LEAKAGE",
+  "status_note": "Synthetic enterprise WAL replay. Use as a format and capability demo, not a customer savings claim.",
+  "demo_disclosure": "500 synthetic WAL rows generated with deterministic seed 73120526; the Rust audit command replays the full JSONL file to compute summary metrics.",
+  "badges": [
+    "SYNTHETIC 500 ROW WAL",
+    "RUST REPLAYED",
+    "CALYBRIS SHADOW"
+  ]
+}
