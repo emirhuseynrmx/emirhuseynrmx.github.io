@@ -10,14 +10,14 @@
   --panel-dark: #ffffff;
   --glass-line: #d9dde3;
   --glass-line-strong: #bdc3cc;
-  --brand: #b13a32;
-  --brand-strong: #8f2d28;
+  --brand: #0d9488;
+  --brand-strong: #0a7a6f;
   --brand-ink: #ffffff;
   --cream: #15171a;
-  --blue: #b13a32;
+  --blue: #0d9488;
   --amber: #8b6b24;
-  --danger: #9d2638;
-  --signal: #176b63;
+  --danger: #dc2626;
+  --signal: #0d9488;
   --shadow: rgba(0, 0, 0, 0.48);
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --sans:
@@ -496,7 +496,7 @@ button:disabled {
 
 .surface-heading b,
 .decision-row strong {
-  border: 1px solid rgba(177, 58, 50, 0.3);
+  border: 1px solid rgba(13, 148, 136, 0.3);
   border-radius: 999px;
   color: var(--brand);
   font-family: var(--mono);
@@ -633,7 +633,7 @@ dd {
   height: 5px;
   border-radius: 999px;
   background: var(--brand);
-  box-shadow: 0 0 10px rgba(177, 58, 50, 0.26);
+  box-shadow: 0 0 10px rgba(13, 148, 136, 0.26);
   content: "";
   animation: routePulse 1800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
@@ -991,7 +991,7 @@ dd {
   .audit-output div:hover,
   .contact-card:hover,
   .glass-panel:hover {
-    border-color: rgba(177, 58, 50, 0.38);
+    border-color: rgba(13, 148, 136, 0.38);
     box-shadow: 0 18px 42px rgba(21, 23, 26, 0.08);
     transform: translateY(-3px);
   }
@@ -1379,10 +1379,10 @@ dd {
 
 .hero-product.is-evaluating .surface-heading,
 .hero-product.is-evaluating .route-map .gate {
-  border-color: rgba(177, 58, 50, 0.68);
+  border-color: rgba(13, 148, 136, 0.68);
   box-shadow:
     inset 3px 0 0 var(--brand),
-    0 0 0 4px rgba(177, 58, 50, 0.07);
+    0 0 0 4px rgba(13, 148, 136, 0.07);
 }
 
 .hero-product.is-evaluating .route-map i::after {
@@ -1426,10 +1426,10 @@ dd {
 @keyframes statusBreathe {
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(177, 58, 50, 0);
+    box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
   }
   50% {
-    box-shadow: 0 0 0 4px rgba(177, 58, 50, 0.06);
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.06);
   }
 }
 
