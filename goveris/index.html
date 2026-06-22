@@ -86,9 +86,10 @@
       <section class="hero" id="platform">
         <div class="hero-copy">
           <p class="eyebrow">GOVERIS — AI spend governance product · Powered by CALYBRIS engine</p>
-          <h1>Control LLM spend before the invoice arrives.</h1>
+          <h1>Find the <span class="hero-accent">20–40%</span> of LLM spend nobody reviewed.</h1>
           <p class="hero-lede">
-            Get your LLM spend audit in 7 days. GOVERIS deploys a private Docker image inside your VPC, observes model call metadata, and produces a board-readable audit with what-if policy scenarios. No prompt capture. No log export.
+            In 7 days, a private Docker image turns metadata-only traffic into a board-readable
+            spend audit and policy replay. Your prompts stay in your VPC. Production routing stays unchanged.
           </p>
           <div class="hero-actions" aria-label="GOVERIS actions">
             <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%207-Day%20Audit&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Get your spend audit in 7 days</a>
@@ -96,9 +97,9 @@
             <a href="#audit">View sample PDF</a>
           </div>
           <div class="signal-row" aria-label="GOVERIS proof points">
-            <span><strong>20–40%</strong> typical avoidable spend identified</span>
+            <span><strong>7 days</strong> from metadata to executive audit</span>
             <span><strong>CALYBRIS</strong> proof-carrying engine</span>
-            <span><strong>231 tests</strong> fault injection + proptest + loom</span>
+            <span><strong>269 Rust tests</strong> fault injection + proptest + loom</span>
             <span><strong>OpenAI · Anthropic · Google</strong> compatible</span>
           </div>
         </div>
@@ -220,9 +221,9 @@
           </p>
         </div>
         <dl class="benchmark-metrics" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-          <div><dt>Integer kernel</dt><dd>10.27M/s</dd><small>3-run median</small></div>
+          <div><dt>Integer kernel</dt><dd>9.19M/s</dd><small>correctness-guarded median</small></div>
           <div><dt>Durable HTTP</dt><dd>6,084 req/s</dd><small>c=128 · 1 ms mock</small></div>
-          <div><dt>HTTP p99</dt><dd>42 ms</dd><small>15,000 requests · 0 failed</small></div>
+          <div><dt>HTTP p99</dt><dd>44 ms</dd><small>15,000 requests · 0 failed</small></div>
           <div><dt>Durable WAL</dt><dd>10,684/s</dd><small>current contended host</small></div>
         </dl>
         <p class="benchmark-caveat">
@@ -234,7 +235,7 @@
       <section class="proof-band" aria-label="Engineering proof">
         <div>
           <span>Engineering proof</span>
-          <strong>231 tests · fault injection · proptest · loom exhaustive concurrency</strong>
+          <strong>269 Rust tests · fault injection · proptest · loom exhaustive concurrency</strong>
         </div>
         <div>
           <span>Hardened</span>
@@ -534,45 +535,45 @@ enforcement    off during replay</pre>
       <section class="pricing-section" id="pricing">
         <div class="section-heading">
           <p class="eyebrow">Adoption path</p>
-          <h2>Choose your audit depth.</h2>
+          <h2>Fixed scope. Clear price. No surprise integration bill.</h2>
           <p>
-            Typical teams identify 20–40% avoidable LLM spend in the first replay.
-            No upfront commitment. Start read-only, enforce only after evidence.
+            Every package starts read-only. Savings are scenario estimates until your outcomes validate them.
           </p>
         </div>
         <div class="pricing-grid">
           <article>
-            <span>Starter audit</span>
-            <strong>$75–150</strong>
-            <p>Same-day triage from anonymized logs. Markdown memo, JSON summary, top savings opportunities.</p>
+            <span>Shadow scan</span>
+            <strong>$490 fixed</strong>
+            <p>A focused metadata-only scan for one team that needs a fast, defensible spend baseline.</p>
             <ul class="check-list">
-              <li>Delivery: same day</li>
-              <li>Minimum: 100 LLM calls</li>
-              <li>Output: Markdown + JSON</li>
+              <li>7-day observation window</li>
+              <li>Up to 50,000 metadata events</li>
+              <li>1 provider · 1 business unit</li>
+              <li>Executive brief + top 10 actions</li>
             </ul>
           </article>
           <article>
-            <span>Standard replay</span>
-            <strong>$250–750</strong>
-            <p>Private Docker pilot in your VPC. Shadow replay, tenant breakdown, what-if scenarios, PDF audit.</p>
+            <span>Decision audit</span>
+            <strong>$1,500 fixed</strong>
+            <p>The full private Docker pilot: attribution, proof trail, what-if policies, and board-ready reporting.</p>
             <ul class="check-list">
-              <li>Setup: under 30 minutes</li>
-              <li>Duration: 7–14 days</li>
-              <li>Minimum: 500 calls</li>
-              <li>Output: PDF + HTML + JSON</li>
-              <li>3 policy scenarios included</li>
+              <li>7-day observation window</li>
+              <li>Up to 250,000 metadata events</li>
+              <li>Up to 2 providers · 3 business units</li>
+              <li>PDF + dashboard + evidence hashes</li>
+              <li>3 policy scenarios + review session</li>
             </ul>
           </article>
           <article>
-            <span>Gateway review</span>
-            <strong>$1,000+</strong>
-            <p>Full proxy mode evaluation. WAL tracing, shadow traffic, canary rollout plan, enforcement roadmap.</p>
+            <span>Gateway readiness</span>
+            <strong>From $3,500</strong>
+            <p>Provider contract validation and a canary-ready plan for teams considering governed execution.</p>
             <ul class="check-list">
-              <li>Duration: 14–30 days</li>
-              <li>Includes: proxy mode + shadow</li>
-              <li>Minimum: 5,000 calls</li>
-              <li>Output: full audit + rollout plan</li>
-              <li>Dedicated Slack/email support</li>
+              <li>14-day technical engagement</li>
+              <li>Idempotency + timeout reconciliation</li>
+              <li>WAL recovery + load evidence</li>
+              <li>Canary, rollback, and SLO plan</li>
+              <li>Enforcement remains approval-gated</li>
             </ul>
           </article>
         </div>
@@ -584,7 +585,7 @@ enforcement    off during replay</pre>
           <h2>Deploy in your VPC with a single docker compose.</h2>
           <p>
             No agent installation. No log export. No prompt capture.
-            Point your app at GOVERIS, mirror metadata for 7–14 days,
+            Mirror approved metadata to GOVERIS for 7 days,
             then pull the audit report from the API.
           </p>
         </div>
@@ -595,7 +596,7 @@ enforcement    off during replay</pre>
           </article>
           <article>
             <span>Step 2</span>
-            <p>Point your app to http://goveris:8080/v1/chat/completions</p>
+            <p>Mirror metadata to POST http://goveris:8080/api/v1/route</p>
           </article>
           <article>
             <span>Step 3</span>
@@ -624,12 +625,12 @@ enforcement    off during replay</pre>
 
       <section class="demo-section" id="demo">
         <div class="section-heading">
-          <p class="eyebrow">Interactive decision lab</p>
-          <h2>Change the workload. See the policy decision and its proof.</h2>
+          <p class="eyebrow">Live policy replay</p>
+          <h2>Change the workload. Watch Calybris decide in real time.</h2>
           <p>
-            Pick a realistic workload below. The page calls the deployed Calybris API when one is
-            available and falls back to the same deterministic public-demo policy in the browser.
-            No provider key is exposed and no paid model call is made.
+            The first scenario runs automatically. When a Calybris demo endpoint is available the
+            decision is server-authored; otherwise the page uses the disclosed deterministic browser policy.
+            Either way, the proof and decision factors appear immediately—without a paid model call.
           </p>
         </div>
 
@@ -666,8 +667,8 @@ enforcement    off during replay</pre>
             </button>
             <div class="demo-runtime">
               <span>Evaluation source</span>
-              <strong id="demo-source">waiting</strong>
-              <small id="demo-source-note">No paid provider call is made.</small>
+              <strong id="demo-source">starting policy replay</strong>
+              <small id="demo-source-note">Resolving the public Calybris decision path.</small>
             </div>
           </aside>
 
@@ -677,7 +678,7 @@ enforcement    off during replay</pre>
                 <h3>Decision ledger</h3>
                 <p id="scenario-summary">Order-status request / support-emea / standard</p>
               </div>
-              <span id="ledger-action">waiting</span>
+              <span id="ledger-action">evaluating</span>
             </div>
 
             <dl class="ledger-grid">
