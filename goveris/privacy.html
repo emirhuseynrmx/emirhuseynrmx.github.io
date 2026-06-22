@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacy and Data Retention | GOVERIS</title>
+    <meta name="description" content="GOVERIS privacy and pilot data-retention summary." />
+    <link rel="icon" href="./assets/goveris-favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="./"><img src="./assets/goveris-mark.svg" alt="" width="38" height="38" /><span><strong>GOVERIS</strong><small>Powered by Calybris Engine</small></span></a>
+        <span></span><a class="topbar-cta" href="./">Back to product</a>
+      </header>
+      <article class="legal-page">
+        <p class="eyebrow">Privacy</p>
+        <h1>Metadata-only by default.</h1>
+        <p>GOVERIS pilots are designed to run inside the customer-controlled environment. The standard shadow endpoint accepts approved decision metadata, not prompt or response content.</p>
+        <section><h2>Collected pilot fields</h2><p>Model name, token counts, latency, tenant/workflow identifiers, policy signals, decision output, and approved outcome labels. Provider credentials, raw prompts, raw responses, and direct personal data are outside the standard pilot scope.</p></section>
+        <section><h2>Storage and access</h2><p>Raw pilot evidence remains in the customer environment unless the customer explicitly exports an aggregate artifact. Data-plane, outcome-plane, and administrative credentials are separated.</p></section>
+        <section id="retention"><h2>Retention and deletion</h2><p>The customer selects a 7, 30, or 90-day retention window before deployment. The default is deletion within 30 days after final report delivery. Deletion includes the named Docker volume and customer-controlled replicas/backups, with an operator record of the disposition.</p></section>
+        <section><h2>Contact</h2><p>Privacy and pilot questions: <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>.</p></section>
+      </article>
+    </main>
+  </body>
+</html>

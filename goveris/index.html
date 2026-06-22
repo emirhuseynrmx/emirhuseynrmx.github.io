@@ -58,23 +58,23 @@
       }
     </script>
   </head>
-  <body>
+  <body class="conversion-v2">
     <div class="scroll-progress" aria-hidden="true"></div>
     <div class="site-frame" aria-hidden="true"></div>
     <main class="shell">
       <header class="topbar">
         <a class="brand" href="./" aria-label="GOVERIS home">
-          <img src="./assets/goveris-mark.svg" alt="" />
+          <img src="./assets/goveris-mark.svg" alt="" width="38" height="38" />
           <span><strong>GOVERIS</strong><small>Powered by Calybris Engine</small></span>
         </a>
         <nav class="primary-nav" aria-label="Primary navigation">
           <a href="#platform">Product</a>
-          <a href="#audit">Audit package</a>
+          <a href="#how-it-works">How it works</a>
           <a href="#demo">Demo</a>
-          <a href="#workflow">Gateway</a>
+          <a href="#pricing">Pricing</a>
         </nav>
         <div class="topbar-actions">
-          <a class="topbar-link" href="#workflow">Architecture</a>
+          <a class="topbar-link" href="./reports/goveris-ai-spend-governance-sample.pdf" target="_blank" rel="noopener">Sample report</a>
           <a
             class="topbar-cta"
             href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Private%20Shadow%20Replay%20Pilot&body=Hi%20Emir%2C%0A%0AWe%20would%20like%20to%20scope%20a%20private%20GOVERIS%20shadow%20replay%20pilot.%0A%0AApprox.%20monthly%20LLM%20calls%3A%0AProvider%2Fgateway%20topology%3A%0ADeployment%20environment%3A%0A"
@@ -85,23 +85,24 @@
 
       <section class="hero" id="platform">
         <div class="hero-copy">
-          <p class="eyebrow">GOVERIS — AI spend governance product · Powered by CALYBRIS engine</p>
-          <h1>Find the <span class="hero-accent">20–40%</span> of LLM spend nobody reviewed.</h1>
+          <p class="eyebrow">AI spend governance for LLM APIs</p>
+          <h1>Control LLM spend <span class="hero-accent">before the invoice arrives.</span></h1>
           <p class="hero-lede">
-            In 7 days, a private Docker image turns metadata-only traffic into a board-readable
-            spend audit and policy replay. Your prompts stay in your VPC. Production routing stays unchanged.
+            Find 20–40% avoidable model spend without touching prompts. Private VPC deployment.
+            Metadata-only observation. Board-ready audit in 7 days.
           </p>
           <div class="hero-actions" aria-label="GOVERIS actions">
             <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%207-Day%20Audit&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Get your spend audit in 7 days</a>
-            <a href="#demo">Try interactive demo</a>
-            <a href="#audit">View sample PDF</a>
+            <a href="#demo">Try the live replay</a>
           </div>
           <div class="signal-row" aria-label="GOVERIS proof points">
-            <span><strong>7 days</strong> from metadata to executive audit</span>
-            <span><strong>CALYBRIS</strong> proof-carrying engine</span>
-            <span><strong>269 Rust tests</strong> fault injection + proptest + loom</span>
-            <span><strong>OpenAI · Anthropic · Google</strong> compatible</span>
+            <span><strong>No prompt capture</strong></span>
+            <span><strong>Runs in your VPC</strong></span>
+            <span><strong>Production stays unchanged</strong></span>
           </div>
+          <p class="hero-proof-note">
+            Built for OpenAI, Anthropic, Google, and OpenAI-compatible gateways.
+          </p>
         </div>
 
         <aside class="hero-product" aria-label="GOVERIS spend control plane preview">
@@ -193,6 +194,69 @@
             </div>
           </div>
         </aside>
+      </section>
+
+      <section class="conversion-proof" aria-label="Verified product evidence">
+        <div><strong>500K</strong><span>deterministic decisions replayed in the sample audit</span></div>
+        <div><strong>269</strong><span>passing Rust tests across recovery, concurrency, and policy invariants</span></div>
+        <div><strong>9.19M/s</strong><span>correctness-guarded kernel median on one local host</span></div>
+      </section>
+
+      <section class="conversion-audience" aria-labelledby="audience-title">
+        <div class="conversion-heading">
+          <p class="eyebrow">One system, three answers</p>
+          <h2 id="audience-title">See where the money went—and what to change safely.</h2>
+        </div>
+        <div class="audience-grid">
+          <article>
+            <span>For Finance</span>
+            <h3>Attribute every model dollar.</h3>
+            <p>Break down spend by tenant, workflow, provider, and use case before the invoice becomes a surprise.</p>
+          </article>
+          <article>
+            <span>For CTO & Security</span>
+            <h3>Observe without exporting prompts.</h3>
+            <p>Run a private, metadata-only Docker image inside your VPC. Production routing remains untouched.</p>
+          </article>
+          <article>
+            <span>For AI & ML teams</span>
+            <h3>Test policy changes before rollout.</h3>
+            <p>Replay downgrade, block, and routing policies against the same traffic with an auditable reason for every decision.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="conversion-how" id="how-it-works" aria-labelledby="how-title">
+        <div class="conversion-heading">
+          <p class="eyebrow">How it works</p>
+          <h2 id="how-title">From metadata to a defensible action plan in four steps.</h2>
+        </div>
+        <ol class="how-grid">
+          <li><span>01</span><strong>Mirror metadata</strong><p>Model, token, latency, cost, tenant, and workflow signals—never prompts.</p></li>
+          <li><span>02</span><strong>Replay decisions</strong><p>Calybris evaluates cost, risk, quality floors, and candidate routes in shadow mode.</p></li>
+          <li><span>03</span><strong>Compare policies</strong><p>Measure projected savings and the exact calls each policy would keep, downgrade, or block.</p></li>
+          <li><span>04</span><strong>Ship the audit</strong><p>Receive an executive PDF, evidence hashes, and a prioritized implementation plan.</p></li>
+        </ol>
+      </section>
+
+      <section class="conversion-report" aria-labelledby="report-title">
+        <div class="report-preview">
+          <picture>
+            <source srcset="./assets/goveris-report-page-1.webp" type="image/webp" />
+            <img src="./assets/goveris-report-page-1.png" alt="First page of the GOVERIS AI spend governance sample report" loading="lazy" width="960" height="1242" />
+          </picture>
+        </div>
+        <div class="report-copy">
+          <p class="eyebrow">The deliverable</p>
+          <h2 id="report-title">A board-readable report backed by replayable evidence.</h2>
+          <p>Not another dashboard someone has to monitor. The audit tells you where spend concentrates, which policies are safe to test, and what evidence supports each recommendation.</p>
+          <ul>
+            <li>Requested versus selected model analysis</li>
+            <li>Cost, quality, risk, and confidence trade-offs</li>
+            <li>Evidence hashes and reproducible scenario methodology</li>
+          </ul>
+          <a href="./reports/goveris-ai-spend-governance-sample.pdf" target="_blank" rel="noopener">Open the sample audit PDF</a>
+        </div>
       </section>
 
       <section class="proof-band" aria-label="GOVERIS credibility markers">
@@ -477,7 +541,17 @@ enforcement    off during replay</pre>
             aria-label="Open sample GOVERIS PDF audit report"
           >
             <span class="pdf-badge">Open sample PDF</span>
-            <img src="./assets/goveris-report-page-1.png" alt="GOVERIS sample PDF audit report preview" />
+            <picture>
+              <source srcset="./assets/goveris-report-page-1.webp" type="image/webp" />
+              <img
+                src="./assets/goveris-report-page-1.png"
+                alt="GOVERIS sample PDF audit report preview"
+                width="1120"
+                height="1584"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
           </a>
         </div>
       </section>
@@ -577,6 +651,18 @@ enforcement    off during replay</pre>
             </ul>
           </article>
         </div>
+        <div class="enterprise-band">
+          <div>
+            <span>Enterprise · Custom</span>
+            <strong>Multi-team rollout, private registry, and deployment-specific acceptance evidence.</strong>
+          </div>
+          <ul>
+            <li>Custom event volume and retention</li>
+            <li>Managed PostgreSQL/KMS integration</li>
+            <li>Security and procurement package</li>
+          </ul>
+          <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Enterprise%20Scope">Scope enterprise</a>
+        </div>
       </section>
 
       <section class="problem-section">
@@ -632,6 +718,10 @@ enforcement    off during replay</pre>
             decision is server-authored; otherwise the page uses the disclosed deterministic browser policy.
             Either way, the proof and decision factors appear immediately—without a paid model call.
           </p>
+          <div class="demo-mode-note">
+            <strong>Default on this page: deterministic browser replay</strong>
+            <span>Connect a Calybris demo endpoint and the same panel switches to a server-authored decision.</span>
+          </div>
         </div>
 
         <div class="demo-workbench">
@@ -757,8 +847,15 @@ enforcement    off during replay</pre>
       </section>
 
       <footer class="site-footer">
-        <strong>GOVERIS</strong>
-        <span>AI spend governance and audit infrastructure · Powered by Calybris Engine</span>
+        <div>
+          <strong>GOVERIS</strong>
+          <span>AI spend governance and audit infrastructure · Powered by Calybris Engine</span>
+        </div>
+        <nav aria-label="Legal">
+          <a href="./privacy.html">Privacy</a>
+          <a href="./terms.html">Terms</a>
+          <a href="./privacy.html#retention">Data retention</a>
+        </nav>
       </footer>
     </main>
 
