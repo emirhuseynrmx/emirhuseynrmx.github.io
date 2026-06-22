@@ -219,14 +219,12 @@
             fastest-run screenshot.
           </p>
         </div>
-        <div class="benchmark-layout">
-          <dl class="benchmark-metrics">
-            <div><dt>Integer kernel</dt><dd>10.27M/s</dd><small>3-run median</small></div>
-            <div><dt>Durable HTTP</dt><dd>6,084 req/s</dd><small>c=128 · 1 ms mock</small></div>
-            <div><dt>HTTP p99</dt><dd>42 ms</dd><small>15,000 requests · 0 failed</small></div>
-            <div><dt>Durable WAL</dt><dd>10,684/s</dd><small>current contended host</small></div>
-          </dl>
-        </div>
+        <dl class="benchmark-metrics" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+          <div><dt>Integer kernel</dt><dd>10.27M/s</dd><small>3-run median</small></div>
+          <div><dt>Durable HTTP</dt><dd>6,084 req/s</dd><small>c=128 · 1 ms mock</small></div>
+          <div><dt>HTTP p99</dt><dd>42 ms</dd><small>15,000 requests · 0 failed</small></div>
+          <div><dt>Durable WAL</dt><dd>10,684/s</dd><small>current contended host</small></div>
+        </dl>
         <p class="benchmark-caveat">
           Measured on a consumer Windows host with NTFS storage. Production Linux + NVMe is expected
           to improve HTTP p99 and WAL throughput. We publish local-host numbers, not cloud SLO claims.
