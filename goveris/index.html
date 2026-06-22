@@ -226,24 +226,10 @@
             <div><dt>HTTP p99</dt><dd>42 ms</dd><small>15,000 requests · 0 failed</small></div>
             <div><dt>Durable WAL</dt><dd>10,684/s</dd><small>current contended host</small></div>
           </dl>
-          <a
-            class="benchmark-figure"
-            href="./launch/02-calybris-benchmark-en.png"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Open the full Calybris benchmark layer comparison"
-          >
-            <img
-              src="./launch/02-calybris-benchmark-en.png"
-              alt="Calybris benchmark showing WAL off, bounded flush, sync_data and durable HTTP measurements"
-            />
-            <span>Open benchmark layer comparison ↗</span>
-          </a>
         </div>
         <p class="benchmark-caveat">
-          The current-host sync_data barrier p99 was 1.57 s; an isolated stable reference measured
-          9,861 durable events/s at 83.8 ms barrier p99. We publish the bad run because storage
-          contention is an operational fact, not a footnote.
+          Measured on a consumer Windows host with NTFS storage. Production Linux + NVMe is expected
+          to improve HTTP p99 and WAL throughput. We publish local-host numbers, not cloud SLO claims.
         </p>
       </section>
 
