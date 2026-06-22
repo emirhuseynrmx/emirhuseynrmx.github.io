@@ -1127,6 +1127,14 @@ dd {
   overflow: visible;
 }
 
+.conversion-v2.motion-ready .hero-copy > *,
+.conversion-v2.motion-ready .hero-product {
+  animation: none;
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
 .conversion-v2 .hero::before {
   position: absolute;
   z-index: -1;
@@ -1141,20 +1149,21 @@ dd {
 }
 
 .conversion-v2 .hero h1 {
-  max-width: 610px;
-  font-size: clamp(50px, 4.7vw, 66px);
+  max-width: 570px;
+  font-size: clamp(48px, 4.35vw, 62px);
   letter-spacing: -0.055em;
   text-wrap: balance;
-  overflow-wrap: normal;
+  overflow-wrap: anywhere;
 }
 
 .conversion-v2 .hero-accent {
   display: block;
   white-space: normal;
+  max-width: 100%;
 }
 
 .conversion-v2 .hero-lede {
-  max-width: 585px;
+  max-width: 560px;
   font-size: 20px;
 }
 
