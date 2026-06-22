@@ -78,10 +78,10 @@
         <h2><a href="./engine/" style="color:#c8a03c;transition:opacity .2s">Calybris Engine</a></h2>
         <p class="engine-sub">Proof-carrying, domain-neutral prescriptive decision engine. Rust. Every decision gets a fingerprint, cost estimate, risk penalty, quality floor, and replayable audit trail.</p>
         <div class="engine-stats">
-          <div><span>kernel</span><strong>4.46M decisions/s</strong></div>
-          <div><span>http gateway</span><strong>4,188 req/s</strong></div>
-          <div><span>p99 latency</span><strong>54.1ms</strong></div>
-          <div><span>durable WAL</span><strong>3,134/s</strong></div>
+          <div><span>kernel</span><strong>10.27M decisions/s</strong></div>
+          <div><span>http gateway</span><strong>6,084 req/s</strong></div>
+          <div><span>p99 latency</span><strong>42ms</strong></div>
+          <div><span>durable WAL</span><strong>10,684/s</strong></div>
         </div>
       </div>
       <div class="engine-orbit">
@@ -380,7 +380,7 @@
   var commands=[
     {cmd:'calybris --version',out:'calybris-engine v1.0.0 (Rust 1.87, ed25519, WAL, proof-carrying)'},
     {cmd:'calybris products',out:'001 GOVERIS    AI cost governance    [live]\n002 LuceThemis Quant signal audit    [pilot]\n003 AeraCFO    AI finance reporting  [MIT]\n004 Aegis      Prescriptive churn    [MIT]\n005 NexusAlpha Quant research infra  [private]'},
-    {cmd:'calybris bench --kernel',out:'kernel throughput:  4,460,000 decisions/s\nhttp gateway:       4,188 req/s (c=128)\nhttp p99:           54.1ms (15,000 req, 0 failed)\ndurable WAL:        3,134 events/s'},
+    {cmd:'calybris bench --kernel',out:'kernel throughput:  10,270,000 decisions/s\nhttp gateway:       6,084 req/s (c=128)\nhttp p99:           42ms (15,000 req, 0 failed)\ndurable WAL:        10,684 events/s'},
     {cmd:'whoami',out:'emir_huseyin_inci\nrole: decision infrastructure engineer\nfocus: causal ML · prescriptive analytics · quant research'},
   ];
   var typedEl=document.getElementById('typed'),outputEl=document.getElementById('term-output');
