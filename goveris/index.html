@@ -98,10 +98,10 @@
           <div class="signal-row" aria-label="GOVERIS proof points">
             <span><strong>No prompt capture</strong></span>
             <span><strong>Runs in your VPC</strong></span>
-            <span><strong>Production stays unchanged</strong></span>
+            <span><strong>294 tests</strong> fault injection + proptest + loom</span>
           </div>
           <p class="hero-proof-note">
-            Built for OpenAI, Anthropic, Google, and OpenAI-compatible gateways.
+            Built for OpenAI, Anthropic, Google, DeepSeek, Meta, and Mistral.
           </p>
         </div>
 
@@ -285,7 +285,7 @@
           </p>
         </div>
         <dl class="benchmark-metrics" style="grid-template-columns:repeat(4,minmax(0,1fr))">
-          <div><dt>Integer kernel</dt><dd>9.19M/s</dd><small>correctness-guarded median</small></div>
+          <div><dt>Integer kernel</dt><dd>8.6M/s</dd><small>3-run median · overflow-safe</small></div>
           <div><dt>Durable HTTP</dt><dd>6,084 req/s</dd><small>c=128 · 1 ms mock</small></div>
           <div><dt>HTTP p99</dt><dd>44 ms</dd><small>15,000 requests · 0 failed</small></div>
           <div><dt>Durable WAL</dt><dd>10,684/s</dd><small>current contended host</small></div>
@@ -299,7 +299,7 @@
       <section class="proof-band" aria-label="Engineering proof">
         <div>
           <span>Engineering proof</span>
-          <strong>269 Rust tests · fault injection · proptest · loom exhaustive concurrency</strong>
+          <strong>294 tests · fault injection · proptest · loom exhaustive concurrency</strong>
         </div>
         <div>
           <span>Hardened</span>

@@ -139,7 +139,7 @@ No long-term commitment. No upfront platform fee. Start with a starter audit and
 
 > **📷 INSERT: Calybris abstract — dark background, logo with data streams flowing in, hash chain blocks flowing out**
 
-GOVERIS is built on the [Calybris Engine](https://emirhuseyin.tech/calybris/) — a proof-carrying prescriptive decision engine written in Rust. The engine processes 4.46 million decisions per second on a single core, maintains cryptographic hash chains for every decision, and has survived 231 tests including fault injection, property-based testing, and exhaustive concurrency verification.
+GOVERIS is built on the [Calybris Engine](https://emirhuseyin.tech/calybris/) — a proof-carrying prescriptive decision engine written in Rust. The engine processes 8.6 million decisions per second on a single core with overflow-safe arithmetic, maintains cryptographic hash chains for every decision, and has survived 294 tests including fault injection, property-based testing, and exhaustive concurrency verification.
 
 > **📷 INSERT: 4,460,000/sec benchmark card**
 

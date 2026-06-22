@@ -52,7 +52,7 @@ utility = (quality-adjusted value) − (risk penalty) − (cost) − (latency pe
 
 It picks the model with the highest utility. If no model has positive utility, it blocks the request. It also tracks the **counterfactual** — what would the second-best model have been? This matters for measuring regret later.
 
-**Performance**: 4.46 million decisions per second on a single core. Three-run median, one local host. Not a cloud SLO claim.
+**Performance**: 8.6 million decisions per second on a single core with overflow-safe arithmetic. Three-run median, one local host. Not a cloud SLO claim.
 
 ---
 
@@ -129,7 +129,7 @@ We publish this as a catalog estimate, not a production claim. The savings are s
 
 ## Built to Survive
 
-The engine is written in Rust. Zero unsafe code. 231 tests, including:
+The engine is written in Rust. Zero unsafe code. 294 tests, including:
 
 - **Fault injection**: what happens when the disk corrupts mid-write? The WAL truncates to the last valid event and continues.
 - **Property-based testing**: random sequences of budget operations never produce a negative balance. Proved across thousands of generated test cases.

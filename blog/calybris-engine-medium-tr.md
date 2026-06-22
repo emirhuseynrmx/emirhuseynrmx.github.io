@@ -107,7 +107,7 @@ Bu geçitler kapalı-başarısız çalışır. Motor bozuk girdi, eksik gerekli 
 
 ## Hayatta Kalmak İçin İnşa Edildi
 
-Motor, proje kodunda hiçbir güvensiz blok olmadan Rust ile yazılmıştır. Yayımlanan test çalışmasında **231 test geçti, 0 başarısız oldu ve 3'ü kasıtlı olarak yok sayıldı**.
+Motor, proje kodunda hiçbir güvensiz blok olmadan Rust ile yazılmıştır. Yayımlanan test çalışmasında **294 test geçti, 0 başarısız oldu ve 3'ü kasıtlı olarak yok sayıldı**.
 
 > **GÖRSEL 7 — `07-test-piramidi.png`: Giriş cümlesinin hemen altına ekle.**
 

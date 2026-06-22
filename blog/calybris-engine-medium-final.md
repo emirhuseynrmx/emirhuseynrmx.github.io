@@ -107,9 +107,9 @@ These gates are fail-closed. If the engine can't evaluate a request — corrupte
 
 ## Built to Survive
 
-The engine is written in Rust. Zero unsafe code. 231 tests, including:
+The engine is written in Rust. Zero unsafe code. 294 tests, including:
 
-> **📷 INSERT: Test pyramid — 208 library / 19 integration / 4 loom, 231 passed, 0 failed**
+> **📷 INSERT: Test pyramid — 264 library / 26 integration / 4 loom, 294 passed, 0 failed**
 
 - **Fault injection**: what happens when the disk corrupts mid-write? The WAL truncates to the last valid event and continues.
 - **Property-based testing**: random sequences of budget operations never produce a negative balance. Proved across thousands of generated test cases.
@@ -122,7 +122,7 @@ The engine is written in Rust. Zero unsafe code. 231 tests, including:
 
 The test suite runs in ~3 seconds. Every test is a proof of a specific invariant, not a check that "it works."
 
-> **📷 INSERT: Stopwatch ~3.2s — 231 tests, 0 failed, observed runtime**
+> **📷 INSERT: Stopwatch ~3.2s — 294 tests, 0 failed, observed runtime**
 
 ---
 
