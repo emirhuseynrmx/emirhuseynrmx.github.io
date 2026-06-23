@@ -498,10 +498,77 @@
     </div>
   </section>
 
-  <!-- ── 08 Products ── -->
+  <!-- ── 08 Shadow Replay Results ── -->
+  <section id="shadow-replay">
+    <div class="container">
+      <p class="section-label reveal">08 &mdash; Shadow Replay</p>
+      <h2 class="section-title reveal">The engine gets better every week. Here's the data.</h2>
+      <p class="section-desc reveal">Simulated 4-week shadow replay pilot (10K decisions). Adaptive routing improves as Thompson Sampling calibrates quality floors from outcome feedback.</p>
+
+      <table class="proof-table reveal">
+        <thead>
+          <tr><th>Week</th><th>Calls</th><th>Savings</th><th>Miss Rate</th><th>Precision</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Week 1</td><td class="val">2,500</td><td>79.0%</td><td>19.2%</td><td>80.8%</td></tr>
+          <tr><td>Week 2</td><td class="val">2,500</td><td>88.2%</td><td>22.9%</td><td>77.1%</td></tr>
+          <tr><td>Week 3</td><td class="val">2,500</td><td>92.5%</td><td>18.5%</td><td>81.5%</td></tr>
+          <tr><td>Week 4</td><td class="val">2,500</td><td style="color:var(--green)"><strong>97.1%</strong></td><td>20.7%</td><td>79.3%</td></tr>
+        </tbody>
+      </table>
+
+      <div class="bench-note reveal">
+        Simulated shadow replay with Thompson Sampling + outcome feedback. Savings increase as the engine learns which regimes can be safely downgraded.
+        Miss rate stays ~20% (consistent with random premium-needed rate). In production, shadow replay runs without affecting live traffic.
+        <strong>Marginal savings over existing routing: 14&ndash;45%</strong> depending on current maturity.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 09 Quickstart ── -->
+  <section id="quickstart">
+    <div class="container">
+      <p class="section-label reveal">09 &mdash; Quickstart</p>
+      <h2 class="section-title reveal">Deploy in 3 commands. Audit in 7 days.</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card reveal">
+          <h3>1. Build &amp; Deploy</h3>
+          <pre><code>docker build -t goveris:pilot .
+docker compose --env-file .env \
+  -f docker-compose.pilot.yml up -d</code></pre>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <h3>2. Mirror Traffic</h3>
+          <pre><code>curl -X POST http://goveris:8080/api/v1/route \
+  -H "Authorization: Bearer $KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"gpt-4o",
+       "input_tokens":1200,
+       "output_tokens":400,
+       "metadata":{
+         "tenant_id":"your-team",
+         "use_case":"support"}}'</code></pre>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <h3>3. Fetch Audit</h3>
+          <pre><code>curl -H "Authorization: Bearer $ADMIN_KEY" \
+  http://goveris:8080/api/v1/audit/report \
+  | jq .summary</code></pre>
+        </div>
+      </div>
+
+      <div class="bench-note reveal">
+        <strong>One-command pilot setup:</strong> <code>./scripts/new-pilot.sh your-company</code> generates API keys, docker-compose, and a customer README.
+        No prompt capture. Metadata-only. Read-only container. Private VPC deployment.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 10 Products ── -->
   <section id="products">
     <div class="container">
-      <p class="section-label reveal">08 &mdash; Powered by Calybris</p>
+      <p class="section-label reveal">10 &mdash; Powered by Calybris</p>
       <h2 class="section-title reveal">One engine, multiple products</h2>
       <p class="section-desc reveal">Each product plugs its own domain vocabulary. The proof machinery, adaptive routing, and durability layer are shared.</p>
 
