@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Calybris Engine | Proof-Carrying Prescriptive Decision Engine</title>
-  <meta name="description" content="Calybris is a domain-neutral, deterministic, proof-carrying prescriptive decision engine written in Rust. Every decision carries a cryptographic fingerprint, cost estimate, risk penalty, and replayable audit trail. Zero unsafe code."/>
-  <meta name="keywords" content="decision engine, proof-carrying, prescriptive analytics, Rust, integer kernel, WAL, ed25519, SHA-256, budget enforcement, causal regret, off-policy evaluation, Calybris"/>
+  <title>Calybris Engine | Adaptive Proof-Carrying Decision Engine</title>
+  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Thompson Sampling, outcome learning, integer kernel, hash-chained WAL. 311 tests, 1.1M real-data benchmark, 4 industries."/>
+  <meta name="keywords" content="decision engine, proof-carrying, Thompson Sampling, adaptive routing, Rust, integer kernel, WAL, SHA-256, budget enforcement, quality floor, Calybris"/>
   <meta name="author" content="Emir H. Inci"/>
   <meta name="robots" content="index, follow"/>
   <meta name="theme-color" content="#0a0a0a"/>
@@ -712,11 +712,9 @@
     </a>
     <div class="nav-links">
       <a href="#kernel">kernel</a>
-      <a href="#proof-chain">proof chain</a>
-      <a href="#budget">budget</a>
-      <a href="#regret">regret</a>
-      <a href="#rollout">rollout</a>
-      <a href="#governance">governance</a>
+      <a href="#adaptive">adaptive</a>
+      <a href="#proof-chain">proof</a>
+      <a href="#domains">domains</a>
       <a href="#tests">tests</a>
       <a href="#products">products</a>
     </div>
@@ -726,17 +724,19 @@
   <!-- ── Hero ── -->
   <section class="hero" id="top">
     <div class="container hero-content">
-      <p class="hero-eyebrow reveal">Rust &middot; zero unsafe &middot; deterministic</p>
+      <p class="hero-eyebrow reveal">Rust &middot; adaptive &middot; proof-carrying &middot; domain-neutral</p>
       <h1 class="reveal reveal-delay-1">Calybris Engine</h1>
-      <p class="hero-tagline reveal reveal-delay-2">Proof-carrying prescriptive decision engine</p>
+      <p class="hero-tagline reveal reveal-delay-2">The decision engine that learns where to spend</p>
       <p class="hero-sub reveal reveal-delay-3">
-        Domain-neutral. Deterministic. Every decision carries a <strong>cryptographic fingerprint</strong>,
-        <strong>cost estimate</strong>, <strong>risk penalty</strong>, and <strong>replayable audit trail</strong>.
-        Written in Rust. Zero <code style="font-family:var(--mono);color:var(--gold);font-size:0.95rem;">unsafe</code> code.
+        <strong>Adaptive routing</strong> with Thompson Sampling. <strong>Outcome-calibrated</strong> quality floors.
+        <strong>SHA-256 sealed</strong> proof chain. <strong>22 models</strong> across 6 providers.
+        <strong>1.1M real decisions</strong> across 4 industries with <strong>zero errors</strong>.
+        <br><br>
+        311 tests. Integer kernel. Zero <code style="font-family:var(--mono);color:var(--gold);font-size:0.95rem;">unsafe</code> code.
       </p>
       <div class="hero-actions reveal reveal-delay-4">
-        <a class="btn btn-primary" href="/goveris/">View GOVERIS product</a>
-        <a class="btn btn-secondary" href="https://github.com/emirhuseynrmx/norn" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-primary" href="/goveris/">GOVERIS Product</a>
+        <a class="btn btn-secondary" href="https://cal.com/emirhuseyininci/goveris-pilot">Book Pilot Call</a>
       </div>
     </div>
   </section>
@@ -771,9 +771,9 @@
           <div class="bench-label">3-run median · overflow-safe</div>
         </div>
         <div class="bench-card">
-          <div class="bench-value">64</div>
-          <div class="bench-unit">models in catalog</div>
-          <div class="bench-label">Evaluated per decision</div>
+          <div class="bench-value">22</div>
+          <div class="bench-unit">models &middot; 6 providers</div>
+          <div class="bench-label">OpenAI, Anthropic, Google, DeepSeek, Meta, Mistral</div>
         </div>
         <div class="bench-card">
           <div class="bench-value">11</div>
@@ -795,10 +795,70 @@
     </div>
   </section>
 
-  <!-- ── 02 Decision Proof Chain ── -->
+  <!-- ── 02 Adaptive Intelligence ── -->
+  <section id="adaptive">
+    <div class="container">
+      <p class="section-label reveal">02 &mdash; Adaptive Intelligence</p>
+      <h2 class="section-title reveal">The engine reads the data. Decides on its own. Learns from outcomes.</h2>
+      <p class="section-desc reveal">
+        Three layers &mdash; Welford statistics, Thompson Sampling, outcome calibration &mdash;
+        all in allocation-free Rust with lock-free atomics. No manual quality floor tuning needed.
+      </p>
+
+      <div class="detail-grid reveal">
+        <div class="detail-card">
+          <h4>Welford Online Statistics</h4>
+          <p>Tracks rolling mean and variance per input regime. Detects anomalous requests automatically &mdash; unusual patterns get higher quality floors.</p>
+        </div>
+        <div class="detail-card">
+          <h4>Thompson Sampling</h4>
+          <p>Bayesian explore/exploit for tier selection. Beta(alpha, beta) per regime per tier. Converges to optimal policy without manual tuning.</p>
+        </div>
+        <div class="detail-card">
+          <h4>Outcome Calibration</h4>
+          <p>Failures raise the quality floor 2x faster than successes lower it. The engine is naturally conservative &mdash; it protects quality by default.</p>
+        </div>
+        <div class="detail-card">
+          <h4>Warm-Start Floors</h4>
+          <p>Pre-computed from public benchmarks (WildChat 500K, KDD 494K, SP500 14K). Day-one defaults: support 0.55, coding 0.72, compliance 0.92, security 0.92.</p>
+        </div>
+      </div>
+
+      <div class="bench-grid reveal">
+        <div class="bench-card">
+          <div class="bench-value">7.2x</div>
+          <div class="bench-unit">fewer missed attacks</div>
+          <div class="bench-label">Adaptive vs random on KDD Cup 99</div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-value">16.69%</div>
+          <div class="bench-unit">miss rate</div>
+          <div class="bench-label">SP500: 20% fewer errors than random</div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-value">+4.9pp</div>
+          <div class="bench-unit">learning</div>
+          <div class="bench-label">KDD last quarter vs first quarter</div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-value">8</div>
+          <div class="bench-unit">regimes</div>
+          <div class="bench-label">Each learns its own quality floor</div>
+        </div>
+      </div>
+
+      <div class="callout reveal">
+        <strong>Client override always wins.</strong> The adaptive router recommends quality floors
+        only when the client doesn&rsquo;t provide one. Client-provided floors are never overridden.
+        For high-stakes workflows, set <code style="font-family:var(--mono);color:var(--gold);">causal_exploration_bps=0</code> and use shadow mode instead.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 Decision Proof Chain ── -->
   <section id="proof-chain">
     <div class="container">
-      <p class="section-label reveal">02 &mdash; Decision Proof Chain</p>
+      <p class="section-label reveal">03 &mdash; Decision Proof Chain</p>
       <h2 class="section-title reveal">Every decision is cryptographically chained</h2>
       <p class="section-desc reveal">
         Each decision gets a SHA-256 fingerprint that includes the previous decision's hash,
@@ -856,7 +916,7 @@
   <!-- ── 03 Budget Enforcement ── -->
   <section id="budget">
     <div class="container">
-      <p class="section-label reveal">03 &mdash; Budget Enforcement</p>
+      <p class="section-label reveal">04 &mdash; Budget Enforcement</p>
       <h2 class="section-title reveal">Per-tenant atomic budget control</h2>
       <p class="section-desc reveal">
         Balances are denominated in microcents and stored as
@@ -898,7 +958,7 @@
   <!-- ── 04 Causal Regret ── -->
   <section id="regret">
     <div class="container">
-      <p class="section-label reveal">04 &mdash; Causal Regret Measurement</p>
+      <p class="section-label reveal">05 &mdash; Causal Regret Measurement</p>
       <h2 class="section-title reveal">Doubly-robust off-policy evaluation</h2>
       <p class="section-desc reveal">
         The engine measures whether past decisions were optimal by comparing actual outcomes
@@ -945,7 +1005,7 @@
   <!-- ── 05 Staged Policy Rollout ── -->
   <section id="rollout">
     <div class="container">
-      <p class="section-label reveal">05 &mdash; Staged Policy Rollout</p>
+      <p class="section-label reveal">06 &mdash; Staged Policy Rollout</p>
       <h2 class="section-title reveal">Shadow evaluation before enforcement</h2>
       <p class="section-desc reveal">
         New policies are never deployed directly. A candidate policy snapshot is staged and runs
@@ -986,7 +1046,7 @@
   <!-- ── 06 Governance Hard Limits ── -->
   <section id="governance">
     <div class="container">
-      <p class="section-label reveal">06 &mdash; Governance Hard Limits</p>
+      <p class="section-label reveal">07 &mdash; Governance Hard Limits</p>
       <h2 class="section-title reveal">Fail-closed safety gates</h2>
       <p class="section-desc reveal">
         These constraints are evaluated before every decision. They cannot be overridden by client metadata,
@@ -1029,11 +1089,52 @@
     </div>
   </section>
 
-  <!-- ── 07 Test Infrastructure ── -->
+  <!-- ── Domain-Neutral Proof ── -->
+  <section id="domains">
+    <div class="container">
+      <p class="section-label reveal">08 &mdash; Domain-Neutral Proof</p>
+      <h2 class="section-title reveal">1,110,073 real records. 4 industries. 0 errors.</h2>
+      <p class="section-desc reveal">
+        Same binary. Zero domain-specific code. Every dataset is real &mdash;
+        Yahoo Finance, KDD Cup 99, UCI Covertype, California Housing.
+      </p>
+
+      <div class="bench-grid reveal">
+        <div class="bench-card">
+          <div class="bench-value">14,400</div>
+          <div class="bench-unit">SP500 Finance</div>
+          <div class="bench-label">30 tickers, 2yr daily &middot; 0 errors</div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-value">494,021</div>
+          <div class="bench-unit">Cybersecurity</div>
+          <div class="bench-label">KDD Cup 99 intrusion detection &middot; 0 errors</div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-value">581,012</div>
+          <div class="bench-unit">Forestry</div>
+          <div class="bench-label">UCI Covertype classification &middot; 0 errors</div>
+        </div>
+        <div class="bench-card">
+          <div class="bench-value">20,640</div>
+          <div class="bench-unit">Real Estate</div>
+          <div class="bench-label">California Housing valuation &middot; 0 errors</div>
+        </div>
+      </div>
+
+      <div class="callout reveal">
+        <strong>Marginal savings depend on your current routing maturity:</strong>
+        teams with no routing see ~44%, teams with basic routing see ~26%,
+        teams with smart routing see ~14%. The shadow replay pilot measures YOUR actual savings.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 09 Test Infrastructure ── -->
   <section id="tests">
     <div class="container">
-      <p class="section-label reveal">07 &mdash; Test Infrastructure</p>
-      <h2 class="section-title reveal">294 tests. Not happy-path.</h2>
+      <p class="section-label reveal">09 &mdash; Test Infrastructure</p>
+      <h2 class="section-title reveal">311 tests. Not happy-path.</h2>
       <p class="section-desc reveal">
         The test suite is designed to break the engine, not confirm that it works. Fault injection,
         property-based testing, exhaustive concurrency analysis, and adversarial inputs.
@@ -1069,7 +1170,7 @@
   <!-- ── 08 Products ── -->
   <section id="products">
     <div class="container">
-      <p class="section-label reveal">08 &mdash; Products Built on Calybris</p>
+      <p class="section-label reveal">10 &mdash; Products Built on Calybris</p>
       <h2 class="section-title reveal">Four products, one engine</h2>
       <p class="section-desc reveal">
         Each product plugs its own domain vocabulary into the Calybris policy gate.
@@ -1112,7 +1213,8 @@
       <div class="footer-links">
         <a href="/">Portfolio</a>
         <a href="/goveris/">GOVERIS</a>
-        <a href="https://github.com/emirhuseynrmx/norn" target="_blank" rel="noopener">GitHub</a>
+        <a href="/engine/">Engine Overview</a>
+        <a href="https://cal.com/emirhuseyininci/goveris-pilot">Book Pilot</a>
       </div>
     </div>
   </footer>
