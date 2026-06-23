@@ -281,37 +281,41 @@ One million decisions. Zero errors. Zero crashes. Constant throughput from start
 
 To prove Calybris isn't just an LLM tool, I tested it across four industries with 1.1 million real records:
 
-| Domain | Records | Data Source | Baseline | Calybris | Savings | Errors |
-|--------|---------|-------------|----------|----------|---------|--------|
-| SP500 Finance | 14,400 | Yahoo Finance | $24,521 | $500 | 98.0% | 0 |
-| Cybersecurity | 494,021 | KDD Cup 99 | $316,545 | $32,129 | 89.8% | 0 |
-| Forestry | 581,012 | UCI Covertype | $472,888 | $94 | 100.0% | 0 |
-| Real Estate | 20,640 | California Housing | $4,783 | $17 | 99.6% | 0 |
-| **Total** | **1,110,073** | **4 real datasets** | **$818,738** | **$32,743** | **96.0%*** | **0** |
+| Domain | Records | Data Source | Errors |
+|--------|---------|-------------|--------|
+| SP500 Finance | 14,400 | Yahoo Finance 30 tickers, 2yr daily | 0 |
+| Cybersecurity | 494,021 | KDD Cup 99 intrusion detection | 0 |
+| Forestry | 581,012 | UCI Covertype classification | 0 |
+| Real Estate | 20,640 | California Housing valuation | 0 |
+| **Total** | **1,110,073** | **4 real datasets** | **0** |
 
-*\*Against always-premium baseline. Real-world marginal savings depend on existing routing maturity:*
+The primary proof here is **zero errors across 1.1 million decisions in four unrelated domains, with zero code changes.** Domain neutrality is binary: it either works or it doesn't. It works.
 
-| Your current setup | Marginal savings with Calybris |
-|-------------------|-------------------------------|
-| No routing (always premium) | ~40–45% |
-| Basic routing (60% premium, 40% cheap) | ~25–30% |
-| Smart routing with caching | ~14–20% |
+### What about savings?
 
-*These estimates assume 100K monthly calls. The shadow replay pilot measures your actual marginal savings — not theoretical maximums.*
+I'm not going to claim "96% savings." That number is real but misleading — it's measured against a baseline of "always use the most expensive tier for every decision," which no serious team actually does.
+
+Here's what I can say honestly, based on the marginal savings calculator with realistic customer profiles:
+
+| Your current setup | What Calybris adds | Why |
+|-------------------|--------------------|-----|
+| No routing (100% premium) | ~40–45% savings | Most downgrade headroom available |
+| Basic routing (60% premium, 40% cheap) | ~25–30% savings | Calybris finds the downgrades you missed |
+| Smart routing with some caching | ~14–20% savings | Marginal gains + audit trail + proof |
+
+*These estimates assume 100K monthly calls. The shadow replay pilot measures your actual marginal savings against your current routing — not against a theoretical worst case.*
+
+**The value of Calybris is not just the savings percentage. It's the savings + the proof that every decision was correct + the adaptive learning that improves over time.** A team with smart routing and 14% marginal savings still gets something no other tool provides: a cryptographic audit trail for every routing decision.
 
 Same binary. Same kernel. Zero domain-specific code. Zero errors across all four domains.
 
-### A note on the savings numbers
+### A note on savings claims
 
-These percentages look aggressive — 96%, 99%, 100%. They are real measurements, but the baseline deserves scrutiny.
+You'll see some decision engine benchmarks claiming 90%+ savings. Those numbers are typically measured against "always use the most expensive model" — a baseline nobody actually uses.
 
-The baseline is "always use the most expensive tier for every decision." This is the worst case, and yes, it's an easy target. In practice, most serious teams already do *some* routing — using cheaper models for simple tasks, caching repeated questions, rate-limiting expensive calls.
+I measured the same way initially and got 96%. It's technically correct but practically misleading. A team that already routes 40% of traffic to cheap models won't see 96% savings — they'll see the marginal improvement over what they already do.
 
-A more realistic baseline would be "a team that already routes 30% of traffic to cheaper models." Against that baseline, Calybris would show 20–40% additional savings, not 96%.
-
-I chose the "always premium" baseline because it's the only one I can measure without assumptions about what a specific team already does. The shadow replay pilot exists precisely to measure savings against *your* current routing, not against a theoretical worst case.
-
-**If your team already routes intelligently, Calybris won't show 96% savings. It will show the marginal improvement over your current policy — and prove every decision cryptographically.**
+I've replaced those inflated numbers throughout this article with realistic marginal savings estimates: **14–45% depending on your current routing maturity.** The shadow replay pilot measures against *your* actual routing, not a theoretical worst case.
 
 ---
 
@@ -388,9 +392,9 @@ Every weakness has a concrete mitigation. Not a promise — shipped code and tes
    - *Risk*: Even 5% exploration on live compliance or security decisions is unacceptable for some organizations.
    - *Mitigation (shipped)*: `causal_exploration_bps=0` disables all live exploration. Shadow mode explores on a parallel non-enforcing path. For organizations that can't even shadow (data privacy), offline replay mode accepts anonymized metadata exports.
 
-3. **96% savings against "always premium" is a misleading headline.**
-   - *Risk*: Most serious teams already do some routing. The real question is marginal improvement.
-   - *Mitigation (shipped)*: `estimate_marginal_savings()` function takes the customer's current model distribution and calculates realistic additional savings. Typical result: 20–35% marginal improvement over existing routing, not 96%. Shadow replay pilot measures against YOUR current routing, not a theoretical worst case.
+3. **Inflated savings claims are dishonest.**
+   - *Risk*: Benchmarks against "always premium" show 96%. Nobody uses always premium. Real marginal savings are 14–45%.
+   - *Mitigation (shipped)*: `estimate_marginal_savings()` function takes the customer's current model distribution and calculates realistic additional savings. All inflated numbers removed from this article. Shadow replay pilot measures against YOUR current routing, not a theoretical worst case.
 
 4. **GBM beats online learning on stationary data.**
    - *Risk*: If your workload is stable, batch-trained ML will outperform Thompson Sampling.
