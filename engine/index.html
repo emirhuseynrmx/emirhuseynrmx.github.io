@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Calybris Engine | Adaptive Proof-Carrying Decision Engine</title>
-  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Integer kernel, Thompson Sampling, outcome learning, hash-chained WAL. 311 tests, 1.1M real-data benchmark, 4 industries."/>
+  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Integer kernel, Thompson Sampling, outcome learning, hash-chained WAL. 316 tests, 1.1M real-data benchmark, 4 industries."/>
   <meta name="keywords" content="decision engine, proof-carrying, Thompson Sampling, adaptive routing, Rust, audit trail, WAL, quality floor, Calybris"/>
   <meta name="author" content="Emir H. Inci"/>
   <meta name="robots" content="index, follow"/>
@@ -14,7 +14,7 @@
 
   <meta property="og:type" content="website"/>
   <meta property="og:title" content="Calybris Engine | Adaptive Proof-Carrying Decision Engine"/>
-  <meta property="og:description" content="Domain-neutral prescriptive decision engine with Thompson Sampling, outcome learning, and cryptographic proof. 311 tests, 1.1M real-data benchmark."/>
+  <meta property="og:description" content="Domain-neutral prescriptive decision engine with Thompson Sampling, outcome learning, and cryptographic proof. 316 tests, 1.1M real-data benchmark."/>
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:title" content="Calybris Engine"/>
   <meta name="twitter:description" content="Adaptive proof-carrying decision engine. 1.1M real records, 4 industries, 0 errors."/>
@@ -236,7 +236,7 @@
 
       <div class="bench-grid">
         <div class="bench-card reveal">
-          <div class="bench-value">311</div>
+          <div class="bench-value">316</div>
           <div class="bench-unit">tests passing</div>
           <div class="bench-label">Fault injection + proptest + loom + adaptive</div>
         </div>
@@ -293,9 +293,9 @@
           <span class="tag">lock-free &middot; concurrent-safe</span>
         </div>
         <div class="feature-card reveal reveal-delay-1">
-          <h3>GBM Comparison (validated)</h3>
-          <p>Tested against Gradient Boosting on SP500 and KDD Cup 99. GBM wins on stationary data (11.82% miss). Adaptive wins on evolving threats (11.16% vs 75.42%). Both can coexist in the same engine.</p>
-          <span class="tag">honest benchmark &middot; use both</span>
+          <h3>GBM Compiled to Rust Trees</h3>
+          <p>200 GBM trees trained on 2,090 labeled prompts, exported as pure Rust source code. No ONNX runtime, no Python, no GPU. The model predicts quality_floor, risk_score, and confidence_score from a 384-dim sentence embedding — compiled directly into the binary.</p>
+          <span class="tag">40K lines Rust &middot; 0 dependencies &middot; &lt;1ms inference</span>
         </div>
       </div>
     </div>
@@ -421,7 +421,7 @@
   <section id="tests">
     <div class="container">
       <p class="section-label reveal">06 &mdash; Test Infrastructure</p>
-      <h2 class="section-title reveal">311 tests. Designed to break the engine.</h2>
+      <h2 class="section-title reveal">316 tests. Designed to break the engine.</h2>
 
       <div class="feature-grid">
         <div class="feature-card reveal">
@@ -476,10 +476,18 @@
           <div class="tech-desc">/openapi.json spec, /metrics Prometheus exposition, /health + /ready probes</div>
         </div>
         <div class="tech-item reveal reveal-delay-2">
+          <div class="tech-name">GBM-to-Rust Codegen</div>
+          <div class="tech-desc">200 decision trees compiled to 40K lines of pure Rust. Zero runtime dependency. &lt;1ms inference.</div>
+        </div>
+        <div class="tech-item reveal reveal-delay-3">
+          <div class="tech-name">Sentence Embedding (384-dim)</div>
+          <div class="tech-desc">all-MiniLM-L6-v2 for prompt understanding. CPU-only, ~9ms. Predicts quality_floor, risk, confidence from text.</div>
+        </div>
+        <div class="tech-item reveal">
           <div class="tech-name">Circuit Breaker</div>
           <div class="tech-desc">10 consecutive failures opens circuit, 30s recovery, auto half-open</div>
         </div>
-        <div class="tech-item reveal reveal-delay-3">
+        <div class="tech-item reveal reveal-delay-1">
           <div class="tech-name">Docker Deployment</div>
           <div class="tech-desc">Single image, read-only filesystem, no-new-privileges, one-command pilot</div>
         </div>
