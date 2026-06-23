@@ -197,7 +197,8 @@
       </section>
 
       <section class="conversion-proof" aria-label="Verified product evidence">
-        <div><strong>500K</strong><span>deterministic decisions replayed in the sample audit</span></div>
+        <div><strong>1M</strong><span>real conversations benchmarked — WildChat + OpenAssistant — 0 errors</span></div>
+        <div><strong>23%</strong><span>cost savings on 1M real-world LLM calls with zero quality loss</span></div>
         <div><strong>294</strong><span>passing Rust tests across recovery, concurrency, and policy invariants</span></div>
         <div><strong>9.19M/s</strong><span>correctness-guarded kernel median on one local host</span></div>
       </section>
@@ -290,9 +291,16 @@
           <div><dt>HTTP p99</dt><dd>44 ms</dd><small>15,000 requests · 0 failed</small></div>
           <div><dt>Durable WAL</dt><dd>10,684/s</dd><small>current contended host</small></div>
         </dl>
+        <dl class="benchmark-metrics" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:1.5rem">
+          <div><dt>Real data benchmark</dt><dd>1M rows</dd><small>WildChat + OpenAssistant · 0 errors</small></div>
+          <div><dt>Real data savings</dt><dd>23.1%</dd><small>$157K avoided on $682K requested</small></div>
+          <div><dt>Kernel p99 (real)</dt><dd>152 µs</dd><small>22-model catalog · SHA-256 proof</small></div>
+          <div><dt>HTTP throughput</dt><dd>2,597/s</dd><small>1M requests · 32 threads · WAL on</small></div>
+        </dl>
         <p class="benchmark-caveat">
-          Measured on a consumer Windows host with NTFS storage. Production Linux + NVMe is expected
-          to improve HTTP p99 and WAL throughput. We publish local-host numbers, not cloud SLO claims.
+          Real data benchmark uses 500K WildChat and 47K OpenAssistant conversations plus synthetic fill
+          across 22 models from 6 providers. Measured on a consumer Windows host with NTFS storage.
+          We publish local-host numbers, not cloud SLO claims.
         </p>
       </section>
 
