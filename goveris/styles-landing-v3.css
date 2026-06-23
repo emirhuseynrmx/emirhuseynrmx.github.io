@@ -1325,7 +1325,7 @@ dd {
 }
 
 .conversion-v2 .demo-section,
-.conversion-v2 .pricing-section { padding-top: 92px; }
+.conversion-v2 .pricing-section { padding-top: 36px; }
 
 .conversion-v2 .scenario-picker-head span { font-size: 0; }
 .conversion-v2 .scenario-picker-head span::after { content: "3 representative workloads · no paid model call"; font-size: 10px; }

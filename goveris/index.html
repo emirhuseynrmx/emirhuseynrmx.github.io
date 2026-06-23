@@ -77,8 +77,10 @@
           <a class="topbar-link" href="./reports/goveris-ai-spend-governance-sample.pdf" target="_blank" rel="noopener">Sample report</a>
           <a
             class="topbar-cta"
-            href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Private%20Shadow%20Replay%20Pilot&body=Hi%20Emir%2C%0A%0AWe%20would%20like%20to%20scope%20a%20private%20GOVERIS%20shadow%20replay%20pilot.%0A%0AApprox.%20monthly%20LLM%20calls%3A%0AProvider%2Fgateway%20topology%3A%0ADeployment%20environment%3A%0A"
-            ><span id="health" aria-hidden="true"></span>Shadow pilot</a
+            href="https://cal.com/emirhuseyininci/goveris-pilot"
+            target="_blank"
+            rel="noopener"
+            ><span id="health" aria-hidden="true"></span>Book pilot call</a
           >
         </div>
       </header>
@@ -92,7 +94,7 @@
             Metadata-only observation. Board-ready audit in 7 days.
           </p>
           <div class="hero-actions" aria-label="GOVERIS actions">
-            <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%207-Day%20Audit&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Get your spend audit in 7 days</a>
+            <a href="https://cal.com/emirhuseyininci/goveris-pilot" target="_blank" rel="noopener">Book a 15-min pilot setup call</a>
             <a href="#demo">Try the live replay</a>
           </div>
           <div class="signal-row" aria-label="GOVERIS proof points">
@@ -119,28 +121,28 @@
                 <span>Shadow policy evaluation</span>
                 <strong>Support agent workflow</strong>
               </div>
-              <b id="preview-action">shadow-ready</b>
+              <b id="preview-action">quality preserved</b>
             </div>
 
             <dl class="metric-strip">
               <div>
                 <dt>Requested model</dt>
-                <dd id="preview-requested">claude-opus-4-8</dd>
+                <dd id="preview-requested">claude-opus-4</dd>
               </div>
               <div>
                 <dt>Selected route</dt>
-                <dd id="preview-selected">claude-sonnet-4-6</dd>
+                <dd id="preview-selected">claude-opus-4</dd>
               </div>
               <div>
                 <dt>Decision value</dt>
-                <dd id="preview-net">+11.61c</dd>
+                <dd id="preview-net">+quality preserved</dd>
               </div>
             </dl>
 
             <div class="route-map" aria-label="Model routing map">
               <div>
                 <span>requested</span>
-                <strong>claude-opus-4-8</strong>
+                <strong>claude-opus-4</strong>
               </div>
               <i></i>
               <div class="gate">
@@ -150,7 +152,7 @@
               <i></i>
               <div>
                 <span>selected</span>
-                <strong>claude-sonnet-4-6</strong>
+                <strong>claude-opus-4 ✓</strong>
               </div>
             </div>
 
@@ -201,6 +203,39 @@
         <div><strong>23–40%</strong><span>savings range: 23% floor on 2-model traffic, 40%+ with multi-provider mix</span></div>
         <div><strong>294</strong><span>passing Rust tests across recovery, concurrency, and policy invariants</span></div>
         <div><strong>9.19M/s</strong><span>correctness-guarded kernel median on one local host</span></div>
+      </section>
+
+      <section class="proof-band" aria-label="Quality guarantee">
+        <div>
+          <span>Quality floor guarantee</span>
+          <strong>If no cheaper model meets your quality threshold, the premium model stays. Always.</strong>
+        </div>
+        <div>
+          <span>Proof-carrying</span>
+          <strong>Every decision is SHA-256 sealed and independently auditable months later.</strong>
+        </div>
+        <div>
+          <span>Shadow first</span>
+          <strong>See savings projections on real traffic before any routing change goes live.</strong>
+        </div>
+      </section>
+
+      <section class="benchmark-section" aria-labelledby="quality-title">
+        <div class="section-heading">
+          <p class="eyebrow">The #1 fear: "will quality drop?"</p>
+          <h2 id="quality-title">GOVERIS never downgrades below your quality floor.</h2>
+          <p>
+            Every request carries a quality floor (0–1). The kernel only considers models whose
+            quality score meets or exceeds that floor. If the cheapest qualifying model is the
+            premium one, GOVERIS keeps it and explains why. This invariant is mathematically
+            proven across thousands of randomized property tests.
+          </p>
+        </div>
+        <dl class="benchmark-metrics" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+          <div><dt>Quality invariant</dt><dd>Proven</dd><small>proptest: 10K+ random parameter sets</small></div>
+          <div><dt>Premium preserved</dt><dd>Always</dd><small>when no cheaper model meets the floor</small></div>
+          <div><dt>Enforcement</dt><dd>You decide</dd><small>shadow first → review → then enforce</small></div>
+        </dl>
       </section>
 
       <section class="conversion-audience" aria-labelledby="audience-title">
@@ -319,6 +354,24 @@
           <span>Instant audit</span>
           <strong>GET /api/v1/audit/report → JSON + Markdown spend analysis</strong>
         </div>
+      </section>
+
+      <section class="benchmark-section" aria-labelledby="compare-title">
+        <div class="section-heading">
+          <p class="eyebrow">Already using Helicone, LangSmith, or Phoenix?</p>
+          <h2 id="compare-title">They show what happened. GOVERIS decides what should happen next.</h2>
+          <p>
+            Observability tools tell you which model was called and how much it cost.
+            GOVERIS tells you whether a cheaper model would have satisfied the quality floor,
+            proves it cryptographically, and enforces the policy when you're ready.
+          </p>
+        </div>
+        <dl class="benchmark-metrics" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+          <div><dt>Observability</dt><dd>Both</dd><small>GOVERIS + Helicone can coexist</small></div>
+          <div><dt>Prescriptive routing</dt><dd>GOVERIS only</dd><small>auto downgrade / block / cache</small></div>
+          <div><dt>Proof trail</dt><dd>GOVERIS only</dd><small>SHA-256 sealed, audit-grade</small></div>
+          <div><dt>No prompt capture</dt><dd>GOVERIS only</dd><small>metadata-only by design</small></div>
+        </dl>
       </section>
 
       <section class="executive-section">
@@ -706,16 +759,23 @@ enforcement    off during replay</pre>
           <p class="eyebrow">Start here</p>
           <h2>Get your LLM spend audit in 7 days.</h2>
           <p>
-            Send your monthly call volume and provider stack. I'll deploy a private Docker pilot in your VPC and return a board-readable audit package. No prompt capture. Metadata-only observation.
+            Book a 15-minute call. We'll scope the pilot, deploy a private Docker image in your VPC, and return a board-readable audit. No prompt capture. Metadata-only observation.
           </p>
+          <div class="hero-actions" style="margin-top:1.5rem">
+            <a href="https://cal.com/emirhuseyininci/goveris-pilot" target="_blank" rel="noopener">Book a 15-min pilot call</a>
+            <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Shadow%20Replay%20Pilot&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Or email directly</a>
+          </div>
         </div>
-        <div class="contact-card">
-          <span>Email</span>
+        <div class="contact-card" style="background:var(--panel-strong);border-color:var(--brand)">
+          <span>Early adopter offer</span>
+          <strong style="font-size:1.3rem">First 5 pilots: Shadow Scan at $290</strong>
+          <p>40% off the $490 Shadow Scan for early adopters who help us build the first case studies. Same deliverable, same quality, same private VPC deployment.</p>
           <a
-            href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Shadow%20Replay%20Pilot&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A"
-            >emirhuseyininci@gmail.com</a
-          >
-          <p>Subject: GOVERIS Shadow Replay Pilot</p>
+            href="https://cal.com/emirhuseyininci/goveris-pilot"
+            target="_blank"
+            rel="noopener"
+            style="display:inline-block;margin-top:0.5rem;padding:0.6rem 1.5rem;background:var(--brand);color:#fff;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.95rem"
+          >Claim early adopter spot</a>
         </div>
       </section>
 
@@ -737,33 +797,33 @@ enforcement    off during replay</pre>
         <div class="demo-workbench">
           <aside class="scenario-picker" aria-label="Demo workload scenarios">
             <div class="scenario-picker-head">
-              <span>5 real-world scenarios · 4 tenants · 3 providers</span>
+              <span>5 real-world scenarios · 5 tenants · 5 providers</span>
               <strong>Pick a workload</strong>
             </div>
-            <button class="scenario-option is-selected" type="button" data-scenario="support">
-              <span>01 / Claude Opus 4.8 → Sonnet</span>
-              <strong>Customer refund request routed through your most expensive model</strong>
-              <small>$15/$75 per 1M tokens · $0.42 value · standard floor · GOVERIS downgrades to Sonnet 4.6</small>
+            <button class="scenario-option is-selected" type="button" data-scenario="critical">
+              <span>01 / Claude Opus 4 — kept</span>
+              <strong>SOC2 compliance review: quality floor too high to downgrade</strong>
+              <small>Critical workload · 0.95 quality floor · Opus preserved · GOVERIS proves why the premium model stays</small>
             </button>
-            <button class="scenario-option" type="button" data-scenario="critical">
-              <span>02 / Claude Opus 4.8 — kept</span>
-              <strong>SOC2 compliance review requires reasoning-grade output</strong>
-              <small>Critical · 0.95 quality floor · Opus preserved · $8.20 business value justifies cost</small>
+            <button class="scenario-option" type="button" data-scenario="support">
+              <span>02 / GPT-4o → GPT-4o-mini</span>
+              <strong>Support ticket answered with a $2.50 model when $0.15 is enough</strong>
+              <small>2,400 tokens · $0.42 value · 0.55 floor · savings: $2.35/call × 50K calls/mo = $117K/yr</small>
             </button>
             <button class="scenario-option" type="button" data-scenario="coding">
-              <span>03 / GPT-5.5 → GPT-4o</span>
-              <strong>Internal code review bot using flagship when mid-tier suffices</strong>
-              <small>4,200 tokens · 0.72 quality floor · $0.18 value doesn't justify $0.84 cost</small>
+              <span>03 / o3 → Claude Sonnet 4</span>
+              <strong>Code review using $100/M reasoning model — mid-tier cross-provider route saves 80%</strong>
+              <small>Cross-provider downgrade · o3 $10/40 per 1M → Sonnet $3/15 per 1M · quality floor 0.72 satisfied</small>
             </button>
             <button class="scenario-option" type="button" data-scenario="risky">
-              <span>04 / Gemini 3.5 Pro — blocked</span>
-              <strong>Accounts payable automation requests vendor bank change</strong>
-              <small>Prompt-injection signal · 0.94 risk · 0.41 confidence · hard block</small>
+              <span>04 / Gemini 2.5 Pro — blocked</span>
+              <strong>Accounts payable bot requests vendor bank change — hard block</strong>
+              <small>0.94 risk · 0.41 confidence · GOVERIS blocks before the model sees the prompt</small>
             </button>
             <button class="scenario-option" type="button" data-scenario="cache">
-              <span>05 / Claude Sonnet → Cache</span>
-              <strong>Identical FAQ question asked 200 times/day across tenants</strong>
-              <small>Semantic cache eligible · $0.02 value · repeated prompt hash detected</small>
+              <span>05 / DeepSeek Chat → Cache</span>
+              <strong>"What are your business hours?" asked 200 times/day — cache saves 100%</strong>
+              <small>Repeated prompt detected · $0.02 value · semantic cache: $0.00 cost · same answer every time</small>
             </button>
             <div class="demo-runtime">
               <span>Evaluation source</span>
@@ -899,34 +959,13 @@ enforcement    off during replay</pre>
       const reduceMotion =
         !forceMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const heroProduct = document.querySelector(".hero-product");
-      let activeScenario = "support";
+      let activeScenario = "critical";
 
       const scenarios = {
-        support: {
-          summary: "Customer refund / support-emea / standard / Opus 4.8 → Sonnet downgrade",
-          payload: {
-            model: "claude-opus-4-8",
-            input_tokens: 2400,
-            output_tokens: 680,
-            metadata: {
-              tenant_id: "support-emea",
-              use_case: "customer-refund-request",
-              workload_criticality: "standard",
-              estimated_business_value_cents: 42,
-              risk_score: 0.08,
-              confidence_score: 0.96,
-              prompt_complexity: 0.28,
-              quality_floor: 0.62,
-              max_latency_ms: 1200,
-              forbidden_models: ["semantic-cache"],
-              explain: true
-            }
-          }
-        },
         critical: {
-          summary: "SOC2 compliance review / legal-prod / critical / Opus 4.8 preserved",
+          summary: "SOC2 compliance / legal-prod / critical / Claude Opus 4 preserved — quality floor too high",
           payload: {
-            model: "claude-opus-4-8",
+            model: "claude-opus-4",
             input_tokens: 12000,
             output_tokens: 3800,
             metadata: {
@@ -939,24 +978,45 @@ enforcement    off during replay</pre>
               prompt_complexity: 0.94,
               quality_floor: 0.95,
               max_latency_ms: 5000,
-              required_models: ["claude-opus-4-8"],
+              required_models: ["claude-opus-4"],
+              explain: true
+            }
+          }
+        },
+        support: {
+          summary: "Support ticket / support-emea / standard / GPT-4o → GPT-4o-mini downgrade — saving $2.35/call",
+          payload: {
+            model: "gpt-4o",
+            input_tokens: 2400,
+            output_tokens: 680,
+            metadata: {
+              tenant_id: "support-emea",
+              use_case: "customer-support-ticket",
+              workload_criticality: "standard",
+              estimated_business_value_cents: 42,
+              risk_score: 0.08,
+              confidence_score: 0.96,
+              prompt_complexity: 0.28,
+              quality_floor: 0.55,
+              max_latency_ms: 1200,
+              forbidden_models: ["semantic-cache"],
               explain: true
             }
           }
         },
         coding: {
-          summary: "Internal code review / eng-platform / standard / GPT-5.5 → GPT-4o downgrade",
+          summary: "Code review / eng-platform / standard / o3 → Claude Sonnet 4 cross-provider downgrade",
           payload: {
-            model: "gpt-5.5",
+            model: "o3",
             input_tokens: 3200,
             output_tokens: 1000,
             metadata: {
               tenant_id: "eng-platform",
-              use_case: "internal-code-review-bot",
+              use_case: "pull-request-code-review",
               workload_criticality: "standard",
-              estimated_business_value_cents: 18,
-              risk_score: 0.15,
-              confidence_score: 0.89,
+              estimated_business_value_cents: 35,
+              risk_score: 0.12,
+              confidence_score: 0.91,
               prompt_complexity: 0.52,
               quality_floor: 0.72,
               max_latency_ms: 3000,
@@ -965,9 +1025,9 @@ enforcement    off during replay</pre>
           }
         },
         risky: {
-          summary: "Vendor bank change / finance-ops / high risk / Gemini 3.5 Pro blocked",
+          summary: "Vendor bank change / finance-ops / high risk / Gemini 2.5 Pro blocked",
           payload: {
-            model: "gemini-3.5-pro",
+            model: "gemini-2.5-pro",
             input_tokens: 1250,
             output_tokens: 350,
             metadata: {
@@ -985,20 +1045,20 @@ enforcement    off during replay</pre>
           }
         },
         cache: {
-          summary: "Repeated FAQ / support-global / standard / Sonnet → semantic cache",
+          summary: "Repeated FAQ / support-global / standard / DeepSeek Chat → semantic cache — $0 cost",
           payload: {
-            model: "claude-sonnet-4-6",
+            model: "deepseek-chat",
             input_tokens: 480,
             output_tokens: 220,
             metadata: {
               tenant_id: "support-global",
-              use_case: "faq-repeated-question",
+              use_case: "faq-business-hours",
               workload_criticality: "standard",
               estimated_business_value_cents: 2,
               risk_score: 0.02,
               confidence_score: 0.99,
               prompt_complexity: 0.08,
-              quality_floor: 0.40,
+              quality_floor: 0.35,
               max_latency_ms: 200,
               explain: true
             }
@@ -1243,17 +1303,29 @@ enforcement    off during replay</pre>
         const catalog = {
           "semantic-cache": [0, 0],
           "local-small": [2, 5],
-          "gemini-3.1-flash": [15, 60],
           "gpt-4o-mini": [15, 60],
-          "claude-haiku-4-5": [80, 400],
-          "claude-sonnet-4-6": [300, 1500],
+          "gpt-4.1-nano": [10, 40],
+          "gpt-4.1-mini": [40, 160],
+          "mistral-small": [10, 30],
+          "deepseek-chat": [14, 28],
+          "llama-4-scout": [15, 36],
+          "gemini-2.0-flash": [10, 40],
+          "gemini-2.5-flash": [15, 60],
           "gpt-4o": [250, 1000],
-          "gemini-3.5-pro": [125, 1000],
-          "gpt-5.5": [500, 1500],
-          "claude-opus-4-8": [1500, 7500]
+          "gpt-4.1": [200, 800],
+          "claude-haiku-3.5": [80, 400],
+          "llama-4-maverick": [20, 60],
+          "deepseek-reasoner": [55, 219],
+          "mistral-large": [200, 600],
+          "claude-sonnet-4": [300, 1500],
+          "gemini-2.5-pro": [125, 1000],
+          "o3-mini": [110, 440],
+          "o4-mini": [110, 440],
+          "o3": [1000, 4000],
+          "claude-opus-4": [1500, 7500]
         };
         if (model === "blocked") return 0;
-        const [inputPrice, outputPrice] = catalog[model] || catalog["gemini-3.1-flash"];
+        const [inputPrice, outputPrice] = catalog[model] || catalog["gpt-4o-mini"];
         return (inputTokens * inputPrice + outputTokens * outputPrice) / 1_000_000;
       }
 
@@ -1266,13 +1338,21 @@ enforcement    off during replay</pre>
           metadata.required_models?.includes(payload.model);
 
         const downgradeMap = {
-          "claude-sonnet-4-6": "claude-haiku-4-5",
-          "claude-opus-4-8": "claude-sonnet-4-6",
-          "gpt-5.5": "gpt-4o",
+          "claude-opus-4": "claude-sonnet-4",
+          "claude-sonnet-4": "claude-haiku-3.5",
           "gpt-4o": "gpt-4o-mini",
-          "gemini-3.5-pro": "gemini-3.1-flash",
+          "gpt-4.1": "gpt-4.1-mini",
+          "o3": "claude-sonnet-4",
+          "o3-mini": "gpt-4o-mini",
+          "o4-mini": "gpt-4o-mini",
+          "gemini-2.5-pro": "gemini-2.5-flash",
+          "gemini-2.5-flash": "gemini-2.0-flash",
+          "deepseek-reasoner": "deepseek-chat",
+          "deepseek-chat": "gpt-4o-mini",
+          "mistral-large": "mistral-small",
+          "llama-4-maverick": "llama-4-scout",
         };
-        const cheapFallback = downgradeMap[payload.model] || "gemini-3.1-flash";
+        const cheapFallback = downgradeMap[payload.model] || "gpt-4o-mini";
 
         const cacheEligible = metadata.prompt_complexity < 0.15 && metadata.quality_floor < 0.50
           && metadata.confidence_score > 0.95 && metadata.estimated_business_value_cents <= 5;
