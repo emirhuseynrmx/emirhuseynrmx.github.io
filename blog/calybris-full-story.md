@@ -120,6 +120,22 @@ No cheaper model qualifies. Business value $8.20 justifies cost.
 
 This invariant is tested with proptest across thousands of randomized parameter combinations. It cannot be overridden by cost pressure, load shedding, or policy weights.
 
+### How do you calibrate the quality floor?
+
+This is the hardest practical question. The quality floor is a number — but what does 0.75 actually mean for your use case?
+
+Three approaches, in order of maturity:
+
+**1. Human judgment (day one).** Your team sets initial floors based on experience. "Support tickets can use 0.55. Compliance reviews need 0.92." This is imprecise but better than no floor at all.
+
+**2. LLM-as-judge (week two).** Run a sample of downgraded responses through a judge model. Compare the quality rating against the original model's output. If the judge consistently rates the cheaper model as "acceptable," the floor is validated.
+
+**3. Outcome-calibrated (ongoing).** The adaptive router learns from real outcomes. If a downgraded request leads to a customer complaint, a failed audit, or a re-escalation, that outcome is fed back and the quality floor rises automatically.
+
+There's also a hard problem I haven't fully solved: **cross-provider quality equivalence.** Claude Sonnet 4 and GPT-4o both have quality scores around 0.92–0.95, but they handle prompts differently. Tool use formats differ. System prompt behavior differs. A quality floor of 0.90 might be satisfied by both on paper, but one might fail on your specific prompt structure.
+
+The shadow replay pilot catches this: you run both models on the same traffic in non-enforcing mode and compare actual output quality before routing goes live. The engine doesn't assume cross-provider equivalence — it measures it.
+
 ---
 
 ## 22 Models, 6 Providers
@@ -162,6 +178,20 @@ I added three layers to the kernel:
 **2. Thompson Sampling** — The engine doesn't just exploit what it knows. It explores. It maintains a Beta distribution for each tier in each data regime. When uncertain about whether a cheaper tier is safe, it samples from the distribution and tries it. Over time, it converges on the optimal policy.
 
 **3. Outcome Calibration** — When an outcome is reported, the engine adjusts its quality floors. Correct downgrade → lower the floor. Wrong downgrade → raise the floor. The adjustment is asymmetric: failures raise the floor 2x faster than successes lower it. This makes the engine naturally conservative.
+
+### Cold start: what happens in the first thousand requests?
+
+Thompson Sampling has a cold start problem. With no outcome data, the Beta distributions are uniform — the engine has no idea which tiers are safe.
+
+Calybris handles this with three mechanisms:
+
+1. **Conservative default.** Quality floors start at 0.75 (high). The engine uses premium models until it has enough data to justify downgrades. You overpay during warmup, but you don't lose quality.
+
+2. **Exploration rate.** 5% of requests (configurable via `causal_exploration_bps`) are randomly assigned to cheaper tiers. This generates the outcome data needed for learning. At 1,000 req/day, the engine has 50 exploration data points per day — enough to converge within a week for most regimes.
+
+3. **Regime-specific learning.** The engine doesn't learn a single global policy. It learns 8 separate policies for 8 complexity regimes. Simple requests (short, low-risk) converge quickly. Complex requests (long, high-risk) take longer but default to conservative routing in the meantime.
+
+In the SP500 test, first-quarter miss rate was 25.1%, last-quarter was 21.8%. The engine is worse than its final performance during warmup — but never worse than random, because the conservative default protects it.
 
 ### Does it actually work?
 
@@ -247,7 +277,17 @@ To prove Calybris isn't just an LLM tool, I tested it across four industries wit
 
 Same binary. Same kernel. Zero domain-specific code. Zero errors across all four domains.
 
-"Savings" here means the difference between "always use the most expensive tier" (what most teams do by default) and "route intelligently based on quality, risk, and value."
+### A note on the savings numbers
+
+These percentages look aggressive — 96%, 99%, 100%. They are real measurements, but the baseline deserves scrutiny.
+
+The baseline is "always use the most expensive tier for every decision." This is the worst case, and yes, it's an easy target. In practice, most serious teams already do *some* routing — using cheaper models for simple tasks, caching repeated questions, rate-limiting expensive calls.
+
+A more realistic baseline would be "a team that already routes 30% of traffic to cheaper models." Against that baseline, Calybris would show 20–40% additional savings, not 96%.
+
+I chose the "always premium" baseline because it's the only one I can measure without assumptions about what a specific team already does. The shadow replay pilot exists precisely to measure savings against *your* current routing, not against a theoretical worst case.
+
+**If your team already routes intelligently, Calybris won't show 96% savings. It will show the marginal improvement over your current policy — and prove every decision cryptographically.**
 
 ---
 
@@ -321,7 +361,13 @@ I want to be direct about limitations:
 
 4. **Zero production customers.** The engine has processed 1.1 million real records with zero errors. But it has never run in a production environment with real stakes. Shadow replay pilots are the next step.
 
-5. **Single developer.** I built this with AI assistance, but I'm the only human who has read every line. This is both a risk (bus factor = 1) and a feature (consistent vision, no design-by-committee).
+5. **Single developer.** I built this with AI assistance, but I'm the only human who has read every line. This is both a risk (bus factor = 1) and a feature (consistent vision, no design-by-committee). How I mitigate the risk:
+   - **305 tests** document every invariant — a new developer can change code and know immediately if they broke something
+   - **Technical FAQ** in Turkish and English covers every customer question
+   - **OpenAPI 3.1 spec** at `/openapi.json` documents every endpoint
+   - **Proof trail** means decisions are self-documenting — you can audit the engine's behavior without reading the source
+   - **Architecture is modular**: kernel, WAL, budget, adaptive, and HTTP are separate modules with clear interfaces
+   - If traction justifies it, the kernel and WAL modules can be open-sourced to build community trust while keeping the adaptive routing and GOVERIS product layer proprietary
 
 ---
 
@@ -373,6 +419,14 @@ Every box is tested. Every connection is tested. The full loop — from request 
 5. **AI as an engineering partner changes the economics.** A single developer with AI assistance produced 305 tests, 22-model catalog, adaptive routing, hash-chained WAL, and a production-ready Docker deployment in two weeks. The traditional estimate for this scope is 3-6 engineers over 6-12 months.
 
 ---
+
+## From Engine to Product: Calybris Powers GOVERIS
+
+Calybris is the engine. GOVERIS is the product built on top of it.
+
+The relationship is simple: Calybris handles the decision kernel, proof generation, WAL, budget engine, and adaptive routing. GOVERIS wraps that in an OpenAI-compatible HTTP gateway with shadow replay, audit reports, tenant attribution, and what-if policy simulation.
+
+If you're a developer who wants to embed a decision engine in your own system, Calybris is the library. If you're a team that wants a ready-to-deploy AI cost governance tool, GOVERIS is the product.
 
 ## What's Next
 
