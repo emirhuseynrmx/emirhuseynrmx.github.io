@@ -54,9 +54,9 @@
   </ul>
   <p><strong>Known limitations:</strong></p>
   <ul>
-    <li>4-model catalog. With 22 models, per-decision time increases ~3x</li>
+    <li>4-model catalog. With 22 models, the pure kernel slows down roughly ~3x versus the 4-model synthetic loop.</li>
     <li>Single-threaded tight loop, no concurrent load</li>
-    <li>Synthetic data. Real data with 22 models: 12,222 decisions/sec (see section 6)</li>
+    <li>The 12,222 decisions/sec real-data benchmark (section 6) is a <em>broader</em> benchmark: it includes real-record JSON mapping, 22-model evaluation, SHA-256 proof generation, and full decision-object construction. It is not directly comparable to the 8.6M kernel-only number.</li>
   </ul>
   <p><strong>Why 8.6M not 10.27M:</strong> Earlier version used <code>wrapping_mul</code> (unsafe overflow risk). Reverted to <code>saturating_mul</code>. Correctness > speed.</p>
 
@@ -80,12 +80,12 @@
   <pre><code>daily_return, volume_ratio, intraday_range, gap,
 momentum_5d, volatility_20d, momentum_10d, avg_range_5d</code></pre>
   <h3>Ground truth</h3>
-  <p><code>|return[t+1]| > 2%</code> = premium analysis was needed (~15-20% of days)</p>
+  <p><code>|return[t+1]| > 2%</code> = premium analysis was needed (~15-20% of days). This is a proxy label: the benchmark treats next-day absolute moves above 2% as cases where premium analysis would have been worth paying for. It is not a trading profitability label.</p>
   <h3>Split</h3>
   <ul>
     <li><strong>GBM:</strong> 50/50 split (shuffled across tickers, not strict temporal)</li>
     <li><strong>Adaptive:</strong> online, no split, first-vs-last quarter comparison</li>
-    <li><strong>Known limitation:</strong> not a strict temporal split. GBM numbers are an upper bound.</li>
+    <li><strong>Known limitation:</strong> not a strict temporal split. Because the GBM split is shuffled across tickers and time, it may leak market-regime information across the split. GBM numbers should be treated as an upper bound. These results are routing feasibility evidence, not live-trading alpha claims.</li>
   </ul>
   <h3>GBM hyperparameters</h3>
   <pre><code>n_estimators=200, max_depth=5, learning_rate=0.1, subsample=0.8, random_state=42
@@ -105,7 +105,7 @@ No hyperparameter search performed. Standard defaults.</code></pre>
     <li><strong>Records:</strong> 494,021 (~80% attack, ~20% normal)</li>
     <li><strong>Known limitation:</strong> KDD Cup 99 is widely criticized as unrealistic. Used as standard benchmark, not as representative of real traffic.</li>
   </ul>
-  <p><strong>Why adaptive wins (11% vs 75%):</strong> KDD has non-stationary attack patterns. Adaptive learns per-regime. GBM memorizes training distribution.</p>
+  <p><strong>Why adaptive wins (11% vs 75%):</strong> In this setup, the adaptive policy benefits from online per-regime feedback, while the GBM is fixed after training. The result should be interpreted as an online-adaptation advantage in this specific benchmark, not as a general claim that GBM is weaker.</p>
   <p><strong>Caveat:</strong> 7.2x improvement is dataset-specific. We do not claim generalization to unseen attack categories.</p>
 
   <h2>5. Domain-Neutral 1.1M Benchmark</h2>
@@ -130,10 +130,11 @@ No hyperparameter search performed. Standard defaults.</code></pre>
     <li>Export: 200 trees → 40K lines pure Rust, <1ms inference</li>
     <li>MAE: quality_floor 0.046, risk 0.052, confidence 0.051</li>
     <li><strong>Limitation:</strong> template data, needs retraining on real prompts</li>
+    <li>The GBM prompt model is used as a <strong>routing prior</strong>, not as a final correctness oracle. It provides initial quality floor estimates that the adaptive router refines from real outcomes.</li>
   </ul>
 
   <h2>8. Cold Start (51 decisions)</h2>
-  <p>20 simulated trials. Average crossover: 51 decisions to beat random. At 1K req/day: ~1 hour.</p>
+  <p>20 simulated trials. Average crossover: 51 decisions to beat random in simulated feedback trials. At 1K req/day: ~1 hour.</p>
   <p><strong>Limitation:</strong> assumes immediate feedback, stationary distribution during calibration.</p>
 
   <h2>9. Test Suite (316 tests)</h2>
