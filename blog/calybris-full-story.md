@@ -205,6 +205,10 @@ Calybris handles this with three mechanisms:
 
 3. **Regime-specific learning.** The engine doesn't learn a single global policy. It learns 8 separate policies for 8 complexity regimes. Simple requests (short, low-risk) converge quickly. Complex requests (long, high-risk) take longer but default to conservative routing in the meantime.
 
+**How fast does it calibrate?** Across 20 simulated trials, the adaptive router beats random after an average of **51 decisions** — not 51,000, not 5,000, just 51. At 1,000 requests/day, calibration takes under an hour. At 100 requests/day, half a day.
+
+During those first 51 decisions, the engine uses conservative defaults (quality floor 0.75). You overpay slightly, but you never lose quality. After calibration, the engine outperforms random consistently.
+
 In the SP500 test, first-quarter miss rate was 25.1%, last-quarter was 21.8%. The engine is worse than its final performance during warmup — but never worse than random, because the conservative default protects it.
 
 ### Does it actually work?
@@ -273,7 +277,9 @@ Results:
 | p50 latency | 37 µs |
 | p99 latency | 79 µs |
 
-One million decisions. Zero errors. Zero crashes. Constant throughput from start to finish.
+One million decisions. Zero operational failures — no crashes, no panics, no invariant violations, no data corruption, constant throughput from start to finish.
+
+**Important distinction: "zero errors" means zero operational failures, not zero wrong decisions.** The engine made routing decisions that were sometimes suboptimal (16–20% miss rate on SP500, depending on strategy). But it never crashed, never corrupted data, and never violated its own invariants. Operational reliability and decision quality are separate metrics — the engine is reliable; decision quality depends on calibration.
 
 ---
 
@@ -289,7 +295,9 @@ To prove Calybris isn't just an LLM tool, I tested it across four industries wit
 | Real Estate | 20,640 | California Housing valuation | 0 |
 | **Total** | **1,110,073** | **4 real datasets** | **0** |
 
-The primary proof here is **zero errors across 1.1 million decisions in four unrelated domains, with zero code changes.** Domain neutrality is binary: it either works or it doesn't. It works.
+The primary proof here is **zero operational failures** (no crashes, no panics, no data corruption) **across 1.1 million decisions in four unrelated domains, with zero code changes.** Domain neutrality is binary: it either works or it doesn't. It works.
+
+"Zero errors" does not mean "zero wrong decisions." Decision quality depends on quality floor calibration, which varies by domain and use case. What this table proves is that the engine is *operationally reliable* across domains — it doesn't crash, corrupt data, or violate invariants regardless of what data you feed it.
 
 ### What about savings?
 
