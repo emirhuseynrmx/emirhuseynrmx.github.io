@@ -136,9 +136,17 @@ Three approaches, in order of maturity:
 
 **3. Outcome-calibrated (ongoing).** The adaptive router learns from real outcomes. If a downgraded request leads to a customer complaint, a failed audit, or a re-escalation, that outcome is fed back and the quality floor rises automatically.
 
-There's also a hard problem I haven't fully solved: **cross-provider quality equivalence.** Claude Sonnet 4 and GPT-4o both have quality scores around 0.92–0.95, but they handle prompts differently. Tool use formats differ. System prompt behavior differs. A quality floor of 0.90 might be satisfied by both on paper, but one might fail on your specific prompt structure.
+### The cross-provider equivalence problem (the hardest unsolved challenge)
 
-The shadow replay pilot catches this: you run both models on the same traffic in non-enforcing mode and compare actual output quality before routing goes live. The engine doesn't assume cross-provider equivalence — it measures it.
+This deserves its own section because it's the biggest practical risk in multi-provider routing.
+
+Claude Sonnet 4 and GPT-4o both score around 0.92–0.95 on quality benchmarks. But benchmarks measure average performance — your specific prompts might hit a gap. Tool use formats differ between providers. System prompt handling differs. JSON mode behavior differs. A quality floor of 0.90 might be satisfied by both on paper, but one might fail silently on your prompt structure.
+
+**Calybris does not assume cross-provider equivalence. It measures it.**
+
+The shadow replay pilot runs both models on the same real traffic metadata. The `QualityTracker` module records empirical success rates per model per use case. After 50+ observations, it knows — with statistical confidence — whether Claude Sonnet actually matches GPT-4o *for your specific workload*.
+
+If it doesn't match, the quality floor for that use case rises automatically, and cross-provider downgrades stop until the data says otherwise. This is the conservative default: **prove equivalence before routing across providers.**
 
 ---
 
@@ -279,7 +287,17 @@ To prove Calybris isn't just an LLM tool, I tested it across four industries wit
 | Cybersecurity | 494,021 | KDD Cup 99 | $316,545 | $32,129 | 89.8% | 0 |
 | Forestry | 581,012 | UCI Covertype | $472,888 | $94 | 100.0% | 0 |
 | Real Estate | 20,640 | California Housing | $4,783 | $17 | 99.6% | 0 |
-| **Total** | **1,110,073** | **4 real datasets** | **$818,738** | **$32,743** | **96.0%** | **0** |
+| **Total** | **1,110,073** | **4 real datasets** | **$818,738** | **$32,743** | **96.0%*** | **0** |
+
+*\*Against always-premium baseline. Real-world marginal savings depend on existing routing maturity:*
+
+| Your current setup | Marginal savings with Calybris |
+|-------------------|-------------------------------|
+| No routing (always premium) | ~40–45% |
+| Basic routing (60% premium, 40% cheap) | ~25–30% |
+| Smart routing with caching | ~14–20% |
+
+*These estimates assume 100K monthly calls. The shadow replay pilot measures your actual marginal savings — not theoretical maximums.*
 
 Same binary. Same kernel. Zero domain-specific code. Zero errors across all four domains.
 
@@ -310,10 +328,12 @@ I chose the "always premium" baseline because it's the only one I can measure wi
 
 The full suite runs in under 3 seconds on a consumer laptop.
 
+*How does one person write 311 tests in two weeks?* Most of these tests were co-authored with AI — I described the invariant I wanted to protect, the AI generated the test structure, I reviewed and adjusted. The hard part isn't writing the test — it's knowing *which* invariant to test. The WAL fault injection tests, the proptest conservation proofs, and the loom concurrency models came from debugging real failures during development.
+
 Additionally:
 - **69 million WAL rows** accumulated during development and stress testing
 - **1.1 million real-data domain-neutral** decisions with zero failures
-- **Opus 4.8 code review** — 10 critical bugs found and fixed (WAL deadlock, NaN bypass, timing leak, CORS, shutdown flush)
+- **Independent AI code review** (3 parallel review agents) — 10 critical bugs found and fixed (WAL deadlock, NaN bypass, timing leak, CORS, shutdown flush)
 
 ---
 
@@ -439,9 +459,17 @@ Every box is tested. Every connection is tested. The full loop — from request 
 
 Calybris is the engine. GOVERIS is the product built on top of it.
 
-The relationship is simple: Calybris handles the decision kernel, proof generation, WAL, budget engine, and adaptive routing. GOVERIS wraps that in an OpenAI-compatible HTTP gateway with shadow replay, audit reports, tenant attribution, and what-if policy simulation.
+**Calybris** (the engine) handles: integer kernel, proof generation, hash-chained WAL, budget engine, adaptive routing, quality tracking, and outcome calibration.
 
-If you're a developer who wants to embed a decision engine in your own system, Calybris is the library. If you're a team that wants a ready-to-deploy AI cost governance tool, GOVERIS is the product.
+**GOVERIS** (the product) wraps that engine in:
+- An **OpenAI-compatible HTTP gateway** — drop-in replacement for `/v1/chat/completions`
+- **Shadow replay mode** — observe your traffic without changing production routing
+- **Audit report API** — `GET /api/v1/audit/report` returns a board-readable spend analysis
+- **Tenant attribution** — break down spend by team, workflow, and provider
+- **What-if simulation** — compare conservative, balanced, and aggressive policy scenarios before enforcing
+- **Prometheus metrics** at `/metrics` and **OpenAPI 3.1 spec** at `/openapi.json`
+
+If you're a developer who wants to embed a decision engine in your own system, Calybris is the library. If you're a team that wants a ready-to-deploy AI cost governance tool with one `docker compose up`, GOVERIS is the product.
 
 ## What's Next
 
