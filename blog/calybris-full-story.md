@@ -18,12 +18,16 @@ I looked at the existing tools. LangSmith, Helicone, Phoenix — they all show y
 
 And none of them *prove* it. If your CFO asks "why did you route this call to the expensive model?", the best you can say is "the system decided." There's no audit trail. No cryptographic evidence. No replay.
 
+Tools like Helicone, LangSmith, and Phoenix show you what happened. They're excellent observability platforms. But observability answers yesterday's question. I wanted to answer tomorrow's: **what should happen next, and can you prove it?**
+
 I wanted to build a system that:
 1. Evaluates every decision *before* it happens
 2. Records *why* it made that decision
 3. Proves the decision was made correctly — cryptographically
 4. Learns from outcomes and gets better over time
 5. Works across any domain, not just LLMs
+
+The difference in one sentence: **they show what happened; Calybris proves what should have happened.**
 
 ---
 
@@ -187,7 +191,9 @@ Calybris handles this with three mechanisms:
 
 1. **Conservative default.** Quality floors start at 0.75 (high). The engine uses premium models until it has enough data to justify downgrades. You overpay during warmup, but you don't lose quality.
 
-2. **Exploration rate.** 5% of requests (configurable via `causal_exploration_bps`) are randomly assigned to cheaper tiers. This generates the outcome data needed for learning. At 1,000 req/day, the engine has 50 exploration data points per day — enough to converge within a week for most regimes.
+2. **Exploration rate.** 5% of requests (configurable via `causal_exploration_bps`, can be set to 0) are randomly assigned to cheaper tiers. This generates the outcome data needed for learning. At 1,000 req/day, the engine has 50 exploration data points per day — enough to converge within a week for most regimes.
+
+**Important caveat for high-stakes environments:** In compliance, trading, or security workflows, even 5% exploration can be unacceptable. For these cases, set `causal_exploration_bps=0` and use shadow mode instead — the engine explores on a parallel non-enforcing path while production traffic uses the conservative default. Exploration happens, but never on a live decision that matters.
 
 3. **Regime-specific learning.** The engine doesn't learn a single global policy. It learns 8 separate policies for 8 complexity regimes. Simple requests (short, low-risk) converge quickly. Complex requests (long, high-risk) take longer but default to conservative routing in the meantime.
 
