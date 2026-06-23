@@ -39,7 +39,7 @@
   <a class="back" href="/engine/">&larr; back to engine</a>
 
   <h1>Calybris Benchmark Methodology</h1>
-  <p>Every number on the landing page, in the Medium articles, and in this document comes from a reproducible test. This page documents exactly how each benchmark was run, what splits were used, what hyperparameters were chosen, and what the known limitations are.</p>
+  <p>Every performance, savings, and reliability number on the landing page, in the Medium articles, and in this document comes from a reproducible test or replay. This page documents exactly how each benchmark was run, what splits were used, what hyperparameters were chosen, and what the known limitations are.</p>
   <p>If you find a methodological flaw, email <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>. I'll fix it or retract the claim.</p>
 
   <h2>1. Kernel Throughput (8.6M decisions/sec)</h2>
@@ -120,8 +120,9 @@ No hyperparameter search performed. Standard defaults.</code></pre>
   <p><strong>"Zero errors"</strong> = zero crashes, zero panics, zero data corruption. Not zero wrong decisions.</p>
   <p><strong>"96% savings"</strong> is against always-premium baseline. Realistic marginal: 14-45% depending on existing routing.</p>
 
-  <h2>6. Real Data Kernel (12,222 dec/sec)</h2>
-  <p>22-model catalog + SHA-256 proof + 1M real records. ~3x slower than 4-model synthetic benchmark. WAL disabled, single-threaded.</p>
+  <h2>6. Real Data Decision Replay (12,222 dec/sec)</h2>
+  <p>22-model catalog + real-record JSON mapping + SHA-256 proof generation + full decision-object construction across 1M real records. WAL disabled, single-threaded.</p>
+  <p>This is not a pure-kernel benchmark. The ~3x slowdown only applies when comparing 4-model vs 22-model pure kernel loops. The 12,222 dec/sec replay includes additional mapping, proof, and object-construction overhead that the 8.6M kernel-only benchmark does not measure.</p>
 
   <h2>7. GBM Prompt Model</h2>
   <ul>
@@ -131,6 +132,7 @@ No hyperparameter search performed. Standard defaults.</code></pre>
     <li>MAE: quality_floor 0.046, risk 0.052, confidence 0.051</li>
     <li><strong>Limitation:</strong> template data, needs retraining on real prompts</li>
     <li>The GBM prompt model is used as a <strong>routing prior</strong>, not as a final correctness oracle. It provides initial quality floor estimates that the adaptive router refines from real outcomes.</li>
+    <li>The goal of this model is not broad language understanding; it is to provide a cheap prior for routing decisions before outcome feedback is available.</li>
   </ul>
 
   <h2>8. Cold Start (51 decisions)</h2>
