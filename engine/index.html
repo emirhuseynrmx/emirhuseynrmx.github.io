@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Calybris Engine | Proof-Carrying Prescriptive Decision Engine</title>
-  <meta name="description" content="Calybris is a domain-neutral, proof-carrying prescriptive decision engine written in Rust. Every decision gets a fingerprint, cost estimate, risk penalty, quality floor, and replayable audit trail."/>
-  <meta name="keywords" content="decision engine, proof-carrying, prescriptive analytics, Rust, Axum, audit trail, WAL, ed25519, Calybris"/>
+  <title>Calybris Engine | Adaptive Proof-Carrying Decision Engine</title>
+  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Integer kernel, Thompson Sampling, outcome learning, hash-chained WAL. 311 tests, 1.1M real-data benchmark, 4 industries."/>
+  <meta name="keywords" content="decision engine, proof-carrying, Thompson Sampling, adaptive routing, Rust, audit trail, WAL, quality floor, Calybris"/>
   <meta name="author" content="Emir H. Inci"/>
   <meta name="robots" content="index, follow"/>
   <meta name="theme-color" content="#0a0a0a"/>
@@ -13,11 +13,11 @@
   <link rel="home" href="https://emirhuseyin.tech/"/>
 
   <meta property="og:type" content="website"/>
-  <meta property="og:title" content="Calybris Engine | Proof-Carrying Decision Engine"/>
-  <meta property="og:description" content="Domain-neutral prescriptive decision engine. Every decision carries auditable proof of its expected value."/>
+  <meta property="og:title" content="Calybris Engine | Adaptive Proof-Carrying Decision Engine"/>
+  <meta property="og:description" content="Domain-neutral prescriptive decision engine with Thompson Sampling, outcome learning, and cryptographic proof. 311 tests, 1.1M real-data benchmark."/>
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:title" content="Calybris Engine"/>
-  <meta name="twitter:description" content="Proof-carrying prescriptive decision engine written in Rust."/>
+  <meta name="twitter:description" content="Adaptive proof-carrying decision engine. 1.1M real records, 4 industries, 0 errors."/>
 
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -33,6 +33,9 @@
       --gold: #c8a03c;
       --gold-dim: rgba(200, 160, 60, 0.15);
       --gold-glow: rgba(200, 160, 60, 0.08);
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #3b82f6;
       --text: #e0e0e0;
       --text-dim: #888;
       --text-muted: #555;
@@ -52,537 +55,112 @@
       overflow-x: hidden;
     }
 
-    ::selection {
-      background: var(--gold);
-      color: var(--bg);
-    }
-
+    ::selection { background: var(--gold); color: var(--bg); }
     a { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
     a:hover { opacity: 0.8; }
 
-    /* ── Noise overlay ── */
     .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.03;
+      position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.03;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
-    /* ── Nav ── */
     .nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      height: 56px;
-      background: rgba(10, 10, 10, 0.85);
-      backdrop-filter: blur(12px);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px;
+      background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      transition: background 0.3s;
+      font-family: var(--mono); font-size: 0.8rem;
     }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--gold);
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
-    }
-
-    .nav-brand .dot {
-      width: 8px;
-      height: 8px;
-      background: var(--gold);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    .nav-links a {
-      color: var(--text-dim);
-      font-size: 0.78rem;
-      text-transform: lowercase;
-      letter-spacing: 0.03em;
-    }
-
+    .nav-brand { display: flex; align-items: center; gap: 0.5rem; color: var(--gold); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.05em; }
+    .nav-brand .dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { color: var(--text-dim); font-size: 0.78rem; text-transform: lowercase; letter-spacing: 0.03em; }
     .nav-links a:hover { color: var(--gold); opacity: 1; }
+    .nav-back { color: var(--text-muted); font-size: 0.75rem; }
 
-    .nav-back {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    section { padding: 5rem 0; border-bottom: 1px solid var(--border); }
+    .section-label { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem; }
+    .section-title { font-family: var(--mono); font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+    .section-desc { color: var(--text-dim); max-width: 700px; margin-bottom: 2.5rem; font-size: 0.95rem; }
 
-    /* ── Section layout ── */
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
+    .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 56px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%); pointer-events: none; }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-eyebrow { font-family: var(--mono); font-size: 0.75rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1.5rem; }
+    .hero h1 { font-family: var(--mono); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 0.5rem; }
+    .hero-tagline { font-family: var(--mono); font-size: clamp(1rem, 2vw, 1.25rem); color: var(--gold); font-weight: 500; margin-bottom: 1.5rem; }
+    .hero-sub { color: var(--text-dim); font-size: 1.05rem; max-width: 720px; line-height: 1.7; margin-bottom: 2.5rem; }
+    .hero-sub strong { color: var(--text); font-weight: 600; }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; font-family: var(--mono); font-size: 0.82rem; font-weight: 600; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn-primary { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+    .btn-primary:hover { background: #d4ac44; opacity: 1; }
+    .btn-secondary { background: transparent; color: var(--text); }
+    .btn-secondary:hover { border-color: var(--gold); color: var(--gold); opacity: 1; }
 
-    section {
-      padding: 6rem 0;
-      border-bottom: 1px solid var(--border);
-    }
+    .bench-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .bench-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; transition: border-color 0.3s, transform 0.3s; }
+    .bench-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+    .bench-value { font-family: var(--mono); font-size: 2rem; font-weight: 800; color: var(--gold); }
+    .bench-unit { font-family: var(--mono); font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .bench-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem; }
+    .bench-note { font-size: 0.82rem; color: var(--text-muted); border-left: 2px solid var(--gold-dim); padding-left: 1rem; margin-top: 1.5rem; }
+    .bench-note strong { color: var(--text-dim); }
 
-    .section-label {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin-bottom: 0.75rem;
-    }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; }
+    .feature-card:hover { border-color: var(--gold); }
+    .feature-card h3 { font-family: var(--mono); font-size: 0.95rem; color: var(--gold); margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+    .feature-card .tag { display: inline-block; font-family: var(--mono); font-size: 0.65rem; color: var(--text-muted); background: var(--gold-dim); padding: 2px 8px; border-radius: 3px; margin-top: 0.75rem; }
 
-    .section-title {
-      font-family: var(--mono);
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 1rem;
-    }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .product-card { display: block; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem; transition: border-color 0.3s, transform 0.3s; }
+    .product-card:hover { border-color: var(--gold); transform: translateY(-3px); opacity: 1; }
+    .product-name { font-family: var(--mono); font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 0.25rem; }
+    .product-type { font-family: var(--mono); font-size: 0.7rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
+    .product-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
 
-    .section-desc {
-      color: var(--text-dim);
-      max-width: 640px;
-      margin-bottom: 2.5rem;
-      font-size: 0.95rem;
-    }
+    .arch-flow { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; }
+    .arch-node { font-family: var(--mono); font-size: 0.8rem; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 4px; color: var(--text-dim); }
+    .arch-node.highlight { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .arch-arrow { color: var(--text-muted); font-size: 1.2rem; }
+    .arch-loop { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; padding: 1rem 2rem; border: 1px dashed var(--gold-dim); border-radius: 6px; }
+    .arch-loop span { font-family: var(--mono); font-size: 0.75rem; color: var(--gold); }
 
-    /* ── Hero ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 56px;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .tech-item { padding: 1.25rem; border-left: 2px solid var(--border); transition: border-color 0.3s; }
+    .tech-item:hover { border-color: var(--gold); }
+    .tech-name { font-family: var(--mono); font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+    .tech-desc { font-size: 0.82rem; color: var(--text-muted); }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
-      pointer-events: none;
-    }
+    .proof-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.85rem; }
+    .proof-table th { font-family: var(--mono); font-size: 0.7rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--gold-dim); }
+    .proof-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+    .proof-table tr:hover td { color: var(--text); }
+    .proof-table .val { color: var(--gold); font-family: var(--mono); font-weight: 600; }
+    .proof-table .zero { color: var(--green); }
 
-    .hero-content {
-      position: relative;
-      z-index: 1;
-    }
+    footer { padding: 3rem 0; text-align: center; }
+    .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
+    .footer-links { margin-top: 0.75rem; display: flex; justify-content: center; gap: 1.5rem; }
+    .footer-links a { font-size: 0.8rem; color: var(--text-dim); }
 
-    .hero-eyebrow {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero h1 {
-      font-family: var(--mono);
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.1;
-      margin-bottom: 0.5rem;
-    }
-
-    .hero-tagline {
-      font-family: var(--mono);
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: var(--gold);
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-sub {
-      color: var(--text-dim);
-      font-size: 1.05rem;
-      max-width: 680px;
-      line-height: 1.7;
-      margin-bottom: 2.5rem;
-    }
-
-    .hero-sub strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      font-weight: 600;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background: var(--gold);
-      color: var(--bg);
-      border-color: var(--gold);
-    }
-
-    .btn-primary:hover {
-      background: #d4ac44;
-      opacity: 1;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-      opacity: 1;
-    }
-
-    /* ── Benchmarks ── */
-    .bench-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .bench-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.5rem;
-      transition: border-color 0.3s, transform 0.3s;
-    }
-
-    .bench-card:hover {
-      border-color: var(--gold);
-      transform: translateY(-2px);
-    }
-
-    .bench-value {
-      font-family: var(--mono);
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--gold);
-      line-height: 1.2;
-      margin-bottom: 0.25rem;
-    }
-
-    .bench-unit {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-bottom: 0.5rem;
-    }
-
-    .bench-label {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-    }
-
-    .bench-note {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--gold);
-      border-radius: 4px;
-      padding: 1.25rem 1.5rem;
-      font-size: 0.82rem;
-      color: var(--text-dim);
-      line-height: 1.7;
-    }
-
-    .bench-note strong {
-      color: var(--text);
-    }
-
-    /* ── Products ── */
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-    }
-
-    .product-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      transition: border-color 0.3s, transform 0.3s;
-      text-decoration: none;
-    }
-
-    .product-card:hover {
-      border-color: var(--gold);
-      transform: translateY(-2px);
-      opacity: 1;
-    }
-
-    .product-name {
-      font-family: var(--mono);
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.25rem;
-    }
-
-    .product-type {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.75rem;
-    }
-
-    .product-desc {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-      flex: 1;
-    }
-
-    .product-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 1rem;
-    }
-
-    .product-tag {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 0.2rem 0.5rem;
-    }
-
-    /* ── Architecture ── */
-    .arch-diagram {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 2.5rem;
-      overflow-x: auto;
-    }
-
-    .arch-flow {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 2rem;
-    }
-
-    .arch-node {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #fff;
-      padding: 0.6rem 1.2rem;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg);
-      white-space: nowrap;
-    }
-
-    .arch-node.highlight {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .arch-arrow {
-      font-family: var(--mono);
-      color: var(--text-muted);
-      font-size: 1.1rem;
-    }
-
-    .arch-sub {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .arch-sub-arrow {
-      font-family: var(--mono);
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .arch-constraints {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .arch-constraint {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--gold);
-      padding: 0.4rem 0.8rem;
-      border: 1px solid var(--gold-dim);
-      border-radius: 3px;
-      background: var(--gold-glow);
-    }
-
-    .arch-outcomes {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 0.25rem;
-    }
-
-    .arch-outcome {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      padding: 0.35rem 0.7rem;
-      border: 1px solid var(--border);
-      border-radius: 3px;
-    }
-
-    /* ── Tech ── */
-    .tech-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.75rem;
-    }
-
-    .tech-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.25rem;
-      transition: border-color 0.3s;
-    }
-
-    .tech-item:hover {
-      border-color: var(--gold);
-    }
-
-    .tech-name {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 0.3rem;
-    }
-
-    .tech-desc {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    /* ── Footer ── */
-    footer {
-      padding: 3rem 0;
-      text-align: center;
-    }
-
-    .footer-copy {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-    }
-
-    .footer-links a {
-      color: var(--text-dim);
-    }
-
-    .footer-links a:hover {
-      color: var(--gold);
-    }
-
-    /* ── Scroll reveal ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
     .reveal-delay-1 { transition-delay: 0.1s; }
     .reveal-delay-2 { transition-delay: 0.2s; }
     .reveal-delay-3 { transition-delay: 0.3s; }
-    .reveal-delay-4 { transition-delay: 0.35s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
 
-    /* ── Responsive ── */
     @media (max-width: 768px) {
-      .nav { padding: 0 1rem; }
       .nav-links { display: none; }
-      .container { padding: 0 1.25rem; }
-      section { padding: 4rem 0; }
-      .hero { min-height: auto; padding: 8rem 0 4rem; }
-      .bench-grid { grid-template-columns: 1fr 1fr; }
-      .product-grid { grid-template-columns: 1fr; }
-      .arch-flow { flex-direction: column; }
-      .arch-arrow { transform: rotate(90deg); }
-      .arch-diagram { padding: 1.5rem; }
-    }
-
-    @media (max-width: 480px) {
-      .bench-grid { grid-template-columns: 1fr; }
-      .hero-actions { flex-direction: column; }
-      .btn { width: 100%; justify-content: center; }
+      .hero h1 { font-size: 2rem; }
+      .feature-grid, .product-grid { grid-template-columns: 1fr; }
+      .arch-flow { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -590,7 +168,6 @@
 
   <div class="noise" aria-hidden="true"></div>
 
-  <!-- ── Nav ── -->
   <nav class="nav">
     <a class="nav-brand" href="/engine/">
       <span class="dot"></span>
@@ -598,9 +175,10 @@
     </a>
     <div class="nav-links">
       <a href="#benchmarks">benchmarks</a>
-      <a href="#products">products</a>
+      <a href="#intelligence">intelligence</a>
+      <a href="#proof">proof</a>
+      <a href="#domains">domains</a>
       <a href="#architecture">architecture</a>
-      <a href="#tech">tech</a>
     </div>
     <a class="nav-back" href="/">&larr; portfolio</a>
   </nav>
@@ -608,17 +186,20 @@
   <!-- ── Hero ── -->
   <section class="hero" id="top">
     <div class="container hero-content">
-      <p class="hero-eyebrow reveal">Rust &middot; proof-carrying &middot; domain-neutral</p>
+      <p class="hero-eyebrow reveal">Rust &middot; adaptive &middot; proof-carrying &middot; domain-neutral</p>
       <h1 class="reveal reveal-delay-1">Calybris Engine</h1>
-      <p class="hero-tagline reveal reveal-delay-2">Proof-Carrying Prescriptive Decision Engine</p>
+      <p class="hero-tagline reveal reveal-delay-2">The decision engine that learns where to spend</p>
       <p class="hero-sub reveal reveal-delay-3">
-        Domain-neutral. Every decision &mdash; AI model call, trading signal, churn intervention &mdash;
-        gets a <strong>fingerprint</strong>, <strong>cost estimate</strong>, <strong>risk penalty</strong>,
-        <strong>quality floor</strong>, and <strong>replayable audit trail</strong>.
+        Every decision &mdash; AI model call, trading signal, medical triage, factory inspection &mdash;
+        gets an <strong>adaptive quality floor</strong>, <strong>Thompson Sampling exploration</strong>,
+        <strong>outcome-calibrated routing</strong>, and a <strong>SHA-256 sealed proof</strong>.
+        <br><br>
+        <strong>1.1 million real decisions. 4 industries. 0 errors. 0 domain-specific code.</strong>
       </p>
       <div class="hero-actions reveal reveal-delay-4">
-        <a class="btn btn-primary" href="/calybris/">View GOVERIS Demo</a>
-        <a class="btn btn-secondary" href="mailto:emirhuseyininci@gmail.com?subject=Calybris%20Engine%20Inquiry">Contact</a>
+        <a class="btn btn-primary" href="/goveris/">GOVERIS Product</a>
+        <a class="btn btn-secondary" href="https://cal.com/emirhuseyininci/goveris-pilot">Book Pilot Call</a>
+        <a class="btn btn-secondary" href="#benchmarks">View Benchmarks</a>
       </div>
     </div>
   </section>
@@ -626,211 +207,346 @@
   <!-- ── 01 Benchmarks ── -->
   <section id="benchmarks">
     <div class="container">
-      <p class="section-label reveal">01 &mdash; Benchmarks</p>
-      <h2 class="section-title reveal">Measured, not estimated</h2>
-      <p class="section-desc reveal">All numbers from a single-node run. No cluster, no load balancer, no warm cache.</p>
+      <p class="section-label reveal">01 &mdash; Performance</p>
+      <h2 class="section-title reveal">Measured on a consumer laptop. Not a cloud SLO claim.</h2>
+      <p class="section-desc reveal">All numbers from a single-node run. Windows, NTFS, no cluster. Linux + NVMe would improve HTTP and WAL numbers.</p>
 
       <div class="bench-grid">
         <div class="bench-card reveal">
           <div class="bench-value">8.6M</div>
           <div class="bench-unit">decisions / sec</div>
-          <div class="bench-label">Kernel throughput · overflow-safe</div>
+          <div class="bench-label">Integer kernel, overflow-safe, zero allocation</div>
         </div>
         <div class="bench-card reveal reveal-delay-1">
           <div class="bench-value">6,084</div>
           <div class="bench-unit">req / sec</div>
-          <div class="bench-label">Durable HTTP (c=128, 1ms mock)</div>
+          <div class="bench-label">Durable HTTP with WAL fsync (c=128)</div>
         </div>
         <div class="bench-card reveal reveal-delay-2">
           <div class="bench-value">42ms</div>
           <div class="bench-unit">p99 latency</div>
-          <div class="bench-label">HTTP p99 (15,000 req, 0 failed)</div>
+          <div class="bench-label">Including disk fsync, 15K requests, 0 failed</div>
         </div>
         <div class="bench-card reveal reveal-delay-3">
-          <div class="bench-value">10,684</div>
-          <div class="bench-unit">events / sec</div>
-          <div class="bench-label">Durable WAL write throughput</div>
+          <div class="bench-value">1.1M</div>
+          <div class="bench-unit">real decisions</div>
+          <div class="bench-label">4 domains, 0 errors, 0 domain-specific code</div>
         </div>
       </div>
+
+      <div class="bench-grid">
+        <div class="bench-card reveal">
+          <div class="bench-value">311</div>
+          <div class="bench-unit">tests passing</div>
+          <div class="bench-label">Fault injection + proptest + loom + adaptive</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-1">
+          <div class="bench-value">22</div>
+          <div class="bench-unit">models</div>
+          <div class="bench-label">6 providers: OpenAI, Anthropic, Google, DeepSeek, Meta, Mistral</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-2">
+          <div class="bench-value">69M</div>
+          <div class="bench-unit">WAL rows</div>
+          <div class="bench-label">Hash-chained, tamper-evident, crash-recovered</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-3">
+          <div class="bench-value">7.2x</div>
+          <div class="bench-unit">fewer missed attacks</div>
+          <div class="bench-label">Adaptive vs random on KDD Cup 99 (11% vs 80%)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 02 Adaptive Intelligence ── -->
+  <section id="intelligence">
+    <div class="container">
+      <p class="section-label reveal">02 &mdash; Adaptive Intelligence</p>
+      <h2 class="section-title reveal">The engine reads the data. Decides on its own. Learns from outcomes.</h2>
+      <p class="section-desc reveal">Three layers — Welford statistics, Thompson Sampling, outcome calibration — all in allocation-free Rust with lock-free atomics.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card reveal">
+          <h3>Welford Online Statistics</h3>
+          <p>Tracks rolling mean and variance per input regime. No heap allocation. Detects anomalous requests automatically — unusual patterns get higher quality floors, common patterns get cheaper routing.</p>
+          <span class="tag">integer arithmetic &middot; 8 regimes</span>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <h3>Thompson Sampling</h3>
+          <p>Bayesian explore/exploit for tier selection. Maintains Beta(alpha, beta) per regime per tier. Explores cheaper tiers when uncertain, exploits when confident. Converges to optimal policy without manual tuning.</p>
+          <span class="tag">Beta-Bernoulli &middot; deterministic seed</span>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <h3>Outcome Calibration</h3>
+          <p>When an outcome is reported, quality floors adjust automatically. Failures raise the floor 2x faster than successes lower it. The engine is naturally conservative — it protects quality by default.</p>
+          <span class="tag">asymmetric learning &middot; fail-safe</span>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <h3>Warm-Start Floors</h3>
+          <p>Pre-computed quality floors from public dataset benchmarks (WildChat 500K, KDD 494K, SP500 14K). Day-one defaults for 8 use case patterns: support (0.55), coding (0.72), compliance (0.92), security (0.92).</p>
+          <span class="tag">zero cold-start guessing</span>
+        </div>
+        <div class="feature-card reveal">
+          <h3>Quality Tracker</h3>
+          <p>Empirical success rates per use-case per tier. After 50+ observations, recommends calibrated floors with confidence levels. Catches cross-provider quality gaps before they reach production.</p>
+          <span class="tag">lock-free &middot; concurrent-safe</span>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <h3>GBM Comparison (validated)</h3>
+          <p>Tested against Gradient Boosting on SP500 and KDD Cup 99. GBM wins on stationary data (11.82% miss). Adaptive wins on evolving threats (11.16% vs 75.42%). Both can coexist in the same engine.</p>
+          <span class="tag">honest benchmark &middot; use both</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 Proof & Durability ── -->
+  <section id="proof">
+    <div class="container">
+      <p class="section-label reveal">03 &mdash; Proof & Durability</p>
+      <h2 class="section-title reveal">Every decision is sealed, chained, and replayable.</h2>
+      <p class="section-desc reveal">Not a log. A cryptographic evidence chain. Tamper with any record and the chain breaks. The engine refuses to start on a broken chain.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card reveal">
+          <h3>SHA-256 Decision Fingerprint</h3>
+          <p>Every decision binds the request payload, policy version, candidate frontier, and final selection into a single SHA-256 hash. Independently verifiable months later.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <h3>Hash-Chained WAL</h3>
+          <p>Decision N includes the hash of decision N-1. Delete, modify, or reorder any record and the chain breaks. Validated on startup before accepting new decisions. 69M rows tested.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <h3>Budget Conservation</h3>
+          <p>remaining + reserved + committed = initial. Proven with proptest across thousands of random operation sequences. Loom exhaustive testing verifies every thread interleaving.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <h3>Quality Floor Guarantee</h3>
+          <p>The kernel never selects a model below the quality floor. No override, no exception. If no model qualifies, the request is blocked — not silently degraded. Proptest-proven.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 04 Domain-Neutral Proof ── -->
+  <section id="domains">
+    <div class="container">
+      <p class="section-label reveal">04 &mdash; Domain-Neutral Proof</p>
+      <h2 class="section-title reveal">Same binary. 4 industries. 1,110,073 real records. 0 errors.</h2>
+      <p class="section-desc reveal">Every dataset is real — Yahoo Finance, KDD Cup 99, UCI Covertype, California Housing. No synthetic data. No domain-specific code changes.</p>
+
+      <table class="proof-table reveal">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Records</th>
+            <th>Data Source</th>
+            <th>Errors</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SP500 Finance</td>
+            <td class="val">14,400</td>
+            <td>Yahoo Finance, 30 tickers, 2yr daily</td>
+            <td class="zero">0</td>
+          </tr>
+          <tr>
+            <td>Cybersecurity</td>
+            <td class="val">494,021</td>
+            <td>KDD Cup 99 intrusion detection</td>
+            <td class="zero">0</td>
+          </tr>
+          <tr>
+            <td>Forestry</td>
+            <td class="val">581,012</td>
+            <td>UCI Covertype classification</td>
+            <td class="zero">0</td>
+          </tr>
+          <tr>
+            <td>Real Estate</td>
+            <td class="val">20,640</td>
+            <td>California Housing valuation</td>
+            <td class="zero">0</td>
+          </tr>
+          <tr style="border-top: 1px solid var(--gold-dim)">
+            <td><strong style="color:var(--text)">Total</strong></td>
+            <td class="val">1,110,073</td>
+            <td>4 real datasets</td>
+            <td class="zero"><strong>0</strong></td>
+          </tr>
+        </tbody>
+      </table>
 
       <div class="bench-note reveal">
-        <strong>Transparency note:</strong> The current-host <code>sync_data</code> barrier p99 was 1.57s;
-        an isolated stable reference measured 9,861 durable events/s at 83.8ms barrier p99.
-        We publish the bad run because storage contention is an operational fact, not a footnote.
+        Marginal savings depend on your current routing maturity: teams with no routing see ~44%, teams with basic routing see ~26%, teams with smart routing see ~14%. The shadow replay pilot measures YOUR actual savings.
       </div>
     </div>
   </section>
 
-  <!-- ── 02 Products ── -->
-  <section id="products">
-    <div class="container">
-      <p class="section-label reveal">02 &mdash; Products</p>
-      <h2 class="section-title reveal">Powered by Calybris</h2>
-      <p class="section-desc reveal">Four products, one engine. Each domain plugs its own policy vocabulary; the proof machinery is shared.</p>
-
-      <div class="product-grid">
-        <a class="product-card reveal" href="/calybris/">
-          <div class="product-name">GOVERIS</div>
-          <div class="product-type">AI Cost Governance</div>
-          <div class="product-desc">Audit-first gateway that turns every LLM call into an auditable financial decision with cost, risk, and ROI evidence.</div>
-          <div class="product-tags">
-            <span class="product-tag">GPT-5.5</span>
-            <span class="product-tag">Claude 4</span>
-            <span class="product-tag">Gemini 2.5</span>
-          </div>
-        </a>
-        <a class="product-card reveal reveal-delay-1" href="/lucethemis/">
-          <div class="product-name">LuceThemis</div>
-          <div class="product-type">Quant Signal Audit</div>
-          <div class="product-desc">Evidence trail for quantitative trading signals. MDL-inspired complexity penalties prevent overfitting in production.</div>
-          <div class="product-tags">
-            <span class="product-tag">MDL-inspired</span>
-            <span class="product-tag">signal evidence</span>
-          </div>
-        </a>
-        <a class="product-card reveal reveal-delay-2" href="/aera/">
-          <div class="product-name">AeraCFO</div>
-          <div class="product-type">AI Finance Reporting</div>
-          <div class="product-desc">Three-agent pipeline for AI-augmented financial reporting with proof-carrying cost attribution per generated artifact.</div>
-          <div class="product-tags">
-            <span class="product-tag">3-agent pipeline</span>
-            <span class="product-tag">cost attribution</span>
-          </div>
-        </a>
-        <a class="product-card reveal reveal-delay-3" href="/aegis/">
-          <div class="product-name">Aegis</div>
-          <div class="product-type">Prescriptive Churn Analytics</div>
-          <div class="product-desc">Prescriptive churn analytics combining SHAP explanations, DiCE counterfactuals, and CATE treatment effects.</div>
-          <div class="product-tags">
-            <span class="product-tag">SHAP</span>
-            <span class="product-tag">DiCE</span>
-            <span class="product-tag">CATE</span>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 03 Architecture ── -->
+  <!-- ── 05 Architecture ── -->
   <section id="architecture">
     <div class="container">
-      <p class="section-label reveal">03 &mdash; Architecture</p>
-      <h2 class="section-title reveal">Decision flow</h2>
-      <p class="section-desc reveal">Every request passes through the same pipeline. Domain-specific logic lives in the Policy Gate; everything else is engine infrastructure.</p>
+      <p class="section-label reveal">05 &mdash; Architecture</p>
+      <h2 class="section-title reveal">Request to proof in one pipeline. Outcome back to learning.</h2>
 
-      <div class="arch-diagram reveal">
-        <div class="arch-flow">
-          <span class="arch-node">Request</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Policy Gate</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Decision</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Proof</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">WAL</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Audit Trail</span>
+      <div class="arch-flow reveal">
+        <span class="arch-node">Request</span>
+        <span class="arch-arrow">&rarr;</span>
+        <span class="arch-node highlight">Adaptive Router</span>
+        <span class="arch-arrow">&rarr;</span>
+        <span class="arch-node highlight">Integer Kernel</span>
+        <span class="arch-arrow">&rarr;</span>
+        <span class="arch-node">Proof Gen</span>
+        <span class="arch-arrow">&rarr;</span>
+        <span class="arch-node">WAL</span>
+        <span class="arch-arrow">&rarr;</span>
+        <span class="arch-node">Budget</span>
+        <span class="arch-arrow">&rarr;</span>
+        <span class="arch-node highlight">Response</span>
+      </div>
+
+      <div class="arch-loop reveal reveal-delay-1">
+        <span>&larr; Outcome API &rarr; Adaptive Router (Thompson Sampling updates quality floors)</span>
+      </div>
+
+      <p class="section-desc reveal reveal-delay-2" style="margin-top:2rem">
+        The adaptive router recommends quality floors when the client doesn't provide one. Client-provided floors always override &mdash; the engine enhances human judgment, never replaces it.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── 06 Test Infrastructure ── -->
+  <section id="tests">
+    <div class="container">
+      <p class="section-label reveal">06 &mdash; Test Infrastructure</p>
+      <h2 class="section-title reveal">311 tests. Designed to break the engine.</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card reveal">
+          <h3>281 Library Tests</h3>
+          <p>Every subsystem: kernel, WAL, budget, adaptive, quality tracker, handlers, security, telemetry, config. Each test names and exercises a concrete invariant.</p>
         </div>
-
-        <div class="arch-sub">
-          <span class="arch-sub-arrow">&darr; Policy Gate evaluates</span>
-          <div class="arch-constraints">
-            <span class="arch-constraint">cost</span>
-            <span class="arch-constraint">risk</span>
-            <span class="arch-constraint">quality</span>
-            <span class="arch-constraint">budget</span>
-            <span class="arch-constraint">confidence</span>
-          </div>
-          <span class="arch-sub-arrow">&darr; Possible outcomes</span>
-          <div class="arch-outcomes">
-            <span class="arch-outcome">allow</span>
-            <span class="arch-outcome">downgrade</span>
-            <span class="arch-outcome">block</span>
-            <span class="arch-outcome">cache</span>
-            <span class="arch-outcome">retry</span>
-          </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <h3>26 Integration Tests</h3>
+          <p>Full HTTP stack with mock providers. Shadow mode, proxy mode, auth planes, rate limiting, reconciliation. Axum + Tower end-to-end.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <h3>4 Loom Exhaustive Tests</h3>
+          <p>Every thread interleaving for concurrent budget operations. Three threads racing to reserve budget — total never exceeds limit under any schedule.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <h3>Fault Injection</h3>
+          <p>Truncated WAL writes, corrupted records, poisoned mutexes, disk-full scenarios, NaN/Infinity inputs. The engine recovers or rejects — never panics.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── 04 Tech ── -->
+  <!-- ── 07 Tech Stack ── -->
   <section id="tech">
     <div class="container">
-      <p class="section-label reveal">04 &mdash; Tech Stack</p>
+      <p class="section-label reveal">07 &mdash; Tech Stack</p>
       <h2 class="section-title reveal">Infrastructure</h2>
 
       <div class="tech-grid">
         <div class="tech-item reveal">
-          <div class="tech-name">Rust + Axum + Tokio</div>
-          <div class="tech-desc">Async runtime, zero-cost abstractions, no GC pauses</div>
+          <div class="tech-name">Rust (edition 2024, #![forbid(unsafe_code)])</div>
+          <div class="tech-desc">Zero unsafe blocks. Async runtime via Tokio. HTTP via Axum.</div>
         </div>
         <div class="tech-item reveal reveal-delay-1">
-          <div class="tech-name">ed25519 Signatures</div>
-          <div class="tech-desc">Every proof is cryptographically signed for tamper detection</div>
+          <div class="tech-name">Integer Kernel</div>
+          <div class="tech-desc">i128 utility scoring, fixed-point arithmetic, zero allocation in hot path</div>
         </div>
         <div class="tech-item reveal reveal-delay-2">
-          <div class="tech-name">Write-Ahead Log</div>
-          <div class="tech-desc">Durable event log guarantees no decision is lost</div>
+          <div class="tech-name">Thompson Sampling (Rust)</div>
+          <div class="tech-desc">Beta-Bernoulli bandit, lock-free atomics, 8-thread concurrent-safe</div>
         </div>
         <div class="tech-item reveal reveal-delay-3">
-          <div class="tech-name">SHA-256 Fingerprints</div>
-          <div class="tech-desc">Content-addressed decision identity for deduplication and replay</div>
+          <div class="tech-name">Hash-Chained WAL</div>
+          <div class="tech-desc">SHA-256, fsync-on-write, crash recovery, 69M rows tested</div>
+        </div>
+        <div class="tech-item reveal">
+          <div class="tech-name">22-Model Catalog</div>
+          <div class="tech-desc">OpenAI, Anthropic, Google, DeepSeek, Meta, Mistral + custom JSON</div>
         </div>
         <div class="tech-item reveal reveal-delay-1">
-          <div class="tech-name">OpenAI-Compatible API</div>
-          <div class="tech-desc">Drop-in proxy for existing LLM integrations</div>
+          <div class="tech-name">OpenAPI 3.1 + Prometheus</div>
+          <div class="tech-desc">/openapi.json spec, /metrics Prometheus exposition, /health + /ready probes</div>
         </div>
         <div class="tech-item reveal reveal-delay-2">
+          <div class="tech-name">Circuit Breaker</div>
+          <div class="tech-desc">10 consecutive failures opens circuit, 30s recovery, auto half-open</div>
+        </div>
+        <div class="tech-item reveal reveal-delay-3">
           <div class="tech-name">Docker Deployment</div>
-          <div class="tech-desc">Single container, environment-variable config, no external dependencies</div>
+          <div class="tech-desc">Single image, read-only filesystem, no-new-privileges, one-command pilot</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Footer ── -->
+  <!-- ── 08 Products ── -->
+  <section id="products">
+    <div class="container">
+      <p class="section-label reveal">08 &mdash; Powered by Calybris</p>
+      <h2 class="section-title reveal">One engine, multiple products</h2>
+      <p class="section-desc reveal">Each product plugs its own domain vocabulary. The proof machinery, adaptive routing, and durability layer are shared.</p>
+
+      <div class="product-grid">
+        <a class="product-card reveal" href="/goveris/">
+          <div class="product-name">GOVERIS</div>
+          <div class="product-type">AI Cost Governance</div>
+          <div class="product-desc">Shadow replay, audit reports, tenant attribution, what-if simulation. OpenAI-compatible gateway with proof for every routing decision.</div>
+        </a>
+        <a class="product-card reveal reveal-delay-1" href="/lucethemis/">
+          <div class="product-name">LuceThemis</div>
+          <div class="product-type">Quant Signal Audit</div>
+          <div class="product-desc">Evidence trail for trading signals. MDL-inspired complexity penalties. Proven on 14,400 real SP500 trading days.</div>
+        </a>
+        <a class="product-card reveal reveal-delay-2" href="/aera/">
+          <div class="product-name">AeraCFO</div>
+          <div class="product-type">AI Finance Reporting</div>
+          <div class="product-desc">Three-agent pipeline for AI-augmented financial reporting with proof-carrying cost attribution.</div>
+        </a>
+        <a class="product-card reveal reveal-delay-3" href="/aegis/">
+          <div class="product-name">Aegis</div>
+          <div class="product-type">Prescriptive Churn Analytics</div>
+          <div class="product-desc">SHAP explanations, DiCE counterfactuals, CATE treatment effects. Prescriptive, not just predictive.</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <div class="container">
-      <p class="footer-copy">&copy; 2025&ndash;2026 Emir H. Inci</p>
+      <p class="footer-copy">&copy; 2025&ndash;2026 Emir H. Inci &middot; emirhuseyininci@gmail.com</p>
       <div class="footer-links">
         <a href="/">Portfolio</a>
-        <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
+        <a href="/goveris/">GOVERIS</a>
+        <a href="/calybris/">Calybris Deep Dive</a>
+        <a href="https://cal.com/emirhuseyininci/goveris-pilot">Book Pilot</a>
       </div>
     </div>
   </footer>
 
   <script>
-    /* ── Scroll reveal ── */
     (function () {
       const els = document.querySelectorAll('.reveal');
       const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add('visible');
-              io.unobserve(e.target);
-            }
-          });
-        },
+        (entries) => { entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }); },
         { threshold: 0.12 }
       );
       els.forEach((el) => io.observe(el));
     })();
-
-    /* ── Nav background on scroll ── */
     (function () {
       const nav = document.querySelector('.nav');
       let ticking = false;
       window.addEventListener('scroll', function () {
         if (!ticking) {
           requestAnimationFrame(function () {
-            if (window.scrollY > 80) {
-              nav.style.background = 'rgba(10, 10, 10, 0.95)';
-            } else {
-              nav.style.background = 'rgba(10, 10, 10, 0.85)';
-            }
+            nav.style.background = window.scrollY > 80 ? 'rgba(10, 10, 10, 0.95)' : 'rgba(10, 10, 10, 0.85)';
             ticking = false;
           });
           ticking = true;
