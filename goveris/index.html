@@ -797,7 +797,7 @@ enforcement    off during replay</pre>
         <div class="demo-workbench">
           <aside class="scenario-picker" aria-label="Demo workload scenarios">
             <div class="scenario-picker-head">
-              <span>5 real-world scenarios · 5 tenants · 5 providers</span>
+              <span>6 real-world scenarios · 6 tenants · 5 providers</span>
               <strong>Pick a workload</strong>
             </div>
             <button class="scenario-option is-selected" type="button" data-scenario="critical">
@@ -824,6 +824,11 @@ enforcement    off during replay</pre>
               <span>05 / DeepSeek Chat → Cache</span>
               <strong>"What are your business hours?" asked 200 times/day — cache saves 100%</strong>
               <small>Repeated prompt detected · $0.02 value · semantic cache: $0.00 cost · same answer every time</small>
+            </button>
+            <button class="scenario-option" type="button" data-scenario="enterprise">
+              <span>06 / Claude Opus 4 → Sonnet — enterprise scale</span>
+              <strong>128K context legal document review — $2.85 per call, 200K calls/month</strong>
+              <small>48,000 input + 12,000 output tokens · $570K/mo baseline · GOVERIS routes 74% to Sonnet · projected $421K/mo saved</small>
             </button>
             <div class="demo-runtime">
               <span>Evaluation source</span>
@@ -1040,6 +1045,26 @@ enforcement    off during replay</pre>
               prompt_complexity: 0.57,
               quality_floor: 0.9,
               max_latency_ms: 700,
+              explain: true
+            }
+          }
+        },
+        enterprise: {
+          summary: "Legal doc review / enterprise-legal / standard / Opus 4 → Sonnet 4 — 48K+12K tokens · $2.85→$0.54/call",
+          payload: {
+            model: "claude-opus-4",
+            input_tokens: 48000,
+            output_tokens: 12000,
+            metadata: {
+              tenant_id: "enterprise-legal",
+              use_case: "contract-clause-extraction",
+              workload_criticality: "standard",
+              estimated_business_value_cents: 450,
+              risk_score: 0.18,
+              confidence_score: 0.93,
+              prompt_complexity: 0.62,
+              quality_floor: 0.72,
+              max_latency_ms: 8000,
               explain: true
             }
           }
