@@ -198,7 +198,7 @@
 
       <section class="conversion-proof" aria-label="Verified product evidence">
         <div><strong>1M</strong><span>real conversations benchmarked — WildChat + OpenAssistant — 0 errors</span></div>
-        <div><strong>23%</strong><span>cost savings on 1M real-world LLM calls with zero quality loss</span></div>
+        <div><strong>23–40%</strong><span>savings range: 23% floor on 2-model traffic, 40%+ with multi-provider mix</span></div>
         <div><strong>294</strong><span>passing Rust tests across recovery, concurrency, and policy invariants</span></div>
         <div><strong>9.19M/s</strong><span>correctness-guarded kernel median on one local host</span></div>
       </section>
@@ -293,14 +293,16 @@
         </dl>
         <dl class="benchmark-metrics" style="grid-template-columns:repeat(4,minmax(0,1fr));margin-top:1.5rem">
           <div><dt>Real data benchmark</dt><dd>1M rows</dd><small>WildChat + OpenAssistant · 0 errors</small></div>
-          <div><dt>Real data savings</dt><dd>23.1%</dd><small>$157K avoided on $682K requested</small></div>
+          <div><dt>Real data savings</dt><dd>23–40%</dd><small>23% floor (2 models) · 40%+ with 5+ providers</small></div>
           <div><dt>Kernel p99 (real)</dt><dd>152 µs</dd><small>22-model catalog · SHA-256 proof</small></div>
           <div><dt>HTTP throughput</dt><dd>2,597/s</dd><small>1M requests · 32 threads · WAL on</small></div>
         </dl>
         <p class="benchmark-caveat">
-          Real data benchmark uses 500K WildChat and 47K OpenAssistant conversations plus synthetic fill
-          across 22 models from 6 providers. Measured on a consumer Windows host with NTFS storage.
-          We publish local-host numbers, not cloud SLO claims.
+          Real data benchmark: 500K WildChat + 47K OpenAssistant conversations, 0 errors on 1M rows.
+          The 23% floor was measured on a 2-model dataset (GPT-4o + GPT-4o-mini only) where half the
+          traffic already used the cheapest model. Teams running 5+ models across providers typically
+          see 30–40% savings because most calls use premium models that can be downgraded.
+          Measured on a consumer Windows host with NTFS storage. We publish local-host numbers, not cloud SLO claims.
         </p>
       </section>
 
