@@ -310,8 +310,8 @@
         </div>
         <div class="feature-card reveal reveal-delay-1">
           <h3>GBM Compiled to Rust Trees</h3>
-          <p>200 GBM trees trained on 2,090 labeled prompts, exported as pure Rust source code. No ONNX runtime, no Python, no GPU. The model predicts quality_floor, risk_score, and confidence_score from a 384-dim sentence embedding — compiled directly into the binary.</p>
-          <span class="tag">40K lines Rust &middot; 0 dependencies &middot; &lt;1ms inference</span>
+          <p>200 GBM trees trained on 1,512 multilingual prompts (EN/TR/JA/ZH/FR/DE), exported as pure Rust source code. No ONNX runtime, no Python, no GPU. Predicts quality_floor, risk_score, and confidence_score from a 384-dim multilingual embedding.</p>
+          <span class="tag">37K lines Rust &middot; 7 languages &middot; 0 dependencies &middot; &lt;1ms</span>
         </div>
       </div>
     </div>
@@ -564,8 +564,8 @@
           <div class="tech-desc">200 decision trees compiled to 40K lines of pure Rust. Zero runtime dependency. &lt;1ms inference.</div>
         </div>
         <div class="tech-item reveal reveal-delay-3">
-          <div class="tech-name">Sentence Embedding (384-dim)</div>
-          <div class="tech-desc">all-MiniLM-L6-v2 for prompt understanding. CPU-only, ~9ms. Predicts quality_floor, risk, confidence from text.</div>
+          <div class="tech-name">Multilingual Embedding (384-dim)</div>
+          <div class="tech-desc">paraphrase-multilingual-MiniLM-L12-v2 for cross-language prompt understanding. EN/TR/JA/ZH/FR/DE. CPU-only, ~9ms.</div>
         </div>
         <div class="tech-item reveal">
           <div class="tech-name">Circuit Breaker</div>

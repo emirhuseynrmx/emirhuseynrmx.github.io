@@ -144,7 +144,7 @@ No hyperparameter search performed. Standard defaults.</code></pre>
   <h2>7. GBM Prompt Model</h2>
   <ul>
     <li>2,090 labeled prompts, 7 categories, template-generated</li>
-    <li>Embedding: all-MiniLM-L6-v2 (22M params, 384-dim, CPU, ~9ms)</li>
+    <li>Embedding: paraphrase-multilingual-MiniLM-L12-v2 (multilingual, 384-dim, CPU, ~9ms)</li>
     <li>Export: 200 trees → 40K lines pure Rust, <1ms inference</li>
     <li>MAE: quality_floor 0.046, risk 0.052, confidence 0.051</li>
     <li><strong>Limitation:</strong> template data, needs retraining on real prompts</li>
