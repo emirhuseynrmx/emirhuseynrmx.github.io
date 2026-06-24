@@ -729,12 +729,13 @@
       <p class="hero-tagline reveal reveal-delay-2">The decision engine that learns where to spend</p>
       <p class="hero-sub reveal reveal-delay-3">
         <strong>Adaptive routing</strong> with Thompson Sampling. <strong>Outcome-calibrated</strong> quality floors.
-        <strong>SHA-256 sealed</strong> proof chain. <strong>22 models</strong> across 6 providers.
+        <strong>Three-level proof</strong>: tamper detection + correctness certificate + optimality proof.
+        <strong>22 models</strong> across 6 providers. <strong>Automatic policy evolution</strong> with counterfactual replay.
         <br><br>
         <strong>1M real conversations: 0 errors, $572K saved (84%).</strong>
         <strong>1.1M across 4 industries: 0 runtime failures.</strong>
         <br><br>
-        316 tests. Integer kernel. Zero <code style="font-family:var(--mono);color:var(--gold);font-size:0.95rem;">unsafe</code> code.
+        334 tests. Integer kernel. Zero <code style="font-family:var(--mono);color:var(--gold);font-size:0.95rem;">unsafe</code> code.
       </p>
       <div class="hero-actions reveal reveal-delay-4">
         <a class="btn btn-primary" href="/goveris/">GOVERIS Product</a>
@@ -915,10 +916,86 @@
     </div>
   </section>
 
-  <!-- ── 03 Budget Enforcement ── -->
+  <!-- ── 03b Formal Verification ── -->
+  <section id="verification">
+    <div class="container">
+      <p class="section-label reveal">04 &mdash; Formal Decision Verification</p>
+      <h2 class="section-title reveal">Three levels of proof. Not just "what happened" &mdash; "why it was correct."</h2>
+      <p class="section-desc reveal">
+        Most systems log decisions. Calybris proves them. Each decision can be verified
+        against the policy rules that produced it &mdash; not after the fact, but structurally.
+      </p>
+
+      <div class="detail-grid reveal">
+        <div class="detail-card">
+          <h4>Level 1: Tamper Proof</h4>
+          <p>SHA-256 hash chain. Every decision references the previous one. Modify any record and the chain breaks. The engine refuses to start on a broken chain.</p>
+        </div>
+        <div class="detail-card">
+          <h4>Level 2: Correctness Certificate</h4>
+          <p>Six rule checks per decision: risk limit, confidence floor, quality floor, budget limit, positive utility, and optimality. Each check records evidence. The certificate is SHA-256 signed.</p>
+        </div>
+        <div class="detail-card">
+          <h4>Level 3: Optimality Proof</h4>
+          <p>Proves the selected model had the highest utility among ALL eligible candidates &mdash; not just "better than second-best." Includes every model's utility in the proof hash.</p>
+        </div>
+        <div class="detail-card">
+          <h4>Implicit Feedback</h4>
+          <p>When explicit outcome feedback isn't available, the engine infers quality from proxy signals: provider latency, HTTP errors, client retries, stream early-abort. No manual feedback required.</p>
+        </div>
+      </div>
+
+      <div class="callout reveal">
+        <strong>For regulated domains:</strong> The correctness certificate answers "Given THIS input and THIS policy,
+        was THIS the only valid decision?" &mdash; with cryptographic proof and evidence strings for each rule.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 04 Policy Evolution ── -->
+  <section id="evolution">
+    <div class="container">
+      <p class="section-label reveal">05 &mdash; Automatic Policy Evolution</p>
+      <h2 class="section-title reveal">The engine proposes. You approve. The proof verifies.</h2>
+      <p class="section-desc reveal">
+        Calybris analyzes its own outcome data, synthesizes policy improvements,
+        replays them counterfactually against historical decisions, verifies all invariants,
+        and presents a promotion report with SHA-256 proof.
+      </p>
+
+      <div class="arch-diagram reveal">
+        <div class="arch-flow">
+          <span class="arch-node">Outcome Data</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node highlight">Policy Synthesizer</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node highlight">Counterfactual Replay</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node">Invariant Check</span>
+          <span class="arch-arrow">&rarr;</span>
+          <span class="arch-node highlight">Promotion Report</span>
+        </div>
+      </div>
+
+      <ul class="constraint-list reveal">
+        <li><strong>Synthesize:</strong> analyzes adaptive state + quality tracker to propose new quality floors per regime</li>
+        <li><strong>Replay:</strong> re-evaluates historical decisions with proposed policy, measures savings and miss rate delta</li>
+        <li><strong>Verify:</strong> checks quality floors &ge; 0.20, budget preserved, risk limits enforced, hash chain valid</li>
+        <li><strong>Recommend:</strong> PROMOTE (savings &gt;5%, quality preserved) / REVIEW / REJECT (invariant violation)</li>
+        <li><strong>Proof:</strong> entire proposal is SHA-256 hashed &mdash; deterministic and independently verifiable</li>
+      </ul>
+
+      <div class="callout reveal">
+        <strong>The engine never auto-promotes.</strong> It proposes with evidence. The human decides.
+        This is governance-safe policy evolution &mdash; not autonomous optimization.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 Budget Enforcement ── -->
   <section id="budget">
     <div class="container">
-      <p class="section-label reveal">04 &mdash; Budget Enforcement</p>
+      <p class="section-label reveal">06 &mdash; Budget Enforcement</p>
       <h2 class="section-title reveal">Per-tenant atomic budget control</h2>
       <p class="section-desc reveal">
         Balances are denominated in microcents and stored as
@@ -960,7 +1037,7 @@
   <!-- ── 04 Causal Regret ── -->
   <section id="regret">
     <div class="container">
-      <p class="section-label reveal">05 &mdash; Causal Regret Measurement</p>
+      <p class="section-label reveal">07 &mdash; Causal Regret Measurement</p>
       <h2 class="section-title reveal">Doubly-robust off-policy evaluation</h2>
       <p class="section-desc reveal">
         The engine measures whether past decisions were optimal by comparing actual outcomes
@@ -1007,7 +1084,7 @@
   <!-- ── 05 Staged Policy Rollout ── -->
   <section id="rollout">
     <div class="container">
-      <p class="section-label reveal">06 &mdash; Staged Policy Rollout</p>
+      <p class="section-label reveal">08 &mdash; Staged Policy Rollout</p>
       <h2 class="section-title reveal">Shadow evaluation before enforcement</h2>
       <p class="section-desc reveal">
         New policies are never deployed directly. A candidate policy snapshot is staged and runs
@@ -1048,7 +1125,7 @@
   <!-- ── 06 Governance Hard Limits ── -->
   <section id="governance">
     <div class="container">
-      <p class="section-label reveal">07 &mdash; Governance Hard Limits</p>
+      <p class="section-label reveal">09 &mdash; Governance Hard Limits</p>
       <h2 class="section-title reveal">Fail-closed safety gates</h2>
       <p class="section-desc reveal">
         These constraints are evaluated before every decision. They cannot be overridden by client metadata,
@@ -1094,7 +1171,7 @@
   <!-- ── Domain-Neutral Proof ── -->
   <section id="domains">
     <div class="container">
-      <p class="section-label reveal">08 &mdash; Domain-Neutral Proof</p>
+      <p class="section-label reveal">10 &mdash; Domain-Neutral Proof</p>
       <h2 class="section-title reveal">1,110,073 real records. 4 industries. 0 errors.</h2>
       <p class="section-desc reveal">
         Same binary. Zero domain-specific code. Every dataset is real &mdash;
@@ -1135,8 +1212,8 @@
   <!-- ── 09 Test Infrastructure ── -->
   <section id="tests">
     <div class="container">
-      <p class="section-label reveal">09 &mdash; Test Infrastructure</p>
-      <h2 class="section-title reveal">316 tests. Not happy-path.</h2>
+      <p class="section-label reveal">11 &mdash; Test Infrastructure</p>
+      <h2 class="section-title reveal">334 tests. Not happy-path.</h2>
       <p class="section-desc reveal">
         The test suite is designed to break the engine, not confirm that it works. Fault injection,
         property-based testing, exhaustive concurrency analysis, and adversarial inputs.
@@ -1172,7 +1249,7 @@
   <!-- ── 08 Products ── -->
   <section id="products">
     <div class="container">
-      <p class="section-label reveal">10 &mdash; Products Built on Calybris</p>
+      <p class="section-label reveal">12 &mdash; Products Built on Calybris</p>
       <h2 class="section-title reveal">Four products, one engine</h2>
       <p class="section-desc reveal">
         Each product plugs its own domain vocabulary into the Calybris policy gate.
