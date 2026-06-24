@@ -236,7 +236,7 @@ If you're running LLM workloads and want to test whether adaptive routing saves 
 
 **GOVERIS** — AI cost governance product: [emirhuseyin.tech/goveris](https://emirhuseyin.tech/goveris)
 
-**Book a pilot call**: [cal.com/emirhuseyininci/goveris-pilot](https://cal.com/emirhuseyininci/goveris-pilot)
+**Book a pilot call**: [cal.com/emirhuseyininci/goveris-pilot](mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Pilot%20Call)
 
 emirhuseyininci@gmail.com
 

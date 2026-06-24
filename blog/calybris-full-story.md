@@ -499,7 +499,7 @@ The first 5 pilots get the Shadow Scan at $290 (40% off) while I build the first
 
 **GOVERIS** (AI cost governance product) — [emirhuseyin.tech/goveris](https://emirhuseyin.tech/goveris)
 
-**Book a 15-minute pilot call** — [cal.com/emirhuseyininci/goveris-pilot](https://cal.com/emirhuseyininci/goveris-pilot)
+**Book a 15-minute pilot call** — [cal.com/emirhuseyininci/goveris-pilot](mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Pilot%20Call)
 
 **Email** — emirhuseyininci@gmail.com
 
