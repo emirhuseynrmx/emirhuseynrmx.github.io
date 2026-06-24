@@ -100,7 +100,7 @@
           <div class="signal-row" aria-label="GOVERIS proof points">
             <span><strong>No prompt capture</strong></span>
             <span><strong>Runs in your VPC</strong></span>
-            <span><strong>294 tests</strong> fault injection + proptest + loom</span>
+            <span><strong>334 tests</strong> fault injection + proptest + loom</span>
           </div>
           <p class="hero-proof-note">
             Built for OpenAI, Anthropic, Google, DeepSeek, Meta, and Mistral.
@@ -201,8 +201,8 @@
       <section class="conversion-proof" aria-label="Verified product evidence">
         <div><strong>1M</strong><span>real conversations benchmarked — 0 crashes, 0 data corruption</span></div>
         <div><strong>14–45%</strong><span>marginal savings over your current routing — measured, not theoretical</span></div>
-        <div><strong>311</strong><span>passing Rust tests across recovery, concurrency, and policy invariants</span></div>
-        <div><strong>9.19M/s</strong><span>correctness-guarded kernel median on one local host</span></div>
+        <div><strong>334</strong><span>passing Rust tests across recovery, concurrency, and policy invariants</span></div>
+        <div><strong>8.6M/s</strong><span>correctness-guarded kernel median on one local host</span></div>
       </section>
 
       <section class="proof-band" aria-label="Quality guarantee">
@@ -344,7 +344,7 @@
       <section class="proof-band" aria-label="Engineering proof">
         <div>
           <span>Engineering proof</span>
-          <strong>294 tests · fault injection · proptest · loom exhaustive concurrency</strong>
+          <strong>334 tests · fault injection · proptest · loom exhaustive concurrency</strong>
         </div>
         <div>
           <span>Hardened</span>
@@ -792,8 +792,8 @@ enforcement    off during replay</pre>
             Either way, the proof and decision factors appear immediately—without a paid model call.
           </p>
           <div class="demo-mode-note">
-            <strong>Default on this page: deterministic browser replay</strong>
-            <span>Connect a Calybris demo endpoint and the same panel switches to a server-authored decision.</span>
+            <strong>Public deterministic replay demo</strong>
+            <span>Same kernel logic running in-browser. No paid API call, no server required. Click a scenario to see the decision.</span>
           </div>
         </div>
 
@@ -886,16 +886,16 @@ enforcement    off during replay</pre>
 
             <div class="decision-explain">
               <span>Decision reason</span>
-              <strong id="decision-reason">Waiting for evaluation.</strong>
+              <strong id="decision-reason">Select a scenario to see a real decision.</strong>
               <small id="fallback-chain">Fallback chain: --</small>
             </div>
 
             <div class="payload">
               <div class="payload-head">
                 <span>/api/v1/route</span>
-                <span id="policy-latency">not evaluated</span>
+                <span id="policy-latency">—</span>
               </div>
-              <pre id="decision">Waiting for a policy decision...</pre>
+              <pre id="decision">Deterministic public-demo replay. Click a scenario above.</pre>
             </div>
           </section>
         </div>
