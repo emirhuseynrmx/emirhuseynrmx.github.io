@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Calybris Engine | Adaptive Proof-Carrying Decision Engine</title>
-  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Integer kernel, Thompson Sampling, outcome learning, hash-chained WAL. 316 tests, 1.1M real-data benchmark, 4 industries."/>
+  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Integer kernel, Thompson Sampling, outcome learning, hash-chained WAL. 334 tests, 1.1M real-data benchmark, 4 industries."/>
   <meta name="keywords" content="decision engine, proof-carrying, Thompson Sampling, adaptive routing, Rust, audit trail, WAL, quality floor, Calybris"/>
   <meta name="author" content="Emir H. Inci"/>
   <meta name="robots" content="index, follow"/>
@@ -14,7 +14,7 @@
 
   <meta property="og:type" content="website"/>
   <meta property="og:title" content="Calybris Engine | Adaptive Proof-Carrying Decision Engine"/>
-  <meta property="og:description" content="Domain-neutral prescriptive decision engine with Thompson Sampling, outcome learning, and cryptographic proof. 316 tests, 1.1M real-data benchmark."/>
+  <meta property="og:description" content="Domain-neutral prescriptive decision engine with Thompson Sampling, outcome learning, and cryptographic proof. 334 tests, 1.1M real-data benchmark."/>
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:title" content="Calybris Engine"/>
   <meta name="twitter:description" content="Adaptive proof-carrying decision engine. 1.1M real records, 4 industries, 0 errors."/>
@@ -207,9 +207,10 @@
         gets an <strong>adaptive quality floor</strong>, <strong>Thompson Sampling exploration</strong>,
         <strong>outcome-calibrated routing</strong>, and a <strong>SHA-256 sealed proof</strong>.
         <br><br>
-        <strong>1M real conversations: 0 errors, $572K saved, 84% cost reduction.</strong>
-        <br>
-        <strong>1.1M across 4 industries: 0 runtime failures, 0 domain-specific code.</strong>
+        <strong>Three-level proof</strong>: tamper + correctness + optimality. <strong>Automatic policy evolution</strong> with counterfactual replay.
+        <br><br>
+        <strong>1M real conversations: 0 errors, $572K saved.</strong>
+        <strong>1.1M across 4 industries: 0 runtime failures.</strong>
       </p>
       <div class="hero-actions reveal reveal-delay-4">
         <a class="btn btn-primary" href="/goveris/">GOVERIS Product</a>
@@ -251,7 +252,7 @@
 
       <div class="bench-grid">
         <div class="bench-card reveal">
-          <div class="bench-value">316</div>
+          <div class="bench-value">334</div>
           <div class="bench-unit">tests passing</div>
           <div class="bench-label">Fault injection + proptest + loom + adaptive</div>
         </div>
@@ -344,10 +345,77 @@
     </div>
   </section>
 
-  <!-- ── 04 Domain-Neutral Proof ── -->
+  <!-- ── 04 Formal Verification ── -->
+  <section id="verification">
+    <div class="container">
+      <p class="section-label reveal">04 &mdash; Formal Decision Verification</p>
+      <h2 class="section-title reveal">Three levels of proof. Not just "what" &mdash; "why it was correct."</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card reveal">
+          <h3>Level 1: Tamper Proof</h3>
+          <p>SHA-256 hash chain. Modify any record, the chain breaks. Engine refuses to start on a broken chain.</p>
+          <span class="tag">existing &middot; hash-chained WAL</span>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <h3>Level 2: Correctness Certificate</h3>
+          <p>Six rule checks per decision: risk limit, confidence floor, quality floor, budget, utility, optimality. Each check has evidence. Certificate is SHA-256 signed.</p>
+          <span class="tag">6 rules &middot; per-decision</span>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <h3>Level 3: Optimality Proof</h3>
+          <p>Proves the selected model has the highest utility among ALL eligible candidates &mdash; every model's utility included in the proof hash.</p>
+          <span class="tag">full candidate frontier</span>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <h3>Implicit Feedback</h3>
+          <p>No explicit outcome? Engine infers quality from proxy signals: latency, HTTP errors, retries, stream early-abort. Zero manual feedback needed.</p>
+          <span class="tag">5 signal types</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 Policy Evolution ── -->
+  <section id="evolution">
+    <div class="container">
+      <p class="section-label reveal">05 &mdash; Automatic Policy Evolution</p>
+      <h2 class="section-title reveal">Engine proposes. You approve. Proof verifies.</h2>
+      <p class="section-desc reveal">Calybris synthesizes policy improvements from outcome data, replays them counterfactually, verifies invariants, and produces a SHA-256 signed promotion report.</p>
+
+      <div class="bench-grid">
+        <div class="bench-card reveal">
+          <div class="bench-value">Synthesize</div>
+          <div class="bench-unit">new quality floors</div>
+          <div class="bench-label">From adaptive state + quality tracker</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-1">
+          <div class="bench-value">Replay</div>
+          <div class="bench-unit">counterfactual</div>
+          <div class="bench-label">Re-evaluate history with proposed policy</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-2">
+          <div class="bench-value">Verify</div>
+          <div class="bench-unit">invariants</div>
+          <div class="bench-label">Quality, budget, risk &mdash; all must pass</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-3">
+          <div class="bench-value">Propose</div>
+          <div class="bench-unit">with proof</div>
+          <div class="bench-label">PROMOTE / REVIEW / REJECT</div>
+        </div>
+      </div>
+
+      <div class="bench-note reveal">
+        The engine never auto-promotes. It proposes with evidence. The human decides. Governance-safe policy evolution.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 06 Domain-Neutral Proof ── -->
   <section id="domains">
     <div class="container">
-      <p class="section-label reveal">04 &mdash; Domain-Neutral Proof</p>
+      <p class="section-label reveal">06 &mdash; Domain-Neutral Proof</p>
       <h2 class="section-title reveal">Same binary. 4 industries. 1,110,073 real records. 0 errors.</h2>
       <p class="section-desc reveal">Every dataset is real — Yahoo Finance, KDD Cup 99, UCI Covertype, California Housing. No synthetic data. No domain-specific code changes.</p>
 
@@ -404,7 +472,7 @@
   <!-- ── 05 Architecture ── -->
   <section id="architecture">
     <div class="container">
-      <p class="section-label reveal">05 &mdash; Architecture</p>
+      <p class="section-label reveal">07 &mdash; Architecture</p>
       <h2 class="section-title reveal">Request to proof in one pipeline. Outcome back to learning.</h2>
 
       <div class="arch-flow reveal">
@@ -436,8 +504,8 @@
   <!-- ── 06 Test Infrastructure ── -->
   <section id="tests">
     <div class="container">
-      <p class="section-label reveal">06 &mdash; Test Infrastructure</p>
-      <h2 class="section-title reveal">316 tests. Designed to break the engine.</h2>
+      <p class="section-label reveal">08 &mdash; Test Infrastructure</p>
+      <h2 class="section-title reveal">334 tests. Designed to break the engine.</h2>
 
       <div class="feature-grid">
         <div class="feature-card reveal">
@@ -463,7 +531,7 @@
   <!-- ── 07 Tech Stack ── -->
   <section id="tech">
     <div class="container">
-      <p class="section-label reveal">07 &mdash; Tech Stack</p>
+      <p class="section-label reveal">09 &mdash; Tech Stack</p>
       <h2 class="section-title reveal">Infrastructure</h2>
 
       <div class="tech-grid">
@@ -514,7 +582,7 @@
   <!-- ── 08 Shadow Replay Results ── -->
   <section id="shadow-replay">
     <div class="container">
-      <p class="section-label reveal">08 &mdash; Shadow Replay</p>
+      <p class="section-label reveal">10 &mdash; Shadow Replay</p>
       <h2 class="section-title reveal">The engine gets better every week. Here's the data.</h2>
       <p class="section-desc reveal">Simulated 4-week shadow replay pilot (10K decisions). Adaptive routing improves as Thompson Sampling calibrates quality floors from outcome feedback.</p>
 
@@ -541,7 +609,7 @@
   <!-- ── 09 Quickstart ── -->
   <section id="quickstart">
     <div class="container">
-      <p class="section-label reveal">09 &mdash; Quickstart</p>
+      <p class="section-label reveal">11 &mdash; Quickstart</p>
       <h2 class="section-title reveal">Deploy in 3 commands. Audit in 7 days.</h2>
 
       <div class="feature-grid">
@@ -577,7 +645,7 @@
   <!-- ── 10 Products ── -->
   <section id="products">
     <div class="container">
-      <p class="section-label reveal">10 &mdash; Powered by Calybris</p>
+      <p class="section-label reveal">12 &mdash; Powered by Calybris</p>
       <h2 class="section-title reveal">One engine, multiple products</h2>
       <p class="section-desc reveal">Each product plugs its own domain vocabulary. The proof machinery, adaptive routing, and durability layer are shared.</p>
 
