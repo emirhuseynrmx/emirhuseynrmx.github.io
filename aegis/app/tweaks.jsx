@@ -17,7 +17,7 @@ const STRINGS = {
     live_quarter: "LIVE · Q2 FY26",
     search_placeholder: "Search customer ID, cohort, experiment…",
     export: "Export",
-    run_batch: "Run intervention batch",
+    run_batch: "Demo Preview",
     // heading
     heading_title: "Retention Intelligence",
     heading_sub_a: "WACC-discounted EV optimization ·",
