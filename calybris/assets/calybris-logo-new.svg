@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90.71 90.71">
+  <defs>
+    <style>
+      .cls-1 {
+        letter-spacing: 0em;
+      }
+
+      .cls-2 {
+        font-family: Calibri-Light, Calibri;
+        font-size: 9px;
+      }
+
+      .cls-3 {
+        fill: #63b89b;
+        font-family: Calibri-LightItalic, Calibri;
+        font-size: 7px;
+        font-style: italic;
+      }
+
+      .cls-4 {
+        letter-spacing: -.08em;
+      }
+
+      .cls-5 {
+        font-weight: 300;
+      }
+    </style>
+  </defs>
+  <path d="M19.51,22.64l-11.85,6.77v26.69l11.82,7.25c.23.14.54-.02.54-.3v-20.75s-3.78-2.2-3.78-2.2l3.77-2.4.02-14.75c0-.27-.29-.44-.53-.31Z"/>
+  <path d="M33.51,22.64l11.85,6.77v26.69l-11.82,7.25c-.23.14-.54-.02-.54-.3v-20.75s3.78-2.2,3.78-2.2l-3.77-2.4-.02-14.75c0-.27.29-.44.53-.31Z"/>
+  <path d="M23.75,48.44s1.77-1.93,2.58-1.91c.76.02,2.6,1.91,2.6,1.91v16.03s-1.86,1.66-2.64,1.67-2.54-1.72-2.54-1.72v-15.99Z"/>
+  <text class="cls-5" transform="translate(47.56 41.61)"><tspan class="cls-2"><tspan x="0" y="0">CA</tspan><tspan class="cls-4" x="9.89" y="0">L</tspan><tspan x="12.96" y="0">YBRIS</tspan></tspan><tspan class="cls-3"><tspan class="cls-1" x="0" y="8.4">E</tspan><tspan x="3.35" y="8.4">ngine</tspan></tspan></text>
+</svg>
