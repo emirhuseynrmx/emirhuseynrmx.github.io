@@ -47,7 +47,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="styles.css?v=20260628-delivery-compact"/>
+  <link rel="stylesheet" href="styles.css?v=20260628-delivery-products"/>
 </head>
 <body>
 
@@ -304,129 +304,120 @@
   <!-- CLIENT DELIVERY -->
   <section class="delivery" id="delivery">
     <div class="section-label"><span>03</span> Client Delivery Work</div>
-    <div class="delivery-head">
-      <h2>Reusable automation and analytics packages</h2>
-      <p>Small, scoped systems built around clean inputs, validated outputs, tests, and client-ready reports. The work is intentionally practical: CSVs, PDFs, APIs, automation flows, and source code that can be handed over.</p>
-    </div>
-
-    <div class="delivery-grid">
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/churn-report-preview.png" alt="Churn prediction retention report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
+    <article class="project delivery-project" id="delivery-churn">
+      <div class="project-index">D01</div>
+      <div class="project-badge">Client-ready analytics</div>
+      <div class="project-content">
+        <div class="project-tags">
           <span class="ptag ptag-python">Python</span>
           <span class="ptag ptag-ml">XGBoost</span>
           <span class="ptag ptag-ai">SHAP</span>
         </div>
-        <h3><a href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener">Churn Prediction &amp; Retention Report</a></h3>
-        <p>Validated customer CSV intake, churn risk scoring, lift analysis, explainability, retention action queue, and PDF report.</p>
-      </article>
+        <h2><a href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener">Churn Prediction &amp; Retention Report</a></h2>
+        <p>Customer CSV in, retention operating list out. Validated intake, probability scoring, lift analysis, explainability, action queue, model card, and PDF report.</p>
+        <div class="project-grid">
+          <div class="pgrid-cell"><span>input</span><strong>Customer CSV</strong></div>
+          <div class="pgrid-cell"><span>model</span><strong>XGBoost / Logistic</strong></div>
+          <div class="pgrid-cell"><span>output</span><strong>PDF + CSVs</strong></div>
+          <div class="pgrid-cell"><span>proof</span><strong>SHAP + Lift</strong></div>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener" class="btn-demo"><span class="demo-pulse"></span> View Repo</a>
+        <a href="https://github.com/emirhuseynrmx/churn-prediction-retention-report/blob/main/docs/samples/sample_churn_retention_report.pdf" target="_blank" rel="noopener" class="btn-ghost">Sample Report &nearr;</a>
+      </div>
+    </article>
 
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/scraping-data-pipeline" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/scraping-report-preview.png" alt="Scraping data pipeline report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
+    <article class="project delivery-project" id="delivery-data">
+      <div class="project-index">D02</div>
+      <div class="project-badge">Data automation</div>
+      <div class="project-content">
+        <div class="project-tags">
           <span class="ptag ptag-python">Python</span>
           <span class="ptag ptag-infra">Pandera</span>
-          <span class="ptag ptag-live">CSV</span>
+          <span class="ptag ptag-live">CSV / Excel</span>
         </div>
-        <h3><a href="https://github.com/emirhuseynrmx/scraping-data-pipeline" target="_blank" rel="noopener">Scraping Data Pipeline</a></h3>
-        <p>Typed records, schema validation, retry-aware scraping, CSV/JSONL exports, tests, and a sample handoff report.</p>
+        <h2>Scraping, Cleaning &amp; Monitoring Pipelines</h2>
+        <p>Reusable project templates for public web scraping, lead-list cleaning, CSV/Excel normalization, and price monitoring. Built around typed schemas, clean exports, tests, and handoff reports.</p>
+        <div class="project-grid">
+          <div class="pgrid-cell"><span>scraping</span><strong>Validated exports</strong></div>
+          <div class="pgrid-cell"><span>cleaning</span><strong>CSV / Excel</strong></div>
+          <div class="pgrid-cell"><span>quality</span><strong>Pydantic + Pandera</strong></div>
+          <div class="pgrid-cell"><span>delivery</span><strong>Reports + tests</strong></div>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="https://github.com/emirhuseynrmx/scraping-data-pipeline" target="_blank" rel="noopener" class="btn-demo"><span class="demo-pulse"></span> Scraping</a>
+        <a href="https://github.com/emirhuseynrmx/data-quality-cleaning-api" target="_blank" rel="noopener" class="btn-ghost">Cleaning API &nearr;</a>
+        <a href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener" class="btn-ghost">Price Monitor &nearr;</a>
+      </div>
+    </article>
+
+    <div class="project-pair delivery-pair">
+      <article class="project" id="delivery-rag">
+        <div class="project-index">D03</div>
+        <div class="project-content">
+          <div class="project-tags">
+            <span class="ptag ptag-ai">RAG</span>
+            <span class="ptag ptag-python">FastAPI</span>
+            <span class="ptag ptag-ml">Retrieval</span>
+          </div>
+          <h3><a href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener">RAG Chatbot Template</a></h3>
+          <p>Document ingestion, chunk retrieval, source-aware answers, CLI, API endpoint, and tests that run without external model calls.</p>
+          <div class="project-grid project-grid-sm">
+            <div class="pgrid-cell"><span>docs</span><strong>PDF / TXT</strong></div>
+            <div class="pgrid-cell"><span>handoff</span><strong>API + report</strong></div>
+          </div>
+          <div class="project-actions project-actions-sm">
+            <a href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener" class="btn-demo btn-demo-sm"><span class="demo-pulse"></span> Repo</a>
+          </div>
+        </div>
       </article>
 
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/data-quality-cleaning-api" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/lead-quality-report-preview.png" alt="Lead quality cleaning API report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
-          <span class="ptag ptag-python">FastAPI</span>
-          <span class="ptag ptag-infra">Pydantic</span>
-          <span class="ptag ptag-live">API</span>
+      <article class="project" id="delivery-automation">
+        <div class="project-index">D04</div>
+        <div class="project-content">
+          <div class="project-tags">
+            <span class="ptag ptag-infra">n8n</span>
+            <span class="ptag ptag-ai">Automation</span>
+            <span class="ptag ptag-live">Telegram</span>
+          </div>
+          <h3><a href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener">Business Automation Workflows</a></h3>
+          <p>Import-ready flows for forms, emails, sheets, alerts, summaries, and small-business Telegram workflows.</p>
+          <div class="project-grid project-grid-sm">
+            <div class="pgrid-cell"><span>workflows</span><strong>n8n JSON</strong></div>
+            <div class="pgrid-cell"><span>bots</span><strong>Lead capture</strong></div>
+          </div>
+          <div class="project-actions project-actions-sm">
+            <a href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener" class="btn-demo btn-demo-sm"><span class="demo-pulse"></span> Repo</a>
+          </div>
         </div>
-        <h3><a href="https://github.com/emirhuseynrmx/data-quality-cleaning-api" target="_blank" rel="noopener">Lead Quality Cleaning API</a></h3>
-        <p>CRM lead list cleaning with email and phone normalization, duplicate checks, spreadsheet-safe output, and report generation.</p>
-      </article>
-
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/csv-excel-cleaning-toolkit" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/cleaning-report-preview.png" alt="CSV and Excel cleaning report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
-          <span class="ptag ptag-python">Python</span>
-          <span class="ptag ptag-infra">Pandera</span>
-          <span class="ptag ptag-live">Excel</span>
-        </div>
-        <h3><a href="https://github.com/emirhuseynrmx/csv-excel-cleaning-toolkit" target="_blank" rel="noopener">CSV &amp; Excel Cleaning Toolkit</a></h3>
-        <p>Reusable cleaning profiles for messy spreadsheets, typed validation, quality summaries, clean exports, and PDF handoff reports.</p>
-      </article>
-
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/price-monitor-report-preview.png" alt="Price monitor pipeline report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
-          <span class="ptag ptag-python">Python</span>
-          <span class="ptag ptag-infra">Pandas</span>
-          <span class="ptag ptag-live">Alerts</span>
-        </div>
-        <h3><a href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">Price Monitor Pipeline</a></h3>
-        <p>Product price snapshots, threshold alerts, exportable reports, and a small pipeline shape that fits ecommerce monitoring jobs.</p>
-      </article>
-
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/rag-report-preview.png" alt="RAG chatbot delivery report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
-          <span class="ptag ptag-ai">RAG</span>
-          <span class="ptag ptag-python">FastAPI</span>
-          <span class="ptag ptag-ml">Retrieval</span>
-        </div>
-        <h3><a href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener">RAG Chatbot Template</a></h3>
-        <p>Local document ingestion, chunk retrieval, source-aware answers, CLI commands, FastAPI endpoint, and no external API dependency for tests.</p>
-      </article>
-
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/n8n-report-preview.png" alt="n8n automation workflow report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
-          <span class="ptag ptag-infra">n8n</span>
-          <span class="ptag ptag-live">Sheets</span>
-          <span class="ptag ptag-ai">Automation</span>
-        </div>
-        <h3><a href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener">n8n Business Workflows</a></h3>
-        <p>Import-ready workflows for forms, emails, sheets, alerts, and summaries with placeholders, metadata, and handoff notes.</p>
-      </article>
-
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/trading-report-preview.png" alt="Trading performance report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
-          <span class="ptag ptag-quant">Trading</span>
-          <span class="ptag ptag-python">Python</span>
-          <span class="ptag ptag-live">PDF</span>
-        </div>
-        <h3><a href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">Trading Performance Report Kit</a></h3>
-        <p>Trade CSV analysis, risk metrics, drawdown review, charts, and a clean PDF report for strategy evaluation.</p>
-      </article>
-
-      <article class="delivery-card">
-        <a href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener" class="delivery-shot">
-          <img src="assets/client-work/uplift-report-preview.png" alt="Criteo uplift modeling benchmark report preview" width="180" height="112" loading="lazy"/>
-        </a>
-        <div class="delivery-meta">
-          <span class="ptag ptag-ml">Causal ML</span>
-          <span class="ptag ptag-python">Python</span>
-          <span class="ptag ptag-ai">Uplift</span>
-        </div>
-        <h3><a href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">Criteo Uplift Modeling Benchmark</a></h3>
-        <p>7M-row campaign incrementality benchmark with S/T/X/DR learners, Causal Forest, AUUC, Qini curves, policy simulation, and sample report.</p>
       </article>
     </div>
+
+    <article class="project delivery-project" id="delivery-market">
+      <div class="project-index">D05</div>
+      <div class="project-badge">Research-grade reports</div>
+      <div class="project-content">
+        <div class="project-tags">
+          <span class="ptag ptag-quant">Trading</span>
+          <span class="ptag ptag-ml">Causal ML</span>
+          <span class="ptag ptag-python">Python</span>
+        </div>
+        <h2>Trading Performance &amp; Uplift Modeling Reports</h2>
+        <p>Report kits for strategy review and campaign incrementality: risk metrics, drawdown analysis, AUUC/Qini curves, policy simulation, and stakeholder-readable outputs.</p>
+        <div class="project-grid">
+          <div class="pgrid-cell"><span>trading</span><strong>Risk report</strong></div>
+          <div class="pgrid-cell"><span>causal</span><strong>Uplift ranking</strong></div>
+          <div class="pgrid-cell"><span>scale</span><strong>7M-row benchmark</strong></div>
+          <div class="pgrid-cell"><span>output</span><strong>Charts + PDF</strong></div>
+        </div>
+      </div>
+      <div class="project-actions">
+        <a href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener" class="btn-demo"><span class="demo-pulse"></span> Trading Kit</a>
+        <a href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener" class="btn-ghost">Uplift Benchmark &nearr;</a>
+      </div>
+    </article>
   </section>
 
   <!-- ── STACK ── -->
@@ -563,7 +554,7 @@
     nav.classList.toggle('nav-bg',y>60);lastY=y;
   },{passive:true});
 
-  var revealEls=document.querySelectorAll('.project,.cert,.metric,.stack-card,.contact-card,.research-card,.delivery-card,.engine-stats>div');
+  var revealEls=document.querySelectorAll('.project,.cert,.metric,.stack-card,.contact-card,.research-card,.engine-stats>div');
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(entries){
       entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
