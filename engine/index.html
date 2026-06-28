@@ -218,6 +218,7 @@
         <a class="btn btn-secondary" href="/goveris/">GOVERIS Product</a>
         <a class="btn btn-secondary" href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Pilot%20Call&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Request Pilot</a>
         <a class="btn btn-secondary" href="#benchmarks">View Benchmarks</a>
+        <a class="btn btn-secondary" href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">crates.io v0.3.12</a>
       </div>
     </div>
   </section>
@@ -254,9 +255,9 @@
 
       <div class="bench-grid">
         <div class="bench-card reveal">
-          <div class="bench-value">334</div>
+          <div class="bench-value">334+</div>
           <div class="bench-unit">tests passing</div>
-          <div class="bench-label">Fault injection + proptest + loom + adaptive</div>
+          <div class="bench-label">Fault injection + proptest + loom + miri + adaptive</div>
         </div>
         <div class="bench-card reveal reveal-delay-1">
           <div class="bench-value">22</div>
@@ -272,6 +273,11 @@
           <div class="bench-value">7.2x</div>
           <div class="bench-unit">fewer missed attacks</div>
           <div class="bench-label">Adaptive vs random on KDD Cup 99 (11% vs 80%)</div>
+        </div>
+        <div class="bench-card reveal reveal-delay-3">
+          <div class="bench-value">91.6%</div>
+          <div class="bench-unit">code coverage</div>
+          <div class="bench-label">llvm-cov line coverage. Remaining 8.4% is defensive error paths and Display impls</div>
         </div>
       </div>
     </div>
@@ -333,11 +339,11 @@
         </div>
         <div class="feature-card reveal reveal-delay-1">
           <h3>Hash-Chained WAL</h3>
-          <p>Decision N includes the hash of decision N-1. Delete, modify, or reorder any record and the chain breaks. Validated on startup before accepting new decisions. 69M rows tested.</p>
+          <p>Decision N includes the hash of decision N-1. Optional HMAC-SHA256 keying &mdash; attacker cannot recompute hashes without the secret key. Constant-time comparison via subtle crate. Validated on startup. 69M rows tested.</p>
         </div>
         <div class="feature-card reveal reveal-delay-2">
           <h3>Budget Conservation</h3>
-          <p>remaining + reserved + committed = initial. Proven with proptest across thousands of random operation sequences. Loom exhaustive testing verifies every thread interleaving.</p>
+          <p>remaining + reserved + committed = initial. CAS-based atomic operations with per-tenant exposure caps. Proven with proptest across thousands of random operation sequences. Loom exhaustive testing verifies all 7 concurrent interleavings. Miri confirms zero undefined behavior.</p>
         </div>
         <div class="feature-card reveal reveal-delay-3">
           <h3>Quality Floor Guarantee</h3>
@@ -507,7 +513,7 @@
   <section id="tests">
     <div class="container">
       <p class="section-label reveal">08 &mdash; Test Infrastructure</p>
-      <h2 class="section-title reveal">334 tests. Designed to break the engine.</h2>
+      <h2 class="section-title reveal">334+ tests. Designed to break the engine.</h2>
 
       <div class="feature-grid">
         <div class="feature-card reveal">
@@ -519,12 +525,17 @@
           <p>Full HTTP stack with mock providers. Shadow mode, proxy mode, auth planes, rate limiting, reconciliation. Axum + Tower end-to-end.</p>
         </div>
         <div class="feature-card reveal reveal-delay-2">
-          <h3>4 Loom Exhaustive Tests</h3>
-          <p>Every thread interleaving for concurrent budget operations. Three threads racing to reserve budget — total never exceeds limit under any schedule.</p>
+          <h3>7 Loom Exhaustive Tests</h3>
+          <p>Every thread interleaving for concurrent budget operations. Scenarios covered: concurrent reserve/release, reserve never overspends, top-up during reserve, failed overrun conservation, exposure cap concurrent, two concurrent topups, snapshot restore after mutation.</p>
         </div>
         <div class="feature-card reveal reveal-delay-3">
           <h3>Fault Injection</h3>
           <p>Truncated WAL writes, corrupted records, poisoned mutexes, disk-full scenarios, NaN/Infinity inputs. The engine recovers or rejects — never panics.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-4">
+          <h3>Miri UB Detection</h3>
+          <p>Nightly CI runs Miri on all library tests to detect undefined behavior: uninitialized reads, use-after-free, data races. 70 tests pass under Miri, 4 skipped (proptest/loom incompatible).</p>
+          <span class="tag">nightly CI &middot; zero UB</span>
         </div>
       </div>
     </div>

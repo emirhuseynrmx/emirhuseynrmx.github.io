@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Calybris Engine | Adaptive Proof-Carrying Decision Engine</title>
-  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Thompson Sampling, outcome learning, integer kernel, hash-chained WAL. 334 tests, 1.1M real-data benchmark, 4 industries."/>
+  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Thompson Sampling, outcome learning, integer kernel, hash-chained WAL. 334+ tests + Miri, 7 Loom exhaustive, 91.6% coverage, 1.1M real-data benchmark, 4 industries."/>
   <meta name="keywords" content="decision engine, proof-carrying, Thompson Sampling, adaptive routing, Rust, integer kernel, WAL, SHA-256, budget enforcement, quality floor, Calybris"/>
   <meta name="author" content="Emir H. Inci"/>
   <meta name="robots" content="index, follow"/>
@@ -706,8 +706,8 @@
 
   <!-- ── Nav ── -->
   <nav class="nav" id="main-nav">
-    <a class="nav-brand" href="/calybris/">
-      <span class="dot"></span>
+    <a class="nav-brand" href="/calybris/" style="display:flex;align-items:center;gap:0.5rem;">
+      <img src="assets/calybris-logo-new.svg" alt="Calybris" width="28" height="28" style="filter:brightness(1.2);" />
       CALYBRIS ENGINE
     </a>
     <div class="nav-links">
@@ -718,6 +718,7 @@
       <a href="#tests">tests</a>
       <a href="#products">products</a>
       <a href="https://github.com/emirhuseynrmx/calybris-core" target="_blank" rel="noopener" style="color:var(--gold);">GitHub</a>
+      <a href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener" style="color:var(--gold);">crates.io</a>
     </div>
     <a class="nav-back" href="/">&larr; portfolio</a>
   </nav>
@@ -736,12 +737,25 @@
         <strong>1M real conversation replays: 0 errors, $572K catalog-estimated avoidable spend.</strong>
         <strong>1.1M across 4 industries: 0 runtime failures.</strong>
         <br><br>
-        334 tests. Integer kernel. Zero <code style="font-family:var(--mono);color:var(--gold);font-size:0.95rem;">unsafe</code> code.
+        334+ tests + Miri. 7 Loom exhaustive. 91.6% coverage. Integer kernel. Zero <code style="font-family:var(--mono);color:var(--gold);font-size:0.95rem;">unsafe</code> code.
       </p>
       <div class="hero-actions reveal reveal-delay-4">
         <a class="btn btn-primary" href="https://github.com/emirhuseynrmx/calybris-core" target="_blank" rel="noopener">&#9733; View Source on GitHub</a>
+        <a class="btn btn-secondary" href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">&#128230; crates.io &middot; v0.3.12</a>
         <a class="btn btn-secondary" href="/goveris/">GOVERIS Product</a>
         <a class="btn btn-secondary" href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Pilot%20Call&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Request Pilot</a>
+      </div>
+
+      <!-- App Preview -->
+      <div class="reveal reveal-delay-4" style="margin-top:3rem;display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;">
+        <div style="background:#111;border:1px solid #222;border-radius:12px;padding:1rem;max-width:320px;">
+          <img src="assets/calybris-app-dark.svg" alt="Calybris Dark Mode" style="width:100%;border-radius:8px;" />
+          <p style="text-align:center;color:#888;font-size:0.7rem;margin-top:0.5rem;">Dark Mode</p>
+        </div>
+        <div style="background:#f5f5f5;border:1px solid #ddd;border-radius:12px;padding:1rem;max-width:320px;">
+          <img src="assets/calybris-app-light.svg" alt="Calybris Light Mode" style="width:100%;border-radius:8px;" />
+          <p style="text-align:center;color:#666;font-size:0.7rem;margin-top:0.5rem;">Light Mode</p>
+        </div>
       </div>
     </div>
   </section>
@@ -889,7 +903,7 @@
       <div class="detail-grid reveal">
         <div class="detail-card">
           <h4>Write-Ahead Log</h4>
-          <p>Every decision is durably written before acknowledgment. The WAL uses hash chaining &mdash; each entry includes the previous entry's SHA-256 digest.</p>
+          <p>Every decision is durably written before acknowledgment. The WAL uses hash chaining &mdash; each entry includes the previous entry's SHA-256 digest. Optional HMAC-SHA256 keying for authenticated chains; constant-time comparison via the <code style="font-family:var(--mono);color:var(--gold);">subtle</code> crate prevents timing side-channels.</p>
         </div>
         <div class="detail-card">
           <h4>Crash Recovery</h4>
@@ -1026,6 +1040,8 @@
         <li><strong>Release on failure:</strong> full reservation returned if execution never completes</li>
         <li><strong>CAS loop:</strong> compare-and-swap on <code style="font-family:var(--mono);color:var(--gold);">AtomicI64</code> &mdash; no mutex, no lock convoy</li>
         <li><strong>Hash-chained journal:</strong> every balance mutation is logged with a SHA-256 chain and durably fsynced</li>
+        <li><strong>Per-tenant exposure caps:</strong> configurable ceiling per tenant &mdash; hard-blocked when cumulative exposure reaches the cap</li>
+        <li><strong>Snapshot recovery:</strong> <code style="font-family:var(--mono);color:var(--gold);">restore_from_snapshot</code> reconstructs budget state from the last durable checkpoint after crash or migration</li>
       </ul>
 
       <div class="callout reveal">
@@ -1215,10 +1231,10 @@
   <section id="tests">
     <div class="container">
       <p class="section-label reveal">11 &mdash; Test Infrastructure</p>
-      <h2 class="section-title reveal">334 tests. Not happy-path.</h2>
+      <h2 class="section-title reveal">334+ tests + Miri. 91.6% coverage. Not happy-path.</h2>
       <p class="section-desc reveal">
         The test suite is designed to break the engine, not confirm that it works. Fault injection,
-        property-based testing, exhaustive concurrency analysis, and adversarial inputs.
+        property-based testing, 7 Loom exhaustive concurrency tests, Miri undefined-behavior detection, and adversarial inputs.
       </p>
 
       <div class="test-grid reveal">
@@ -1231,8 +1247,12 @@
           <p>Random operation sequences &mdash; reserve, commit, release, fail &mdash; with NaN and Inf poison values injected at random positions. Balance invariant checked after every sequence.</p>
         </div>
         <div class="test-card">
-          <h4>Loom Exhaustive</h4>
-          <p>3-way reservation race tested under ALL interleavings using loom. Not sampling &mdash; every possible thread schedule is explored to prove the absence of data races.</p>
+          <h4>Loom Exhaustive (7 tests)</h4>
+          <p>7 Loom exhaustive concurrency tests &mdash; including 3-way reservation races, WAL contention, and adaptive-state updates &mdash; tested under ALL interleavings. Not sampling &mdash; every possible thread schedule is explored to prove the absence of data races.</p>
+        </div>
+        <div class="test-card">
+          <h4>Miri UB Detection</h4>
+          <p>Full test suite runs under Miri to detect undefined behavior: uninitialized reads, out-of-bounds access, use-after-free, and invalid pointer provenance. Complements Loom &mdash; Loom checks concurrency interleavings, Miri checks memory safety.</p>
         </div>
         <div class="test-card">
           <h4>Handler Adversarial</h4>
@@ -1241,9 +1261,9 @@
       </div>
 
       <div class="callout reveal">
-        <strong>Constant-time key comparison.</strong> Cryptographic key comparisons use
-        length-independent usize arithmetic &mdash; no early exit on mismatch.
-        Timing side-channel leakage is structurally impossible.
+        <strong>Constant-time key comparison via <code style="font-family:var(--mono);color:var(--gold);font-size:0.82rem;">subtle</code> crate.</strong> Cryptographic key comparisons use
+        the <code style="font-family:var(--mono);color:var(--gold);font-size:0.82rem;">subtle::ConstantTimeEq</code> trait &mdash; no early exit on mismatch.
+        Timing side-channel leakage is structurally impossible. HMAC-SHA256 chain authentication uses the same constant-time path.
       </div>
     </div>
   </section>
@@ -1462,6 +1482,7 @@
         <a href="/goveris/">GOVERIS</a>
         <a href="/engine/">Engine Overview</a>
         <a href="https://github.com/emirhuseynrmx/calybris-core" target="_blank" rel="noopener">GitHub (Open Core)</a>
+        <a href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">crates.io</a>
         <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Pilot%20Call&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Request Pilot</a>
       </div>
     </div>
