@@ -65,7 +65,7 @@
       <header class="topbar">
         <a class="brand" href="./" aria-label="GOVERIS home">
           <img src="./assets/goveris-mark.svg" alt="" width="38" height="38" />
-          <span><strong>GOVERIS</strong><small>Powered by Calybris Engine</small></span>
+          <span><strong>GOVERIS</strong><small>Powered by Calybris Core v0.4.0</small></span>
         </a>
         <nav class="primary-nav" aria-label="Primary navigation">
           <a href="#platform">Product</a>
@@ -73,6 +73,7 @@
           <a href="#demo">Demo</a>
           <a href="#pricing">Pricing</a>
           <a href="https://github.com/emirhuseynrmx/calybris-core" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">crates.io</a>
         </nav>
         <div class="topbar-actions">
           <a class="topbar-link" href="./reports/goveris-ai-spend-governance-sample.pdf" target="_blank" rel="noopener">Sample report</a>
@@ -101,7 +102,7 @@
           <div class="signal-row" aria-label="GOVERIS proof points">
             <span><strong>No prompt capture</strong></span>
             <span><strong>Runs in your VPC</strong></span>
-            <span><strong>334 tests</strong> fault injection + proptest + loom</span>
+            <span><strong>145+ tests</strong> proptest + Loom + Miri</span>
           </div>
           <p class="hero-proof-note">
             Built for OpenAI, Anthropic, Google, DeepSeek, Meta, and Mistral.
@@ -202,7 +203,7 @@
       <section class="conversion-proof" aria-label="Verified product evidence">
         <div><strong>1M</strong><span>real conversations benchmarked — 0 crashes, 0 data corruption</span></div>
         <div><strong>14–45%</strong><span>marginal savings over your current routing — measured, not theoretical</span></div>
-        <div><strong>334</strong><span>passing Rust tests across recovery, concurrency, and policy invariants</span></div>
+        <div><strong>145+</strong><span>passing Rust tests: proptest, Loom exhaustive concurrency, Miri UB detection</span></div>
         <div><strong>8.6M/s</strong><span>correctness-guarded kernel median on one local host</span></div>
       </section>
 
@@ -213,7 +214,7 @@
         </div>
         <div>
           <span>Proof-carrying</span>
-          <strong>Every decision is SHA-256 sealed and independently auditable months later.</strong>
+          <strong>Every decision is sealed in a ProofEnvelope — SHA-256 digests, WAL position, budget proof — independently auditable months later.</strong>
         </div>
         <div>
           <span>Shadow first</span>
@@ -345,7 +346,7 @@
       <section class="proof-band" aria-label="Engineering proof">
         <div>
           <span>Engineering proof</span>
-          <strong>334 tests · fault injection · proptest · loom exhaustive concurrency</strong>
+          <strong>145+ tests · proptest · 7 Loom exhaustive · Miri UB · 91.6% coverage</strong>
         </div>
         <div>
           <span>Hardened</span>
