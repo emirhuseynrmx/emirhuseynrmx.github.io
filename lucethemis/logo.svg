@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="50%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="secondary" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.8"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#8b5cf6" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background glow -->
+  <circle cx="256" cy="256" r="200" fill="url(#glow)"/>
+
+  <!-- Outer hexagonal frame -->
+  <polygon points="256,56 412,126 412,266 412,386 256,456 100,386 100,126"
+    stroke="url(#primary)" stroke-width="4" fill="none" opacity="0.4"/>
+
+  <!-- Inner hexagonal frame -->
+  <polygon points="256,96 376,146 376,346 256,416 136,346 136,146"
+    stroke="url(#primary)" stroke-width="2.5" fill="none" opacity="0.6"/>
+
+  <!-- Central shield shape (Themis = justice/judgement) -->
+  <path d="M256 100 L370 170 L370 350 L256 420 L142 350 L142 170 Z"
+    fill="url(#secondary)" stroke="url(#primary)" stroke-width="3" filter="url(#shadow)"/>
+
+  <!-- Scale of justice / balance motif (Themis) -->
+  <!-- Central vertical beam -->
+  <line x1="256" y1="180" x2="256" y2="340" stroke="url(#primary)" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Horizontal balance beam -->
+  <line x1="180" y1="220" x2="332" y2="220" stroke="url(#primary)" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Left pan (signal audit) -->
+  <path d="M180 220 L165 260 L195 260 Z" fill="none" stroke="#8b5cf6" stroke-width="2.5"/>
+  <path d="M158 260 Q180 280 202 260" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Right pan (risk decision) -->
+  <path d="M332 220 L317 260 L347 260 Z" fill="none" stroke="#06b6d4" stroke-width="2.5"/>
+  <path d="M310 260 Q332 280 354 260" fill="none" stroke="#06b6d4" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Data flow lines (representing proof chain) -->
+  <path d="M200 300 L230 310 L260 295 L290 310 L320 300"
+    fill="none" stroke="url(#primary)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3"/>
+
+  <!-- Hash chain nodes -->
+  <circle cx="200" cy="300" r="4" fill="#8b5cf6"/>
+  <circle cx="230" cy="310" r="3" fill="#a78bfa"/>
+  <circle cx="260" cy="295" r="5" fill="url(#primary)"/>
+  <circle cx="290" cy="310" r="3" fill="#67e8f9"/>
+  <circle cx="320" cy="300" r="4" fill="#06b6d4"/>
+
+  <!-- Top crown / light motif (Luce = light) -->
+  <path d="M256 130 L248 155 L264 155 Z" fill="#a78bfa"/>
+  <path d="M240 140 L236 155 L244 155 Z" fill="#8b5cf6" opacity="0.7"/>
+  <path d="M272 140 L268 155 L276 155 Z" fill="#06b6d4" opacity="0.7"/>
+
+  <!-- Corner accent marks -->
+  <circle cx="256" cy="56" r="5" fill="#8b5cf6"/>
+  <circle cx="412" cy="126" r="4" fill="#6366f1" opacity="0.6"/>
+  <circle cx="100" cy="126" r="4" fill="#6366f1" opacity="0.6"/>
+  <circle cx="412" cy="386" r="4" fill="#06b6d4" opacity="0.6"/>
+  <circle cx="100" cy="386" r="4" fill="#06b6d4" opacity="0.6"/>
+  <circle cx="256" cy="456" r="5" fill="#06b6d4"/>
+
+  <!-- "LT" monogram inside -->
+  <text x="234" y="380" font-family="monospace" font-weight="800" font-size="32" fill="url(#primary)">LT</text>
+</svg>
