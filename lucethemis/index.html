@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr" class="lang-tr">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://emirhuseyin.tech/lucethemis/"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:title" content="LuceThemis — 900ns Pre-Trade Risk"/>
-  <meta name="theme-color" content="#050508"/>
+  <meta name="theme-color" content="#050504"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -22,24 +22,24 @@
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
     :root {
-      --bg: #050508;
-      --bg-elevated: #0a0a0f;
-      --bg-card: #0d0d14;
-      --border: #1a1a2e;
-      --border-accent: #2a1f4e;
-      --accent: #8b5cf6;
-      --accent-bright: #a78bfa;
-      --accent-dim: rgba(139,92,246,0.08);
-      --accent-glow: rgba(139,92,246,0.15);
+      --bg: #050504;
+      --bg-elevated: #0a0906;
+      --bg-card: #0d0c0a;
+      --border: #1a1812;
+      --border-accent: #2a1e0a;
+      --accent: #ff4800;
+      --accent-bright: #ff6b35;
+      --accent-dim: rgba(255,72,0,0.08);
+      --accent-glow: rgba(255,72,0,0.15);
       --green: #10b981;
       --green-dim: rgba(16,185,129,0.1);
       --red: #ef4444;
       --red-dim: rgba(239,68,68,0.1);
       --amber: #f59e0b;
       --cyan: #06b6d4;
-      --text: #f0f0f5;
-      --text-secondary: #a0a0b0;
-      --text-dim: #606070;
+      --text: #f0eee8;
+      --text-secondary: #a0a090;
+      --text-dim: #605e50;
       --mono: 'JetBrains Mono', monospace;
       --sans: 'Inter', sans-serif;
     }
@@ -61,8 +61,8 @@
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(139,92,246,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(139,92,246,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(255,72,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,72,0,0.03) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
       z-index: 0;
@@ -130,7 +130,7 @@
       position: absolute;
       top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 800px; height: 600px;
-      background: radial-gradient(ellipse, rgba(139,92,246,0.06) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(255,72,0,0.06) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-content { position: relative; z-index: 1; }
@@ -210,12 +210,12 @@
     .btn-primary {
       background: var(--accent);
       color: #fff;
-      box-shadow: 0 0 20px rgba(139,92,246,0.3);
+      box-shadow: 0 0 20px rgba(255,72,0,0.3);
     }
     .btn-primary:hover {
       background: var(--accent-bright);
       transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(139,92,246,0.5);
+      box-shadow: 0 0 30px rgba(255,72,0,0.5);
     }
     .btn-ghost {
       background: transparent;
@@ -501,6 +501,31 @@
     }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
+    /* ── CURSOR ── */
+    .c-dot {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ff4800; pointer-events: none;
+    }
+    .c-ring {
+      position: fixed; top: 0; left: 0; z-index: 9998;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid rgba(255,72,0,.45); pointer-events: none;
+    }
+
+    /* ── LANG ── */
+    .en { display: none; }
+    .lang-en .tr { display: none; }
+    .lang-en .en { display: inline; }
+    .lang-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text-dim); font-family: var(--mono);
+      font-size: .6rem; font-weight: 700; letter-spacing: .08em;
+      padding: .3rem .7rem; border-radius: 4px; cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .nav { padding: 0 1rem; }
@@ -516,32 +541,37 @@
 </head>
 <body>
 
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
   <!-- NAV -->
   <nav class="nav">
-    <a href="#" class="nav-brand">
+    <a href="/" class="nav-brand">
       <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="nav-grad" x1="0" y1="0" x2="32" y2="32">
-            <stop offset="0%" stop-color="#8b5cf6"/>
+            <stop offset="0%" stop-color="#ff4800"/>
             <stop offset="100%" stop-color="#06b6d4"/>
           </linearGradient>
         </defs>
         <polygon points="16,2 29,9 29,23 16,30 3,23 3,9" stroke="url(#nav-grad)" stroke-width="1.5" fill="none"/>
-        <polygon points="16,6 25,11 25,21 16,26 7,21 7,11" stroke="url(#nav-grad)" stroke-width="1" fill="rgba(139,92,246,0.1)"/>
+        <polygon points="16,6 25,11 25,21 16,26 7,21 7,11" stroke="url(#nav-grad)" stroke-width="1" fill="rgba(255,72,0,0.1)"/>
         <line x1="16" y1="11" x2="16" y2="23" stroke="url(#nav-grad)" stroke-width="1.5" stroke-linecap="round"/>
         <line x1="11" y1="14" x2="21" y2="14" stroke="url(#nav-grad)" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M11 14 L9.5 17.5 L12.5 17.5 Z" fill="none" stroke="#8b5cf6" stroke-width="0.8"/>
+        <path d="M11 14 L9.5 17.5 L12.5 17.5 Z" fill="none" stroke="#ff4800" stroke-width="0.8"/>
         <path d="M21 14 L19.5 17.5 L22.5 17.5 Z" fill="none" stroke="#06b6d4" stroke-width="0.8"/>
       </svg>
       <span>LuceThemis</span>
     </a>
     <div class="nav-links">
-      <a href="#architecture">Architecture</a>
-      <a href="#performance">Performance</a>
-      <a href="#audit">Audit</a>
+      <a href="/">← <span class="tr">portfolyo</span><span class="en">portfolio</span></a>
+      <a href="#architecture"><span class="tr">Mimari</span><span class="en">Architecture</span></a>
+      <a href="#performance"><span class="tr">Performans</span><span class="en">Performance</span></a>
+      <a href="#audit"><span class="tr">Denetim</span><span class="en">Audit</span></a>
       <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
       <div class="nav-status"><span class="dot"></span> OPERATIONAL</div>
     </div>
+    <button class="lang-btn" id="lang-btn">TR / EN</button>
   </nav>
 
   <div class="container">
@@ -552,26 +582,25 @@
         <div class="hero-eyebrow">v0.1.0 &mdash; Pre-Trade Risk + Signal Audit</div>
         <h1>LuceThemis</h1>
         <p class="hero-sub">
-          Sub-microsecond pre-trade risk decisions with cryptographic proof chains.
-          Signal falsification engine that kills overfitted strategies before capital touches them.
-          Built for desks that measure latency in nanoseconds.
+          <span class="tr">Kriptografik kanıt zincirleriyle sub-mikrosaniye pre-trade risk kararları. Sermaye dokunmadan aşırı uydurulan stratejileri durduran sinyal denetim motoru. Gecikmeyi nanosaniyeyle ölçen kurumsal masalar için.</span>
+          <span class="en">Sub-microsecond pre-trade risk decisions with cryptographic proof chains. Signal falsification engine that kills overfitted strategies before capital touches them. Built for desks that measure latency in nanoseconds.</span>
         </p>
         <div class="hero-metrics">
           <div class="hero-metric">
             <span class="value" data-count="900">0</span>
-            <span class="label">ns / pre-trade check</span>
+            <span class="label"><span class="tr">ns / pre-trade kontrol</span><span class="en">ns / pre-trade check</span></span>
           </div>
           <div class="hero-metric">
             <span class="value" data-count="4.65" data-decimals="2">0</span>
-            <span class="label">M checks / sec</span>
+            <span class="label"><span class="tr">M karar / sn</span><span class="en">M checks / sec</span></span>
           </div>
           <div class="hero-metric">
             <span class="value" data-count="48">0</span>
-            <span class="label">&mu;s / signal audit</span>
+            <span class="label"><span class="tr">&mu;s / sinyal denetimi</span><span class="en">&mu;s / signal audit</span></span>
           </div>
           <div class="hero-metric">
             <span class="value" data-count="14400" data-commas="true">0</span>
-            <span class="label">trading days tested</span>
+            <span class="label"><span class="tr">test günü</span><span class="en">trading days tested</span></span>
           </div>
           <div class="hero-metric">
             <span class="value">0</span>
@@ -579,8 +608,12 @@
           </div>
         </div>
         <div class="hero-ctas">
-          <a href="mailto:emirhuseyininci@gmail.com?subject=LuceThemis%20Access%20Request" class="btn btn-primary">Request Access</a>
-          <a href="https://github.com/emirhuseynrmx/calybrisengine" target="_blank" rel="noopener" class="btn btn-ghost">View Engine Source</a>
+          <a href="mailto:emirhuseyininci@gmail.com?subject=LuceThemis%20Access%20Request" class="btn btn-primary">
+            <span class="tr">Erişim İste</span><span class="en">Request Access</span>
+          </a>
+          <a href="https://github.com/emirhuseynrmx/calybrisengine" target="_blank" rel="noopener" class="btn btn-ghost">
+            <span class="tr">Motor Kaynağı</span><span class="en">View Engine Source</span>
+          </a>
         </div>
       </div>
     </section>
@@ -627,9 +660,12 @@
     <!-- ARCHITECTURE -->
     <section class="section reveal" id="architecture">
       <div class="section-header">
-        <div class="section-eyebrow">01 &mdash; Architecture</div>
-        <h2 class="section-title">Layered for Speed</h2>
-        <p class="section-desc">Each layer fails fast. Cheapest check first, most expensive last. Zero allocations on the hot path.</p>
+        <div class="section-eyebrow">01 &mdash; <span class="tr">Mimari</span><span class="en">Architecture</span></div>
+        <h2 class="section-title"><span class="tr">Hız İçin Katmanlı</span><span class="en">Layered for Speed</span></h2>
+        <p class="section-desc">
+          <span class="tr">Her katman hızla başarısız olur. En ucuz kontrol önce, en pahalısı sonda. Hot path'te sıfır allocation.</span>
+          <span class="en">Each layer fails fast. Cheapest check first, most expensive last. Zero allocations on the hot path.</span>
+        </p>
       </div>
 
       <div class="pipeline">
@@ -667,38 +703,56 @@
       <div class="arch-grid">
         <div class="arch-cell">
           <div class="arch-cell-icon">&#x26A1;</div>
-          <h3>Pre-Trade Risk Gateway</h3>
-          <p>Full admit/reject pipeline: circuit breaker, rate limiter, position limits, budget, kernel decision, cryptographic proof.</p>
+          <h3>Pre-Trade Risk <span class="tr">Geçidi</span><span class="en">Gateway</span></h3>
+          <p>
+            <span class="tr">Tam kabul/red pipeline: circuit breaker, rate limiter, pozisyon limitleri, bütçe, kernel kararı, kriptografik kanıt.</span>
+            <span class="en">Full admit/reject pipeline: circuit breaker, rate limiter, position limits, budget, kernel decision, cryptographic proof.</span>
+          </p>
           <span class="perf">900ns p50 latency</span>
         </div>
         <div class="arch-cell">
           <div class="arch-cell-icon">&#x1F50D;</div>
-          <h3>Signal Audit Engine</h3>
-          <p>MDL complexity penalties, walk-forward validation, leakage detection, regime robustness, statistical significance.</p>
+          <h3><span class="tr">Sinyal Denetim Motoru</span><span class="en">Signal Audit Engine</span></h3>
+          <p>
+            <span class="tr">MDL karmaşıklık cezaları, walk-forward doğrulama, sızıntı tespiti, rejim sağlamlığı, istatistiksel anlamlılık.</span>
+            <span class="en">MDL complexity penalties, walk-forward validation, leakage detection, regime robustness, statistical significance.</span>
+          </p>
           <span class="perf">48&mu;s per audit</span>
         </div>
         <div class="arch-cell">
           <div class="arch-cell-icon">&#x1F512;</div>
-          <h3>Proof-Carrying Decisions</h3>
-          <p>Every decision binds to a SHA-256 digest chain. Tamper-evident WAL with HMAC. Replay verification.</p>
+          <h3><span class="tr">Kanıt Taşıyan Kararlar</span><span class="en">Proof-Carrying Decisions</span></h3>
+          <p>
+            <span class="tr">Her karar SHA-256 digest zincirine bağlanır. HMAC ile kurcalamaya karşı dayanıklı WAL. Replay doğrulama.</span>
+            <span class="en">Every decision binds to a SHA-256 digest chain. Tamper-evident WAL with HMAC. Replay verification.</span>
+          </p>
           <span class="perf">Deterministic replay</span>
         </div>
         <div class="arch-cell">
           <div class="arch-cell-icon">&#x1F4B0;</div>
-          <h3>Conservation Proofs</h3>
-          <p>Fixed-point i64 microcents. CAS atomic budget. Mathematical proof that remaining + reserved + committed = initial.</p>
+          <h3><span class="tr">Koruma Kanıtları</span><span class="en">Conservation Proofs</span></h3>
+          <p>
+            <span class="tr">Sabit noktalı i64 mikrosent. CAS atomik bütçe. Matematiksel kanıt: kalan + rezerve + taahhüt = başlangıç.</span>
+            <span class="en">Fixed-point i64 microcents. CAS atomic budget. Mathematical proof that remaining + reserved + committed = initial.</span>
+          </p>
           <span class="perf">Zero floating point</span>
         </div>
         <div class="arch-cell">
           <div class="arch-cell-icon">&#x1F6E1;</div>
-          <h3>Kill Switch</h3>
-          <p>Atomic circuit breaker with sub-nanosecond trip time. Manual kill switch. Auto-recovery with probe validation.</p>
+          <h3><span class="tr">Acil Durdurma</span><span class="en">Kill Switch</span></h3>
+          <p>
+            <span class="tr">Sub-nanosaniye trip süresiyle atomik circuit breaker. Manuel kill switch. Probe doğrulamalı otomatik kurtarma.</span>
+            <span class="en">Atomic circuit breaker with sub-nanosecond trip time. Manual kill switch. Auto-recovery with probe validation.</span>
+          </p>
           <span class="perf">1 atomic store to trip</span>
         </div>
         <div class="arch-cell">
           <div class="arch-cell-icon">&#x1F4CA;</div>
-          <h3>Multi-Tenant Isolation</h3>
-          <p>Per-desk rate limits, position limits, budget isolation. Cross-margin portfolio exposure tracking.</p>
+          <h3><span class="tr">Çok Kiracılı İzolasyon</span><span class="en">Multi-Tenant Isolation</span></h3>
+          <p>
+            <span class="tr">Masa başına rate limit, pozisyon limiti, bütçe izolasyonu. Cross-margin portföy risk takibi.</span>
+            <span class="en">Per-desk rate limits, position limits, budget isolation. Cross-margin portfolio exposure tracking.</span>
+          </p>
           <span class="perf">Per-tenant CAS</span>
         </div>
       </div>
@@ -707,27 +761,30 @@
     <!-- PERFORMANCE -->
     <section class="section reveal" id="performance">
       <div class="section-header">
-        <div class="section-eyebrow">02 &mdash; Performance</div>
-        <h2 class="section-title">Numbers That Matter</h2>
-        <p class="section-desc">Measured on commodity hardware. No FPGA, no kernel bypass. Pure Rust, single core.</p>
+        <div class="section-eyebrow">02 &mdash; <span class="tr">Performans</span><span class="en">Performance</span></div>
+        <h2 class="section-title"><span class="tr">Önemli Sayılar</span><span class="en">Numbers That Matter</span></h2>
+        <p class="section-desc">
+          <span class="tr">Standart donanımda ölçüldü. FPGA yok, kernel bypass yok. Saf Rust, tek çekirdek.</span>
+          <span class="en">Measured on commodity hardware. No FPGA, no kernel bypass. Pure Rust, single core.</span>
+        </p>
       </div>
 
       <div class="stats-row">
         <div class="stat-card">
           <div class="number" data-count="900">0</div>
-          <div class="unit">ns / pre-trade check</div>
+          <div class="unit"><span class="tr">ns / pre-trade kontrol</span><span class="en">ns / pre-trade check</span></div>
         </div>
         <div class="stat-card">
           <div class="number" data-count="115">0</div>
-          <div class="unit">ns / kernel decision</div>
+          <div class="unit"><span class="tr">ns / kernel kararı</span><span class="en">ns / kernel decision</span></div>
         </div>
         <div class="stat-card">
           <div class="number" data-count="4.65" data-decimals="2">0</div>
-          <div class="unit">M decisions / sec</div>
+          <div class="unit"><span class="tr">M karar / sn</span><span class="en">M decisions / sec</span></div>
         </div>
         <div class="stat-card">
           <div class="number" data-count="0">0</div>
-          <div class="unit">allocations hot path</div>
+          <div class="unit"><span class="tr">hot path allocation</span><span class="en">allocations hot path</span></div>
         </div>
         <div class="stat-card">
           <div class="number" data-count="0">0</div>
@@ -735,7 +792,7 @@
         </div>
         <div class="stat-card">
           <div class="number" data-count="48">0</div>
-          <div class="unit">&mu;s / signal audit</div>
+          <div class="unit"><span class="tr">&mu;s / sinyal denetimi</span><span class="en">&mu;s / signal audit</span></div>
         </div>
       </div>
 
@@ -755,14 +812,17 @@
     <!-- SIGNAL AUDIT -->
     <section class="section reveal" id="audit">
       <div class="section-header">
-        <div class="section-eyebrow">03 &mdash; Signal Audit</div>
-        <h2 class="section-title">Kill Overfitted Strategies</h2>
-        <p class="section-desc">MDL-inspired complexity penalties. More complex signals need exponentially stronger evidence.</p>
+        <div class="section-eyebrow">03 &mdash; <span class="tr">Sinyal Denetimi</span><span class="en">Signal Audit</span></div>
+        <h2 class="section-title"><span class="tr">Aşırı Uydurulmuş Stratejileri Durdur</span><span class="en">Kill Overfitted Strategies</span></h2>
+        <p class="section-desc">
+          <span class="tr">MDL ilhamıyla karmaşıklık cezaları. Daha karmaşık sinyaller üstel olarak daha güçlü kanıt gerektirir.</span>
+          <span class="en">MDL-inspired complexity penalties. More complex signals need exponentially stronger evidence.</span>
+        </p>
       </div>
 
       <div class="proof-visual">
         <div style="font-family:var(--mono);font-size:0.75rem;color:var(--text-secondary);margin-bottom:1.5rem;">
-          Signal Audit Pipeline
+          <span class="tr">Sinyal Denetim Pipeline</span><span class="en">Signal Audit Pipeline</span>
         </div>
         <div class="proof-chain">
           <span class="proof-block">Signal Ingest</span>
@@ -786,20 +846,29 @@
 
       <div class="arch-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))">
         <div class="arch-cell">
-          <h3 style="color:var(--amber)">MDL Penalty</h3>
+          <h3 style="color:var(--amber)">MDL <span class="tr">Cezası</span><span class="en">Penalty</span></h3>
           <p>log2(params) * 200 + sqrt(lookback) * 100 + indicators * 150 + optimization * 1000 + snooping^2 * 300</p>
         </div>
         <div class="arch-cell">
           <h3 style="color:var(--green)">Walk-Forward</h3>
-          <p>5-fold expanding window. In-sample 70%, out-of-sample 30%. Must profit in 3+ folds after costs.</p>
+          <p>
+            <span class="tr">5 katlı genişleyen pencere. In-sample %70, out-of-sample %30. Maliyetler sonrası 3+ katta kârlı olmalı.</span>
+            <span class="en">5-fold expanding window. In-sample 70%, out-of-sample 30%. Must profit in 3+ folds after costs.</span>
+          </p>
         </div>
         <div class="arch-cell">
-          <h3 style="color:var(--red)">Leakage Detection</h3>
-          <p>First 5% returns vs rest. Suspiciously high early returns flag look-ahead bias. Snooping degree tracked.</p>
+          <h3 style="color:var(--red)"><span class="tr">Sızıntı Tespiti</span><span class="en">Leakage Detection</span></h3>
+          <p>
+            <span class="tr">İlk %5 getiri vs geri kalanı. Şüpheli yüksek erken getiri look-ahead bias işaretler. Snooping derecesi takip edilir.</span>
+            <span class="en">First 5% returns vs rest. Suspiciously high early returns flag look-ahead bias. Snooping degree tracked.</span>
+          </p>
         </div>
         <div class="arch-cell">
-          <h3 style="color:var(--cyan)">Regime Robustness</h3>
-          <p>Split into 3 regimes. Must be profitable in at least 2/3. Pure bull-market signals fail.</p>
+          <h3 style="color:var(--cyan)"><span class="tr">Rejim Sağlamlığı</span><span class="en">Regime Robustness</span></h3>
+          <p>
+            <span class="tr">3 rejime bölünür. En az 2/3'ünde kârlı olmalı. Salt boğa piyasası sinyalleri başarısız olur.</span>
+            <span class="en">Split into 3 regimes. Must be profitable in at least 2/3. Pure bull-market signals fail.</span>
+          </p>
         </div>
       </div>
     </section>
@@ -807,14 +876,17 @@
     <!-- PROOF CHAIN -->
     <section class="section reveal">
       <div class="section-header">
-        <div class="section-eyebrow">04 &mdash; Audit Trail</div>
-        <h2 class="section-title">Cryptographic Evidence Chain</h2>
-        <p class="section-desc">Every decision is hash-chained. Tamper with one entry, break the entire chain. MiFID II / Reg NMS ready.</p>
+        <div class="section-eyebrow">04 &mdash; <span class="tr">Denetim İzi</span><span class="en">Audit Trail</span></div>
+        <h2 class="section-title"><span class="tr">Kriptografik Kanıt Zinciri</span><span class="en">Cryptographic Evidence Chain</span></h2>
+        <p class="section-desc">
+          <span class="tr">Her karar hash zincirine bağlıdır. Tek girdiyi kurcala, tüm zincir kırılır. MiFID II / Reg NMS hazır.</span>
+          <span class="en">Every decision is hash-chained. Tamper with one entry, break the entire chain. MiFID II / Reg NMS ready.</span>
+        </p>
       </div>
 
       <div class="proof-visual">
         <div style="font-family:var(--mono);font-size:0.7rem;color:var(--text-secondary);margin-bottom:1rem">
-          Hash-Chained WAL (Write-Ahead Log)
+          <span class="tr">Hash Zincirli WAL (Write-Ahead Log)</span><span class="en">Hash-Chained WAL (Write-Ahead Log)</span>
         </div>
         <div class="proof-chain">
           <span class="proof-block">Decision #1</span>
@@ -830,16 +902,16 @@
         </div>
         <div style="margin-top:1.5rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;font-family:var(--mono);font-size:0.65rem;">
           <div>
-            <div style="color:var(--text-dim);margin-bottom:0.3rem">CONSERVATION PROOF</div>
+            <div style="color:var(--text-dim);margin-bottom:0.3rem"><span class="tr">KORUMA KANITI</span><span class="en">CONSERVATION PROOF</span></div>
             <div style="color:var(--green)">remaining + reserved + committed = initial</div>
           </div>
           <div>
-            <div style="color:var(--text-dim);margin-bottom:0.3rem">REPLAY VERIFICATION</div>
-            <div style="color:var(--cyan)">Same input + policy = same decision (always)</div>
+            <div style="color:var(--text-dim);margin-bottom:0.3rem"><span class="tr">REPLAY DOĞRULAMA</span><span class="en">REPLAY VERIFICATION</span></div>
+            <div style="color:var(--cyan)"><span class="tr">Aynı girdi + politika = aynı karar (her zaman)</span><span class="en">Same input + policy = same decision (always)</span></div>
           </div>
           <div>
-            <div style="color:var(--text-dim);margin-bottom:0.3rem">FAIL-CLOSED WAL</div>
-            <div style="color:var(--amber)">Invalid decisions never enter the log</div>
+            <div style="color:var(--text-dim);margin-bottom:0.3rem"><span class="tr">KAPALI WAL</span><span class="en">FAIL-CLOSED WAL</span></div>
+            <div style="color:var(--amber)"><span class="tr">Geçersiz kararlar kayıta girmez</span><span class="en">Invalid decisions never enter the log</span></div>
           </div>
         </div>
       </div>
@@ -849,7 +921,7 @@
     <section class="section reveal">
       <div class="section-header">
         <div class="section-eyebrow">05 &mdash; Stack</div>
-        <h2 class="section-title">Built Different</h2>
+        <h2 class="section-title"><span class="tr">Farklı İnşa Edildi</span><span class="en">Built Different</span></h2>
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
         <span class="proof-block">Rust</span>
@@ -873,11 +945,21 @@
 
     <!-- CTA -->
     <section class="cta-section reveal">
-      <h2>Built for institutional desks.</h2>
-      <p>Sub-microsecond pre-trade risk. Signal falsification that kills overfitted strategies. Proof-carrying audit trail for regulators.</p>
+      <h2>
+        <span class="tr">Kurumsal masalar için inşa edildi.</span>
+        <span class="en">Built for institutional desks.</span>
+      </h2>
+      <p>
+        <span class="tr">Sub-mikrosaniye pre-trade risk. Aşırı uydurulmuş stratejileri öldüren sinyal denetimi. Düzenleyiciler için kanıt taşıyan denetim izi.</span>
+        <span class="en">Sub-microsecond pre-trade risk. Signal falsification that kills overfitted strategies. Proof-carrying audit trail for regulators.</span>
+      </p>
       <div class="hero-ctas" style="justify-content:center">
-        <a href="mailto:emirhuseyininci@gmail.com?subject=LuceThemis%20Access%20Request" class="btn btn-primary">Request Access</a>
-        <a href="https://github.com/emirhuseynrmx/calybrisengine" target="_blank" rel="noopener" class="btn btn-ghost">Engine Source</a>
+        <a href="mailto:emirhuseyininci@gmail.com?subject=LuceThemis%20Access%20Request" class="btn btn-primary">
+          <span class="tr">Erişim İste</span><span class="en">Request Access</span>
+        </a>
+        <a href="https://github.com/emirhuseynrmx/calybrisengine" target="_blank" rel="noopener" class="btn btn-ghost">
+          <span class="tr">Motor Kaynağı</span><span class="en">Engine Source</span>
+        </a>
       </div>
     </section>
   </div>
@@ -889,6 +971,30 @@
   </footer>
 
   <script>
+    /* Custom cursor */
+    (function(){
+      var dot=document.getElementById('c-dot');
+      var ring=document.getElementById('c-ring');
+      if(!dot||!ring)return;
+      var mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+      document.addEventListener('mousemove',function(e){
+        mx=e.clientX;my=e.clientY;
+        dot.style.transform='translate3d('+(mx-4)+'px,'+(my-4)+'px,0)';
+      });
+      (function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.transform='translate3d('+(rx-16)+'px,'+(ry-16)+'px,0)';requestAnimationFrame(loop);})();
+    })();
+
+    /* Lang toggle */
+    (function(){
+      var btn=document.getElementById('lang-btn');
+      var html=document.documentElement;
+      if(!btn)return;
+      btn.addEventListener('click',function(){
+        if(html.classList.contains('lang-tr')){html.classList.replace('lang-tr','lang-en');}
+        else{html.classList.replace('lang-en','lang-tr');}
+      });
+    })();
+
     /* Scroll reveal */
     (function(){
       var els = document.querySelectorAll('.reveal');

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Trading Performance Report Kit — Emir H. İnci</title>
+  <meta name="description" content="Borsa işlem geçmişini PDF rapora dönüştüren Python kiti. PnL analizi, sharpe ratio, drawdown, matplotlib charts."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">Pandas · matplotlib · reportlab</span>
+        <span class="btag">Pydantic v2</span>
+        <span class="btag">PDF</span>
+      </div>
+      <h1 class="lhero-title">Trading Performance Report Kit</h1>
+      <p class="lhero-sub">
+        <span class="tr">İşlem geçmişini CSV olarak ver, PDF rapor al. PnL, Sharpe oranı, max drawdown, equity curve — hepsi otomatik hesaplanır ve çizimlenir.</span>
+        <span class="en">Give trade history as CSV, get a PDF report. PnL, Sharpe ratio, max drawdown, equity curve — all calculated and charted automatically.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Trading Report Kit — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TRADING REPORT — PORTFOLIO METRICS</div>
+        <div style="color:#6b6858;">period: <span style="color:#f2f0ea">2024-01-01 → 2024-12-31</span></div>
+        <div>total_return &nbsp;<span style="color:#10b981;font-weight:700">+34.7%</span></div>
+        <div>sharpe_ratio &nbsp;<span style="color:#ff4800;font-weight:700">1.84</span></div>
+        <div>max_drawdown &nbsp;<span style="color:#ef4444">-8.2%</span></div>
+        <div>win_rate &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f2f0ea">61.3%</span></div>
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          trades=<span style="color:#ff4800">1,847</span> &nbsp;·&nbsp; report=<span style="color:#6b6858">PDF (A4)</span> &nbsp;·&nbsp; charts=<span style="color:#6b6858">Plotly</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>PDF</strong>
+      <span><span class="tr">profesyonel rapor</span><span class="en">professional report</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>Sharpe</strong>
+      <span><span class="tr">oran hesaplama</span><span class="en">ratio calculation</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>equity</strong>
+      <span><span class="tr">curve çizimi</span><span class="en">curve chart</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>CI</strong>
+      <span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Ne yapar?</span>
+      <span class="en">What it does</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">📈</div>
+        <h3><span class="tr">PnL analizi</span><span class="en">PnL analysis</span></h3>
+        <p>
+          <span class="tr">Gerçekleşmiş ve gerçekleşmemiş kâr/zarar, günlük/haftalık/aylık breakdown. Sıfırdan hesaplanır, tabloya dönüştürülür.</span>
+          <span class="en">Realized and unrealized P&amp;L, daily/weekly/monthly breakdown. Calculated from scratch and turned into tables.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📐</div>
+        <h3>Sharpe &amp; Sortino</h3>
+        <p>
+          <span class="tr">Risk-adjusted getiri metrikleri. Yıllık Sharpe oranı, Sortino oranı, Calmar oranı — hepsi otomatik.</span>
+          <span class="en">Risk-adjusted return metrics. Annualized Sharpe ratio, Sortino ratio, Calmar ratio — all automatic.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📉</div>
+        <h3>Max Drawdown</h3>
+        <p>
+          <span class="tr">Tepe-dip drawdown hesaplaması. En kötü düşüş dönemi, süresi ve toparlanma süresi raporlanır.</span>
+          <span class="en">Peak-to-trough drawdown calculation. Worst decline period, duration, and recovery time are reported.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <h3>Equity Curve</h3>
+        <p>
+          <span class="tr">matplotlib ile kümülatif getiri grafiği. Benchmark ile karşılaştırma seçeneği. Yüksek çözünürlüklü PNG olarak PDF'e gömülür.</span>
+          <span class="en">Cumulative return chart via matplotlib. Optional benchmark comparison. High-res PNG embedded in PDF.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📄</div>
+        <h3><span class="tr">PDF export</span><span class="en">PDF export</span></h3>
+        <p>
+          <span class="tr">reportlab ile profesyonel layout. Logo, başlık, metrikler tablosu, grafikler — tek PDF dosyasında.</span>
+          <span class="en">Professional layout via reportlab. Logo, title, metrics table, charts — in a single PDF file.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔧</div>
+        <h3><span class="tr">Özelleştirilebilir</span><span class="en">Customizable</span></h3>
+        <p>
+          <span class="tr">Hangi metrikler görünsün, hangi tarih aralığı, hangi renk şeması — config dosyasından ayarlanır.</span>
+          <span class="en">Which metrics to show, date range, color scheme — configured from a config file.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>
+        <span class="tech-val">Pandas 3.x · numpy · scipy</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Grafikler</span><span class="en">Charts</span></span>
+        <span class="tech-val">matplotlib · seaborn (style layer)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">PDF</span>
+        <span class="tech-val">reportlab · Platypus layout engine</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pydantic v2 · Pandera schema</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · parametrize · coverage &gt;85%</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">CI</span>
+        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">İşlem geçmişin rapor formatı istiyor mu?</span>
+      <span class="en">Does your trade history need a report format?</span>
+    </h2>
+    <p>
+      <span class="tr">Hangi broker, hangi format, hangi metrikler — söyle, özelleştiririm. Haftalık otomatik rapor da kurulabilir.</span>
+      <span class="en">Which broker, which format, which metrics — tell me, I'll customize. Weekly automated reports can also be set up.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Trading Report İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

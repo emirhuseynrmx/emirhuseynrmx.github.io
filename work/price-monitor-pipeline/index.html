@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Price Monitor Pipeline — Emir H. İnci</title>
+  <meta name="description" content="FastAPI + async scraping + Thompson Sampling ile fiyat takip sistemi. İdempotent API, rate limiting, ML-based pricing signals."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">FastAPI · httpx · asyncio</span>
+        <span class="btag">Thompson Sampling</span>
+        <span class="btag">Redis</span>
+      </div>
+      <h1 class="lhero-title">Price Monitor Pipeline</h1>
+      <p class="lhero-sub">
+        <span class="tr">Gerçek zamanlı fiyat izleme sistemi. Rakip fiyatlarını çeker, ML ile anormal değişimleri işaretler ve idempotent FastAPI üzerinden servis eder.</span>
+        <span class="en">Real-time price monitoring system. Scrapes competitor prices, flags anomalies with ML, and serves results via idempotent FastAPI.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Price Monitor Pipeline — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">PRICE MONITOR — LIVE FEED</div>
+        <div><span style="color:#ff4800">▲</span> AAPL &nbsp;<span style="color:#f2f0ea;font-weight:700">189.42</span>&nbsp; <span style="color:#10b981">+2.3%</span>&nbsp; alert=<span style="color:#f59e0b">threshold_breach</span></div>
+        <div style="color:#6b6858;"><span style="color:#3a3828">▬</span> MSFT &nbsp;<span style="color:#f2f0ea">412.17</span>&nbsp; <span style="color:#6b6858">+0.1%</span>&nbsp; alert=none</div>
+        <div><span style="color:#ef4444">▼</span> NVDA &nbsp;<span style="color:#f2f0ea;font-weight:700">875.30</span>&nbsp; <span style="color:#ef4444">-4.8%</span>&nbsp; alert=<span style="color:#ef4444">anomaly_flag</span></div>
+        <div style="color:#6b6858;"><span style="color:#10b981">▲</span> TSLA &nbsp;<span style="color:#f2f0ea">246.80</span>&nbsp; <span style="color:#10b981">+1.7%</span>&nbsp; alert=none</div>
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          scraped=<span style="color:#ff4800">4</span> sources &nbsp;·&nbsp; thompson_arm=<span style="color:#ff4800">AAPL</span> &nbsp;·&nbsp; next_check=<span style="color:#6b6858">30s</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>async</strong>
+      <span><span class="tr">paralel fiyat çekme</span><span class="en">parallel price scraping</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>Thompson</strong>
+      <span><span class="tr">sampling ile fiyatlama</span><span class="en">sampling for pricing</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>idempotent</strong>
+      <span>FastAPI endpoint</span>
+    </div>
+    <div class="lmetric">
+      <strong>CI</strong>
+      <span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Ne yapar?</span>
+      <span class="en">What it does</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">📡</div>
+        <h3><span class="tr">Async fiyat scraping</span><span class="en">Async price scraping</span></h3>
+        <p>
+          <span class="tr">httpx + asyncio ile çok sayıda rakip URL'den aynı anda fiyat çeker. Her çekim Pydantic v2 modeliyle doğrulanır.</span>
+          <span class="en">Pulls prices from multiple competitor URLs simultaneously via httpx + asyncio. Each result validated with Pydantic v2.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎲</div>
+        <h3>Thompson Sampling</h3>
+        <p>
+          <span class="tr">Rakip fiyatlarına bakarak en karlı fiyat aralığını tahmin eden bandit algoritması. Geçmiş veriden öğrenir, öneri üretir.</span>
+          <span class="en">Bandit algorithm that estimates the most profitable price range based on competitor data. Learns from history, produces recommendations.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <h3><span class="tr">İdempotent API</span><span class="en">Idempotent API</span></h3>
+        <p>
+          <span class="tr">Aynı istek iki kez gelirse ikinci sefer cache'den döner. Mükerrer yazma yok, duplicate veri yok.</span>
+          <span class="en">If the same request arrives twice, the second returns from cache. No duplicate writes, no duplicate data.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⏱️</div>
+        <h3>Rate Limiting</h3>
+        <p>
+          <span class="tr">Her kaynak için ayrı rate limit tanımlanabilir. Hedef siteyi aşırı yüklemeden, sürekli izleme.</span>
+          <span class="en">Per-source rate limits configurable. Continuous monitoring without overloading the target site.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🚨</div>
+        <h3><span class="tr">Anomali işaretleme</span><span class="en">Anomaly flagging</span></h3>
+        <p>
+          <span class="tr">Fiyat normalden %X sapıyorsa kayıt işaretlenir. Webhook veya log çıktısına yönlendirilebilir.</span>
+          <span class="en">If price deviates more than X% from baseline, the record is flagged. Routes to webhook or log output.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📦</div>
+        <h3><span class="tr">Export & storage</span><span class="en">Export & storage</span></h3>
+        <p>
+          <span class="tr">JSON, CSV ve Parquet çıktı. SQLite veya Postgres backend ile geçmiş fiyat serisi saklanır.</span>
+          <span class="en">JSON, CSV, and Parquet output. Historical price series stored in SQLite or Postgres backend.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">API</span>
+        <span class="tech-val">FastAPI · Uvicorn · idempotency-key cache</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">HTTP</span>
+        <span class="tech-val">httpx (async) · selectolax · BeautifulSoup</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">ML</span>
+        <span class="tech-val">Thompson Sampling (Beta distribution bandit)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pydantic v2 · Pandera schema checks</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · pytest-asyncio · httpx TestClient</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">CI</span>
+        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Rakip fiyatlarını takip etmek istiyor musun?</span>
+      <span class="en">Need to monitor competitor prices?</span>
+    </h2>
+    <p>
+      <span class="tr">Hangi siteyi, hangi sıklıkla, hangi formatta — söyle, kuralım. Scraping + ML + API, teslim edilebilir paket.</span>
+      <span class="en">Which site, how often, what format — tell me and we'll set it up. Scraping + ML + API in a deliverable package.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Price Monitor İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

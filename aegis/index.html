@@ -1,34 +1,36 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr" class="lang-tr">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Aegis — Prescriptive Analytics Engine for Telecom Churn</title>
-  <meta name="description" content="Most churn systems stop at prediction. Aegis adds explanation, counterfactual prescription, financial value, causal treatment-effect estimation, and backtesting."/>
+  <title>Aegis — Prescriptive Churn Analytics Engine</title>
+  <meta name="description" content="Churn tahmini yetmez. Aegis açıkla, reçete et, finansal olarak doğrula ve nedensel CATE hesaplar. Litestar API + Next.js dashboard."/>
   <meta name="robots" content="index, follow"/>
   <meta name="author" content="Emir Hüseyin İnci"/>
   <link rel="canonical" href="https://emirhuseyin.tech/aegis/"/>
   <meta property="og:type" content="website"/>
-  <meta property="og:title" content="Aegis — Prescriptive Analytics Engine for Telecom Churn"/>
-  <meta property="og:description" content="Prediction, SHAP explanation, DiCE counterfactuals, NPV decisioning, and T-Learner CATE in one pipeline."/>
+  <meta property="og:title" content="Aegis — Prescriptive Churn Analytics"/>
+  <meta property="og:description" content="Prediction → Explanation → Prescription → Financial Decision → Causal CATE. Litestar API + Next.js dashboard."/>
   <meta property="og:url" content="https://emirhuseyin.tech/aegis/"/>
   <meta name="twitter:card" content="summary"/>
-  <meta name="twitter:title" content="Aegis — Prescriptive Churn Analytics"/>
-  <meta name="theme-color" content="#0a0a0a"/>
+  <meta name="theme-color" content="#060504"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
     :root {
-      --bg: #0a0a0a;
-      --card: #0e0e0e;
-      --border: #1a1a1a;
-      --accent: #a855f7;
-      --accent-dim: rgba(168,85,247,0.15);
-      --text: #e5e5e5;
-      --text-dim: #888;
+      --bg: #060504;
+      --card: #0c0a08;
+      --border: #1a1812;
+      --border-hover: #2a2818;
+      --accent: #ff4800;
+      --accent-dim: rgba(255,72,0,0.08);
+      --accent-glow: rgba(255,72,0,0.15);
+      --text: #f2f0ea;
+      --text-sec: #989688;
+      --text-dim: #4a4840;
       --mono: 'JetBrains Mono', monospace;
       --sans: 'Inter', sans-serif;
     }
@@ -44,158 +46,184 @@
       overflow-x: hidden;
     }
 
+    /* ── CURSOR ── */
+    .c-dot {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #ff4800; pointer-events: none;
+      transform: translate3d(-50%, -50%, 0);
+    }
+    .c-ring {
+      position: fixed; top: 0; left: 0; z-index: 9998;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid rgba(255,72,0,.45); pointer-events: none;
+      transform: translate3d(-50%, -50%, 0);
+    }
+
     /* ── NAV ── */
     .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 56px;
-      background: rgba(10,10,10,0.85);
-      backdrop-filter: blur(12px);
+      padding: 0 2rem; height: 52px;
+      background: rgba(6,5,4,0.9);
+      backdrop-filter: blur(20px) saturate(1.5);
       border-bottom: 1px solid var(--border);
-      transition: transform 0.3s ease;
     }
-    .nav.hidden { transform: translateY(-100%); }
     .nav-brand {
       font-family: var(--mono);
-      font-weight: 700; font-size: 1rem;
-      color: var(--accent);
+      font-weight: 800; font-size: .9rem;
+      color: var(--text);
       text-decoration: none;
       letter-spacing: -0.02em;
     }
+    .nav-brand span { color: var(--accent); }
     .nav-links { display: flex; gap: 1.5rem; align-items: center; }
     .nav-links a {
       font-family: var(--mono);
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--text-dim);
       text-decoration: none;
       transition: color 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover { color: var(--text-sec); }
+    .nav-end { display: flex; gap: .75rem; align-items: center; }
+    .lang-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text-dim); font-family: var(--mono);
+      font-size: .6rem; font-weight: 700; letter-spacing: .08em;
+      padding: .3rem .7rem; border-radius: 4px; cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ── GRADIENT LINE ── */
-    .gradient-line {
-      height: 2px;
+    .en { display: none; }
+    .lang-en .tr { display: none; }
+    .lang-en .en { display: inline; }
+
+    /* ── ACCENT LINE ── */
+    .accent-line {
+      height: 1px;
       background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      margin-top: 56px;
+      margin-top: 52px;
     }
 
     /* ── CONTAINER ── */
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
 
     /* ── HERO ── */
     .hero {
-      padding: 6rem 0 4rem;
+      padding: 5.5rem 0 3.5rem;
       text-align: center;
     }
-    .hero-badge {
-      display: inline-block;
+    .hero-kicker {
+      display: inline-flex; align-items: center; gap: .5rem;
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.62rem; letter-spacing: .12em; text-transform: uppercase;
       color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      border: 1px solid rgba(255,72,0,.25);
+      padding: .3rem .9rem; border-radius: 100px;
+      margin-bottom: 1.75rem;
     }
     .hero h1 {
       font-family: var(--mono);
-      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-size: clamp(2.8rem, 7vw, 5rem);
       font-weight: 800;
       letter-spacing: -0.04em;
-      line-height: 1.1;
-      margin-bottom: 1rem;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: .75rem;
     }
     .hero h1 span { color: var(--accent); }
     .hero-tagline {
       font-family: var(--mono);
-      font-size: clamp(0.9rem, 2vw, 1.1rem);
-      color: var(--accent);
-      margin-bottom: 1rem;
-      font-weight: 500;
+      font-size: .8rem;
+      color: var(--text-sec);
+      letter-spacing: .04em;
+      margin-bottom: 1.25rem;
     }
     .hero-sub {
-      font-size: 1.05rem;
-      color: var(--text-dim);
-      max-width: 700px;
+      font-size: 1rem;
+      color: var(--text-sec);
+      max-width: 620px;
       margin: 0 auto 2.5rem;
-      line-height: 1.7;
+      line-height: 1.75;
     }
     .hero-ctas {
-      display: flex; gap: 1rem;
+      display: flex; gap: .75rem;
       justify-content: center;
       flex-wrap: wrap;
     }
     .btn {
       font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 0.75rem 2rem;
-      border-radius: 6px;
+      font-size: 0.72rem; font-weight: 700;
+      padding: .65rem 1.75rem; border-radius: 6px;
       text-decoration: none;
       transition: all 0.2s;
-      cursor: pointer;
-      border: none;
+      cursor: pointer; border: none;
+      letter-spacing: .04em;
     }
     .btn-primary {
       background: var(--accent);
       color: #fff;
     }
-    .btn-primary:hover { background: #9333ea; transform: translateY(-1px); }
+    .btn-primary:hover { background: #cc3300; transform: translateY(-1px); }
     .btn-ghost {
       background: transparent;
-      color: var(--accent);
-      border: 1px solid var(--accent);
+      color: var(--text-sec);
+      border: 1px solid var(--border);
     }
-    .btn-ghost:hover { background: var(--accent-dim); transform: translateY(-1px); }
+    .btn-ghost:hover { border-color: var(--border-hover); color: var(--text); transform: translateY(-1px); }
 
     /* ── SECTION ── */
-    .section { padding: 5rem 0; }
+    .section { padding: 4.5rem 0; }
     .section-label {
       font-family: var(--mono);
-      font-size: 0.75rem;
+      font-size: 0.6rem;
       color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 2.5rem;
+      letter-spacing: 0.12em;
+      margin-bottom: 2.25rem;
       display: flex; align-items: center; gap: 0.75rem;
     }
-    .section-label span {
+    .section-label em {
       color: var(--accent);
-      font-weight: 700;
+      font-style: normal; font-weight: 700;
     }
     .section-label::after {
       content: '';
-      flex: 1;
-      height: 1px;
+      flex: 1; height: 1px;
       background: var(--border);
     }
     .section-title {
       font-family: var(--mono);
-      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-size: clamp(1.4rem, 3vw, 2rem);
       font-weight: 700;
       letter-spacing: -0.03em;
-      margin-bottom: 1rem;
+      color: var(--text);
+      margin-bottom: .75rem;
     }
     .section-desc {
-      color: var(--text-dim);
-      max-width: 600px;
+      color: var(--text-sec);
+      max-width: 540px;
       margin-bottom: 2.5rem;
+      font-size: .9rem;
+      line-height: 1.7;
     }
 
     /* ── PIPELINE ── */
     .pipeline {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2.5rem;
-      margin-bottom: 2rem;
+      border-radius: 14px;
+      padding: 2.25rem 2rem;
+      margin-bottom: 1.5rem;
       overflow-x: auto;
     }
     .pipeline-title {
       font-family: var(--mono);
-      font-size: 0.75rem;
+      font-size: 0.6rem;
       color: var(--text-dim);
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -205,116 +233,154 @@
       display: flex;
       align-items: stretch;
       gap: 0;
-      min-width: 700px;
+      min-width: 740px;
     }
     .pipeline-step {
       flex: 1;
       text-align: center;
-      padding: 1.25rem 0.75rem;
+      padding: 1.1rem 0.6rem;
       position: relative;
     }
     .pipeline-step::after {
-      content: '\2192';
+      content: '→';
       position: absolute;
-      right: -6px;
-      top: 50%;
+      right: -8px; top: 50%;
       transform: translateY(-50%);
       color: var(--accent);
-      font-size: 1.2rem;
+      font-size: 1rem;
       font-family: var(--mono);
     }
     .pipeline-step:last-child::after { display: none; }
     .pipeline-num {
       font-family: var(--mono);
-      font-size: 0.65rem;
+      font-size: 0.58rem;
       color: var(--accent);
-      margin-bottom: 0.5rem;
-      font-weight: 600;
+      margin-bottom: 0.45rem;
+      font-weight: 700;
     }
     .pipeline-name {
       font-family: var(--mono);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.35rem;
       color: var(--text);
     }
     .pipeline-desc {
-      font-size: 0.7rem;
-      color: var(--text-dim);
+      font-size: 0.68rem;
+      color: var(--text-sec);
       line-height: 1.4;
     }
 
     /* ── STATS ── */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
     }
     .stat-card {
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
       padding: 1.5rem;
       text-align: center;
-      transition: all 0.25s ease;
+      border-right: 1px solid var(--border);
     }
-    .stat-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
+    .stat-card:last-child { border-right: 0; }
     .stat-value {
       font-family: var(--mono);
       font-size: 1.75rem;
       font-weight: 700;
       font-variant-numeric: tabular-nums;
       color: var(--accent);
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.3rem;
     }
     .stat-label {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.62rem;
       color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
     }
 
     /* ── FEATURE GRID ── */
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
     }
     .feature-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.75rem;
-      transition: all 0.25s ease;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 0.2s;
     }
-    .feature-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
+    .feature-card:hover { border-color: var(--border-hover); }
     .feature-label {
       font-family: var(--mono);
-      font-size: 0.65rem;
+      font-size: 0.58rem;
       color: var(--accent);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.1em;
       margin-bottom: 0.5rem;
-      font-weight: 600;
+      font-weight: 700;
     }
     .feature-card h3 {
       font-family: var(--mono);
-      font-size: 0.95rem;
-      font-weight: 600;
+      font-size: 0.88rem;
+      font-weight: 700;
       margin-bottom: 0.5rem;
+      color: var(--text);
     }
     .feature-card p {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      color: var(--text-sec);
+      line-height: 1.65;
+    }
+
+    /* ── ROADMAP ── */
+    .roadmap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+    .roadmap-title {
+      font-family: var(--mono);
+      font-size: .6rem;
       color: var(--text-dim);
-      line-height: 1.6;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+    .roadmap-row {
+      display: flex;
+      align-items: baseline;
+      gap: 1.25rem;
+      padding: .65rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .roadmap-row:last-child { border-bottom: 0; }
+    .roadmap-tag {
+      font-family: var(--mono);
+      font-size: .58rem;
+      font-weight: 700;
+      padding: .2rem .55rem;
+      border-radius: 4px;
+      min-width: 5rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .roadmap-tag.done { background: rgba(16,185,129,.1); color: #10b981; }
+    .roadmap-tag.planned { background: rgba(255,72,0,.08); color: var(--accent); }
+    .roadmap-text {
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--text-sec);
+      line-height: 1.5;
     }
 
     /* ── TECH BADGES ── */
@@ -326,299 +392,452 @@
     }
     .tech-badge {
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 500;
-      padding: 0.35rem 0.85rem;
+      padding: .32rem .8rem;
       border: 1px solid var(--border);
-      border-radius: 999px;
-      color: var(--text-dim);
+      border-radius: 100px;
+      color: var(--text-sec);
       background: var(--card);
       transition: border-color 0.2s;
     }
-    .tech-badge:hover { border-color: var(--accent); color: var(--text); }
+    .tech-badge:hover { border-color: var(--border-hover); color: var(--text); }
 
-    /* ── CTA SECTION ── */
+    /* ── HONEST BOX ── */
+    .honest-box {
+      background: rgba(255,72,0,.04);
+      border: 1px solid rgba(255,72,0,.15);
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      margin-top: 2rem;
+    }
+    .honest-box-title {
+      font-family: var(--mono);
+      font-size: .6rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .75rem;
+      font-weight: 700;
+    }
+    .honest-box p {
+      font-size: .82rem;
+      color: var(--text-sec);
+      line-height: 1.7;
+    }
+
+    /* ── CTA ── */
     .cta-section {
       text-align: center;
-      padding: 5rem 0;
+      padding: 4.5rem 0;
     }
     .cta-section h2 {
       font-family: var(--mono);
-      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
       font-weight: 700;
-      margin-bottom: 1rem;
+      letter-spacing: -.02em;
+      margin-bottom: .75rem;
+      color: var(--text);
     }
     .cta-section p {
-      color: var(--text-dim);
+      color: var(--text-sec);
       margin-bottom: 2rem;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      max-width: 460px;
+      margin-left: auto; margin-right: auto;
+      font-size: .9rem;
+      line-height: 1.7;
     }
 
     /* ── FOOTER ── */
     .footer {
       border-top: 1px solid var(--border);
-      padding: 2rem;
+      padding: 1.75rem 2rem;
       text-align: center;
       font-family: var(--mono);
-      font-size: 0.75rem;
+      font-size: 0.65rem;
       color: var(--text-dim);
     }
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .footer a:hover { text-decoration: underline; }
+    .footer a { color: var(--text-sec); text-decoration: none; }
+    .footer a:hover { color: var(--accent); }
 
     /* ── REVEAL ── */
     .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
     }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .nav { padding: 0 1rem; }
-      .container { padding: 0 1rem; }
-      .hero { padding: 4rem 0 2rem; }
-      .section { padding: 3rem 0; }
-      .feature-grid { grid-template-columns: 1fr; }
-      .pipeline { padding: 1.5rem; }
+    @media (max-width: 860px) {
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-card { border-right: 0; border-bottom: 1px solid var(--border); }
+      .stat-card:last-child { border-bottom: 0; }
     }
-
-    @media (max-width: 480px) {
-      .hero-ctas { flex-direction: column; align-items: center; }
-      .btn { width: 100%; max-width: 280px; text-align: center; }
+    @media (max-width: 600px) {
+      .feature-grid { grid-template-columns: 1fr; }
       .stats-grid { grid-template-columns: 1fr; }
+      .hero { padding: 4rem 0 2.5rem; }
+      .container { padding: 0 1.25rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
   <nav class="nav" id="nav">
-    <a href="/" class="nav-brand">Aegis</a>
+    <a href="/" class="nav-brand"><span>Aegis</span></a>
     <div class="nav-links">
-      <a href="/">Portfolio</a>
-      <a href="https://github.com/emirhuseynrmx/aegis" target="_blank" rel="noopener">GitHub</a>
+      <a href="/">← <span class="tr">portfolyo</span><span class="en">portfolio</span></a>
+      <a href="https://github.com/emirhuseynrmx/aegis" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+    <div class="nav-end">
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
     </div>
   </nav>
-  <div class="gradient-line"></div>
+  <div class="accent-line"></div>
 
-  <!-- HERO -->
   <div class="container">
+
+    <!-- ── HERO ── -->
     <section class="hero">
-      <div class="hero-badge">Prescriptive Analytics</div>
+      <div class="hero-kicker">
+        <span class="tr">Prescriptive Churn Analytics</span>
+        <span class="en">Prescriptive Churn Analytics</span>
+      </div>
       <h1><span>Aegis</span></h1>
-      <p class="hero-tagline">Prescriptive Analytics Engine for Telecom Churn</p>
-      <p class="hero-sub">Most churn systems stop at prediction. Aegis adds explanation, counterfactual prescription, financial value, causal treatment-effect estimation, and backtesting.</p>
+      <p class="hero-tagline">
+        <span class="tr">prediction → explanation → prescription → financial decision → causal CATE</span>
+        <span class="en">prediction → explanation → prescription → financial decision → causal CATE</span>
+      </p>
+      <p class="hero-sub">
+        <span class="tr">
+          Çoğu churn sistemi tahminle biter. Aegis oradan başlar: SHAP ile neden, DiCE ile ne değiştirilmeli, NPV + WACC ile değer mi, T-Learner ile gerçekten işe yarar mı — hepsi tek pipeline, denetlenebilir karar kaydıyla.
+        </span>
+        <span class="en">
+          Most churn systems stop at prediction. Aegis starts there: SHAP for why, DiCE for what to change, NPV + WACC for whether it's worth it, T-Learner CATE for whether it actually works — one pipeline, auditable decision trail.
+        </span>
+      </p>
       <div class="hero-ctas">
-        <a href="./app/" class="btn btn-primary">Launch Dashboard &rarr;</a>
-        <a href="mailto:emirhuseyininci@gmail.com?subject=Aegis%20Prescriptive%20Analytics%20Demo" class="btn btn-ghost">Schedule a Demo</a>
-        <a href="https://github.com/emirhuseynrmx/aegis" target="_blank" rel="noopener" class="btn btn-ghost">GitHub &rarr;</a>
+        <a href="./app/" class="btn btn-primary">
+          <span class="tr">Dashboard'u Aç →</span>
+          <span class="en">Launch Dashboard →</span>
+        </a>
+        <a href="mailto:emirhuseyininci@gmail.com?subject=Aegis%20Demo" class="btn btn-ghost">
+          <span class="tr">Demo Planla</span>
+          <span class="en">Schedule Demo</span>
+        </a>
+        <a href="https://github.com/emirhuseynrmx/aegis" target="_blank" rel="noopener" class="btn btn-ghost">GitHub →</a>
       </div>
     </section>
 
-    <!-- 01 PIPELINE -->
+    <!-- ── 01 PIPELINE ── -->
     <section class="section reveal">
-      <div class="section-label"><span>01</span> Pipeline</div>
-      <h2 class="section-title">Six-Stage Prescriptive Pipeline</h2>
-      <p class="section-desc">Each stage builds on the last. From raw probability to actionable, financially-validated prescriptions.</p>
+      <div class="section-label"><em>01</em> Pipeline</div>
+      <h2 class="section-title">
+        <span class="tr">Altı Aşamalı Prescriptive Pipeline</span>
+        <span class="en">Six-Stage Prescriptive Pipeline</span>
+      </h2>
+      <p class="section-desc">
+        <span class="tr">Her aşama bir öncekinin üzerine inşa eder. Ham veriden finansal olarak doğrulanmış retention aksiyonuna.</span>
+        <span class="en">Every stage builds on the last. From raw data to financially-validated retention action.</span>
+      </p>
       <div class="pipeline">
-        <div class="pipeline-title">Aegis Pipeline Flow</div>
+        <div class="pipeline-title">Aegis Pipeline — v2</div>
         <div class="pipeline-flow">
           <div class="pipeline-step">
             <div class="pipeline-num">01</div>
-            <div class="pipeline-name">Predict</div>
-            <div class="pipeline-desc">Calibrated churn probability via XGBoost ensemble</div>
+            <div class="pipeline-name">Preprocess</div>
+            <div class="pipeline-desc">Polars — feature state persist, train/serve tutarlılığı</div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-num">02</div>
-            <div class="pipeline-name">Explain</div>
-            <div class="pipeline-desc">SHAP values reveal feature importance and interactions</div>
+            <div class="pipeline-name">Predict</div>
+            <div class="pipeline-desc">XGBoost + LightGBM + CatBoost — Platt scaling ile kalibre churn prob</div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-num">03</div>
-            <div class="pipeline-name">Prescribe</div>
-            <div class="pipeline-desc">DiCE counterfactuals with business constraints</div>
+            <div class="pipeline-name">Explain</div>
+            <div class="pipeline-desc">SHAP TreeExplainer + DiCE counterfactuals — lokal & global</div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-num">04</div>
             <div class="pipeline-name">Financial</div>
-            <div class="pipeline-desc">NPV-style decisioning with WACC discounting</div>
+            <div class="pipeline-desc">CLTV + aksiyon maliyeti + margin + WACC → beklenen değer kararı</div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-num">05</div>
             <div class="pipeline-name">Causal</div>
-            <div class="pipeline-desc">T-Learner CATE for treatment effect estimation</div>
+            <div class="pipeline-desc">T-Learner CATE — tedavi etkisi tahmini, leakage guard</div>
           </div>
           <div class="pipeline-step">
             <div class="pipeline-num">06</div>
-            <div class="pipeline-name">Validate</div>
-            <div class="pipeline-desc">PSI drift monitoring + temporal backtesting</div>
+            <div class="pipeline-name">Audit</div>
+            <div class="pipeline-desc">Privacy-safe JSONL audit events, policy snapshot digest</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 02 STATS -->
+    <!-- ── 02 STATS ── -->
     <section class="section reveal">
-      <div class="section-label"><span>02</span> Metrics</div>
-      <h2 class="section-title">Validated at Scale</h2>
-      <p class="section-desc">Tested against real-world datasets with rigorous validation.</p>
+      <div class="section-label"><em>02</em> Metrics</div>
+      <h2 class="section-title">
+        <span class="tr">Çalışan Sistem</span>
+        <span class="en">Production-Grade Numbers</span>
+      </h2>
+      <p class="section-desc">
+        <span class="tr">185 test geçiyor. Lint temiz. Frontend production build başarılı.</span>
+        <span class="en">185 tests passing. Lint clean. Frontend production build successful.</span>
+      </p>
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-value" data-target="173" data-suffix="/173">0</div>
+          <div class="stat-value" data-target="185" data-suffix="">0</div>
           <div class="stat-label">Tests Passing</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value" data-target="94" data-suffix="%">0</div>
-          <div class="stat-label">Coverage</div>
+          <div class="stat-value" data-target="3" data-suffix="">0</div>
+          <div class="stat-label">ML Models (ensemble)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value" data-target="7" data-suffix="M Rows">0</div>
-          <div class="stat-label">Criteo Dataset</div>
+          <div class="stat-value" data-target="15" data-suffix="">0</div>
+          <div class="stat-label">API Routes</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value" data-target="6.23" data-suffix="x" data-decimals="2">0</div>
-          <div class="stat-label">Top-Decile Uplift</div>
+          <div class="stat-value" data-target="6" data-suffix="">0</div>
+          <div class="stat-label">Pipeline Stages</div>
         </div>
       </div>
     </section>
 
-    <!-- 03 FEATURES -->
+    <!-- ── 03 MODULES ── -->
     <section class="section reveal">
-      <div class="section-label"><span>03</span> Modules</div>
-      <h2 class="section-title">Full Prescriptive Stack</h2>
-      <p class="section-desc">Six specialized modules working as a unified pipeline.</p>
+      <div class="section-label"><em>03</em> Modules</div>
+      <h2 class="section-title">
+        <span class="tr">Tam Prescriptive Stack</span>
+        <span class="en">Full Prescriptive Stack</span>
+      </h2>
+      <p class="section-desc">
+        <span class="tr">Prediction'dan audit'e kadar birlikte çalışan altı özel modül.</span>
+        <span class="en">Six specialized modules working as one coherent system.</span>
+      </p>
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-label">Prediction</div>
-          <h3>XGBoost Ensemble</h3>
-          <p>Calibrated churn prediction with Platt scaling. Handles class imbalance, missing values, and high-cardinality categoricals out of the box.</p>
+          <h3>
+            <span class="tr">Kalibre Ensemble</span>
+            <span class="en">Calibrated Ensemble</span>
+          </h3>
+          <p>
+            <span class="tr">XGBoost, LightGBM ve CatBoost — Platt scaling ile kalibre edilmiş churn olasılığı. Class imbalance, eksik değer ve yüksek kardinaliteli kategorikler kutu dışı çalışır.</span>
+            <span class="en">XGBoost, LightGBM, and CatBoost with Platt scaling calibration. Handles class imbalance, missing values, and high-cardinality categoricals out of the box.</span>
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-label">Preprocessing</div>
+          <h3>Polars Pipeline</h3>
+          <p>
+            <span class="tr">Polars tabanlı ön işleme. Feature state train sırasında persist ediliyor, serve sırasında yeniden yükleniyor — train/serve tutarsızlığı yok.</span>
+            <span class="en">Polars-based preprocessing with persisted feature state. Loaded at serve time to guarantee train/serve consistency — no silent feature drift.</span>
+          </p>
         </div>
         <div class="feature-card">
           <div class="feature-label">Explanation</div>
-          <h3>SHAP TreeExplainer</h3>
-          <p>Model interpretation and causal analysis via DoWhy. Global and local feature importance with interaction effects.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-label">Prescription</div>
-          <h3>DiCE Counterfactuals</h3>
-          <p>Actionable prescriptions with business constraints. Generates minimal-change interventions that respect feasibility bounds.</p>
+          <h3>SHAP + DiCE</h3>
+          <p>
+            <span class="tr">SHAP TreeExplainer ile global ve lokal feature önem analizi. DiCE ile iş kısıtlarına uyan minimum değişiklik counterfactual'ları. "Bu müşteri neden churn eder?" + "Ne değişse kalır?"</span>
+            <span class="en">SHAP TreeExplainer for global and local feature importance. DiCE counterfactuals with business constraints for minimal-change interventions. "Why will this customer churn?" + "What would make them stay?"</span>
+          </p>
         </div>
         <div class="feature-card">
           <div class="feature-label">Financial</div>
-          <h3>Expected Value Framework</h3>
-          <p>NPV-style decisioning with WACC discounting. Converts churn probability into dollar-denominated retention ROI.</p>
+          <h3>
+            <span class="tr">Beklenen Değer Kararı</span>
+            <span class="en">Expected Value Framework</span>
+          </h3>
+          <p>
+            <span class="tr">Churn olasılığı, CLTV, aksiyon maliyeti, margin ve WACC'yi birleştiren NPV tarzı karar motoru. Müşteri başına retention ROI'sini dolar cinsinden hesaplar — eşiği geçmeyene aksiyon önerilmez.</span>
+            <span class="en">NPV-style decision engine combining churn probability, CLTV, action cost, margin, and WACC discounting. Converts probability into dollar-denominated retention ROI per customer — no intervention recommended below threshold.</span>
+          </p>
         </div>
         <div class="feature-card">
           <div class="feature-label">Causal</div>
           <h3>T-Learner CATE</h3>
-          <p>Treatment effect estimation and sleeping dog detection. Identifies customers who would churn because of intervention.</p>
+          <p>
+            <span class="tr">T-Learner tedavi etkisi tahmini. CATE = P(churn | tedavi) - P(churn | kontrol). Sleeping dog tespiti (aksiyon churn'ü artıranlar). Feature leakage guard, per-arm minimum satır zorunluluğu, treatment evidence metadata.</span>
+            <span class="en">T-Learner treatment effect estimation. CATE = P(churn|treatment) - P(churn|control). Sleeping dog detection. Feature leakage guards, per-arm row minimums, treatment evidence metadata in every API response.</span>
+          </p>
         </div>
         <div class="feature-card">
-          <div class="feature-label">Validation</div>
-          <h3>Backtesting Engine</h3>
-          <p>PSI drift monitoring and temporal validation. Walk-forward testing ensures model stability across time periods.</p>
+          <div class="feature-label">Audit & Auth</div>
+          <h3>
+            <span class="tr">Denetlenebilir Altyapı</span>
+            <span class="en">Auditable Infrastructure</span>
+          </h3>
+          <p>
+            <span class="tr">JWT + RBAC, request-scoped tenant context, rate limiting. Privacy-safe JSONL audit olayları — hassas alanlar redacted. Immutable policy snapshot + digest. Artifact registry ile pilot-grade replay kanıtı.</span>
+            <span class="en">JWT auth with RBAC scopes, request-scoped tenant context, rate limiting. Privacy-safe JSONL audit events with field redaction. Immutable policy snapshots with digests. Artifact registry for pilot-grade replay evidence.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="honest-box">
+        <div class="honest-box-title">
+          <span class="tr">Dürüst Bir Not — CATE ve Dataset</span>
+          <span class="en">Honest Note — CATE and Dataset</span>
+        </div>
+        <p>
+          <span class="tr">
+            Mevcut demo IBM Telco dataset'ini kullanıyor. Bu dataset gerçek tedavi/kontrol ataması içermiyor; uplift akışı simüle edilmiş etiketlerle çalışıyor. Sistem bunu açıkça API response'unda bildiriyor (<code>treatment_source: "simulation"</code>). Gerçek nedensel CATE için randomize campaign verisi gerekiyor. Güçlü hedef dataset: <strong>KKBox</strong> (büyük ölçekli temporal churn), Criteo Uplift, Hillstrom.
+          </span>
+          <span class="en">
+            The current demo runs on the IBM Telco dataset, which has no real treatment/control assignment. The uplift flow uses simulated labels and reports this explicitly in every API response (<code>treatment_source: "simulation"</code>). Real causal CATE requires a randomized campaign dataset. Target datasets: <strong>KKBox</strong> (large-scale temporal churn), Criteo Uplift, Hillstrom.
+          </span>
+        </p>
+      </div>
+
+      <div class="roadmap">
+        <div class="roadmap-title">
+          <span class="tr">Roadmap — Güçlü Causal Layer</span>
+          <span class="en">Roadmap — Stronger Causal Layer</span>
+        </div>
+        <div class="roadmap-row">
+          <span class="roadmap-tag done">✓ Done</span>
+          <span class="roadmap-text">T-Learner CATE engine, feature leakage guard, treatment evidence metadata</span>
+        </div>
+        <div class="roadmap-row">
+          <span class="roadmap-tag done">✓ Done</span>
+          <span class="roadmap-text">Policy snapshot + digest, RBAC, audit JSONL, artifact registry</span>
+        </div>
+        <div class="roadmap-row">
+          <span class="roadmap-tag done">✓ Done</span>
+          <span class="roadmap-text">185 test, ruff clean, Next.js dashboard, production build</span>
+        </div>
+        <div class="roadmap-row">
+          <span class="roadmap-tag planned">Planned</span>
+          <span class="roadmap-text">KKBox churn dataset — büyük ölçekli temporal churn benchmark'ları</span>
+        </div>
+        <div class="roadmap-row">
+          <span class="roadmap-tag planned">Planned</span>
+          <span class="roadmap-text">Simüle uplift etiketlerini gerçek randomize dataset ile değiştir</span>
+        </div>
+        <div class="roadmap-row">
+          <span class="roadmap-tag planned">Planned</span>
+          <span class="roadmap-text">Frontend'de CATE provenance görünümü, typed API contract testleri</span>
         </div>
       </div>
 
       <div class="tech-badges">
         <span class="tech-badge">Python 3.12</span>
+        <span class="tech-badge">Litestar</span>
+        <span class="tech-badge">Polars</span>
         <span class="tech-badge">XGBoost</span>
-        <span class="tech-badge">DoWhy</span>
+        <span class="tech-badge">LightGBM</span>
+        <span class="tech-badge">CatBoost</span>
         <span class="tech-badge">SHAP</span>
         <span class="tech-badge">DiCE</span>
         <span class="tech-badge">EconML</span>
-        <span class="tech-badge">LightGBM</span>
+        <span class="tech-badge">Next.js</span>
+        <span class="tech-badge">DuckDB</span>
+        <span class="tech-badge">Postgres</span>
+        <span class="tech-badge">Redis</span>
+        <span class="tech-badge">JWT + RBAC</span>
+        <span class="tech-badge">Docker</span>
       </div>
     </section>
 
-    <!-- CTA -->
+    <!-- ── CTA ── -->
     <section class="cta-section reveal">
-      <h2>Ready to go beyond prediction?</h2>
-      <p>See how Aegis transforms churn analytics from reactive dashboards to prescriptive, financially-validated action plans.</p>
+      <h2>
+        <span class="tr">Tahminin ötesine geçmeye hazır mısınız?</span>
+        <span class="en">Ready to go beyond prediction?</span>
+      </h2>
+      <p>
+        <span class="tr">Aegis'in churn analitiğini reaktif dashboardlardan finansal olarak doğrulanmış aksiyon planlarına nasıl dönüştürdüğünü görün.</span>
+        <span class="en">See how Aegis transforms churn analytics from reactive dashboards into financially-validated, auditable action plans.</span>
+      </p>
       <div class="hero-ctas">
-        <a href="mailto:emirhuseyininci@gmail.com?subject=Aegis%20Prescriptive%20Analytics%20Demo" class="btn btn-primary">Schedule a Demo</a>
-        <a href="https://github.com/emirhuseynrmx/aegis" target="_blank" rel="noopener" class="btn btn-ghost">GitHub &rarr;</a>
+        <a href="./app/" class="btn btn-primary">
+          <span class="tr">Dashboard'u Aç →</span>
+          <span class="en">Launch Dashboard →</span>
+        </a>
+        <a href="mailto:emirhuseyininci@gmail.com?subject=Aegis%20Demo" class="btn btn-ghost">
+          <span class="tr">Demo Planla</span>
+          <span class="en">Schedule Demo</span>
+        </a>
+        <a href="https://github.com/emirhuseynrmx/aegis" target="_blank" rel="noopener" class="btn btn-ghost">GitHub →</a>
       </div>
     </section>
+
   </div>
 
-  <!-- FOOTER -->
   <footer class="footer">
-    <p>&copy; 2025&ndash;2026 Emir H. İnci &middot; <a href="/">emirhuseyin.tech</a></p>
+    <p>&copy; 2025–2026 Emir H. İnci · <a href="/">emirhuseyin.tech</a></p>
   </footer>
 
   <script>
-    /* ── Sticky nav hide/show on scroll ── */
+    /* ── Custom cursor ── */
     (function(){
-      var nav = document.getElementById('nav');
-      var last = 0;
-      window.addEventListener('scroll', function(){
-        var y = window.scrollY;
-        if(y > last && y > 80) nav.classList.add('hidden');
-        else nav.classList.remove('hidden');
-        last = y;
-      }, {passive:true});
+      var dot=document.getElementById('c-dot');
+      var ring=document.getElementById('c-ring');
+      if(!dot||!ring)return;
+      var mx=window.innerWidth/2,my=window.innerHeight/2;
+      var rx=mx,ry=my;
+      document.addEventListener('mousemove',function(e){
+        mx=e.clientX;my=e.clientY;
+        dot.style.transform='translate3d('+(mx-4)+'px,'+(my-4)+'px,0)';
+      });
+      (function loop(){
+        rx+=(mx-rx)*.15;ry+=(my-ry)*.15;
+        ring.style.transform='translate3d('+(rx-16)+'px,'+(ry-16)+'px,0)';
+        requestAnimationFrame(loop);
+      })();
+    })();
+
+    /* ── Lang toggle ── */
+    (function(){
+      var btn=document.getElementById('lang-btn');
+      var html=document.documentElement;
+      btn.addEventListener('click',function(){
+        if(html.classList.contains('lang-tr')){
+          html.classList.replace('lang-tr','lang-en');
+        } else {
+          html.classList.replace('lang-en','lang-tr');
+        }
+      });
     })();
 
     /* ── Scroll reveal ── */
     (function(){
-      var els = document.querySelectorAll('.reveal');
-      var obs = new IntersectionObserver(function(entries){
+      var els=document.querySelectorAll('.reveal');
+      var obs=new IntersectionObserver(function(entries){
         entries.forEach(function(e){
-          if(e.isIntersecting){
-            e.target.classList.add('visible');
-            obs.unobserve(e.target);
-          }
+          if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}
         });
-      }, {threshold:0.1, rootMargin:'0px 0px -40px 0px'});
-      els.forEach(function(el){ obs.observe(el); });
+      },{threshold:0.08,rootMargin:'0px 0px -30px 0px'});
+      els.forEach(function(el){obs.observe(el);});
     })();
 
-    /* ── Count-up animation ── */
+    /* ── Count-up ── */
     (function(){
-      var stats = document.querySelectorAll('.stat-value[data-target]');
-      var obs = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting){
-            animateCount(e.target);
-            obs.unobserve(e.target);
-          }
-        });
-      }, {threshold:0.1});
-      stats.forEach(function(el){ obs.observe(el); });
-
-      setTimeout(function(){ stats.forEach(function(el){ if(el.textContent === '0' || el.textContent.trim() === '0') animateCount(el); }); }, 2000);
-
-      function animateCount(el){
-        var target = parseFloat(el.getAttribute('data-target'));
-        var suffix = el.getAttribute('data-suffix') || '';
-        var decimals = parseInt(el.getAttribute('data-decimals') || '0');
-        var duration = 1400;
-        var start = performance.now();
-        function tick(now){
-          var elapsed = now - start;
-          var progress = Math.min(elapsed / duration, 1);
-          var eased = 1 - Math.pow(1 - progress, 3);
-          var current = eased * target;
-          if(decimals > 0){
-            el.textContent = current.toFixed(decimals) + suffix;
-          } else {
-            el.textContent = Math.round(current) + suffix;
-          }
-          if(progress < 1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
+      var stats=document.querySelectorAll('.stat-value[data-target]');
+      var obs=new IntersectionObserver(function(entries){
+        entries.forEach(function(e){if(e.isIntersecting){run(e.target);obs.unobserve(e.target);}});
+      },{threshold:0.1});
+      stats.forEach(function(el){obs.observe(el);});
+      function run(el){
+        var target=parseFloat(el.getAttribute('data-target'));
+        var suffix=el.getAttribute('data-suffix')||'';
+        var decimals=parseInt(el.getAttribute('data-decimals')||'0');
+        var start=performance.now();
+        (function tick(now){
+          var p=Math.min((now-start)/1200,1);
+          var v=target*(1-Math.pow(1-p,3));
+          el.textContent=(decimals?v.toFixed(decimals):Math.round(v))+suffix;
+          if(p<1)requestAnimationFrame(tick);
+        })(start);
       }
     })();
   </script>

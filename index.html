@@ -1,511 +1,707 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr" class="lang-tr">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Emir H. Inci — Calybris Ecosystem · Causal ML · Quant Research</title>
-  <meta name="description" content="Emir Hüseyin İnci — Decision infrastructure engineer. Building Calybris, a proof-carrying prescriptive decision engine powering AI cost governance, quant signal audit, and prescriptive analytics."/>
-  <meta name="keywords" content="Calybris, GOVERIS, LLM cost governance, AI gateway, decision engine, Rust, causal ML, prescriptive analytics, quant research, Emir Hüseyin İnci"/>
+  <title>Emir H. İnci — Python · Makine Öğrenmesi · Veri Mühendisliği</title>
+  <meta name="description" content="Emir Hüseyin İnci — Python developer. Veri pipeline, makine öğrenmesi, web scraping, PDF raporlama. Upwork'te freelance."/>
   <meta name="author" content="Emir Hüseyin İnci"/>
   <meta name="robots" content="index, follow"/>
-  <meta name="theme-color" content="#0a0a0a"/>
+  <meta name="theme-color" content="#06040f"/>
   <link rel="canonical" href="https://emirhuseyin.tech/"/>
   <meta property="og:type" content="website"/>
-  <meta property="og:title" content="Emir H. İnci — Calybris Ecosystem"/>
-  <meta property="og:description" content="Decision infrastructure engineer. Proof-carrying AI cost governance, quant signal audit, and prescriptive analytics."/>
+  <meta property="og:title" content="Emir H. İnci — Python Developer"/>
+  <meta property="og:description" content="Veriyle çalışıyorum. Pipeline kurar, model eğitir, rapor teslim ederim."/>
   <meta property="og:url" content="https://emirhuseyin.tech/"/>
-  <meta property="og:image" content="https://emirhuseyin.tech/goveris/assets/goveris-og-preview.png"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="Emir H. İnci — Calybris Ecosystem"/>
-  <meta name="twitter:description" content="Decision infrastructure engineer. Proof-carrying prescriptive decision engine."/>
-  <meta name="twitter:image" content="https://emirhuseyin.tech/goveris/assets/goveris-og-preview.png"/>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Emir Hüseyin İnci",
-    "url": "https://emirhuseyin.tech",
-    "jobTitle": "Decision Infrastructure Engineer",
-    "description": "ML engineer building proof-carrying decision engines for AI cost governance, quant signal audit, and prescriptive analytics.",
-    "address": {"@type": "PostalAddress", "addressLocality": "Bursa", "addressCountry": "TR"},
-    "email": "emirhuseyininci@gmail.com",
-    "sameAs": [
-      "https://linkedin.com/in/emirhuseyininci",
-      "https://github.com/emirhuseynrmx",
-      "https://kaggle.com/emirhseyinnci",
-      "https://medium.com/@emirhuseyininci"
-    ],
-    "knowsAbout": ["Causal ML", "Rust", "Prescriptive Analytics", "LLM Cost Governance", "Quant Research"],
-    "makesOffer": {
-      "@type": "Offer",
-      "name": "GOVERIS Shadow Replay Pilot",
-      "description": "7-day LLM spend audit with private Docker deployment. Metadata-only observation.",
-      "url": "https://emirhuseyin.tech/goveris/"
-    }
-  }
-  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="styles.css?v=20260628-private-engines"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="main.css"/>
 </head>
 <body>
 
-  <canvas id="grid-canvas" aria-hidden="true"></canvas>
-  <div class="noise" aria-hidden="true"></div>
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
 
-  <nav class="nav">
-    <span class="nav-loc" id="coords">40.1885°N 29.0610°E</span>
+  <!-- ── NAV ── -->
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">EHİ</a>
     <div class="nav-links">
-      <a href="#engine">engine</a>
-      <a href="#products">products</a>
-      <a href="#research">research</a>
-      <a href="#delivery">delivery</a>
-      <a href="#certs">credentials</a>
-      <a href="#contact">contact</a>
+      <a href="#work"><span class="tr">işler</span><span class="en">work</span></a>
+      <a href="#tools"><span class="tr">araçlar</span><span class="en">tools</span></a>
+      <a href="#research"><span class="tr">araştırma</span><span class="en">research</span></a>
+      <a href="#stack">stack</a>
+      <a href="#contact"><span class="tr">iletişim</span><span class="en">contact</span></a>
     </div>
-    <span class="nav-clock" id="clock"></span>
+    <div class="nav-end">
+      <span class="nav-avail">
+        <span class="avail-dot"></span>
+        <span class="tr">Açığım</span><span class="en">Available</span>
+      </span>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
   </nav>
 
   <!-- ── HERO ── -->
-  <header class="hero">
-    <div class="hero-identity">
-      <div class="hero-avatar-row">
-        <div class="avatar-ring">
-          <div class="avatar-placeholder">EHİ</div>
-        </div>
-        <div>
-          <p class="hero-tag">Rust · Decision Systems · Causal ML</p>
-          <h1>Emir Hüseyin<br/>İnci</h1>
-        </div>
-      </div>
-      <p class="hero-desc">I'm building <strong>Calybris</strong>, a decision engine in Rust that logs why it chose what it chose. The open-source core is on <a href="https://github.com/emirhuseynrmx/calybris-core" style="color:#c8a03c">GitHub</a>.</p>
-      <div class="about-block">
-        <p>My focus is on systems where decisions need to be traceable and reproducible — AI model routing, cost governance, analytical pipelines. Still early stage, learning in public.</p>
-        <p class="about-meta">Bursa, Turkey · Rust + Python · <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a></p>
-      </div>
-      <div class="hero-status">
-        <div class="status-dot"></div>
-        <span>Open to collaborations, feedback, and early adopters</span>
-      </div>
-      <div class="hero-links">
-        <a href="./goveris/" style="background:#c8a03c;color:#0a0a0a;font-weight:700;border-color:#c8a03c">GOVERIS Pilot</a>
-        <a href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
-        <a href="mailto:emirhuseyininci@gmail.com">Email</a>
-      </div>
+  <section class="hero" id="hero">
+    <div class="hero-tag">
+      <span class="tr">Python · Makine Öğrenmesi · Veri Mühendisliği</span>
+      <span class="en">Python · Machine Learning · Data Engineering</span>
     </div>
 
-    <div class="hero-terminal">
-      <div class="term-bar">
-        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-        <span class="term-title">emirh@calybris ~ </span>
-      </div>
-      <div class="term-body">
-        <p class="term-line"><span class="prompt">$</span> <span class="cmd" id="typed"></span><span class="cursor">_</span></p>
-        <div class="term-output" id="term-output"></div>
-      </div>
-    </div>
-  </header>
+    <h1 class="hero-name">Emir Hüseyin</h1>
 
-  <!-- ── CALYBRIS ENGINE ── -->
-  <section class="engine" id="engine">
-    <div class="section-label"><span>00</span> Core Engine</div>
-    <div class="engine-hero">
-      <div class="engine-text">
-        <h2><a href="./engine/" style="color:#c8a03c;transition:opacity .2s">Calybris Engine</a></h2>
-        <p class="engine-sub">Proof-carrying, domain-neutral prescriptive decision engine. Rust. Every decision gets a fingerprint, cost estimate, risk penalty, quality floor, and replayable audit trail.</p>
-        <div class="engine-stats">
-          <div><span>kernel</span><strong>8.6M decisions/s</strong></div>
-          <div><span>http gateway</span><strong>6,084 req/s</strong></div>
-          <div><span>p99 latency</span><strong>42ms</strong></div>
-          <div><span>durable WAL</span><strong>10,684/s</strong></div>
-        </div>
-      </div>
-      <div class="engine-orbit">
-        <div class="orbit-center">CALYBRIS</div>
-        <div class="orbit-ring ring-1">
-          <a href="#goveris" class="orbit-node node-amber">GOVERIS</a>
-          <a href="#lucethemis" class="orbit-node node-violet">LuceThemis</a>
-        </div>
-        <div class="orbit-ring ring-2">
-          <a href="#aera" class="orbit-node node-blue">AeraCFO</a>
-          <a href="#aegis" class="orbit-node node-teal">Aegis</a>
-          <a href="#nexus" class="orbit-node node-red">NexusAlpha</a>
-        </div>
-      </div>
+    <div class="hero-meta">
+      <span>Bursa, Turkey</span>
+      <span class="hero-sep">·</span>
+      <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+    </div>
+
+    <div class="hero-actions">
+      <a class="btn-primary" href="#work">
+        <span class="tr">İşlerimi gör</span>
+        <span class="en">See my work</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub ↗</a>
+      <a class="btn-ghost" href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+
+    <div class="hero-scroll" aria-hidden="true">
+      <span class="tr">aşağı kaydır</span>
+      <span class="en">scroll down</span>
+      <span class="scroll-arrow">↓</span>
     </div>
   </section>
 
-  <!-- ── MARQUEE ── -->
-  <div class="marquee-band" aria-hidden="true">
-    <div class="marquee-track">
-      <span>CALYBRIS</span><span>·</span>
-      <span>GOVERIS</span><span>·</span>
-      <span>LUCETHEMIS</span><span>·</span>
-      <span>RUST</span><span>·</span>
-      <span>PYTHON</span><span>·</span>
-      <span>CAUSAL ML</span><span>·</span>
-      <span>UPLIFT MODELING</span><span>·</span>
-      <span>MDL AUDIT</span><span>·</span>
-      <span>QUANT RESEARCH</span><span>·</span>
-      <span>PRESCRIPTIVE ANALYTICS</span><span>·</span>
-      <span>CALYBRIS</span><span>·</span>
-      <span>GOVERIS</span><span>·</span>
-      <span>LUCETHEMIS</span><span>·</span>
-      <span>RUST</span><span>·</span>
-      <span>PYTHON</span><span>·</span>
-      <span>CAUSAL ML</span><span>·</span>
-      <span>UPLIFT MODELING</span><span>·</span>
-      <span>MDL AUDIT</span><span>·</span>
-      <span>QUANT RESEARCH</span><span>·</span>
-      <span>PRESCRIPTIVE ANALYTICS</span><span>·</span>
+  <!-- ── TICKER ── -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>PYTHON</span><b>·</b>
+      <span>PANDAS</span><b>·</b>
+      <span>SCIKIT-LEARN</span><b>·</b>
+      <span>FASTAPI</span><b>·</b>
+      <span>PYDANTIC</span><b>·</b>
+      <span>PANDERA</span><b>·</b>
+      <span>MACHINE LEARNING</span><b>·</b>
+      <span>DATA PIPELINE</span><b>·</b>
+      <span>WEB SCRAPING</span><b>·</b>
+      <span>PDF REPORTS</span><b>·</b>
+      <span>PYTEST</span><b>·</b>
+      <span>GITHUB ACTIONS</span><b>·</b>
+      <span>PYTHON</span><b>·</b>
+      <span>PANDAS</span><b>·</b>
+      <span>SCIKIT-LEARN</span><b>·</b>
+      <span>FASTAPI</span><b>·</b>
+      <span>MACHINE LEARNING</span><b>·</b>
+      <span>DATA PIPELINE</span><b>·</b>
+      <span>WEB SCRAPING</span><b>·</b>
+      <span>PDF REPORTS</span><b>·</b>
     </div>
   </div>
 
-  <!-- ── PRODUCTS ── -->
-  <section class="products" id="products">
-    <div class="section-label"><span>01</span> Calybris Products</div>
+  <!-- ── WORK / İŞLER ── -->
+  <section class="section" id="work">
+    <header class="section-head">
+      <span class="section-num">01</span>
+      <h2 class="section-title">
+        <span class="tr">İşlerim</span>
+        <span class="en">My Work</span>
+      </h2>
+      <p class="section-sub">
+        <span class="tr">Farklı domainler için tam stack ürünler. Konsept değil, çalışan buildler.</span>
+        <span class="en">Full-stack products across different domains. Not concepts — working builds.</span>
+      </p>
+    </header>
 
-    <article class="project project-xl" id="goveris">
-      <div class="project-index">001</div>
-      <div class="project-badge">Calybris-powered</div>
-      <div class="project-content">
-        <div class="project-tags">
-          <span class="ptag ptag-rust">Rust</span>
-          <span class="ptag ptag-infra">Gateway</span>
-          <span class="ptag ptag-live">Live Demo</span>
-        </div>
-        <h2><a href="./goveris/">GOVERIS</a></h2>
-        <p>AI cost governance gateway. Every LLM call must justify its cost. Routes, downgrades, blocks, caches across <strong>OpenAI · Anthropic · Google</strong> based on expected value, risk, confidence, and tenant budget.</p>
-        <div class="project-grid">
-          <div class="pgrid-cell"><span>models</span><strong>OpenAI · Anthropic · Google</strong></div>
-          <div class="pgrid-cell"><span>mode</span><strong>Shadow replay → Enforce</strong></div>
-          <div class="pgrid-cell"><span>output</span><strong>PDF + HTML + JSON audit</strong></div>
-          <div class="pgrid-cell"><span>deploy</span><strong>Private Docker / VPC</strong></div>
-        </div>
-      </div>
-      <div class="project-actions">
-        <a href="./goveris/" class="btn-demo"><span class="demo-pulse"></span> Try Interactive Demo</a>
-        <a href="https://github.com/emirhuseynrmx/norn" target="_blank" rel="noopener" class="btn-ghost">Source &nearr;</a>
-      </div>
-    </article>
+    <div class="deck-scene">
+      <div class="deck-wrap" id="deck-wrap">
 
-    <article class="project project-xl" id="lucethemis">
-      <div class="project-index">002</div>
-      <div class="project-badge">Calybris-powered</div>
-      <div class="project-content">
-        <div class="project-tags">
-          <span class="ptag ptag-rust">Rust</span>
-          <span class="ptag ptag-quant">Quant Audit</span>
-          <span class="ptag ptag-ml">MDL</span>
+        <div class="dcard">
+          <div class="dcard-body">
+            <span class="dcard-num">001</span>
+            <div class="btags">
+              <span class="btag">AI · LLM · Cost Governance</span>
+            </div>
+            <h3>Goveris</h3>
+            <p>
+              <span class="tr">LLM harcamalarını izleyen AI maliyet yönetim gateway'i. Token, model ve departman bazında harcama denetimi ve audit trail.</span>
+              <span class="en">AI cost governance gateway for LLM spend. Token, model, and department-level spend audit with full audit trail.</span>
+            </p>
+            <div class="dcard-cta">
+              <a class="dcard-link" href="./goveris/">
+                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
+              </a>
+              <span class="dcard-out">cost report · audit trail</span>
+            </div>
+          </div>
+          <div class="dcard-panel">
+            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">cost governance gateway</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">input</span><span class="dcard-pval">LLM API calls</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">tracks</span><span class="dcard-pval hi">tokens · cost · dept</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">output</span><span class="dcard-pval">audit trail · CSV report</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">status</span><span class="dcard-pval">active build</span></div>
+          </div>
         </div>
-        <h2><a href="./lucethemis/">LuceThemis</a></h2>
-        <p>Quant signal evidence audit layer. Not a trading bot — a falsification engine. Tests whether signals survive cost, leakage, overfit, walk-forward, and complexity pressure before capital goes in. MDL-inspired proxy: more complex signal requires stronger evidence.</p>
-        <div class="project-grid">
-          <div class="pgrid-cell"><span>pilot result</span><strong>Holdout +8.98%</strong></div>
-          <div class="pgrid-cell"><span>win rate</span><strong>84% (N=25)</strong></div>
-          <div class="pgrid-cell"><span>profit factor</span><strong>5.509</strong></div>
-          <div class="pgrid-cell"><span>candidates audited</span><strong>215,233</strong></div>
-        </div>
-        <div class="project-quote">"The market needs a reliable evidence standard, not more backtests."</div>
-      </div>
-      <div class="project-actions">
-        <a href="./lucethemis/" class="btn-demo"><span class="demo-pulse"></span> View Details</a>
-        <a href="mailto:emirhuseyininci@gmail.com?subject=LuceThemis%20Pilot%20Audit" class="btn-ghost">Request Pilot &nearr;</a>
-      </div>
-    </article>
 
-    <div class="project-pair">
-      <article class="project" id="aera">
-        <div class="project-index">003</div>
-        <div class="project-content">
-          <div class="project-tags">
-            <span class="ptag ptag-rust">Rust</span>
-            <span class="ptag ptag-ai">AI Agent</span>
+        <div class="dcard">
+          <div class="dcard-body">
+            <span class="dcard-num">002</span>
+            <div class="btags">
+              <span class="btag">ML · Telecom · Prescriptive</span>
+            </div>
+            <h3>Aegis</h3>
+            <p>
+              <span class="tr">Telecom churn için prescriptive analytics engine. Sadece tahmin değil — counterfactual açıklama, finansal etki, causal treatment önerisi.</span>
+              <span class="en">Prescriptive analytics engine for telecom churn. Not just prediction — counterfactual explanation, financial impact, causal treatment recommendation.</span>
+            </p>
+            <div class="dcard-cta">
+              <a class="dcard-link" href="./aegis/">
+                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
+              </a>
+              <span class="dcard-out">prescriptions · financial impact</span>
+            </div>
           </div>
-          <h3><a href="./aera/">AeraCFO</a></h3>
-          <p>AI finance reporting for SMEs. 3-agent pipeline (Planner → Executor → Critic), Holt forecasting, anomaly detection, incentive matching, PDF generation. Google Gemini Flash.</p>
-          <div class="project-grid project-grid-sm">
-            <div class="pgrid-cell"><span>engine</span><strong>Axum + Polars</strong></div>
-            <div class="pgrid-cell"><span>tests</span><strong>63/63</strong></div>
-          </div>
-          <div class="project-actions project-actions-sm">
-            <a href="./aera/app/" class="btn-demo btn-demo-sm"><span class="demo-pulse"></span> Try App</a>
-            <a href="./aera/" class="btn-ghost btn-ghost-sm">Details</a>
+          <div class="dcard-panel">
+            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">prescriptive analytics</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">domain</span><span class="dcard-pval">telecom churn</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">ml</span><span class="dcard-pval hi">causal inference</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">output</span><span class="dcard-pval">prescriptions · PDF</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">beyond</span><span class="dcard-pval">prediction → action</span></div>
           </div>
         </div>
-        <a href="./aera/" class="project-arrow">&nearr;</a>
-      </article>
 
-      <article class="project" id="aegis">
-        <div class="project-index">004</div>
-        <div class="project-content">
-          <div class="project-tags">
-            <span class="ptag ptag-python">Python</span>
-            <span class="ptag ptag-ml">Causal ML</span>
-            <span class="ptag ptag-live">Live Demo</span>
+        <div class="dcard">
+          <div class="dcard-body">
+            <span class="dcard-num">003</span>
+            <div class="btags">
+              <span class="btag">AI Agents · Finance · PDF</span>
+            </div>
+            <h3>AeraCFO</h3>
+            <p>
+              <span class="tr">KOBİ'ler için otonom AI CFO platformu. CSV yükle, 3 ajan (Planner, Executor, Critic) analiz eder, board-ready PDF çıkar.</span>
+              <span class="en">Autonomous AI CFO platform for SMEs. Upload CSV, 3-agent pipeline analyzes, outputs board-ready PDF.</span>
+            </p>
+            <div class="dcard-cta">
+              <a class="dcard-link" href="./aera/">
+                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
+              </a>
+              <span class="dcard-out">forecasts · anomalies · PDF</span>
+            </div>
           </div>
-          <h3><a href="./aegis/">Aegis</a></h3>
-          <p>Prescriptive churn engine. Prediction → SHAP explanation → DiCE counterfactual prescription → DoWhy causal analysis → NPV decisioning → T-Learner CATE → Backtesting.</p>
-          <div class="project-grid project-grid-sm">
-            <div class="pgrid-cell"><span>tests</span><strong>173/173</strong></div>
-            <div class="pgrid-cell"><span>coverage</span><strong>94%</strong></div>
-          </div>
-          <div class="project-actions project-actions-sm">
-            <a href="./aegis/app/" class="btn-demo btn-demo-sm"><span class="demo-pulse"></span> Launch Dashboard</a>
-            <a href="./aegis/" class="btn-ghost btn-ghost-sm">Details</a>
+          <div class="dcard-panel">
+            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">autonomous AI CFO</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">agents</span><span class="dcard-pval hi">planner · executor · critic</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">input</span><span class="dcard-pval">CSV / XLSX</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">output</span><span class="dcard-pval">board-ready PDF</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">target</span><span class="dcard-pval">SMEs</span></div>
           </div>
         </div>
-        <a href="./aegis/" class="project-arrow">&nearr;</a>
-      </article>
+
+        <div class="dcard">
+          <div class="dcard-body">
+            <span class="dcard-num">004</span>
+            <div class="btags">
+              <span class="btag">HFT · Quant · Risk Engine</span>
+            </div>
+            <h3>LuceThemis</h3>
+            <p>
+              <span class="tr">HFT sınıfı sinyal denetim ve pre-trade risk motoru. 4.6M kontrol/sn. Kurumsal quant masaları için denetlenebilir karar kaydı.</span>
+              <span class="en">HFT-grade signal audit and pre-trade risk engine. 4.6M checks/sec. Auditable decision trail for institutional quant desks.</span>
+            </p>
+            <div class="dcard-cta">
+              <a class="dcard-link" href="./lucethemis/">
+                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
+              </a>
+              <span class="dcard-out">audit trail · risk decisions</span>
+            </div>
+          </div>
+          <div class="dcard-panel">
+            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">pre-trade risk engine</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">speed</span><span class="dcard-pval hi">4.6M checks / sec</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">audit</span><span class="dcard-pval">hash-chained WAL</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">domain</span><span class="dcard-pval">institutional quant</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">latency</span><span class="dcard-pval">sub-millisecond</span></div>
+          </div>
+        </div>
+
+        <div class="dcard">
+          <div class="dcard-body">
+            <span class="dcard-num">005</span>
+            <div class="btags">
+              <span class="btag">Rust · Decision Kernel · Audit</span>
+            </div>
+            <h3>Calybris Core</h3>
+            <p>
+              <span class="tr">Deterministik proof-carrying karar çekirdeği. Aday + kısıt → karar + digest + WAL. LLM routing ve pre-trade guard referans kullanımları. Arşivlendi.</span>
+              <span class="en">Deterministic proof-carrying decision kernel. Candidate + policy → decision + digests + WAL. LLM routing and pre-trade guard as reference use cases. Archived.</span>
+            </p>
+            <div class="dcard-cta">
+              <a class="dcard-link" href="./calybris/">
+                <span class="tr">Arşive bak</span><span class="en">View archive</span> →
+              </a>
+              <span class="dcard-out" style="color:#3a3828">arşivlendi · apache-2.0</span>
+            </div>
+          </div>
+          <div class="dcard-panel">
+            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">decision kernel</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">lang</span><span class="dcard-pval">Rust (no unsafe)</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">audit</span><span class="dcard-pval">HMAC-SHA256 WAL</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">status</span><span class="dcard-pval" style="color:#3a3828">archived</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">ci</span><span class="dcard-pval" style="color:#2a2818">Loom · Miri · proptest</span></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="deck-nav">
+        <button class="deck-btn" id="deck-prev">← <span class="tr">önceki</span><span class="en">prev</span></button>
+        <span class="deck-counter" id="deck-counter">01 / 05</span>
+        <button class="deck-btn" id="deck-next"><span class="tr">sonraki</span><span class="en">next</span> →</button>
+      </div>
+      <p class="deck-hint">← → <span class="tr">ok tuşları da çalışıyor</span><span class="en">keyboard arrows also work</span></p>
     </div>
+  </section>
 
-    <div style="text-align:center;padding:1rem 0;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#333;letter-spacing:.08em">
-      + NexusAlpha (private quant research infra — Rust rewrite in progress)
+  <!-- ── TOOLS / MİNİ SCRİPTLER ── -->
+  <section class="section" id="tools">
+    <header class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="section-title">
+        <span class="tr">Mini Scriptler</span>
+        <span class="en">Mini Scripts</span>
+      </h2>
+      <p class="section-sub">
+        <span class="tr">Python otomasyon araçları — testli, CI'lı, teslim edilebilir.</span>
+        <span class="en">Python automation tools — tested, CI-ready, deliverable.</span>
+      </p>
+    </header>
+
+    <div class="mini-grid">
+
+      <a class="mcard" href="./work/scraping-data-pipeline/">
+        <span class="mcard-tag">Python · async · Pydantic</span>
+        <h3>Scraping Data Pipeline</h3>
+        <p>
+          <span class="tr">Config'den async web scraping. Selector değiştirmek için kod açmana gerek yok.</span>
+          <span class="en">Config-driven async web scraper. No code changes to swap selectors.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="./work/price-monitor-pipeline/">
+        <span class="mcard-tag">FastAPI · Thompson Sampling</span>
+        <h3>Price Monitor Pipeline</h3>
+        <p>
+          <span class="tr">Rakip fiyatlarını async çeker, ML ile anomali işaretler, idempotent API'dan servis eder.</span>
+          <span class="en">Pulls competitor prices async, ML anomaly flagging, served via idempotent API.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="./work/data-quality-cleaning-api/">
+        <span class="mcard-tag">FastAPI · Pandas · Pandera</span>
+        <h3>Data Quality Cleaning API</h3>
+        <p>
+          <span class="tr">Ham veriyi endpoint'e gönder, temiz veri al. Tip çıkarımı, imputation, duplicate tespiti.</span>
+          <span class="en">Send raw data, get clean data back. Type inference, imputation, duplicate detection.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="./work/csv-excel-cleaning-toolkit/">
+        <span class="mcard-tag">Pandas 3.x · openpyxl · chardet</span>
+        <h3>CSV / Excel Cleaning Toolkit</h3>
+        <p>
+          <span class="tr">Bozuk CSV'yi alır, temizler, istediğin formata çevirir. Encoding + tip sorunları otomatik.</span>
+          <span class="en">Takes broken CSVs, cleans them, converts to your format. Encoding + type issues handled automatically.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="./work/trading-performance-report-kit/">
+        <span class="mcard-tag">Quant · matplotlib · PDF</span>
+        <h3>Trading Performance Report Kit</h3>
+        <p>
+          <span class="tr">Trade log CSV → tam performans raporu: P&amp;L, equity curve, drawdown, PDF.</span>
+          <span class="en">Trade log CSV → full performance report: P&amp;L, equity curve, drawdown, PDF.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="./work/churn-prediction-retention-report/">
+        <span class="mcard-tag">ML · sklearn · PDF</span>
+        <h3>Churn Prediction Report</h3>
+        <p>
+          <span class="tr">GradientBoosting ile churn skoru, risk segmentasyonu ve PDF rapor. Otomatik feature engineering.</span>
+          <span class="en">GradientBoosting churn scoring, risk segmentation, PDF report. Automatic feature engineering.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">
+        <span class="mcard-tag">Python · Thompson Sampling · Litestar</span>
+        <h3>RL Pricing Bandit</h3>
+        <p>
+          <span class="tr">Thompson Sampling ile fiyatlandırma ve teklif deneyleri. Reward feedback, posterior güncelleme, offline replay raporu.</span>
+          <span class="en">Pricing and offer experiments with Thompson Sampling. Reward feedback, posterior updates, offline policy replay report.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/counterfactual-lead-scoring-lab" target="_blank" rel="noopener">
+        <span class="mcard-tag">Python · SHAP · DiCE · Litestar</span>
+        <h3>Counterfactual Lead Scoring</h3>
+        <p>
+          <span class="tr">Lead skorlama + SHAP sürücü analizi + DiCE counterfactual aksiyon planlaması. Satışa yönlendirmeden önce incelenebilir kararlar.</span>
+          <span class="en">Lead scoring + SHAP driver review + DiCE counterfactual action planning. Reviewable decisions before routing leads to sales.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener">
+        <span class="mcard-tag">Python · RAG · FastAPI · TF-IDF</span>
+        <h3>RAG Chatbot Template</h3>
+        <p>
+          <span class="tr">Doküman tabanlı local RAG chatbot. TF-IDF vektör deposu, kaynak gösterimi, chunk metadata. Harici API çağrısı yok.</span>
+          <span class="en">Local RAG chatbot for documents. TF-IDF vector store, source-aware retrieval, chunk metadata. No external API calls required.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/telegram-business-bot-template" target="_blank" rel="noopener">
+        <span class="mcard-tag">Python · Telegram Bot API · Pydantic</span>
+        <h3>Telegram Business Bot</h3>
+        <p>
+          <span class="tr">Lead toplama, SSS yanıtlama, sipariş durumu ve CSV dışa aktarma. Küçük işletme otomasyonu için hazır şablon.</span>
+          <span class="en">Lead capture, FAQ replies, order status stubs, and admin CSV export. Ready-to-deploy template for small-business automation.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener">
+        <span class="mcard-tag">n8n · Python · Google Sheets</span>
+        <h3>n8n Business Workflows</h3>
+        <p>
+          <span class="tr">Form→Sheets lead yakalama, e-posta AI özeti, Telegram alert yönlendirme, günlük satış digest. Test edilmiş, özelleştirilebilir şablonlar.</span>
+          <span class="en">Lead form to Sheets, email AI summary, Telegram alert routing, daily sales digest. Tested, customizable workflow templates.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/tradingview-bandit-alert-router" target="_blank" rel="noopener">
+        <span class="mcard-tag">Python · TradingView · Thompson Sampling</span>
+        <h3>TV Alert Bandit Router</h3>
+        <p>
+          <span class="tr">TradingView webhook'larını doğrula, risk guard'dan geçir, Thompson Sampling ile rota seç. Kapalı döngü reward feedback.</span>
+          <span class="en">Validate TradingView webhooks, apply risk guards, route via Thompson Sampling. Closed-loop reward feedback for arm learning.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">
+        <span class="mcard-tag">Python · sklearn · SHAP · DiCE</span>
+        <h3>TV Strategy Risk Lab</h3>
+        <p>
+          <span class="tr">TradingView Strategy Tester export'unu kötü işlem risk modeline dönüştür. SHAP global sürücüler, DiCE counterfactual trade koşulları.</span>
+          <span class="en">Convert TradingView Strategy Tester exports into a bad-trade risk model. SHAP global drivers, DiCE counterfactual trade conditions.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
+      <a class="mcard" href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">
+        <span class="mcard-tag">Python · Uplift · Causal Forest · 7M rows</span>
+        <h3>Criteo Uplift Benchmark</h3>
+        <p>
+          <span class="tr">7M satır Criteo v2.1 üzerinde S/T/X/DR-Learner ve Causal Forest karşılaştırması. AUUC, Qini, top-decile kaldıraç metrikleri.</span>
+          <span class="en">S/T/X/DR-Learner and Causal Forest benchmark on 7M-row Criteo v2.1. AUUC, Qini curve, top-decile incremental uplift metrics.</span>
+        </p>
+        <span class="mcard-arrow">→</span>
+      </a>
+
     </div>
   </section>
 
   <!-- ── RESEARCH ── -->
-  <section class="research" id="research">
-    <div class="section-label"><span>02</span> Research &amp; Notebooks</div>
-
-    <div class="research-grid">
-      <article class="research-card research-featured">
-        <div class="research-meta">
-          <span class="ptag ptag-python">Python</span>
-          <span class="ptag ptag-ml">Benchmark</span>
+  <section class="section" id="research">
+    <header class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="section-title">
+        <span class="tr">Araştırma</span>
+        <span class="en">Research</span>
+      </h2>
+    </header>
+    <div class="research-row">
+      <article class="rcard rcard-feat">
+        <div class="rcard-tags">
+          <span class="btag btag-py">Python</span>
+          <span class="btag btag-ml">Benchmark</span>
         </div>
         <h3><a href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">Criteo Uplift Modeling Benchmark</a></h3>
-        <p>7M-row benchmark: S-Learner, T-Learner, X-Learner, DR-Learner, Causal Forest. S-Learner won.</p>
-        <div class="research-stats">
+        <p>
+          <span class="tr">7 milyon satırlık benchmark. S-Learner, T-Learner, X-Learner, DR-Learner ve Causal Forest karşılaştırması.</span>
+          <span class="en">7M-row benchmark: S-Learner, T-Learner, X-Learner, DR-Learner, Causal Forest comparison.</span>
+        </p>
+        <div class="rcard-stats">
           <div><span>AUUC</span><strong>3,405.48</strong></div>
-          <div><span>top-decile</span><strong>6.23x</strong></div>
+          <div><span>top-decile</span><strong>6.23×</strong></div>
           <div><span>incremental</span><strong>~6,865</strong></div>
         </div>
       </article>
-
-      <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener" class="research-card kaggle-card">
+      <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener" class="rcard rcard-kaggle">
         <div class="kaggle-icon">
-          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M18.825 23.859c-.022.092-.117.141-.281.141h-3.139c-.187 0-.351-.082-.492-.248l-5.178-6.589-1.448 1.374v5.111c0 .235-.117.352-.351.352H5.505c-.236 0-.354-.117-.354-.352V.353c0-.233.118-.353.354-.353h2.431c.234 0 .351.12.351.353v14.343l6.203-6.272c.165-.165.33-.246.495-.246h3.239c.144 0 .236.06.281.18.046.141.021.246-.07.316L12.076 15l6.819 8.563c.068.09.09.186.068.296z" fill="#20BEFF"/></svg>
+          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M18.825 23.859c-.022.092-.117.141-.281.141h-3.139c-.187 0-.351-.082-.492-.248l-5.178-6.589-1.448 1.374v5.111c0 .235-.117.352-.351.352H5.505c-.236 0-.354-.117-.354-.352V.353c0-.233.118-.353.354-.353h2.431c.234 0 .351.12.351.353v14.343l6.203-6.272c.165-.165.33-.246.495-.246h3.239c.144 0 .236.06.281.18.046.141.021.246-.07.316L12.076 15l6.819 8.563c.068.09.09.186.068.296z" fill="#20BEFF"/></svg>
         </div>
         <div>
           <h4>Kaggle Notebooks</h4>
-          <ul class="kaggle-list">
-            <li><strong>S&amp;P 500 Stress-Aware Stock Ranking with Causal ML</strong> <span class="vote-count">6</span></li>
-            <li><strong>A Deep Dive into Uplift Modeling (7M Scale)</strong> <span class="vote-count">3</span></li>
-            <li><strong>FinLLM QLoRA Fine-Tuning on Kaggle T4</strong> <span class="vote-count">1</span></li>
+          <ul class="knotebooks">
+            <li>S&amp;P 500 Stress-Aware Stock Ranking with Causal ML <b>6</b></li>
+            <li>A Deep Dive into Uplift Modeling (7M Scale) <b>3</b></li>
+            <li>FinLLM QLoRA Fine-Tuning on Kaggle T4 <b>1</b></li>
           </ul>
         </div>
       </a>
     </div>
   </section>
 
-  <!-- PRIVATE CAPABILITY LAYER -->
-  <section class="delivery" id="delivery">
-    <article class="delivery-engine" id="private-engines">
-      <div class="engine-kicker"><span>03</span> Private capability layer</div>
-      <div class="engine-head">
-        <div>
-          <h2>Decision engines built for evidence, not screenshots.</h2>
-          <p>Private work stays private. The public signal is the architecture: validated inputs, leakage checks, holdout evidence, typed artifacts, and reproducible reports.</p>
-        </div>
-        <div class="engine-formula">
-          <span>// delivery invariant</span>
-          <code>artifact = validated_input + holdout_proof + manifest - leakage_risk</code>
-        </div>
-      </div>
-
-      <div class="engine-proof-list">
-        <p><strong>Leakage-first evaluation</strong> with target/proxy scans, holdout-only proof tables, and claim boundaries recorded before reporting.</p>
-        <p><strong>Decision science layer</strong> covering uplift, counterfactual actions, Thompson Sampling, and offline replay without overstating causality.</p>
-        <p><strong>Data contract core</strong> using Pydantic v2, Pandera-style validation, schema fingerprints, artifact manifests, and failure messages built for handoff.</p>
-      </div>
-
-      <div class="engine-capability-grid">
-        <div class="engine-capability">
-          <span>01</span>
-          <h3>Counterfactual lead scoring</h3>
-          <p>Model training with action planning, likely drivers, DiCE-style recommendations, and evidence checks for holdout split and leakage boundaries.</p>
-        </div>
-        <div class="engine-capability">
-          <span>02</span>
-          <h3>Uplift benchmark kernel</h3>
-          <p>Criteo-scale incrementality testing with AUUC/Qini, policy segments, paired uncertainty, and explicit randomized-treatment evidence.</p>
-        </div>
-        <div class="engine-capability">
-          <span>03</span>
-          <h3>RL pricing bandit service</h3>
-          <p>Litestar API for Thompson Sampling price experiments, guard-railed arms, replay summaries, and experiment boundaries before live traffic.</p>
-        </div>
-        <div class="engine-capability">
-          <span>04</span>
-          <h3>TradingView decision routers</h3>
-          <p>Alert routing and strategy risk labs with idempotency, risk guards, no-lookahead feature checks, SHAP/DiCE outputs, and audit snapshots.</p>
-        </div>
-      </div>
-
-      <div class="engine-stat-grid" aria-label="Second wave engineering evidence">
-        <div><strong>5</strong><span>private repos upgraded in this wave</span></div>
-        <div><strong>33</strong><span>tests passing across the second wave</span></div>
-        <div><strong>0</strong><span>known lookahead paths accepted</span></div>
-        <div><strong>100%</strong><span>ruff clean on upgraded repos</span></div>
-      </div>
-    </article>
-  </section>
-
   <!-- ── STACK ── -->
-  <section class="stack-section" id="stack">
-    <div class="section-label"><span>04</span> Stack</div>
-    <div class="stack-grid-new">
-      <div class="stack-card" data-tier="primary">
-        <svg class="stack-icon" viewBox="0 0 32 32"><path d="M16.555 2.372a.53.53 0 0 0-.443-.015L1.632 8.677a.557.557 0 0 0-.025 1.007l14.48 7.397a.53.53 0 0 0 .486 0l14.48-7.397a.557.557 0 0 0-.024-1.007zm13.542 10.456l-2.475-1.196-11.1 5.672a1.6 1.6 0 0 1-1.459 0L4.06 11.632l-2.475 1.196a.555.555 0 0 0-.024 1.006l14.48 7.397a.53.53 0 0 0 .485 0l14.48-7.397a.555.555 0 0 0-.024-1.006zm0 5.388l-2.475-1.196-11.1 5.672a1.6 1.6 0 0 1-1.459 0L4.06 17.02l-2.475 1.196a.555.555 0 0 0-.024 1.006l14.48 7.397a.53.53 0 0 0 .485 0l14.48-7.397a.555.555 0 0 0-.024-1.006z" fill="#dea584"/></svg>
-        <div class="stack-info"><strong>Rust</strong><span>Axum · Tokio · Polars · ed25519</span></div>
+  <section class="section" id="stack">
+    <header class="section-head">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Stack</h2>
+    </header>
+    <div class="stack-rows">
+      <div class="stack-row">
+        <span class="stack-label">Core</span>
+        <div class="stack-pills">
+          <span class="pill pill-hot">Python 3.12</span>
+          <span class="pill pill-hot">Pandas</span>
+          <span class="pill pill-hot">scikit-learn</span>
+          <span class="pill">FastAPI</span>
+          <span class="pill">Pydantic v2</span>
+          <span class="pill">Pandera</span>
+          <span class="pill">httpx</span>
+        </div>
       </div>
-      <div class="stack-card" data-tier="primary">
-        <svg class="stack-icon" viewBox="0 0 32 32"><path d="M11.372 5.55A12.2 12.2 0 0 0 5.1 12.963a12.15 12.15 0 0 0 .873 9.876 12.2 12.2 0 0 0 9.964 6.359v-4.878a7.37 7.37 0 0 1-5.079-14.52A7.37 7.37 0 0 1 15.937 9.8V4.91a12.2 12.2 0 0 0-4.565.64z" fill="#ffd43b"/><path d="M20.563 5.55a12.2 12.2 0 0 1 5.774 7.13 12.15 12.15 0 0 1-.873 9.876 12.2 12.2 0 0 1-9.964 6.359v-4.878a7.37 7.37 0 0 0 5.079-14.52A7.37 7.37 0 0 0 15.998 9.8V4.91a12.2 12.2 0 0 1 4.565.64z" fill="#306998"/></svg>
-        <div class="stack-info"><strong>Python</strong><span>LightGBM · XGBoost · PyTorch</span></div>
+      <div class="stack-row">
+        <span class="stack-label">ML</span>
+        <div class="stack-pills">
+          <span class="pill">GradientBoosting</span>
+          <span class="pill">Causal ML</span>
+          <span class="pill">Thompson Sampling</span>
+          <span class="pill">SHAP</span>
+          <span class="pill">Uplift Modeling</span>
+        </div>
       </div>
-      <div class="stack-card">
-        <svg class="stack-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="#c084fc" stroke-width="2"/><path d="M10 16h12M16 10v12" stroke="#c084fc" stroke-width="2"/></svg>
-        <div class="stack-info"><strong>Causal ML</strong><span>DoWhy · EconML · SHAP · DiCE</span></div>
+      <div class="stack-row">
+        <span class="stack-label"><span class="tr">Veri</span><span class="en">Data</span></span>
+        <div class="stack-pills">
+          <span class="pill">CSV / Excel</span>
+          <span class="pill">Parquet</span>
+          <span class="pill">SQLite</span>
+          <span class="pill">PostgreSQL</span>
+          <span class="pill">Typst PDF</span>
+        </div>
       </div>
-      <div class="stack-card">
-        <svg class="stack-icon" viewBox="0 0 32 32"><rect x="4" y="4" width="24" height="24" rx="4" fill="none" stroke="#4ade80" stroke-width="2"/><path d="M10 22V14M16 22V10M22 22V16" stroke="#4ade80" stroke-width="2" stroke-linecap="round"/></svg>
-        <div class="stack-info"><strong>Data</strong><span>Polars · PostgreSQL · Redis</span></div>
-      </div>
-      <div class="stack-card">
-        <svg class="stack-icon" viewBox="0 0 32 32"><path d="M16 4L4 10v12l12 6 12-6V10z" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linejoin="round"/><path d="M4 10l12 6 12-6M16 16v12" stroke="#60a5fa" stroke-width="1.5"/></svg>
-        <div class="stack-info"><strong>Infra</strong><span>Docker · FastAPI · Git</span></div>
-      </div>
-      <div class="stack-card">
-        <svg class="stack-icon" viewBox="0 0 32 32"><circle cx="16" cy="16" r="10" fill="none" stroke="#f97316" stroke-width="2"/><circle cx="16" cy="16" r="4" fill="#f97316"/><line x1="16" y1="2" x2="16" y2="6" stroke="#f97316" stroke-width="2"/><line x1="16" y1="26" x2="16" y2="30" stroke="#f97316" stroke-width="2"/><line x1="2" y1="16" x2="6" y2="16" stroke="#f97316" stroke-width="2"/><line x1="26" y1="16" x2="30" y2="16" stroke="#f97316" stroke-width="2"/></svg>
-        <div class="stack-info"><strong>ML Ops</strong><span>Drift monitoring · Typed configs</span></div>
+      <div class="stack-row">
+        <span class="stack-label">Infra</span>
+        <div class="stack-pills">
+          <span class="pill">Docker</span>
+          <span class="pill">GitHub Actions</span>
+          <span class="pill">pytest</span>
+          <span class="pill">ruff</span>
+          <span class="pill">Codecov</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ── CREDENTIALS ── -->
-  <section class="certs" id="certs">
-    <div class="section-label"><span>05</span> Credentials</div>
-    <div class="cert-scroll">
-      <div class="cert"><div class="cert-org">Google</div><h4>The Power of Statistics</h4><time>Jun 2026</time><code>SHAZAO1AST7J</code></div>
-      <div class="cert"><div class="cert-org">TestDome</div><h4>Python Data Science</h4><time>Jun 2026</time></div>
-      <div class="cert"><div class="cert-org">HackerRank</div><h4>Problem Solving (Intermediate)</h4><time>May 2026</time><code>35E81C28E1A8</code></div>
-      <div class="cert"><div class="cert-org">UPenn</div><h4>Computational Thinking for Problem Solving</h4><time>Nov 2025</time><code>YJ7DMHD90WRS</code></div>
-      <div class="cert"><div class="cert-org">IBM</div><h4>Python Project for Data Engineering</h4><time>Oct 2025</time><code>S4QYUCTATVLY</code></div>
-      <div class="cert"><div class="cert-org">Coursera</div><h4>Python for Data Science and AI</h4><time>Oct 2025</time></div>
-      <div class="cert"><div class="cert-org">J.P. Morgan · Forage</div><h4>Quantitative Research Simulation</h4><time>Oct 2025</time><code>caXP3ioKZp2zsmdCY</code></div>
-      <div class="cert"><div class="cert-org">Google · Coursera</div><h4>Data Analytics Professional Certificate (v2)</h4><time>Oct 2025</time></div>
+  <!-- ── CERTS ── -->
+  <section class="section" id="certs">
+    <header class="section-head">
+      <span class="section-num">05</span>
+      <h2 class="section-title">
+        <span class="tr">Sertifikalar</span>
+        <span class="en">Credentials</span>
+      </h2>
+    </header>
+    <div class="cert-grid">
+      <div class="cert-item"><span class="cert-org">Google</span><span class="cert-name">The Power of Statistics</span><span class="cert-date">Jun 2026</span></div>
+      <div class="cert-item"><span class="cert-org">TestDome</span><span class="cert-name">Python Data Science</span><span class="cert-date">Jun 2026</span></div>
+      <div class="cert-item"><span class="cert-org">HackerRank</span><span class="cert-name">Problem Solving (Intermediate)</span><span class="cert-date">May 2026</span></div>
+      <div class="cert-item"><span class="cert-org">UPenn</span><span class="cert-name">Computational Thinking</span><span class="cert-date">Nov 2025</span></div>
+      <div class="cert-item"><span class="cert-org">IBM</span><span class="cert-name">Python Project for Data Engineering</span><span class="cert-date">Oct 2025</span></div>
+      <div class="cert-item"><span class="cert-org">Coursera</span><span class="cert-name">Python for Data Science and AI</span><span class="cert-date">Oct 2025</span></div>
+      <div class="cert-item"><span class="cert-org">J.P. Morgan</span><span class="cert-name">Quantitative Research Simulation</span><span class="cert-date">Oct 2025</span></div>
+      <div class="cert-item"><span class="cert-org">Google</span><span class="cert-name">Data Analytics Professional Certificate</span><span class="cert-date">Oct 2025</span></div>
     </div>
   </section>
 
   <!-- ── CONTACT ── -->
-  <section class="contact" id="contact">
-    <div class="section-label"><span>06</span> Contact</div>
-    <div class="contact-body">
-      <p>Open to feedback, collaborations, and conversations about decision infrastructure.</p>
-      <div class="contact-grid">
-        <a href="mailto:emirhuseyininci@gmail.com" class="contact-card"><span>email</span><strong>emirhuseyininci@gmail.com</strong></a>
-        <a href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener" class="contact-card"><span>linkedin</span><strong>/in/emirhuseyininci</strong></a>
-        <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener" class="contact-card"><span>github</span><strong>emirhuseynrmx</strong></a>
-      </div>
+  <section class="section" id="contact">
+    <header class="section-head">
+      <span class="section-num">06</span>
+      <h2 class="section-title">
+        <span class="tr">İletişim</span>
+        <span class="en">Contact</span>
+      </h2>
+      <p class="section-sub">
+        <span class="tr">Upwork'te iş konuşmak ya da doğrudan bir proje teklifi için — yazın.</span>
+        <span class="en">For freelance work on Upwork or a direct project proposal — reach out.</span>
+      </p>
+    </header>
+    <div class="contact-links">
+      <a href="mailto:emirhuseyininci@gmail.com" class="clink">
+        <span class="clink-label">email</span>
+        <span class="clink-val">emirhuseyininci@gmail.com</span>
+        <span class="clink-arr">→</span>
+      </a>
+      <a href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener" class="clink">
+        <span class="clink-label">linkedin</span>
+        <span class="clink-val">/in/emirhuseyininci</span>
+        <span class="clink-arr">→</span>
+      </a>
+      <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener" class="clink">
+        <span class="clink-label">github</span>
+        <span class="clink-val">emirhuseynrmx</span>
+        <span class="clink-arr">→</span>
+      </a>
+      <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener" class="clink">
+        <span class="clink-label">kaggle</span>
+        <span class="clink-val">emirhseyinnci</span>
+        <span class="clink-arr">→</span>
+      </a>
     </div>
   </section>
 
-  <footer class="footer">
-    <span>&copy; 2025–2026 Emir H. Inci · Calybris Engine</span>
-    <div class="footer-links">
-      <a href="./goveris/">GOVERIS</a>
-      <a href="./lucethemis/">LuceThemis</a>
-      <a href="./aera/">AeraCFO</a>
-      <a href="./aegis/">Aegis</a>
-      <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
-    </div>
+  <footer class="site-footer">
+    <span>© 2026 Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <span>Bursa, Turkey</span>
+    <span class="footer-dot">·</span>
+    <span>Python Developer</span>
   </footer>
 
 <script>
 (function(){
-  var clockEl=document.getElementById('clock');
-  function tick(){clockEl.textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
-  tick();setInterval(tick,1000);
+'use strict';
 
-  var canvas=document.getElementById('grid-canvas'),ctx=canvas.getContext('2d');
-  var mouseX=0,mouseY=0,W,H;
-  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
-  resize();window.addEventListener('resize',resize);
-  document.addEventListener('mousemove',function(e){mouseX=e.clientX;mouseY=e.clientY;});
-  function drawGrid(){
-    ctx.clearRect(0,0,W,H);
-    var step=60,maxDist=260;
-    for(var x=0;x<W;x+=step){
-      for(var y=-(window.scrollY%step);y<H;y+=step){
-        var dx=x-mouseX,dy=y-mouseY,dist=Math.sqrt(dx*dx+dy*dy);
-        var intensity=Math.max(0,1-dist/maxDist);
-        if(intensity>0.02){
-          ctx.beginPath();ctx.arc(x,y,1.5+intensity*3,0,Math.PI*2);
-          ctx.fillStyle='rgba(200,160,60,'+intensity*0.4+')';ctx.fill();
-        }else{
-          ctx.beginPath();ctx.arc(x,y,0.5,0,Math.PI*2);
-          ctx.fillStyle='rgba(255,255,255,0.03)';ctx.fill();
-        }
+/* LANG */
+var H=document.documentElement;
+var lang=localStorage.getItem('ehi-lang')||'tr';
+H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+document.getElementById('lang-btn').addEventListener('click',function(){
+  var en=H.classList.contains('lang-en');
+  H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+  localStorage.setItem('ehi-lang',en?'tr':'en');
+});
+
+/* CURSOR */
+var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+var mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',function(e){
+  mx=e.clientX;my=e.clientY;
+  dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+});
+!function raf(){
+  rx+=(mx-rx)*.13;ry+=(my-ry)*.13;
+  ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';
+  requestAnimationFrame(raf);
+}();
+document.querySelectorAll('a,button').forEach(function(el){
+  el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+  el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+});
+
+/* NAV */
+var nav=document.getElementById('nav'),lastY=0;
+window.addEventListener('scroll',function(){
+  var y=window.scrollY;
+  nav.classList.toggle('nav-scrolled',y>40);
+  nav.classList.toggle('nav-hidden',y>120&&y>lastY);
+  lastY=y;
+},{passive:true});
+
+/* SCROLL REVEAL */
+var revealCls='.rcard,.cert-item,.stack-row,.clink,.mcard';
+if('IntersectionObserver' in window){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target);}
+    });
+  },{threshold:0.07,rootMargin:'0px 0px -4% 0px'});
+  document.querySelectorAll(revealCls).forEach(function(el,i){
+    el.style.setProperty('--ri',String(i%6));
+    obs.observe(el);
+  });
+}else{
+  document.querySelectorAll(revealCls).forEach(function(el){el.classList.add('revealed');});
+}
+
+/* 3D DECK */
+(function(){
+  var wrap=document.getElementById('deck-wrap');
+  if(!wrap)return;
+  var cards=Array.from(wrap.querySelectorAll('.dcard'));
+  var n=cards.length;
+  var front=0;
+
+  function setPos(){
+    cards.forEach(function(c,i){
+      c.setAttribute('data-pos',((i-front)%n+n)%n);
+    });
+    var ctr=document.getElementById('deck-counter');
+    if(ctr)ctr.textContent=String(front+1).padStart(2,'0')+' / '+String(n).padStart(2,'0');
+  }
+
+  function goNext(){
+    var fc=cards[front];
+    /* fly out */
+    fc.style.transition='transform .38s cubic-bezier(.55,0,1,.45),opacity .3s';
+    fc.style.transform='translateX(-130%) rotate(-22deg)';
+    fc.style.opacity='0';
+    fc.style.pointerEvents='none';
+    setTimeout(function(){
+      front=(front+1)%n;
+      /* snap card to its new back-stack position without transition */
+      fc.style.transition='none';
+      fc.style.transform='';
+      fc.style.opacity='';
+      fc.style.pointerEvents='';
+      fc.offsetHeight; /* force reflow */
+      fc.style.transition='';
+      setPos();
+    },360);
+  }
+
+  function goPrev(){
+    front=(front-1+n)%n;
+    setPos();
+  }
+
+  setPos();
+  document.getElementById('deck-next').addEventListener('click',goNext);
+  document.getElementById('deck-prev').addEventListener('click',goPrev);
+
+  /* keyboard */
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight')goNext();
+    if(e.key==='ArrowLeft')goPrev();
+  });
+})();
+
+/* ACTIVE NAV */
+var navAs=[].slice.call(document.querySelectorAll('.nav-links a'));
+var sections=navAs.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
+if('IntersectionObserver' in window){
+  var sObs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        navAs.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id);});
       }
-    }
-    requestAnimationFrame(drawGrid);
-  }
-  requestAnimationFrame(drawGrid);
+    });
+  },{threshold:0.2,rootMargin:'-15% 0px -60% 0px'});
+  sections.forEach(function(s){sObs.observe(s);});
+}
 
-  var commands=[
-    {cmd:'calybris --version',out:'calybris-engine v1.0.0 (Rust 1.87, ed25519, WAL, proof-carrying)'},
-    {cmd:'calybris products',out:'001 GOVERIS    AI cost governance    [live]\n002 LuceThemis Quant signal audit    [pilot]\n003 AeraCFO    AI finance reporting  [MIT]\n004 Aegis      Prescriptive churn    [MIT]\n005 NexusAlpha Quant research infra  [private]'},
-    {cmd:'calybris bench --kernel',out:'kernel throughput:  10,270,000 decisions/s\nhttp gateway:       6,084 req/s (c=128)\nhttp p99:           42ms (15,000 req, 0 failed)\ndurable WAL:        10,684 events/s'},
-    {cmd:'whoami',out:'emir_huseyin_inci\nrole: decision infrastructure engineer\nfocus: causal ML · prescriptive analytics · quant research'},
-  ];
-  var typedEl=document.getElementById('typed'),outputEl=document.getElementById('term-output');
-  var cursorEl=document.querySelector('.cursor');
-  function typeCommand(i){
-    if(i>=commands.length)i=0;
-    var c=commands[i];typedEl.textContent='';cursorEl.style.display='inline';
-    var j=0;
-    function tc(){
-      if(j<c.cmd.length){typedEl.textContent+=c.cmd[j];j++;setTimeout(tc,30+Math.random()*40);}
-      else{cursorEl.style.display='none';setTimeout(function(){
-        var d=document.createElement('div');d.className='term-result';
-        d.innerHTML='<span class="prompt">$</span> '+c.cmd+'\n'+c.out;
-        outputEl.prepend(d);if(outputEl.children.length>3)outputEl.removeChild(outputEl.lastChild);
-        typedEl.textContent='';cursorEl.style.display='inline';
-        setTimeout(function(){typeCommand(i+1);},2200);
-      },350);}
-    }
-    tc();
-  }
-  setTimeout(function(){typeCommand(0);},500);
-
-  var nav=document.querySelector('.nav'),lastY=0;
-  window.addEventListener('scroll',function(){
-    var y=window.scrollY;
-    nav.classList.toggle('nav-up',y>100&&y>lastY);
-    nav.classList.toggle('nav-bg',y>60);lastY=y;
-  },{passive:true});
-
-  var revealEls=document.querySelectorAll('.project,.cert,.metric,.stack-card,.contact-card,.research-card,.engine-stats>div');
-  if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
-    },{threshold:0.08,rootMargin:'0px 0px -5% 0px'});
-    revealEls.forEach(function(el,i){el.style.setProperty('--delay',i%8*0.06+'s');io.observe(el);});
-  }else{revealEls.forEach(function(el){el.classList.add('in');});}
-
-  var navLinks=[].slice.call(document.querySelectorAll('.nav-links a'));
-  var secs=navLinks.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
-  if('IntersectionObserver' in window){
-    var so=new IntersectionObserver(function(entries){
-      entries.forEach(function(e){if(e.isIntersecting){
-        navLinks.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id);});
-      }});
-    },{threshold:0.15,rootMargin:'-15% 0px -65% 0px'});
-    secs.forEach(function(s){so.observe(s);});
-  }
 })();
 </script>
 </body>

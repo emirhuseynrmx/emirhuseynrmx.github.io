@@ -1,0 +1,131 @@
+/* ── LANDING PAGE STYLES ── */
+
+.btn-sm{
+  font-size:.62rem;padding:.45rem 1rem;
+}
+
+/* ── LANDING HERO ── */
+.lhero{
+  position:relative;z-index:2;
+  min-height:85vh;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;
+  max-width:88rem;margin:0 auto;
+  padding:8rem 2.5rem 4rem;
+}
+.lhero-kicker{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.lhero-title{
+  font-size:clamp(2.5rem,6vw,5rem);font-weight:900;
+  letter-spacing:-.03em;line-height:1;
+  color:#f2f0ea;margin-bottom:1.25rem;
+}
+.lhero-sub{
+  font-size:1.05rem;color:#989688;max-width:34rem;
+  line-height:1.65;margin-bottom:2rem;
+}
+.lhero-actions{display:flex;gap:.75rem;flex-wrap:wrap}
+.lhero-preview{
+  position:relative;border-radius:16px;overflow:hidden;
+  border:1px solid #1a1812;
+  box-shadow:0 24px 80px rgba(255,72,0,.15),0 0 0 1px rgba(255,72,0,.08);
+}
+.lhero-preview img{width:100%;display:block}
+.lhero-preview::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,72,0,.06),transparent 60%);
+  pointer-events:none;z-index:1;
+}
+
+/* ── METRICS ── */
+.lmetrics{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid #131210;border-bottom:1px solid #131210;
+  background:#040302;
+}
+.lmetric{
+  padding:1.75rem 2rem;text-align:center;
+  border-right:1px solid #131210;
+}
+.lmetric:last-child{border-right:0}
+.lmetric strong{
+  display:block;
+  font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:700;
+  color:#ff6b35;margin-bottom:.35rem;
+}
+.lmetric span{
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;
+  letter-spacing:.1em;text-transform:uppercase;color:#3a3828;
+}
+
+/* ── SECTIONS ── */
+.lsection{
+  max-width:88rem;margin:0 auto;padding:5rem 2.5rem;
+}
+.lsection-dark{
+  background:#040302;
+  border-top:1px solid #101010;border-bottom:1px solid #101010;
+  max-width:100%;padding-left:0;padding-right:0;
+}
+.lsection-dark > *{max-width:88rem;margin-left:auto;margin-right:auto;padding-left:2.5rem;padding-right:2.5rem}
+.lsection-title{
+  font-size:clamp(1.5rem,3.5vw,2.5rem);font-weight:900;
+  letter-spacing:-.02em;color:#f2f0ea;margin-bottom:2.5rem;
+}
+
+/* ── FEATURES ── */
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;
+}
+.feature{
+  background:#0a0806;border:1px solid #1a1812;border-radius:14px;
+  padding:1.5rem;transition:border-color .2s;
+}
+.feature:hover{border-color:#2a2818}
+.feature-icon{font-size:1.5rem;margin-bottom:.75rem}
+.feature h3{font-size:.95rem;color:#e8e6f0;margin-bottom:.5rem;font-weight:600}
+.feature p{font-size:.82rem;color:#6b6858;line-height:1.65}
+
+/* ── TECH TABLE ── */
+.tech-table{display:flex;flex-direction:column;gap:0}
+.tech-row{
+  display:flex;align-items:baseline;gap:2rem;
+  padding:1rem 0;border-bottom:1px solid #131210;
+}
+.tech-row:last-child{border-bottom:0}
+.tech-key{
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:#ff4800;
+  min-width:120px;flex-shrink:0;
+}
+.tech-val{
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#989688;
+}
+
+/* ── CTA SECTION ── */
+.lcta{
+  position:relative;z-index:2;
+  max-width:88rem;margin:0 auto;padding:6rem 2.5rem;
+  text-align:center;
+}
+.lcta h2{
+  font-size:clamp(1.8rem,4vw,3rem);font-weight:900;
+  letter-spacing:-.03em;color:#f2f0ea;margin-bottom:1rem;
+}
+.lcta p{
+  font-size:1rem;color:#6b6858;max-width:36rem;margin:0 auto 2.5rem;line-height:1.7;
+}
+.lcta-actions{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .lhero{grid-template-columns:1fr;padding-top:6rem;min-height:auto;gap:2rem}
+  .lhero-preview{order:-1}
+  .lmetrics{grid-template-columns:repeat(2,1fr)}
+  .lmetric{border-right:0;border-bottom:1px solid #131210}
+  .features-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .lhero{padding:5rem 1.5rem 3rem}
+  .lsection{padding:3.5rem 1.5rem}
+}

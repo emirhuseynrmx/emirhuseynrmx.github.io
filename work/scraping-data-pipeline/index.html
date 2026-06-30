@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Scraping Data Pipeline — Emir H. İnci</title>
+  <meta name="description" content="Config-driven async Python web scraper. Retry, Pydantic validation, Pandera schema checks. CSV, Excel, JSONL, Parquet export."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/scraping-data-pipeline" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <!-- ── LANDING HERO ── -->
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">async · selectolax · httpx</span>
+        <span class="btag">Pydantic v2</span>
+        <span class="btag">Pandera</span>
+      </div>
+      <h1 class="lhero-title">Scraping Data Pipeline</h1>
+      <p class="lhero-sub">
+        <span class="tr">Config dosyasından çalışan async web scraper. Selector değiştirmek için kod açman gerekmiyor — sadece JSON'u güncelle.</span>
+        <span class="en">Config-driven async web scraper. No need to touch code to change selectors — just update the JSON.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/scraping-data-pipeline" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Scraping Data Pipeline — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">SCRAPING PIPELINE — RUN OUTPUT</div>
+        <div style="color:#6b6858;">config: <span style="color:#f2f0ea">targets.json</span> &nbsp;·&nbsp; concurrency=<span style="color:#ff4800">12</span></div>
+        <div><span style="color:#10b981">✓</span> <span style="color:#f2f0ea">example.com</span> &nbsp;items=<span style="color:#ff4800">847</span> &nbsp;elapsed=<span style="color:#10b981">1.2s</span></div>
+        <div><span style="color:#10b981">✓</span> <span style="color:#f2f0ea">shop.example.io</span> &nbsp;items=<span style="color:#ff4800">1,204</span> &nbsp;elapsed=<span style="color:#10b981">2.8s</span></div>
+        <div style="color:#6b6858;"><span style="color:#f59e0b">⚠</span> news.example.net &nbsp;retry=2 &nbsp;items=<span style="color:#ff4800">312</span></div>
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          total=<span style="color:#ff4800">2,363</span> records &nbsp;·&nbsp; valid=<span style="color:#10b981">2,351</span> &nbsp;·&nbsp; export=<span style="color:#6b6858">parquet</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── METRICS ── -->
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>async</strong>
+      <span><span class="tr">eşzamanlı istekler</span><span class="en">concurrent requests</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>4</strong>
+      <span><span class="tr">export formatı</span><span class="en">export formats</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>Pandera</strong>
+      <span><span class="tr">schema doğrulama</span><span class="en">schema validation</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>CI</strong>
+      <span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <!-- ── FEATURES ── -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Ne yapar?</span>
+      <span class="en">What it does</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">⚡</div>
+        <h3><span class="tr">Async scraping</span><span class="en">Async scraping</span></h3>
+        <p>
+          <span class="tr">httpx + asyncio ile eşzamanlı HTTP istekleri. Tek sayfa için de, bin sayfa için de aynı hızda.</span>
+          <span class="en">Concurrent HTTP requests with httpx + asyncio. Same speed whether you scrape one page or a thousand.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔧</div>
+        <h3><span class="tr">Config-driven</span><span class="en">Config-driven</span></h3>
+        <p>
+          <span class="tr">Hedef URL'ler, CSS selectorlar, retry sayısı ve export formatı — hepsi JSON config'de. Kod açmadan değiştirilir.</span>
+          <span class="en">Target URLs, CSS selectors, retry count, and export format — all in JSON config. No code changes needed.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🛡️</div>
+        <h3>Pydantic v2</h3>
+        <p>
+          <span class="tr">Her kayıt Pydantic modelden geçer. Tip hatası, eksik alan, beklenmedik veri — hepsi net hata mesajıyla yakalanır.</span>
+          <span class="en">Every record passes through a Pydantic model. Type errors, missing fields, unexpected data — all caught with clear error messages.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <h3>Pandera</h3>
+        <p>
+          <span class="tr">DataFrame'e geçmeden önce Pandera schema doğrulaması. Beklediğin veriden sapma olursa pipeline durur.</span>
+          <span class="en">Pandera schema validation before the DataFrame is returned. If data drifts from what you expect, the pipeline stops.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📁</div>
+        <h3><span class="tr">Çoklu format</span><span class="en">Multi-format export</span></h3>
+        <p>
+          <span class="tr">CSV, Excel, JSONL ve Parquet desteği. Aynı config, farklı format.</span>
+          <span class="en">CSV, Excel, JSONL, and Parquet support. Same config, different format.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔁</div>
+        <h3><span class="tr">Retry mantığı</span><span class="en">Retry logic</span></h3>
+        <p>
+          <span class="tr">Başarısız istekler otomatik olarak yeniden denenir. Timeout, 5xx ve network hatası — hepsini ele alır.</span>
+          <span class="en">Failed requests are automatically retried. Handles timeouts, 5xx errors, and network failures.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TECH STACK ── -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">HTTP</span>
+        <span class="tech-val">httpx (async) + selectolax</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pydantic v2 · Pandera strict schema</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Export</span><span class="en">Export</span></span>
+        <span class="tech-val">CSV · Excel (openpyxl) · JSONL · Parquet (pyarrow)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · pytest-asyncio · coverage</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">CI</span>
+        <span class="tech-val">GitHub Actions · ruff lint · Python 3.11 &amp; 3.12</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Logging</span><span class="en">Logging</span></span>
+        <span class="tech-val">rich · structlog-style progress tracking</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="lcta">
+    <h2>
+      <span class="tr">Buna benzer bir şeye ihtiyacın var mı?</span>
+      <span class="en">Need something like this?</span>
+    </h2>
+    <p>
+      <span class="tr">Siteyi, ürün listesini veya herhangi bir veriyi scrape etmem gerekiyorsa konuşalım. Config, model ve test ile teslim ederim.</span>
+      <span class="en">If you need a website, product list, or any data scraped — let's talk. I deliver with config, models, and tests.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Scraping İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/scraping-data-pipeline" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

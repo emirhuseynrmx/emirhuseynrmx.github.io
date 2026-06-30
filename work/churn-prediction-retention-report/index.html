@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Churn Prediction &amp; Retention Report — Emir H. İnci</title>
+  <meta name="description" content="sklearn ML pipeline ile müşteri churn tahmini. GradientBoosting classifier, feature engineering, PDF retention raporu."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">sklearn · GradientBoosting</span>
+        <span class="btag">Pandas · Pydantic v2</span>
+        <span class="btag">PDF rapor</span>
+      </div>
+      <h1 class="lhero-title">Churn Prediction &amp; Retention Report</h1>
+      <p class="lhero-sub">
+        <span class="tr">Müşteri verisini ver, kim ayrılacak söylesin. GradientBoosting model + otomatik feature engineering + PDF retention raporu — tek pipeline'da.</span>
+        <span class="en">Give customer data, find out who's about to leave. GradientBoosting model + automatic feature engineering + PDF retention report — in one pipeline.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Churn Prediction — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">CHURN REPORT — RETENTION DECISIONS</div>
+        <div><span style="color:#ef4444">HIGH</span> &nbsp;cust_id=<span style="color:#f2f0ea">C_8821</span> &nbsp;prob=<span style="color:#ef4444">0.91</span> &nbsp;action=<span style="color:#ff4800">discount_offer</span></div>
+        <div><span style="color:#f59e0b">MED</span> &nbsp;&nbsp;cust_id=<span style="color:#f2f0ea">C_4402</span> &nbsp;prob=<span style="color:#f59e0b">0.64</span> &nbsp;action=<span style="color:#ff4800">loyalty_call</span></div>
+        <div style="color:#6b6858;"><span style="color:#10b981">LOW</span> &nbsp;&nbsp;cust_id=<span style="color:#f2f0ea">C_1195</span> &nbsp;prob=<span style="color:#10b981">0.12</span> &nbsp;action=none</div>
+        <div><span style="color:#ef4444">HIGH</span> &nbsp;cust_id=<span style="color:#f2f0ea">C_7733</span> &nbsp;prob=<span style="color:#ef4444">0.88</span> &nbsp;action=<span style="color:#ff4800">upgrade_offer</span></div>
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          customers=<span style="color:#ff4800">12,400</span> &nbsp;·&nbsp; high_risk=<span style="color:#ef4444">843</span> &nbsp;·&nbsp; report=<span style="color:#6b6858">PDF</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>ML</strong>
+      <span>GradientBoosting</span>
+    </div>
+    <div class="lmetric">
+      <strong>auto</strong>
+      <span><span class="tr">feature engineering</span><span class="en">feature engineering</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>PDF</strong>
+      <span><span class="tr">retention raporu</span><span class="en">retention report</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>CI</strong>
+      <span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Ne yapar?</span>
+      <span class="en">What it does</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">🤖</div>
+        <h3>GradientBoosting</h3>
+        <p>
+          <span class="tr">sklearn GradientBoostingClassifier ile eğitilmiş churn modeli. Hiperparametre tuning pipeline içinde yerleşik.</span>
+          <span class="en">Churn model trained with sklearn GradientBoostingClassifier. Hyperparameter tuning built into the pipeline.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚙️</div>
+        <h3><span class="tr">Otomatik feature engineering</span><span class="en">Auto feature engineering</span></h3>
+        <p>
+          <span class="tr">Ham müşteri verisinden RFM segmentasyonu, tenure grupları, kullanım yoğunluğu — hepsi otomatik türetilir.</span>
+          <span class="en">From raw customer data: RFM segmentation, tenure groups, usage intensity — all derived automatically.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎯</div>
+        <h3><span class="tr">Risk skorlama</span><span class="en">Risk scoring</span></h3>
+        <p>
+          <span class="tr">Her müşteriye 0-100 arası churn riski skoru. Yüksek risk segmenti ayrıca listelenir, önceliklendirilir.</span>
+          <span class="en">Churn risk score 0-100 per customer. High-risk segment listed separately and prioritized.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📄</div>
+        <h3><span class="tr">PDF rapor</span><span class="en">PDF report</span></h3>
+        <p>
+          <span class="tr">Model metrikleri, feature importance grafiği, risk dağılımı ve aksiyon önerileri — profesyonel PDF'e dönüşür.</span>
+          <span class="en">Model metrics, feature importance chart, risk distribution, and action recommendations — converted to professional PDF.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <h3><span class="tr">Model yorumlanabilirliği</span><span class="en">Model explainability</span></h3>
+        <p>
+          <span class="tr">Feature importance sıralaması raporda görünür. Hangi değişken churn'ü en çok etkiliyor — net görülebilir.</span>
+          <span class="en">Feature importance ranking visible in the report. Which variable affects churn most — clearly visible.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔁</div>
+        <h3>sklearn Pipeline</h3>
+        <p>
+          <span class="tr">Preprocessing + model tek sklearn Pipeline nesnesi. Joblib ile serialize edilir, yeni veri gelince yeniden fit edilmeden prediction yapılabilir.</span>
+          <span class="en">Preprocessing + model as a single sklearn Pipeline object. Serialized via joblib — predict on new data without refitting.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">ML</span>
+        <span class="tech-val">sklearn · GradientBoostingClassifier · Pipeline · GridSearchCV</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>
+        <span class="tech-val">Pandas 3.x · numpy · feature-engine</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">PDF</span>
+        <span class="tech-val">reportlab · matplotlib (charts)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pydantic v2 · Pandera schema · TypeAdapter</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · parametrize · coverage &gt;85%</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">CI</span>
+        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Hangi müşterilerin ayrılacağını bilmek ister misin?</span>
+      <span class="en">Want to know which customers are about to leave?</span>
+    </h2>
+    <p>
+      <span class="tr">Müşteri verini ver, model eğiteyim, raporu çıkarayım. Sektöre özgü feature engineering de eklerim.</span>
+      <span class="en">Give me your customer data, I'll train the model, produce the report. I'll add industry-specific feature engineering too.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Churn Prediction İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

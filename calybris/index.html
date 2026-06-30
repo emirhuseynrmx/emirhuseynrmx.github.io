@@ -1,1531 +1,265 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr" class="lang-tr">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Calybris Engine | Adaptive Proof-Carrying Decision Engine</title>
-  <meta name="description" content="Calybris is a domain-neutral, adaptive, proof-carrying prescriptive decision engine. Thompson Sampling, outcome learning, integer kernel, hash-chained WAL. 334+ tests + Miri, 7 Loom exhaustive, 91.6% coverage, 1.1M real-data benchmark, 4 industries."/>
-  <meta name="keywords" content="decision engine, proof-carrying, Thompson Sampling, adaptive routing, Rust, integer kernel, WAL, SHA-256, budget enforcement, quality floor, Calybris"/>
-  <meta name="author" content="Emir H. Inci"/>
-  <meta name="robots" content="index, follow"/>
-  <meta name="theme-color" content="#0a0a0a"/>
-  <link rel="canonical" href="https://emirhuseyin.tech/calybris/"/>
-  <link rel="home" href="https://emirhuseyin.tech/"/>
-
-  <meta property="og:type" content="website"/>
-  <meta property="og:title" content="Calybris Engine | Proof-Carrying Prescriptive Decision Engine"/>
-  <meta property="og:description" content="Domain-neutral. Deterministic. Every decision carries a cryptographic fingerprint, cost estimate, risk penalty, and replayable audit trail. Written in Rust. Zero unsafe code."/>
-  <meta name="twitter:card" content="summary"/>
-  <meta name="twitter:title" content="Calybris Engine"/>
-  <meta name="twitter:description" content="Proof-carrying prescriptive decision engine. Integer kernel. Cryptographic audit chain. Written in Rust."/>
-
+  <title>Calybris Core — Arşiv</title>
+  <meta name="robots" content="noindex"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../main.css"/>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --bg: #0a0a0a;
-      --card: #0e0e0e;
-      --border: #1a1a1a;
-      --gold: #c8a03c;
-      --gold-dim: rgba(200, 160, 60, 0.15);
-      --gold-glow: rgba(200, 160, 60, 0.08);
-      --text: #e0e0e0;
-      --text-dim: #888;
-      --text-muted: #555;
-      --mono: 'JetBrains Mono', monospace;
-      --sans: 'Inter', system-ui, sans-serif;
-      --red: #c0392b;
-      --green: #27ae60;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-size: 16px;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-
-    ::selection {
-      background: var(--gold);
-      color: var(--bg);
-    }
-
-    a { color: var(--gold); text-decoration: none; transition: opacity 0.2s; }
-    a:hover { opacity: 0.8; }
-
-    /* ── Noise overlay ── */
-    .noise {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.03;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    }
-
-    /* ── Nav ── */
-    .nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2rem;
-      height: 56px;
-      background: rgba(10, 10, 10, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      transition: transform 0.3s ease, background 0.3s;
-    }
-
-    .nav.nav-hidden {
-      transform: translateY(-100%);
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--gold);
-      font-weight: 700;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
-    }
-
-    .nav-brand .dot {
-      width: 8px;
-      height: 8px;
-      background: var(--gold);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    .nav-links a {
-      color: var(--text-dim);
-      font-size: 0.78rem;
-      text-transform: lowercase;
-      letter-spacing: 0.03em;
-    }
-
-    .nav-links a:hover { color: var(--gold); opacity: 1; }
-
-    .nav-back {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    /* ── Section layout ── */
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
-
-    section {
-      padding: 6rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .section-label {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      margin-bottom: 0.75rem;
-    }
-
-    .section-title {
-      font-family: var(--mono);
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 1rem;
-    }
-
-    .section-desc {
-      color: var(--text-dim);
-      max-width: 700px;
-      margin-bottom: 2.5rem;
-      font-size: 0.95rem;
-      line-height: 1.7;
-    }
-
-    /* ── Hero ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 56px;
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-eyebrow {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero h1 {
-      font-family: var(--mono);
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.1;
-      margin-bottom: 0.5rem;
-    }
-
-    .hero-tagline {
-      font-family: var(--mono);
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      color: var(--gold);
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-sub {
-      color: var(--text-dim);
-      font-size: 1.05rem;
-      max-width: 720px;
-      line-height: 1.7;
-      margin-bottom: 2.5rem;
-    }
-
-    .hero-sub strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      font-weight: 600;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-
-    .btn-primary {
-      background: var(--gold);
-      color: var(--bg);
-      border-color: var(--gold);
-    }
-
-    .btn-primary:hover {
-      background: #d4ac44;
-      opacity: 1;
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-      opacity: 1;
-    }
-
-    /* ── Code blocks ── */
-    .code-block {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.5rem 2rem;
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      line-height: 1.8;
-      color: var(--text-dim);
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-    }
-
-    .code-block .keyword { color: var(--gold); }
-    .code-block .comment { color: var(--text-muted); font-style: italic; }
-    .code-block .value { color: #e0e0e0; }
-    .code-block .type { color: #7ec8e3; }
-    .code-block .string { color: #a8d5a2; }
-
-    /* ── Constraint list ── */
-    .constraint-list {
-      list-style: none;
-      display: grid;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .constraint-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      font-size: 0.9rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    .constraint-list li::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background: var(--gold);
-      border-radius: 50%;
-      flex-shrink: 0;
-      margin-top: 0.55rem;
-    }
-
-    .constraint-list li strong {
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    /* ── Gate list (for hard limits) ── */
-    .gate-list {
-      list-style: none;
-      display: grid;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .gate-list li {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      padding: 0.75rem 1rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      transition: border-color 0.3s;
-    }
-
-    .gate-list li:hover {
-      border-color: var(--gold);
-    }
-
-    .gate-icon {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.7rem;
-      flex-shrink: 0;
-      font-weight: 700;
-    }
-
-    .gate-icon.block {
-      background: rgba(192, 57, 43, 0.15);
-      color: var(--red);
-    }
-
-    .gate-icon.pass {
-      background: rgba(39, 174, 96, 0.15);
-      color: var(--green);
-    }
-
-    .gate-label {
-      color: var(--text);
-      flex: 1;
-    }
-
-    .gate-threshold {
-      color: var(--gold);
-      font-size: 0.78rem;
-    }
-
-    /* ── Bench grid ── */
-    .bench-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .bench-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.5rem;
-      transition: border-color 0.3s, transform 0.3s;
-    }
-
-    .bench-card:hover {
-      border-color: var(--gold);
-      transform: translateY(-2px);
-    }
-
-    .bench-value {
-      font-family: var(--mono);
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--gold);
-      line-height: 1.2;
-      margin-bottom: 0.25rem;
-    }
-
-    .bench-unit {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-bottom: 0.5rem;
-    }
-
-    .bench-label {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-    }
-
-    /* ── Callout note ── */
-    .callout {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--gold);
-      border-radius: 4px;
-      padding: 1.25rem 1.5rem;
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.7;
-      margin-top: 1.5rem;
-    }
-
-    .callout strong {
-      color: var(--text);
-    }
-
-    .callout em {
-      color: var(--gold);
-      font-style: normal;
-      font-family: var(--mono);
-      font-size: 0.82rem;
-    }
-
-    /* ── Detail grid ── */
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .detail-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.5rem;
-      transition: border-color 0.3s;
-    }
-
-    .detail-card:hover {
-      border-color: var(--gold);
-    }
-
-    .detail-card h4 {
-      font-family: var(--mono);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 0.5rem;
-    }
-
-    .detail-card p {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    /* ── Product grid ── */
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-    }
-
-    .product-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      transition: border-color 0.3s, transform 0.3s;
-      text-decoration: none;
-    }
-
-    .product-card:hover {
-      border-color: var(--gold);
-      transform: translateY(-2px);
-      opacity: 1;
-    }
-
-    .product-name {
-      font-family: var(--mono);
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.25rem;
-    }
-
-    .product-type {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--gold);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.75rem;
-    }
-
-    .product-desc {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-      flex: 1;
-    }
-
-    .product-arrow {
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 1rem;
-      transition: color 0.2s;
-    }
-
-    .product-card:hover .product-arrow {
-      color: var(--gold);
-    }
-
-    /* ── Test grid ── */
-    .test-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .test-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.5rem;
-      transition: border-color 0.3s;
-    }
-
-    .test-card:hover {
-      border-color: var(--gold);
-    }
-
-    .test-card h4 {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--gold);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .test-card p {
-      font-size: 0.85rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-
-    /* ── Architecture flow ── */
-    .arch-diagram {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 2rem;
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-    }
-
-    .arch-flow {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .arch-node {
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #fff;
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--bg);
-      white-space: nowrap;
-    }
-
-    .arch-node.highlight {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .arch-arrow {
-      font-family: var(--mono);
-      color: var(--text-muted);
-      font-size: 1rem;
-    }
-
-    /* ── Footer ── */
-    footer {
-      padding: 3rem 0;
-      text-align: center;
-    }
-
-    .footer-copy {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-    }
-
-    .footer-links a {
-      color: var(--text-dim);
-    }
-
-    .footer-links a:hover {
-      color: var(--gold);
-    }
-
-    /* ── Scroll reveal ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .reveal-delay-1 { transition-delay: 0.1s; }
-    .reveal-delay-2 { transition-delay: 0.2s; }
-    .reveal-delay-3 { transition-delay: 0.3s; }
-    .reveal-delay-4 { transition-delay: 0.35s; }
-
-    /* ── Responsive ── */
-    @media (max-width: 768px) {
-      .nav { padding: 0 1rem; }
-      .nav-links { display: none; }
-      .container { padding: 0 1.25rem; }
-      section { padding: 4rem 0; }
-      .hero { min-height: auto; padding: 8rem 0 4rem; }
-      .bench-grid { grid-template-columns: 1fr 1fr; }
-      .product-grid { grid-template-columns: 1fr; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .test-grid { grid-template-columns: 1fr; }
-      .code-block { padding: 1rem 1.25rem; font-size: 0.75rem; }
-      .arch-flow { flex-direction: column; }
-      .arch-arrow { transform: rotate(90deg); }
-    }
-
-    @media (max-width: 480px) {
-      .bench-grid { grid-template-columns: 1fr; }
-      .hero-actions { flex-direction: column; }
-      .btn { width: 100%; justify-content: center; }
+    body { background:#060504; }
+
+    .archive-bar {
+      background:#1a1208;
+      border-bottom:1px solid #2a1e08;
+      padding:.55rem 2rem;
+      text-align:center;
+      font-family:'JetBrains Mono',monospace;
+      font-size:.58rem;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:#6b5a30;
+    }
+    .archive-bar a { color:#ff4800; text-decoration:none; }
+    .archive-bar a:hover { text-decoration:underline; }
+
+    .calybris-wrap {
+      max-width:54rem;
+      margin:0 auto;
+      padding:7rem 2.5rem 5rem;
+    }
+
+    .calybris-eyebrow {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.6rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:#3a3828;
+      margin-bottom:1.5rem;
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+    }
+    .calybris-eyebrow::before {
+      content:'';
+      display:inline-block;
+      width:2rem;
+      height:1px;
+      background:#2a2818;
+    }
+
+    .calybris-title {
+      font-size:clamp(2.8rem,7vw,5rem);
+      font-weight:900;
+      letter-spacing:-.04em;
+      line-height:1;
+      color:#f2f0ea;
+      margin-bottom:.5rem;
+    }
+    .calybris-title span { color:#ff4800; }
+
+    .calybris-tagline {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.75rem;
+      color:#5a5848;
+      letter-spacing:.04em;
+      margin-bottom:2rem;
+    }
+
+    .calybris-desc {
+      font-size:1rem;
+      color:#6b6858;
+      line-height:1.75;
+      max-width:42rem;
+      margin-bottom:2.5rem;
+    }
+
+    .calybris-tags {
+      display:flex;
+      gap:.5rem;
+      flex-wrap:wrap;
+      margin-bottom:3rem;
+    }
+    .calybris-tag {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.58rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:#5a5850;
+      background:#141210;
+      border:1px solid #201e1c;
+      border-radius:4px;
+      padding:.3rem .7rem;
+    }
+
+    .calybris-divider {
+      border:0;
+      border-top:1px solid #1a1812;
+      margin:2.5rem 0;
+    }
+
+    .use-cases {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1rem;
+      margin-bottom:2.5rem;
+    }
+    .use-case {
+      background:#0c0a08;
+      border:1px solid #1a1812;
+      border-radius:12px;
+      padding:1.25rem 1.4rem;
+    }
+    .use-case-label {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.55rem;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:#ff4800;
+      margin-bottom:.6rem;
+    }
+    .use-case p {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.7rem;
+      color:#5a5848;
+      line-height:1.7;
+    }
+
+    .calybris-note {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.72rem;
+      color:#3a3828;
+      line-height:1.8;
+      border-left:2px solid #2a1e08;
+      padding-left:1.25rem;
+      margin-bottom:3rem;
+    }
+
+    .calybris-back {
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      font-family:'JetBrains Mono',monospace;
+      font-size:.68rem;
+      font-weight:700;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:#ff4800;
+      text-decoration:none;
+      transition:gap .2s;
+    }
+    .calybris-back:hover { gap:.75rem; }
+
+    @media(max-width:600px){
+      .use-cases{grid-template-columns:1fr}
+      .calybris-wrap{padding:5rem 1.5rem 3rem}
     }
   </style>
 </head>
 <body>
 
-  <div class="noise" aria-hidden="true"></div>
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
 
-  <!-- ── Nav ── -->
-  <nav class="nav" id="main-nav">
-    <a class="nav-brand" href="/calybris/">
-      <span class="dot"></span>
-      CALYBRIS ENGINE
-    </a>
-    <div class="nav-links">
-      <a href="#kernel">kernel</a>
-      <a href="#adaptive">adaptive</a>
-      <a href="#proof-chain">proof</a>
-      <a href="#domains">domains</a>
-      <a href="#tests">tests</a>
-      <a href="#products">products</a>
-      <a href="https://github.com/emirhuseynrmx/calybris-core" target="_blank" rel="noopener" style="color:var(--gold);">GitHub</a>
-      <a href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener" style="color:var(--gold);">crates.io</a>
-    </div>
-    <a class="nav-back" href="/">&larr; portfolio</a>
-  </nav>
+<div class="archive-bar">
+  <span class="tr">Arşiv — aktif geliştirme yok</span>
+  <span class="en">Archive — no active development</span>
+  &nbsp;·&nbsp;
+  <a href="/">
+    <span class="tr">Ana sayfaya dön →</span>
+    <span class="en">Back to home →</span>
+  </a>
+</div>
 
-  <!-- ── Hero ── -->
-  <section class="hero" id="top">
-    <div class="container hero-content">
-      <p class="hero-eyebrow reveal">Rust &middot; adaptive &middot; proof-carrying &middot; domain-neutral</p>
-      <h1 class="reveal reveal-delay-1">Calybris Engine</h1>
-      <p class="hero-tagline reveal reveal-delay-2">The decision engine that learns where to spend</p>
-      <p class="hero-sub reveal reveal-delay-3">
-        <strong>Adaptive routing</strong> with Thompson Sampling. <strong>Outcome-calibrated</strong> quality floors.
-        <strong>Three-level proof</strong>: tamper detection + correctness certificate + optimality proof.
-        <strong>22 models</strong> across 6 providers. <strong>Automatic policy evolution</strong> with counterfactual replay.
-        <br><br>
-        <strong>1M real conversation replays: 0 errors, $572K catalog-estimated avoidable spend.</strong>
-        <strong>1.1M across 4 industries: 0 runtime failures.</strong>
-        <br><br>
-        334+ tests + Miri. 7 Loom exhaustive. 91.6% coverage. Integer kernel. Zero <code style="font-family:var(--mono);color:var(--gold);font-size:0.95rem;">unsafe</code> code.
+<div class="calybris-wrap">
+
+  <div class="calybris-eyebrow">
+    <span class="tr">arşivlenmiş proje · Rust crate</span>
+    <span class="en">archived project · Rust crate</span>
+  </div>
+
+  <h1 class="calybris-title">Calybris<span> Core</span></h1>
+  <div class="calybris-tagline">
+    <span class="tr">deterministic proof-carrying decision kernel</span>
+    <span class="en">deterministic proof-carrying decision kernel</span>
+  </div>
+
+  <p class="calybris-desc tr">
+    Bir aksiyonun neden kabul, ikame veya reddedildiğini açıklamak ve tekrar oynatmak zorunda
+    olan sistemler için domain-agnostic karar çekirdeği. LLM router değil, exchange değil —
+    saf bir karar primitifi: <code style="color:#ff4800;font-size:.85em">aday + kısıtlar → karar + digest + WAL + bütçe kanıtı</code>.
+  </p>
+  <p class="calybris-desc en">
+    A domain-neutral deterministic primitive for systems that must explain and replay
+    why an action was allowed, substituted, or rejected.
+    Not an LLM framework. Not an exchange.
+    Just: <code style="color:#ff4800;font-size:.85em">candidate + policy → decision + digests + optional WAL + budget proof</code>.
+  </p>
+
+  <div class="calybris-tags">
+    <span class="calybris-tag">Rust</span>
+    <span class="calybris-tag">#![forbid(unsafe_code)]</span>
+    <span class="calybris-tag">Apache-2.0</span>
+    <span class="calybris-tag">proptest · Loom · Miri</span>
+    <span class="calybris-tag">HMAC-SHA256 WAL</span>
+    <span class="calybris-tag">integer-only</span>
+  </div>
+
+  <div class="use-cases">
+    <div class="use-case">
+      <div class="use-case-label">
+        <span class="tr">Kullanım 1</span><span class="en">Use case 1</span>
+      </div>
+      <p>
+        <span class="tr">LLM routing — bütçe, gecikme, kalite ve risk kısıtları altında model seç / ikame et / reddet.</span>
+        <span class="en">LLM routing — select / substitute / reject models under budget, latency, quality, risk.</span>
       </p>
-      <div class="hero-actions reveal reveal-delay-4">
-        <a class="btn btn-primary" href="https://github.com/emirhuseynrmx/calybris-core" target="_blank" rel="noopener">&#9733; View Source on GitHub</a>
-        <a class="btn btn-secondary" href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">&#128230; crates.io &middot; v0.4.0</a>
-        <a class="btn btn-secondary" href="/goveris/">GOVERIS Product</a>
-        <a class="btn btn-secondary" href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Pilot%20Call&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Request Pilot</a>
-      </div>
-
     </div>
-  </section>
-
-  <!-- ── 01 Integer Kernel ── -->
-  <section id="kernel">
-    <div class="container">
-      <p class="section-label reveal">01 &mdash; Integer Kernel</p>
-      <h2 class="section-title reveal">Allocation-free integer kernel</h2>
-      <p class="section-desc reveal">
-        No floating-point in the hot path. The kernel uses bounded integer arithmetic throughout &mdash;
-        every value is an <code style="font-family:var(--mono);color:var(--gold);">i64</code> or
-        <code style="font-family:var(--mono);color:var(--gold);">u64</code> denominated in microcents.
-        No heap allocation per decision. No GC pause. No NaN propagation.
+    <div class="use-case">
+      <div class="use-case-label">
+        <span class="tr">Kullanım 2</span><span class="en">Use case 2</span>
+      </div>
+      <p>
+        <span class="tr">Pre-trade guard — pozisyon, risk ve gecikme limitleri altında aday emirleri kabul / ikame / reddet.</span>
+        <span class="en">Pre-trade guard — admit / substitute / reject candidate orders under exposure, risk, latency limits.</span>
       </p>
-
-      <div class="code-block reveal">
-        <span class="comment">// utility formula (integer arithmetic, microcent-denominated)</span><br>
-        <span class="keyword">utility</span> = <span class="value">quality_adjusted_value</span> - <span class="value">risk_penalty</span> - <span class="value">cost</span> - <span class="value">latency_penalty</span>
-      </div>
-
-      <ul class="constraint-list reveal">
-        <li><strong>11 hard constraint gates</strong> evaluated in strict order &mdash; first failure short-circuits</li>
-        <li><strong>Max utility selection</strong> across a 64-model catalog per decision</li>
-        <li><strong>Counterfactual tracking:</strong> best alternative model + utility delta recorded alongside every decision</li>
-      </ul>
-
-      <div class="bench-grid reveal">
-        <div class="bench-card">
-          <div class="bench-value">8.6M</div>
-          <div class="bench-unit">decisions / sec</div>
-          <div class="bench-label">3-run median · overflow-safe</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">22</div>
-          <div class="bench-unit">models &middot; 6 providers</div>
-          <div class="bench-label">OpenAI, Anthropic, Google, DeepSeek, Meta, Mistral</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">11</div>
-          <div class="bench-unit">constraint gates</div>
-          <div class="bench-label">Short-circuit on first fail</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">0</div>
-          <div class="bench-unit">heap allocations</div>
-          <div class="bench-label">Per hot-path decision</div>
-        </div>
-      </div>
-
-      <div class="callout reveal">
-        <strong>Why integers?</strong> Floating-point introduces non-determinism across platforms and
-        makes audit replay unreliable. Integer arithmetic is bit-identical on every architecture.
-        The kernel can be replayed on any machine and produce the same decision for the same input.
-      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ── 02 Adaptive Intelligence ── -->
-  <section id="adaptive">
-    <div class="container">
-      <p class="section-label reveal">02 &mdash; Adaptive Intelligence</p>
-      <h2 class="section-title reveal">The engine reads the data. Decides on its own. Learns from outcomes.</h2>
-      <p class="section-desc reveal">
-        Three layers &mdash; Welford statistics, Thompson Sampling, outcome calibration &mdash;
-        all in allocation-free Rust with lock-free atomics. No manual quality floor tuning needed.
-      </p>
+  <hr class="calybris-divider"/>
 
-      <div class="detail-grid reveal">
-        <div class="detail-card">
-          <h4>Welford Online Statistics</h4>
-          <p>Tracks rolling mean and variance per input regime. Detects anomalous requests automatically &mdash; unusual patterns get higher quality floors.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Thompson Sampling</h4>
-          <p>Bayesian explore/exploit for tier selection. Beta(alpha, beta) per regime per tier. Converges to optimal policy without manual tuning.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Outcome Calibration</h4>
-          <p>Failures raise the quality floor 2x faster than successes lower it. The engine is naturally conservative &mdash; it protects quality by default.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Warm-Start Floors</h4>
-          <p>Pre-computed from public benchmarks (WildChat 500K, KDD 494K, SP500 14K). Day-one defaults: support 0.55, coding 0.72, compliance 0.92, security 0.92.</p>
-        </div>
-      </div>
+  <div class="calybris-note">
+    <span class="tr">
+      // Öncelik listesinin dışında — başka projeler öne geçti.<br/>
+      // Çekirdek çalışıyor; unit / proptest / Loom / Miri coverage var.<br/>
+      // İleride farklı bir kapsamda dönebilir.
+    </span>
+    <span class="en">
+      // Out of priority scope — other projects took precedence.<br/>
+      // Core works; unit / proptest / Loom / Miri coverage in place.<br/>
+      // May return in a different scope later.
+    </span>
+  </div>
 
-      <div class="bench-grid reveal">
-        <div class="bench-card">
-          <div class="bench-value">7.2x</div>
-          <div class="bench-unit">fewer missed attacks</div>
-          <div class="bench-label">Adaptive vs random on KDD Cup 99</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">16.69%</div>
-          <div class="bench-unit">miss rate</div>
-          <div class="bench-label">SP500: 20% fewer errors than random</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">+4.9pp</div>
-          <div class="bench-unit">learning</div>
-          <div class="bench-label">KDD last quarter vs first quarter</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">8</div>
-          <div class="bench-unit">regimes</div>
-          <div class="bench-label">Each learns its own quality floor</div>
-        </div>
-      </div>
+  <a href="/" class="calybris-back">
+    ← <span class="tr">ana sayfa</span><span class="en">home</span>
+  </a>
 
-      <div class="callout reveal">
-        <strong>Client override always wins.</strong> The adaptive router recommends quality floors
-        only when the client doesn&rsquo;t provide one. Client-provided floors are never overridden.
-        For high-stakes workflows, set <code style="font-family:var(--mono);color:var(--gold);">causal_exploration_bps=0</code> and use shadow mode instead.
-      </div>
-    </div>
-  </section>
+</div>
 
-  <!-- ── 03 Decision Proof Chain ── -->
-  <section id="proof-chain">
-    <div class="container">
-      <p class="section-label reveal">03 &mdash; Decision Proof Chain</p>
-      <h2 class="section-title reveal">Every decision is cryptographically chained</h2>
-      <p class="section-desc reveal">
-        Each decision gets a SHA-256 fingerprint that includes the previous decision's hash,
-        forming an immutable chain. Tampering with any decision invalidates every subsequent entry.
-      </p>
-
-      <div class="arch-diagram reveal">
-        <div class="arch-flow">
-          <span class="arch-node">Decision<sub>n-1</sub></span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">SHA-256</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Decision<sub>n</sub></span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">SHA-256</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Decision<sub>n+1</sub></span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">WAL</span>
-        </div>
-      </div>
-
-      <div class="detail-grid reveal">
-        <div class="detail-card">
-          <h4>Write-Ahead Log</h4>
-          <p>Every decision is durably written before acknowledgment. The WAL uses hash chaining &mdash; each entry includes the previous entry's SHA-256 digest. Optional HMAC-SHA256 keying for authenticated chains; constant-time comparison via the <code style="font-family:var(--mono);color:var(--gold);">subtle</code> crate prevents timing side-channels.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Crash Recovery</h4>
-          <p>Crash-tail truncation detects and discards incomplete entries on restart. Deterministic replay re-derives state from the surviving chain.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Group Commit</h4>
-          <p>Decisions within a 200&#181;s window are batched into a single fsync, amortizing I/O cost without sacrificing durability guarantees.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Checkpoint Signing</h4>
-          <p>Optional ed25519 signatures on periodic checkpoints. KMS integration available. The checkpoint proves the chain was intact at a known point.</p>
-        </div>
-      </div>
-
-      <div class="code-block reveal">
-        <span class="comment">// WAL entry structure</span><br>
-        <span class="keyword">struct</span> <span class="type">WalEntry</span> {<br>
-        &nbsp;&nbsp;<span class="value">sequence_id</span>: <span class="type">u64</span>,<br>
-        &nbsp;&nbsp;<span class="value">prev_hash</span>: <span class="type">[u8; 32]</span>,&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// SHA-256 of previous entry</span><br>
-        &nbsp;&nbsp;<span class="value">decision</span>: <span class="type">DecisionRecord</span>,<br>
-        &nbsp;&nbsp;<span class="value">fingerprint</span>: <span class="type">[u8; 32]</span>,&nbsp;&nbsp;<span class="comment">// SHA-256(prev_hash || decision)</span><br>
-        &nbsp;&nbsp;<span class="value">timestamp</span>: <span class="type">i64</span>,<br>
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 03b Formal Verification ── -->
-  <section id="verification">
-    <div class="container">
-      <p class="section-label reveal">04 &mdash; Formal Decision Verification</p>
-      <h2 class="section-title reveal">Three levels of proof. Not just "what happened" &mdash; "why it was correct."</h2>
-      <p class="section-desc reveal">
-        Most systems log decisions. Calybris proves them. Each decision can be verified
-        against the policy rules that produced it &mdash; not after the fact, but structurally.
-      </p>
-
-      <div class="detail-grid reveal">
-        <div class="detail-card">
-          <h4>Level 1: Tamper Proof</h4>
-          <p>SHA-256 hash chain. Every decision references the previous one. Modify any record and the chain breaks. The engine refuses to start on a broken chain.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Level 2: Correctness Certificate</h4>
-          <p>Six rule checks per decision: risk limit, confidence floor, quality floor, budget limit, positive utility, and optimality. Each check records evidence. The certificate is SHA-256 hashed for tamper detection.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Level 3: Optimality Proof</h4>
-          <p>Proves the selected model had the highest utility among ALL eligible candidates &mdash; not just "better than second-best." Includes every model's utility in the proof hash.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Implicit Feedback</h4>
-          <p>When explicit outcome feedback isn't available, the engine infers quality from proxy signals: provider latency, HTTP errors, client retries, stream early-abort. No manual feedback required.</p>
-        </div>
-      </div>
-
-      <div class="callout reveal">
-        <strong>For regulated domains:</strong> The correctness certificate answers "Given THIS input and THIS policy,
-        was THIS the only valid decision?" &mdash; with cryptographic proof and evidence strings for each rule.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 04 Policy Evolution ── -->
-  <section id="evolution">
-    <div class="container">
-      <p class="section-label reveal">05 &mdash; Automatic Policy Evolution</p>
-      <h2 class="section-title reveal">The engine proposes. You approve. The proof verifies.</h2>
-      <p class="section-desc reveal">
-        Calybris analyzes its own outcome data, synthesizes policy improvements,
-        replays them counterfactually against historical decisions, verifies all invariants,
-        and presents a promotion report with SHA-256 proof.
-      </p>
-
-      <div class="arch-diagram reveal">
-        <div class="arch-flow">
-          <span class="arch-node">Outcome Data</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Policy Synthesizer</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Counterfactual Replay</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Invariant Check</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Promotion Report</span>
-        </div>
-      </div>
-
-      <ul class="constraint-list reveal">
-        <li><strong>Synthesize:</strong> analyzes adaptive state + quality tracker to propose new quality floors per regime</li>
-        <li><strong>Replay:</strong> re-evaluates historical decisions with proposed policy, measures savings and miss rate delta</li>
-        <li><strong>Verify:</strong> checks quality floors &ge; 0.20, budget preserved, risk limits enforced, hash chain valid</li>
-        <li><strong>Recommend:</strong> PROMOTE (savings &gt;5%, quality preserved) / REVIEW / REJECT (invariant violation)</li>
-        <li><strong>Proof:</strong> entire proposal is SHA-256 hashed &mdash; deterministic and independently verifiable</li>
-      </ul>
-
-      <div class="callout reveal">
-        <strong>The engine never auto-promotes.</strong> It proposes with evidence. The human decides.
-        This is governance-safe policy evolution &mdash; not autonomous optimization.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 05 Budget Enforcement ── -->
-  <section id="budget">
-    <div class="container">
-      <p class="section-label reveal">06 &mdash; Budget Enforcement</p>
-      <h2 class="section-title reveal">Per-tenant atomic budget control</h2>
-      <p class="section-desc reveal">
-        Balances are denominated in microcents and stored as
-        <code style="font-family:var(--mono);color:var(--gold);">i64</code> atomics.
-        Thread-safe reservation uses a CAS loop &mdash; no mutex, no lock contention.
-        The budget journal is hash-chained and durably synced.
-      </p>
-
-      <div class="arch-diagram reveal">
-        <div class="arch-flow">
-          <span class="arch-node">Request</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Reserve</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Execute</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Commit</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Done</span>
-        </div>
-      </div>
-
-      <ul class="constraint-list reveal">
-        <li><strong>Reserve on decision:</strong> estimated cost deducted atomically before execution begins</li>
-        <li><strong>Commit on execution:</strong> actual cost replaces the reservation; delta refunded</li>
-        <li><strong>Release on failure:</strong> full reservation returned if execution never completes</li>
-        <li><strong>CAS loop:</strong> compare-and-swap on <code style="font-family:var(--mono);color:var(--gold);">AtomicI64</code> &mdash; no mutex, no lock convoy</li>
-        <li><strong>Hash-chained journal:</strong> every balance mutation is logged with a SHA-256 chain and durably fsynced</li>
-        <li><strong>Per-tenant exposure caps:</strong> configurable ceiling per tenant &mdash; hard-blocked when cumulative exposure reaches the cap</li>
-        <li><strong>Snapshot recovery:</strong> <code style="font-family:var(--mono);color:var(--gold);">restore_from_snapshot</code> reconstructs budget state from the last durable checkpoint after crash or migration</li>
-      </ul>
-
-      <div class="callout reveal">
-        <strong>Budget never goes negative.</strong> This invariant is proven by proptest with randomized
-        operation sequences including concurrent reservations, partial commits, and forced failures.
-        If any sequence produces a negative balance, the test suite fails.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 04 Causal Regret ── -->
-  <section id="regret">
-    <div class="container">
-      <p class="section-label reveal">07 &mdash; Causal Regret Measurement</p>
-      <h2 class="section-title reveal">Doubly-robust off-policy evaluation</h2>
-      <p class="section-desc reveal">
-        The engine measures whether past decisions were optimal by comparing actual outcomes
-        against counterfactual alternatives. This is causal inference, not correlation &mdash; and it uses
-        importance weighting to correct for the logging policy's selection bias.
-      </p>
-
-      <div class="code-block reveal">
-        <span class="comment">// regret computation</span><br>
-        <span class="keyword">regret</span> = <span class="value">best_model_reward</span> - <span class="value">selected_model_reward</span><br><br>
-        <span class="comment">// reward formula</span><br>
-        <span class="keyword">reward</span> = (<span class="value">business_outcome</span> &times; <span class="value">quality</span>) - <span class="value">cost</span> - <span class="value">latency_penalty</span><br><br>
-        <span class="comment">// importance weight (corrects for selection bias)</span><br>
-        <span class="keyword">weight</span> = <span class="value">1</span> / <span class="value">logging_propensity</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// capped at 20x</span>
-      </div>
-
-      <div class="detail-grid reveal">
-        <div class="detail-card">
-          <h4>Outcome Ingestion</h4>
-          <p>Outcomes are bound to their originating decision and execution fingerprints. No outcome can be attributed without matching the proof chain.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Importance Weighting</h4>
-          <p>Weight = 1 / logging_propensity, capped at 20x to prevent variance explosion from rare selections. Standard doubly-robust correction.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Holdout Validation</h4>
-          <p>20% of traffic (by default) is held out from policy intervention. The holdout provides an unbiased baseline for regret comparison.</p>
-        </div>
-        <div class="detail-card">
-          <h4>Calibration Check</h4>
-          <p>The engine cross-checks its reward model predictions against observed outcomes. Systematic bias triggers a calibration warning, not a silent drift.</p>
-        </div>
-      </div>
-
-      <div class="callout reveal">
-        <strong>Measures regret but does not auto-optimize &mdash; that is intentional.</strong>
-        The engine tells you which decisions were suboptimal and by how much.
-        It does not autonomously change the policy. The human decides.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 05 Staged Policy Rollout ── -->
-  <section id="rollout">
-    <div class="container">
-      <p class="section-label reveal">08 &mdash; Staged Policy Rollout</p>
-      <h2 class="section-title reveal">Shadow evaluation before enforcement</h2>
-      <p class="section-desc reveal">
-        New policies are never deployed directly. A candidate policy snapshot is staged and runs
-        in shadow mode alongside production, evaluating every decision in parallel without
-        affecting live traffic.
-      </p>
-
-      <div class="arch-diagram reveal">
-        <div class="arch-flow">
-          <span class="arch-node">Stage candidate</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Shadow eval</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Count mismatches</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node highlight">Promotion gate</span>
-          <span class="arch-arrow">&rarr;</span>
-          <span class="arch-node">Promote / Rollback</span>
-        </div>
-      </div>
-
-      <ul class="constraint-list reveal">
-        <li><strong>Shadow evaluation</strong> runs the candidate policy on live requests without altering the production decision</li>
-        <li><strong>Action mismatches:</strong> counts how often the candidate would choose a different action (allow vs. block vs. downgrade)</li>
-        <li><strong>Model mismatches:</strong> counts how often the candidate would select a different model</li>
-        <li><strong>Promotion gates:</strong> minimum sample count + action delta threshold must both pass before promotion is allowed</li>
-        <li><strong>Rollback:</strong> explicit snapshot ID rollback &mdash; the previous policy is always available for instant restore</li>
-      </ul>
-
-      <div class="callout reveal">
-        <strong>One candidate at a time. This is by design.</strong> Concurrent shadow policies
-        create confounding variables that make mismatch counts meaningless.
-        No uncontrolled experiments.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 06 Governance Hard Limits ── -->
-  <section id="governance">
-    <div class="container">
-      <p class="section-label reveal">09 &mdash; Governance Hard Limits</p>
-      <h2 class="section-title reveal">Fail-closed safety gates</h2>
-      <p class="section-desc reveal">
-        These constraints are evaluated before every decision. They cannot be overridden by client metadata,
-        configuration, or policy rules. If any gate fails, the decision is blocked.
-      </p>
-
-      <ul class="gate-list reveal">
-        <li>
-          <span class="gate-icon block">&#10005;</span>
-          <span class="gate-label">Risk score hard block</span>
-          <span class="gate-threshold">risk &lt; 0.96</span>
-        </li>
-        <li>
-          <span class="gate-icon block">&#10005;</span>
-          <span class="gate-label">Confidence floor</span>
-          <span class="gate-threshold">confidence &ge; 0.55</span>
-        </li>
-        <li>
-          <span class="gate-icon block">&#10005;</span>
-          <span class="gate-label">No paid models for zero expected value</span>
-          <span class="gate-threshold">EV &gt; 0 for paid</span>
-        </li>
-        <li>
-          <span class="gate-icon block">&#10005;</span>
-          <span class="gate-label">Cost-to-value ratio limit</span>
-          <span class="gate-threshold">ratio &lt; 1.25</span>
-        </li>
-        <li>
-          <span class="gate-icon block">&#10005;</span>
-          <span class="gate-label">Non-finite numeric rejection</span>
-          <span class="gate-threshold">NaN / Inf &rarr; reject</span>
-        </li>
-      </ul>
-
-      <div class="callout reveal">
-        <strong>These gates cannot be overridden by client metadata.</strong> They are compiled into
-        the kernel. A request with risk 0.97 is blocked regardless of tenant, business value,
-        or any other field. The gate evaluates first and short-circuits the entire pipeline.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Domain-Neutral Proof ── -->
-  <section id="domains">
-    <div class="container">
-      <p class="section-label reveal">10 &mdash; Domain-Neutral Proof</p>
-      <h2 class="section-title reveal">1,110,073 real records. 4 industries. 0 errors.</h2>
-      <p class="section-desc reveal">
-        Same binary. Zero domain-specific code. Every dataset is real &mdash;
-        Yahoo Finance, KDD Cup 99, UCI Covertype, California Housing.
-      </p>
-
-      <div class="bench-grid reveal">
-        <div class="bench-card">
-          <div class="bench-value">14,400</div>
-          <div class="bench-unit">SP500 Finance</div>
-          <div class="bench-label">30 tickers, 2yr daily &middot; 0 errors</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">494,021</div>
-          <div class="bench-unit">Cybersecurity</div>
-          <div class="bench-label">KDD Cup 99 intrusion detection &middot; 0 errors</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">581,012</div>
-          <div class="bench-unit">Forestry</div>
-          <div class="bench-label">UCI Covertype classification &middot; 0 errors</div>
-        </div>
-        <div class="bench-card">
-          <div class="bench-value">20,640</div>
-          <div class="bench-unit">Real Estate</div>
-          <div class="bench-label">California Housing valuation &middot; 0 errors</div>
-        </div>
-      </div>
-
-      <div class="callout reveal">
-        <strong>Marginal savings depend on your current routing maturity:</strong>
-        teams with no routing see ~44%, teams with basic routing see ~26%,
-        teams with smart routing see ~14%. The shadow replay pilot measures YOUR actual savings.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 09 Test Infrastructure ── -->
-  <section id="tests">
-    <div class="container">
-      <p class="section-label reveal">11 &mdash; Test Infrastructure</p>
-      <h2 class="section-title reveal">334+ tests + Miri. 91.6% coverage. Not happy-path.</h2>
-      <p class="section-desc reveal">
-        The test suite is designed to break the engine, not confirm that it works. Fault injection,
-        property-based testing, 7 Loom exhaustive concurrency tests, Miri undefined-behavior detection, and adversarial inputs.
-      </p>
-
-      <div class="test-grid reveal">
-        <div class="test-card">
-          <h4>WAL Fault Injection</h4>
-          <p>Truncation mid-write, bit corruption in committed entries, partial writes with power-loss simulation, and 8-thread concurrent contention on a single WAL file.</p>
-        </div>
-        <div class="test-card">
-          <h4>Budget Proptest</h4>
-          <p>Random operation sequences &mdash; reserve, commit, release, fail &mdash; with NaN and Inf poison values injected at random positions. Balance invariant checked after every sequence.</p>
-        </div>
-        <div class="test-card">
-          <h4>Loom Exhaustive (7 tests)</h4>
-          <p>7 Loom exhaustive concurrency tests &mdash; including 3-way reservation races, WAL contention, and adaptive-state updates &mdash; tested under ALL interleavings. Not sampling &mdash; every possible thread schedule is explored to prove the absence of data races.</p>
-        </div>
-        <div class="test-card">
-          <h4>Miri UB Detection</h4>
-          <p>Full test suite runs under Miri to detect undefined behavior: uninitialized reads, out-of-bounds access, use-after-free, and invalid pointer provenance. Complements Loom &mdash; Loom checks concurrency interleavings, Miri checks memory safety.</p>
-        </div>
-        <div class="test-card">
-          <h4>Handler Adversarial</h4>
-          <p>u32::MAX tokens, empty messages, malformed JSON, and rate limiter 429 responses. The handler must never panic, never produce NaN, and never leak budget.</p>
-        </div>
-      </div>
-
-      <div class="callout reveal">
-        <strong>Constant-time key comparison via <code style="font-family:var(--mono);color:var(--gold);font-size:0.82rem;">subtle</code> crate.</strong> Cryptographic key comparisons use
-        the <code style="font-family:var(--mono);color:var(--gold);font-size:0.82rem;">subtle::ConstantTimeEq</code> trait &mdash; no early exit on mismatch.
-        Timing side-channel leakage is structurally impossible. HMAC-SHA256 chain authentication uses the same constant-time path.
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 08 Products ── -->
-  <section id="products">
-    <div class="container">
-      <p class="section-label reveal">12 &mdash; Products Built on Calybris</p>
-      <h2 class="section-title reveal">Four products, one engine</h2>
-      <p class="section-desc reveal">
-        Each product plugs its own domain vocabulary into the Calybris policy gate.
-        The proof machinery, WAL, budget control, and regret measurement are shared infrastructure.
-      </p>
-
-      <div class="product-grid reveal">
-        <a class="product-card" href="/goveris/">
-          <div class="product-name">GOVERIS</div>
-          <div class="product-type">AI Cost Governance Gateway</div>
-          <div class="product-desc">Audit-first gateway that turns every LLM call into an auditable financial decision with cost, risk, and ROI evidence.</div>
-          <div class="product-arrow">View product &rarr;</div>
-        </a>
-        <a class="product-card" href="/lucethemis/">
-          <div class="product-name">LuceThemis</div>
-          <div class="product-type">Quant Signal Evidence Audit</div>
-          <div class="product-desc">Evidence trail for quantitative trading signals. MDL-inspired complexity penalties prevent overfitting in production.</div>
-          <div class="product-arrow">View product &rarr;</div>
-        </a>
-        <a class="product-card" href="/aera/">
-          <div class="product-name">AeraCFO</div>
-          <div class="product-type">AI Finance Reporting</div>
-          <div class="product-desc">Three-agent pipeline for AI-augmented financial reporting with proof-carrying cost attribution per generated artifact.</div>
-          <div class="product-arrow">View product &rarr;</div>
-        </a>
-        <a class="product-card" href="/aegis/">
-          <div class="product-name">Aegis</div>
-          <div class="product-type">Prescriptive Churn Analytics</div>
-          <div class="product-desc">Prescriptive churn analytics combining SHAP explanations, DiCE counterfactuals, and CATE treatment effects.</div>
-          <div class="product-arrow">View product &rarr;</div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 13 Interactive Demo ── -->
-  <section id="demo">
-    <div class="container">
-      <p class="section-label reveal">13 &mdash; Real Engine Output Preview</p>
-      <h2 class="section-title reveal">Real decisions from the actual Calybris binary. Not simulated.</h2>
-      <p class="section-desc reveal">These results were produced by the actual Calybris engine binary. Every proof hash, latency, and cost is a real output from the kernel.</p>
-
-      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:1.5rem;margin-top:2rem" class="reveal">
-        <div>
-          <div id="demo-scenarios" style="display:flex;flex-direction:column;gap:0.75rem">
-            <button onclick="runDemo('llm')" class="demo-btn active" id="btn-llm">
-              <span style="color:var(--gold);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em">LLM Cost Governance</span>
-              <strong>Customer refund ticket &rarr; GPT-4o approved, value justifies cost</strong>
-            </button>
-            <button onclick="runDemo('trade')" class="demo-btn" id="btn-trade">
-              <span style="color:var(--gold);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em">SP500 &middot; NVDA $200.04 &middot; -4.13%</span>
-              <strong>Premium analysis requested &rarr; mid-tier sufficient, 96% cheaper</strong>
-            </button>
-            <button onclick="runDemo('security')" class="demo-btn" id="btn-security">
-              <span style="color:var(--gold);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em">KDD Cup 99 &middot; Neptune Flood</span>
-              <strong>Deep packet inspection &rarr; confidence 0.38, hard block</strong>
-            </button>
-            <button onclick="runDemo('medical')" class="demo-btn" id="btn-medical">
-              <span style="color:var(--gold);font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em">UCI Breast Cancer &middot; radius 18.0mm</span>
-              <strong>General screening &rarr; quality too low, upgrade to specialist</strong>
-            </button>
-          </div>
-          <p style="margin-top:1rem;font-size:0.75rem;color:var(--text-muted)">Deterministic browser replay. Same kernel logic. No paid API call.</p>
-        </div>
-
-        <div id="demo-result" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.5rem;font-family:var(--mono);font-size:0.8rem;min-height:320px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-            <span style="color:var(--text-muted)">Decision Ledger</span>
-            <span id="demo-action" style="padding:3px 10px;border-radius:4px;font-size:0.7rem;font-weight:700;background:var(--gold-dim);color:var(--gold)">waiting</span>
-          </div>
-          <div id="demo-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem">
-            <div><span style="color:var(--text-muted);font-size:0.65rem">REQUESTED</span><br><strong id="d-requested" style="color:var(--text)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">SELECTED</span><br><strong id="d-selected" style="color:var(--gold)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">NET VALUE</span><br><strong id="d-net" style="color:var(--green,#22c55e)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">QUALITY FLOOR</span><br><strong id="d-floor" style="color:var(--text)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">RISK SCORE</span><br><strong id="d-risk" style="color:var(--text)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">COST</span><br><strong id="d-cost" style="color:var(--text)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">LATENCY</span><br><strong id="d-latency" style="color:var(--text)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">ROUTING</span><br><strong id="d-savings" style="color:var(--gold)">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:0.65rem">PROOF HASH</span><br><strong id="d-proof" style="color:var(--text-muted);font-size:0.7rem">—</strong></div>
-          </div>
-          <div style="margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--border)">
-            <span style="color:var(--text-muted);font-size:0.65rem">DECISION REASON</span>
-            <p id="d-reason" style="color:var(--text-dim);font-size:0.78rem;margin-top:0.3rem;line-height:1.5">Click a scenario to evaluate.</p>
-          </div>
-          <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border)">
-            <span style="color:var(--text-muted);font-size:0.65rem">CORRECTNESS CERTIFICATE</span>
-            <p id="d-cert" style="color:var(--green,#22c55e);font-size:0.72rem;margin-top:0.25rem">—</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <style>
-    .demo-btn {
-      display:block;width:100%;text-align:left;padding:0.85rem 1rem;
-      background:var(--card);border:1px solid var(--border);border-radius:6px;
-      cursor:pointer;transition:all 0.2s;font-family:var(--sans);
-    }
-    .demo-btn strong { display:block;color:var(--text);font-size:0.82rem;margin-top:0.2rem; }
-    .demo-btn:hover { border-color:var(--gold);background:rgba(200,160,60,0.05); }
-    .demo-btn.active { border-color:var(--gold);background:rgba(200,160,60,0.08); }
-    @media(max-width:768px) {
-      #demo .container > .reveal { grid-template-columns:1fr !important; }
-    }
-  </style>
-
-  <script>
-  // REAL engine output. Each scenario was fed through the Calybris binary.
-  // Data sources: Yahoo Finance (NVDA), KDD Cup 99 (neptune attack), UCI Breast Cancer.
-  const scenarios = {
-    llm: {
-      domain: "LLM Cost Governance",
-      requested: "gpt-4o",
-      selected: "gpt-4o",
-      action: "allow",
-      floor: "0.55",
-      risk: "0.08",
-      cost: "1.28¢",
-      net: "+31.86¢",
-      latency: "157µs",
-      proof: "55837fed9695eb0c",
-      savings: "Model approved — value justifies cost",
-      reason: "Customer refund ticket. GPT-4o approved: quality 0.92 exceeds floor 0.55, net value +31.86¢ after risk penalty. Fallback: gpt-4o → local-small → gpt-4o-mini.",
-      cert: "6/6 passed — risk 0.08 OK, confidence 0.96 OK, floor 0.55 met, budget OK, utility +31.86, optimal"
-    },
-    trade: {
-      domain: "SP500 Trading — NVDA",
-      requested: "premium signal analysis",
-      selected: "mid-tier analysis",
-      action: "downgrade",
-      floor: "0.90",
-      risk: "0.58",
-      cost: "4.33¢",
-      net: "+434.88¢",
-      latency: "45µs",
-      proof: "741ca2bd36c6821d",
-      savings: "Premium → mid-tier (96% cheaper)",
-      reason: "NVDA: close $200.04, return -4.13%, range 1.88%, volume 152.8M. Premium analysis requested but mid-tier (quality 0.92) meets floor 0.90 at 4.33¢ vs 163.50¢. Signal value $15.00 justifies analysis cost.",
-      cert: "6/6 passed — risk 0.58 OK, confidence 0.92 OK, floor 0.90 met, budget OK, utility +434.88, optimal"
-    },
-    security: {
-      domain: "Intrusion Detection — KDD",
-      requested: "deep packet inspection",
-      selected: "blocked",
-      action: "block",
-      floor: "0.92",
-      risk: "0.94",
-      cost: "0.00¢",
-      net: "0.00¢",
-      latency: "52µs",
-      proof: "54ccc04369eb62e6",
-      savings: "Blocked — confidence too low",
-      reason: "Neptune flood pattern detected (KDD Cup 99 real data). src_bytes=0, dst_bytes=0, duration=0. Confidence 0.38 below 0.55 minimum. Risk 0.94. Blocked before any analysis runs. Zero cost.",
-      cert: "6/6 passed — confidence 0.38 < minimum → hard block, risk 0.94 also triggers limit"
-    },
-    medical: {
-      domain: "Oncology — Breast Cancer",
-      requested: "general screening",
-      selected: "specialist analysis",
-      action: "upgrade",
-      floor: "0.90",
-      risk: "0.62",
-      cost: "0.90¢",
-      net: "+1,497.30¢",
-      latency: "38µs",
-      proof: "abad7e7506075a14",
-      savings: "General → specialist (quality upgrade)",
-      reason: "Biopsy triage: radius 18.0mm, texture 10.4 (UCI Breast Cancer real data). General screening (quality 0.75) below floor 0.90. Specialist analysis (quality 0.92) is cheapest qualifying tier. Patient safety enforced.",
-      cert: "6/6 passed — quality floor enforced (0.75 < 0.90 → upgrade), budget OK, utility +1497.30, optimal"
-    }
-  };
-
-  function runDemo(key) {
-    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-' + key).classList.add('active');
-
-    const s = scenarios[key];
-    const actionEl = document.getElementById('demo-action');
-    actionEl.textContent = s.action;
-    actionEl.style.background = s.action === 'block' ? 'rgba(239,68,68,0.15)' : s.action === 'allow' || s.action === 'upgrade' ? 'rgba(34,197,94,0.15)' : 'rgba(200,160,60,0.15)';
-    actionEl.style.color = s.action === 'block' ? '#f87171' : s.action === 'allow' || s.action === 'upgrade' ? '#34d399' : '#c8a03c';
-
-    document.getElementById('d-requested').textContent = s.requested;
-    document.getElementById('d-selected').textContent = s.selected;
-    document.getElementById('d-floor').textContent = s.floor;
-    document.getElementById('d-risk').textContent = s.risk;
-    document.getElementById('d-cost').textContent = s.cost;
-    document.getElementById('d-net').textContent = s.net;
-    document.getElementById('d-latency').textContent = s.latency;
-    document.getElementById('d-savings').textContent = s.savings;
-    document.getElementById('d-reason').textContent = s.reason;
-    document.getElementById('d-cert').textContent = s.cert;
-    document.getElementById('d-proof').textContent = s.proof + '...';
-  }
-
-  // Auto-run first scenario
-  setTimeout(() => runDemo('llm'), 500);
-  </script>
-
-  <!-- ── Footer ── -->
-  <footer>
-    <div class="container">
-      <p class="footer-copy">&copy; 2025&ndash;2026 Emir H. Inci</p>
-      <div class="footer-links">
-        <a href="/">Portfolio</a>
-        <a href="/goveris/">GOVERIS</a>
-        <a href="/engine/">Engine Overview</a>
-        <a href="https://github.com/emirhuseynrmx/calybris-core" target="_blank" rel="noopener">GitHub (Open Core)</a>
-        <a href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">crates.io</a>
-        <a href="mailto:emirhuseyininci@gmail.com?subject=GOVERIS%20Pilot%20Call&body=Monthly%20LLM%20calls%3A%20%0AProvider%20stack%3A%20%0ADeployment%20env%3A%20%0A">Request Pilot</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    /* ── Scroll reveal ── */
-    (function () {
-      const els = document.querySelectorAll('.reveal');
-      const io = new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (e) {
-            if (e.isIntersecting) {
-              e.target.classList.add('visible');
-              io.unobserve(e.target);
-            }
-          });
-        },
-        { threshold: 0.12 }
-      );
-      els.forEach(function (el) { io.observe(el); });
-    })();
-
-    /* ── Nav: hide on scroll down, show on scroll up ── */
-    (function () {
-      var nav = document.getElementById('main-nav');
-      var lastScroll = 0;
-      var ticking = false;
-
-      window.addEventListener('scroll', function () {
-        if (!ticking) {
-          requestAnimationFrame(function () {
-            var currentScroll = window.scrollY;
-
-            if (currentScroll > 80) {
-              nav.style.background = 'rgba(10, 10, 10, 0.95)';
-            } else {
-              nav.style.background = 'rgba(10, 10, 10, 0.85)';
-            }
-
-            if (currentScroll > lastScroll && currentScroll > 300) {
-              nav.classList.add('nav-hidden');
-            } else {
-              nav.classList.remove('nav-hidden');
-            }
-
-            lastScroll = currentScroll;
-            ticking = false;
-          });
-          ticking = true;
-        }
-      });
-    })();
-  </script>
-
+<script>
+(function(){
+  var dot=document.getElementById('c-dot');
+  var ring=document.getElementById('c-ring');
+  if(!dot||!ring)return;
+  var mx=window.innerWidth/2,my=window.innerHeight/2;
+  var rx=mx,ry=my;
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;dot.style.transform='translate3d('+(mx-4)+'px,'+(my-4)+'px,0)';});
+  (function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.transform='translate3d('+(rx-16)+'px,'+(ry-16)+'px,0)';requestAnimationFrame(loop);})();
+})();
+</script>
 </body>
 </html>

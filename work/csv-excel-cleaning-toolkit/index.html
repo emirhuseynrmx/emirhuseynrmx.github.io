@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>CSV / Excel Cleaning Toolkit — Emir H. İnci</title>
+  <meta name="description" content="Pandas tabanlı CSV ve Excel temizleme kütüphanesi. Encoding tespiti, tip çıkarımı, duplicate kaldırma, çoklu format export."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/csv-excel-cleaning-toolkit" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">Pandas 3.x · openpyxl</span>
+        <span class="btag">chardet · Pandera</span>
+        <span class="btag">CLI</span>
+      </div>
+      <h1 class="lhero-title">CSV / Excel Cleaning Toolkit</h1>
+      <p class="lhero-sub">
+        <span class="tr">Müşteriden gelen bozuk CSV'yi alır, temizler, istediğin formata çevirir. Encoding sorunu, encoding'i algılar. Tip sorunu, tipi düzeltir.</span>
+        <span class="en">Takes a broken CSV from a client, cleans it, converts to the format you need. Encoding problem? Detects it. Type problem? Fixes it.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/csv-excel-cleaning-toolkit" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=CSV Excel Toolkit — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">CSV TOOLKIT — CLEANING REPORT</div>
+        <div style="color:#6b6858;">input: <span style="color:#f2f0ea">sales_data.csv</span> &nbsp;rows=<span style="color:#ff4800">50,000</span></div>
+        <div><span style="color:#10b981">✓</span> nulls_filled &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff4800">1,247</span> cells</div>
+        <div><span style="color:#10b981">✓</span> duplicates_removed <span style="color:#ff4800">83</span> rows</div>
+        <div><span style="color:#10b981">✓</span> types_fixed &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff4800">6</span> columns</div>
+        <div><span style="color:#10b981">✓</span> outliers_flagged &nbsp;<span style="color:#f59e0b">12</span> rows</div>
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          clean_rows=<span style="color:#10b981">49,905</span> &nbsp;·&nbsp; schema_valid=<span style="color:#10b981">true</span> &nbsp;·&nbsp; export=<span style="color:#6b6858">xlsx+csv</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>auto</strong>
+      <span><span class="tr">encoding tespiti</span><span class="en">encoding detection</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>5+</strong>
+      <span><span class="tr">export formatı</span><span class="en">export formats</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>Pandera</strong>
+      <span><span class="tr">schema doğrulama</span><span class="en">schema validation</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>CI</strong>
+      <span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Ne yapar?</span>
+      <span class="en">What it does</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">🌐</div>
+        <h3><span class="tr">Encoding tespiti</span><span class="en">Encoding detection</span></h3>
+        <p>
+          <span class="tr">chardet ile UTF-8, Latin-1, Windows-1254 ve diğer encoding'leri otomatik algılar. Bozuk karakter sorunu biter.</span>
+          <span class="en">Detects UTF-8, Latin-1, Windows-1254 and other encodings automatically via chardet. Broken character problems end.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔢</div>
+        <h3><span class="tr">Tip çıkarımı ve dönüşüm</span><span class="en">Type inference & conversion</span></h3>
+        <p>
+          <span class="tr">Sayı gibi görünen string'leri, tarih gibi görünen metinleri otomatik dönüştürür. Pandas 3.x StringDtype uyumlu.</span>
+          <span class="en">Auto-converts strings that look like numbers, text that looks like dates. Compatible with Pandas 3.x StringDtype.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🗑️</div>
+        <h3><span class="tr">Duplicate kaldırma</span><span class="en">Duplicate removal</span></h3>
+        <p>
+          <span class="tr">Tam eşleşme ile tekrarlayan satırları bulur. İstersen sadece raporlar, istersen siler.</span>
+          <span class="en">Finds repeating rows by exact match. Reports only, or deletes — your choice.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📄</div>
+        <h3><span class="tr">Excel okuma</span><span class="en">Excel reading</span></h3>
+        <p>
+          <span class="tr">openpyxl ile çok sayfalı Excel dosyaları. Hangi sayfa, hangi satırdan başla, hangi sütunlar — parametre ile.</span>
+          <span class="en">Multi-sheet Excel files via openpyxl. Which sheet, which start row, which columns — all via parameters.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📁</div>
+        <h3><span class="tr">Çoklu export</span><span class="en">Multi-format export</span></h3>
+        <p>
+          <span class="tr">Temizlenen veriyi CSV, Excel, JSONL veya Parquet olarak kaydet. Aynı pipeline, farklı çıktı.</span>
+          <span class="en">Save cleaned data as CSV, Excel, JSONL, or Parquet. Same pipeline, different output.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💻</div>
+        <h3>CLI arayüzü</h3>
+        <p>
+          <span class="tr">Script veya terminal üzerinden doğrudan çalıştırılabilir. Otomasyon pipeline'larına kolayca eklenir.</span>
+          <span class="en">Runnable directly from script or terminal. Easily added to automation pipelines.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>
+        <span class="tech-val">Pandas 3.x (StringDtype compatible) · numpy</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Encoding</span>
+        <span class="tech-val">chardet · codecs · manual fallback chain</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Excel</span>
+        <span class="tech-val">openpyxl · xlrd (legacy .xls support)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pandera strict schema · Pydantic v2</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · parametrize · coverage &gt;85%</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">CI</span>
+        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Müşteri CSV'leri seni mahvediyor mu?</span>
+      <span class="en">Client CSVs driving you crazy?</span>
+    </h2>
+    <p>
+      <span class="tr">Hangi format gelirse gelsin, temizlenip çıksın. Sana özel temizleme kuralları eklerim, teslim ederim.</span>
+      <span class="en">Whatever format arrives, it comes out clean. I add your custom cleaning rules and deliver.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=CSV Cleaning İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/csv-excel-cleaning-toolkit" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

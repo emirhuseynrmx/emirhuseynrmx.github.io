@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Data Quality Cleaning API — Emir H. İnci</title>
+  <meta name="description" content="FastAPI tabanlı veri temizleme ve kalite kontrol API'si. Otomatik tip çıkarımı, eksik değer doldurma, duplicate tespiti."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/data-quality-cleaning-api" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">FastAPI · Pandas · Pandera</span>
+        <span class="btag">Pydantic v2</span>
+        <span class="btag">REST API</span>
+      </div>
+      <h1 class="lhero-title">Data Quality Cleaning API</h1>
+      <p class="lhero-sub">
+        <span class="tr">Ham veriyi endpoint'e gönder, temiz veri al. Tip çıkarımı, eksik değer doldurma, duplicate tespiti — hepsi tek API call'da.</span>
+        <span class="en">Send raw data to the endpoint, get clean data back. Type inference, missing value imputation, duplicate detection — all in a single API call.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/data-quality-cleaning-api" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Data Quality API — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">DATA QUALITY API — POST /validate</div>
+        <div style="color:#6b6858;">status: <span style="color:#10b981;font-weight:700">200 OK</span> &nbsp;·&nbsp; latency=<span style="color:#ff4800">18ms</span></div>
+        <div>quality_score &nbsp;<span style="color:#ff4800;font-weight:700">94.2</span> / 100</div>
+        <div>issues_found &nbsp;&nbsp;<span style="color:#f59e0b">7</span></div>
+        <div>auto_fixed &nbsp;&nbsp;&nbsp;<span style="color:#10b981">5</span></div>
+        <div style="color:#6b6858;">manual_review &nbsp;<span style="color:#f59e0b">2</span> (type mismatch)</div>
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          rows=<span style="color:#ff4800">10,000</span> &nbsp;·&nbsp; cols=<span style="color:#ff4800">24</span> &nbsp;·&nbsp; schema=<span style="color:#10b981">valid</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>REST</strong>
+      <span><span class="tr">temiz API arayüzü</span><span class="en">clean API interface</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>auto</strong>
+      <span><span class="tr">tip çıkarımı</span><span class="en">type inference</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>Pandera</strong>
+      <span><span class="tr">schema doğrulama</span><span class="en">schema validation</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>CI</strong>
+      <span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Ne yapar?</span>
+      <span class="en">What it does</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <h3><span class="tr">Otomatik tip çıkarımı</span><span class="en">Auto type inference</span></h3>
+        <p>
+          <span class="tr">Sütun tiplerini elle belirtmene gerek yok. API string, sayı, tarih ve boolean'ı kendisi tespit eder.</span>
+          <span class="en">No need to specify column types manually. The API detects strings, numbers, dates, and booleans itself.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🧹</div>
+        <h3><span class="tr">Eksik değer doldurma</span><span class="en">Missing value imputation</span></h3>
+        <p>
+          <span class="tr">Sayısal sütunlar için medyan, kategorik için mod. Ya da özel bir doldurma stratejisi parametre olarak geçilebilir.</span>
+          <span class="en">Median for numeric columns, mode for categorical. Or pass a custom imputation strategy as a parameter.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">👥</div>
+        <h3><span class="tr">Duplicate tespiti</span><span class="en">Duplicate detection</span></h3>
+        <p>
+          <span class="tr">Tam eşleşme ve fuzzy match seçenekleriyle tekrarlayan satırları bulur ve raporlar. Silme veya işaretleme yapılabilir.</span>
+          <span class="en">Finds repeating rows with exact-match or fuzzy-match options. Can delete or flag duplicates.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📋</div>
+        <h3><span class="tr">Kalite raporu</span><span class="en">Quality report</span></h3>
+        <p>
+          <span class="tr">Her response'ta: eksiklik oranı, tip dağılımı, anomali sayısı, temizlenen satır sayısı.</span>
+          <span class="en">Every response includes: null rate, type distribution, anomaly count, cleaned row count.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">⚙️</div>
+        <h3>Pandera Schema</h3>
+        <p>
+          <span class="tr">Output veri her zaman Pandera schema'dan geçer. Temizledikten sonra bile beklenen formatta olduğu garanti altında.</span>
+          <span class="en">Output data always passes through a Pandera schema. Even after cleaning, the expected format is guaranteed.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔌</div>
+        <h3><span class="tr">Kolay entegrasyon</span><span class="en">Easy integration</span></h3>
+        <p>
+          <span class="tr">JSON veya multipart/form-data ile CSV yükle. Temiz veriyi JSON veya CSV olarak geri al. Ekstra kütüphane gerekmez.</span>
+          <span class="en">Upload CSV via JSON or multipart/form-data. Get clean data back as JSON or CSV. No extra libraries needed.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">API</span>
+        <span class="tech-val">FastAPI · Pydantic v2 request/response models</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>
+        <span class="tech-val">Pandas 3.x · numpy</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pandera strict schema · TypeAdapter</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Export</span><span class="en">Output</span></span>
+        <span class="tech-val">JSON response · CSV file download</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · FastAPI TestClient · coverage &gt;85%</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">CI</span>
+        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Kirli verinle başa çıkmaktan yoruldun mu?</span>
+      <span class="en">Tired of dealing with dirty data?</span>
+    </h2>
+    <p>
+      <span class="tr">Hangi format, hangi temizleme kuralları, hangi çıktı — söyle, özelleştirelim. API veya script, ikisi de olur.</span>
+      <span class="en">Which format, which cleaning rules, which output — tell me, we'll customize it. API or script, either works.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Data Quality API İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/data-quality-cleaning-api" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>
