@@ -220,6 +220,55 @@
       </div>
     </div>
   </section>
+  <section class="lsection" data-scenario="true">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo</span>
+      <span class="en">Step-by-step scenario</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <h3><span class="tr">Arm setup</span><span class="en">Arm setup</span></h3>
+        <p><span class="tr">Define prices, margins, inventory constraints, and the reward event that counts as success.</span><span class="en">Define prices, margins, inventory constraints, and the reward event that counts as success.</span></p>
+      </div>
+      <div class="feature">
+        <h3><span class="tr">Offline replay</span><span class="en">Offline replay</span></h3>
+        <p><span class="tr">Simulate Thompson Sampling decisions and compare regret against fixed-price baselines.</span><span class="en">Simulate Thompson Sampling decisions and compare regret against fixed-price baselines.</span></p>
+      </div>
+      <div class="feature">
+        <h3><span class="tr">Guarded decision</span><span class="en">Guarded decision</span></h3>
+        <p><span class="tr">Return the chosen arm only after margin, stock, and price-cap rules pass.</span><span class="en">Return the chosen arm only after margin, stock, and price-cap rules pass.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAINS -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Müşteri Ne Kazanır</span>
+      <span class="en">What the Client Gets</span>
+    </h2>
+    <div class="gains-grid">
+      <div class="gain-card">
+        <div class="gain-stat">Bandit</div>
+        <div class="gain-label"><span class="tr">posterior state</span><span class="en">posterior state</span></div>
+        <p><span class="tr">each arm keeps learnable evidence</span><span class="en">each arm keeps learnable evidence</span></p>
+      </div>
+      <div class="gain-card">
+        <div class="gain-stat">Regret</div>
+        <div class="gain-label"><span class="tr">decision cost</span><span class="en">decision cost</span></div>
+        <p><span class="tr">experiments are compared after replay</span><span class="en">experiments are compared after replay</span></p>
+      </div>
+      <div class="gain-card">
+        <div class="gain-stat">Guards</div>
+        <div class="gain-label"><span class="tr">margin limits</span><span class="en">margin limits</span></div>
+        <p><span class="tr">unsafe prices can be blocked before serving</span><span class="en">unsafe prices can be blocked before serving</span></p>
+      </div>
+    </div>
+    <div class="gains-reason">
+      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
+      <p class="gain-why"><span class="tr">The simulator keeps pricing experiments inspectable: chosen arm, reward feedback, constraints, and regret are all recorded.</span><span class="en">The simulator keeps pricing experiments inspectable: chosen arm, reward feedback, constraints, and regret are all recorded.</span></p>
+    </div>
+  </section>
 
   <section class="lcta">
     <h2>
@@ -250,6 +299,7 @@
     <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
   </footer>
 
+  <script src="../../work-interactions.js"></script>
 <script>
 (function(){
   var H=document.documentElement;

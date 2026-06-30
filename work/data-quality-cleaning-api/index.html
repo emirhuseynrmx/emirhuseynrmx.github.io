@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Data Quality Cleaning API — Emir H. İnci</title>
-  <meta name="description" content="FastAPI tabanlı veri temizleme ve kalite kontrol API'si. Otomatik tip çıkarımı, eksik değer doldurma, duplicate tespiti."/>
+  <meta name="description" content="Litestar tabanlı veri temizleme ve kalite kontrol API'si. Otomatik tip çıkarımı, eksik değer doldurma, duplicate tespiti."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
@@ -31,7 +31,7 @@
     <div class="lhero-inner">
       <div class="lhero-kicker">
         <span class="btag btag-py">Python</span>
-        <span class="btag">FastAPI · Pandas · Pandera</span>
+        <span class="btag">Litestar · Pandas · Pandera</span>
         <span class="btag">Pydantic v2</span>
         <span class="btag">REST API</span>
       </div>
@@ -178,8 +178,8 @@
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
         <h3><span class="tr">POST /validate — 18ms yanıt</span><span class="en">POST /validate — 18ms response</span></h3>
         <p>
-          <span class="tr">10.000 satır, 24 sütun CSV multipart/form-data ile gönderildi. API pandas ile okudu, tip çıkarımı yaptı, sorunları tespit etti. Yanıt: quality_score=94.2, issues_found=7. Toplam süre 18ms — FastAPI async IO sayesinde bloke yok.</span>
-          <span class="en">10,000 rows, 24 columns CSV sent as multipart/form-data. API read with pandas, ran type inference, detected issues. Response: quality_score=94.2, issues_found=7. Total time 18ms — no blocking thanks to FastAPI async IO.</span>
+          <span class="tr">10.000 satır, 24 sütun CSV multipart/form-data ile gönderildi. API pandas ile okudu, tip çıkarımı yaptı, sorunları tespit etti. Yanıt: quality_score=94.2, issues_found=7. Toplam süre 18ms — Litestar async IO sayesinde bloke yok.</span>
+          <span class="en">10,000 rows, 24 columns CSV sent as multipart/form-data. API read with pandas, ran type inference, detected issues. Response: quality_score=94.2, issues_found=7. Total time 18ms — no blocking thanks to Litestar async IO.</span>
         </p>
       </div>
       <div class="feature">
@@ -209,7 +209,7 @@
     <div class="tech-table">
       <div class="tech-row">
         <span class="tech-key">API</span>
-        <span class="tech-val">FastAPI · Pydantic v2 request/response models</span>
+        <span class="tech-val">Litestar · Pydantic v2 request/response models</span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>
@@ -225,12 +225,40 @@
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · FastAPI TestClient · coverage &gt;85%</span>
+        <span class="tech-val">pytest · Litestar TestClient · coverage &gt;85%</span>
       </div>
       <div class="tech-row">
         <span class="tech-key">CI</span>
         <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
       </div>
+    </div>
+  </section>
+  <!-- GAINS -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Müşteri Ne Kazanır</span>
+      <span class="en">What the Client Gets</span>
+    </h2>
+    <div class="gains-grid">
+      <div class="gain-card">
+        <div class="gain-stat">Litestar</div>
+        <div class="gain-label"><span class="tr">small API surface</span><span class="en">small API surface</span></div>
+        <p><span class="tr">upload records or CSV text</span><span class="en">upload records or CSV text</span></p>
+      </div>
+      <div class="gain-card">
+        <div class="gain-stat">Safe CSV</div>
+        <div class="gain-label"><span class="tr">spreadsheet guard</span><span class="en">spreadsheet guard</span></div>
+        <p><span class="tr">formula-like values are neutralized</span><span class="en">formula-like values are neutralized</span></p>
+      </div>
+      <div class="gain-card">
+        <div class="gain-stat">Profile</div>
+        <div class="gain-label"><span class="tr">quality report</span><span class="en">quality report</span></div>
+        <p><span class="tr">invalid email, phone, and duplicate counts</span><span class="en">invalid email, phone, and duplicate counts</span></p>
+      </div>
+    </div>
+    <div class="gains-reason">
+      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
+      <p class="gain-why"><span class="tr">Lead lists usually fail at import time. This API catches the boring data problems before they reach a CRM.</span><span class="en">Lead lists usually fail at import time. This API catches the boring data problems before they reach a CRM.</span></p>
     </div>
   </section>
 
@@ -263,6 +291,7 @@
     <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
   </footer>
 
+  <script src="../../work-interactions.js"></script>
 <script>
 (function(){
   var H=document.documentElement;
