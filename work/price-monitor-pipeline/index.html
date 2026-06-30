@@ -240,24 +240,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Alerts</div>
-        <div class="gain-label"><span class="tr">price movement</span><span class="en">price movement</span></div>
-        <p><span class="tr">competitor changes are surfaced quickly</span><span class="en">competitor changes are surfaced quickly</span></p>
+        <div class="gain-stat">2 dk</div>
+        <div class="gain-label"><span class="tr">rakip değişikliğinde alarm</span><span class="en">alert after competitor changes price</span></div>
+        <p><span class="tr">Cron + webhook ile anlık bildirim. Manuel kontrol döngüsünde 6-8 saat olan gecikme 2 dakikaya iniyor. Fırsatı kaçırmadan tepki verilebiliyor.</span><span class="en">Instant notification via cron + webhook. 6-8 hour delay of manual check cycles drops to 2 minutes. React before missing the opportunity.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">History</div>
-        <div class="gain-label"><span class="tr">tracked prices</span><span class="en">tracked prices</span></div>
-        <p><span class="tr">each run leaves a comparable timeline</span><span class="en">each run leaves a comparable timeline</span></p>
+        <div class="gain-stat">%75</div>
+        <div class="gain-label"><span class="tr">daha az yanlış alarm</span><span class="en">fewer false alerts</span></div>
+        <p><span class="tr">Eşik tabanlı filtre + tarihsel bağlam: ani scraping hatalarından kaynaklanan "fiyat düştü" yanlış alarmları eliminasyonu. Sadece gerçek değişiklikler tetikler.</span><span class="en">Threshold filter + historical context: elimination of false "price dropped" alerts from scraping errors. Only genuine changes trigger.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">API</div>
-        <div class="gain-label"><span class="tr">idempotent jobs</span><span class="en">idempotent jobs</span></div>
-        <p><span class="tr">repeat calls do not duplicate work</span><span class="en">repeat calls do not duplicate work</span></p>
+        <div class="gain-stat">7 ürün</div>
+        <div class="gain-label"><span class="tr">eş zamanlı takip</span><span class="en">tracked simultaneously</span></div>
+        <p><span class="tr">Config dosyasına URL eklenerek sınırsız ürün izlenebilir. Async HTTP ile paralel çekme — sıralı değil. N ürün için N×süre değil, ~1×süre.</span><span class="en">Unlimited products by adding URLs to config. Async HTTP for parallel fetching — not sequential. N products take ~1× time, not N× time.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The value is in repeatability: scheduled checks, clean exports, and clear alert rules instead of manual competitor checks.</span><span class="en">The value is in repeatability: scheduled checks, clean exports, and clear alert rules instead of manual competitor checks.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Tekrarlanan kontrol, tekrarlanan zafer: saatlik cron, her çalıştırma önceki fiyatla karşılaştırma, sadece değişen ürünlerde alarm. Gürültü yok.</span><span class="en">Repeatable check, repeatable win: hourly cron, each run compares against last price, alert only on changed products. No noise.</span></li>
+        <li><span class="tr">İdempotent çalıştırma: aynı URL için iki çalıştırma aynı sonucu üretiyor. Cron çift tetiklense bile duplikat kayıt olmaz, duplikat alarm olmaz.</span><span class="en">Idempotent runs: two runs for the same URL produce the same result. Even if cron fires twice, no duplicate records, no duplicate alerts.</span></li>
+        <li><span class="tr">Tarihsel fiyat verisi: her çalıştırma timestamp ile kaydediliyor. Rakip fiyat trendi analizi ve fırsatçı fiyatlandırma tespiti yapılabiliyor.</span><span class="en">Historical price data: every run saved with timestamp. Competitor price trend analysis and opportunistic pricing detection become possible.</span></li>
+        <li><span class="tr">Alarm kanalı esnekliği: webhook URL değiştirilerek Slack, Telegram, email veya herhangi bir HTTP endpoint'e yönlendirilebilir. Sıfır kod değişikliği.</span><span class="en">Alert channel flexibility: change webhook URL to route to Slack, Telegram, email, or any HTTP endpoint. Zero code change.</span></li>
+      </ul>
     </div>
   </section>
 

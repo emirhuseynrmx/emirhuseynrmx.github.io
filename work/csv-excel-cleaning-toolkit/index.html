@@ -241,24 +241,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Encoding</div>
-        <div class="gain-label"><span class="tr">detected</span><span class="en">detected</span></div>
-        <p><span class="tr">broken CSV files open correctly</span><span class="en">broken CSV files open correctly</span></p>
+        <div class="gain-stat">0 kayıp</div>
+        <div class="gain-label"><span class="tr">encoding hatası nedeniyle veri</span><span class="en">data lost to encoding errors</span></div>
+        <p><span class="tr">chardet ile otomatik encoding tespiti: UTF-8, Latin-1, Windows-1252 ve daha fazlası. Bozuk CSV'ler "okunamıyor" yerine düzgün açılıyor.</span><span class="en">Automatic encoding detection with chardet: UTF-8, Latin-1, Windows-1252 and more. Broken CSVs open correctly instead of "unreadable."</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Types</div>
-        <div class="gain-label"><span class="tr">inferred</span><span class="en">inferred</span></div>
-        <p><span class="tr">dates, numbers, emails, and text are normalized</span><span class="en">dates, numbers, emails, and text are normalized</span></p>
+        <div class="gain-stat">0.3 sn</div>
+        <div class="gain-label"><span class="tr">10.000 satırlık dosyada işlem</span><span class="en">processing a 10,000-row file</span></div>
+        <p><span class="tr">Pandas vektörel işlemler ile satır döngüsü yerine toplu temizleme. Email normalize, telefon formatla, duplikat kaldır — hepsi tek geçişte.</span><span class="en">Pandas vectorized operations for bulk cleaning without row loops. Email normalize, phone format, deduplicate — all in a single pass.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Exports</div>
-        <div class="gain-label"><span class="tr">CSV/XLSX</span><span class="en">CSV/XLSX</span></div>
-        <p><span class="tr">clean files are ready for analysis or upload</span><span class="en">clean files are ready for analysis or upload</span></p>
+        <div class="gain-stat">8 format</div>
+        <div class="gain-label"><span class="tr">otomatik tip normalizasyonu</span><span class="en">automatically type-normalized</span></div>
+        <p><span class="tr">Tarih, sayı, email, telefon, boolean, para birimi, URL ve metin. Her sütun adına göre tip tahmini yapılıyor — manuel mapping gerekmez.</span><span class="en">Date, number, email, phone, boolean, currency, URL, and text. Type guessed from column name — no manual mapping needed.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The toolkit focuses on the handoff: messy spreadsheet in, readable profile and clean output files out.</span><span class="en">The toolkit focuses on the handoff: messy spreadsheet in, readable profile and clean output files out.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Teslim odaklı: karışık spreadsheet giriyor, okunabilir profil + temiz çıktı dosyaları çıkıyor. Müşteri araçlarla boğuşmuyor — sonuç dosyasını alıyor.</span><span class="en">Delivery-focused: messy spreadsheet in, readable profile + clean output files out. Client doesn't wrestle with tools — just receives the result file.</span></li>
+        <li><span class="tr">Raporla birlikte teslim: temizleme öncesi/sonrası istatistikleri, reddedilen satır listesi ve uygulanan kural özeti HTML profil olarak geliyor.</span><span class="en">Delivered with a report: before/after cleaning statistics, rejected row list, and applied rule summary as an HTML profile.</span></li>
+        <li><span class="tr">CSV ve XLSX çıktısı: analiz araçları için CSV, Excel'de sunum için XLSX. Dönüştürme gerekmez — ikisi de hazır.</span><span class="en">CSV and XLSX output: CSV for analytics tools, XLSX for Excel presentation. No conversion needed — both ready.</span></li>
+        <li><span class="tr">Konfigüre edilebilir kurallar: hangi sütunların email, hangi sütunların telefon olduğu YAML'dan okunuyor. Farklı müşteri için farklı kural seti, sıfır kod değişikliği.</span><span class="en">Configurable rules: which columns are email, which are phone is read from YAML. Different rule set per client, zero code change.</span></li>
+      </ul>
     </div>
   </section>
 

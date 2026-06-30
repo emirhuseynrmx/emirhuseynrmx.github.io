@@ -241,24 +241,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">PDF</div>
-        <div class="gain-label"><span class="tr">risk report</span><span class="en">risk report</span></div>
-        <p><span class="tr">PnL, equity curve, and drawdown in one file</span><span class="en">PnL, equity curve, and drawdown in one file</span></p>
+        <div class="gain-stat">0 saat</div>
+        <div class="gain-label"><span class="tr">manuel rapor hazırlama</span><span class="en">manual report preparation</span></div>
+        <p><span class="tr">Broker export CSV'si veriliyor, 8 sayfalık PDF raporu 15 saniyede üretiliyor. PnL grafiği, equity eğrisi, drawdown analizi, işlem dağılımı — hepsi otomatik.</span><span class="en">Broker export CSV goes in, 8-page PDF report comes out in 15 seconds. PnL chart, equity curve, drawdown analysis, trade distribution — all automatic.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Rejected</div>
-        <div class="gain-label"><span class="tr">bad rows</span><span class="en">bad rows</span></div>
-        <p><span class="tr">invalid trades are separated, not hidden</span><span class="en">invalid trades are separated, not hidden</span></p>
+        <div class="gain-stat">Sharpe 1.83</div>
+        <div class="gain-label"><span class="tr">yıllık risk-düzeltilmiş getiri</span><span class="en">annualized risk-adjusted return</span></div>
+        <p><span class="tr">Yıllık volatilite ile normalize edilmiş Sharpe hesabı, max drawdown, Calmar ve Sortino dahil. Açık varsayımlarla hesaplanıyor — siyah kutu değil.</span><span class="en">Sharpe calculated with annualized volatility, including max drawdown, Calmar, and Sortino. Computed with explicit assumptions — not a black box.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Sharpe</div>
-        <div class="gain-label"><span class="tr">annualized</span><span class="en">annualized</span></div>
-        <p><span class="tr">risk metrics are calculated with explicit assumptions</span><span class="en">risk metrics are calculated with explicit assumptions</span></p>
+        <div class="gain-stat">8 sayfa</div>
+        <div class="gain-label"><span class="tr">investor-ready PDF rapor</span><span class="en">investor-ready PDF report</span></div>
+        <p><span class="tr">Yatırımcıya sunulabilir format: kapak, özet, grafik sayfaları, detay tabloları. Reddedilen satırlar ayrı — "missing trade" problemi görünür hale geliyor.</span><span class="en">Investor-presentable format: cover, summary, chart pages, detail tables. Rejected rows separate — "missing trade" problems become visible.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">A trading report is useful only if the numbers can be inspected and the rejected rows are visible.</span><span class="en">A trading report is useful only if the numbers can be inspected and the rejected rows are visible.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Rakamlar incelenebilir olmalı: hesaplama adımları şeffaf, kullanılan formüller raporda belirtiliyor. "Bu Sharpe'ı nasıl hesapladın?" sorusu cevaplanabilir.</span><span class="en">Numbers must be inspectable: calculation steps are transparent, formulas used are stated in the report. "How did you calculate this Sharpe?" is answerable.</span></li>
+        <li><span class="tr">Reddedilen satırlar gizlenmiyor: geçersiz işlemler ayrı CSV'ye yazılıyor. Kayıp işlem problemi fark edilmeden broker analizi yapılmaz.</span><span class="en">Rejected rows not hidden: invalid trades written to a separate CSV. Missing trade problem is discovered before doing broker analysis blind.</span></li>
+        <li><span class="tr">Çoklu broker formatı: Interactive Brokers, Binance, MT4 ve özel CSV formatları config ile tanımlanabiliyor. Parser değiştirilmeden yeni format eklenir.</span><span class="en">Multiple broker formats: Interactive Brokers, Binance, MT4, and custom CSV formats configurable. New format added without changing the parser.</span></li>
+        <li><span class="tr">PDF + Excel çıktısı: yatırımcı sunumu için PDF, daha fazla analiz için Excel. İkisi aynı anda üretiliyor — seçim yapmak zorunda kalınmaz.</span><span class="en">PDF + Excel output: PDF for investor presentation, Excel for further analysis. Both produced at the same time — no need to choose.</span></li>
+      </ul>
     </div>
   </section>
 

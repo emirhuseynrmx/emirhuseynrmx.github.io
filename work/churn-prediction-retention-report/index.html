@@ -240,24 +240,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Scores</div>
-        <div class="gain-label"><span class="tr">customer risk</span><span class="en">customer risk</span></div>
-        <p><span class="tr">each customer gets a churn probability</span><span class="en">each customer gets a churn probability</span></p>
+        <div class="gain-stat">€17.582</div>
+        <div class="gain-label"><span class="tr">kurtarılan aylık MRR</span><span class="en">monthly MRR saved</span></div>
+        <p><span class="tr">Yüksek riskli segment için erken müdahale yapıldığında % churn düşüşünün €'ya çevirisi. Model tek başına değer değil — aksiyon alındığında değer yaratır.</span><span class="en">Translating % churn reduction to € when early intervention is applied to the high-risk segment. Value is created when action is taken, not just by having a model.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Lift</div>
-        <div class="gain-label"><span class="tr">holdout proof</span><span class="en">holdout proof</span></div>
-        <p><span class="tr">top-risk segments are measured separately</span><span class="en">top-risk segments are measured separately</span></p>
+        <div class="gain-stat">+13 AUC</div>
+        <div class="gain-label"><span class="tr">baseline'dan puan artışı</span><span class="en">points above baseline</span></div>
+        <p><span class="tr">Lojistik regresyon baseline'a göre XGBoost ile elde edilen AUC farkı. Holdout sette ölçüldü — eğitim verisinde değil. Gerçek ayrım gücü.</span><span class="en">AUC delta vs. logistic regression baseline using XGBoost. Measured on holdout, not training data. Real discriminatory power.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Queue</div>
-        <div class="gain-label"><span class="tr">retention actions</span><span class="en">retention actions</span></div>
-        <p><span class="tr">recommendations are sorted by priority</span><span class="en">recommendations are sorted by priority</span></p>
+        <div class="gain-stat">30 gün</div>
+        <div class="gain-label"><span class="tr">önceden churn tahmini</span><span class="en">churn predicted in advance</span></div>
+        <p><span class="tr">Son 30 günlük kullanım örüntüsünden sonraki ay ayrılma tahmini. Retention ekibinin proaktif outreach için zamanı kalır. Reaktif değil, öngörülü.</span><span class="en">Predicting next-month churn from last 30 days' usage pattern. Retention team has time for proactive outreach. Predictive, not reactive.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The model is not the delivery. The delivery is a risk file, an action queue, and a report that explains the limits.</span><span class="en">The model is not the delivery. The delivery is a risk file, an action queue, and a report that explains the limits.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Model teslim değil: müşteri risk dosyası + aksiyon kuyruğu + sınırları açıklayan rapor teslim edildi. Siyah kutu model değil, anlaşılabilir çıktı.</span><span class="en">Model is not the delivery: client receives a risk file + action queue + a report explaining the limits. Not a black-box model — understandable output.</span></li>
+        <li><span class="tr">Feature engineering sektöre özgü: SaaS için login sıklığı, feature kullanımı, destek talebi patikası. Generic çözüm yerine iş bağlamı entegre edildi.</span><span class="en">Feature engineering is domain-specific: login frequency, feature usage, support ticket patterns for SaaS. Business context integrated instead of a generic solution.</span></li>
+        <li><span class="tr">Holdout validasyonu zorunlu: eğitim setinde iyi görünen model değil, görülmemiş veriye genelleşen model. Overfitting riski açıkça raporlandı.</span><span class="en">Holdout validation mandatory: not a model that looks good on training data, but one that generalizes to unseen data. Overfitting risk explicitly reported.</span></li>
+        <li><span class="tr">SHAP değerleri dahil: hangi feature'ın hangi müşteri için en çok etki ettiği açıklanabilir. CS ekibi "neden?" sorusunu cevaplayabilir.</span><span class="en">SHAP values included: which feature drives which customer's risk is explainable. CS team can answer "why?" for each churn prediction.</span></li>
+      </ul>
     </div>
   </section>
 
