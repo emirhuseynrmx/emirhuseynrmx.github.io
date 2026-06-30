@@ -38,8 +38,8 @@
       </div>
       <h1 class="lhero-title">Scraping Data Pipeline</h1>
       <p class="lhero-sub">
-        <span class="tr">Config dosyasından çalışan async web scraper. Selector değiştirmek için kod açman gerekmiyor — sadece JSON'u güncelle.</span>
-        <span class="en">Config-driven async web scraper. No need to touch code to change selectors — just update the JSON.</span>
+        <span class="tr">books.toscrape.com'u hedef alan async polite scraper. Sayfa başına 20 kitap, selectolax veya BeautifulSoup backend seçimi, Pandera-doğrulanmış çıktı, her çalıştırma için JSON manifest. ScraperConfig ile selector'ları değiştir, herhangi bir siteye adapt et.</span>
+        <span class="en">Async polite scraper targeting books.toscrape.com. 20 books per page, selectolax or BeautifulSoup backend, Pandera-validated output, JSON manifest per run. Swap selectors via ScraperConfig to adapt to any site.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/scraping-data-pipeline" target="_blank" rel="noopener">
@@ -157,7 +157,7 @@
       </div>
       <div class="tech-row">
         <span class="tech-key">selectolax ←</span>
-        <span class="tech-val"><span class="tr">BeautifulSoup4 Python'da yazılmış, yavaş. selectolax C tabanlı lexbor engine — aynı HTML'i parse etmek için selectolax 0.08s, BS4 0.82s (10x). 1000 sayfada bu fark 12 dakika vs 800 saniye. Büyük scrape'lerde seçim değişmiyor.</span><span class="en">BeautifulSoup4 is written in Python, slow. selectolax uses C-based lexbor engine — parsing the same HTML: selectolax 0.08s, BS4 0.82s (10x). At 1000 pages that's 12 minutes vs 800 seconds. For large-scale scraping, no contest.</span></span>
+        <span class="tech-val"><span class="tr">BeautifulSoup4 Python'da yazılmış, yavaş. selectolax C tabanlı lexbor engine — aynı HTML'i parse etmek için selectolax 0.08s, BS4 0.82s (10x). 1000 sayfada bu fark 12 dakika vs 800 saniye. Pipeline her iki backend'i de destekler — ScraperConfig'de parser="selectolax" veya parser="bs4" seç.</span><span class="en">BeautifulSoup4 is written in Python, slow. selectolax uses C-based lexbor engine — same HTML parse: selectolax 0.08s, BS4 0.82s (10x). At 1000 pages that's 12 min vs 800 sec. Pipeline supports both — pick parser="selectolax" or parser="bs4" in ScraperConfig.</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key">async httpx ←</span>
@@ -165,43 +165,43 @@
       </div>
       <div class="tech-row">
         <span class="tech-key">Config-driven ←</span>
-        <span class="tech-val"><span class="tr">Rakip site CSS selector'ı değişirse kodu açmak zorunda kalma. targets.json'da url, selector, field mapping güncelle, çalıştır. Müşteri bu güncellemeyi kendisi yapabiliyor — teknik bilgi gerekmez.</span><span class="en">If a competitor's CSS selector changes, no need to open the code. Update url, selector, field mapping in targets.json and run. Client can make this update themselves — no technical knowledge required.</span></span>
+        <span class="tech-val"><span class="tr">books.toscrape.com için CSS selector'lar: article.product_pod, h3 a (başlık), p.star-rating (değerlendirme), .price_color (fiyat £), .availability (stok). Bunları ScraperConfig'e koy — başka herhangi bir siteye geçmek için sadece selector'ları değiştirmek yeterli, kod değişmez.</span><span class="en">CSS selectors for books.toscrape.com: article.product_pod, h3 a (title), p.star-rating (rating), .price_color (price £), .availability (stock). Put them in ScraperConfig — switching to any other site is just changing selectors, no code change.</span></span>
       </div>
     </div>
   </section>
 
   <section class="lsection">
     <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: 3 site, 2363 kayıt</span>
-      <span class="en">Step-by-step scenario: 3 sites, 2363 records</span>
+      <span class="tr">Adım adım senaryo: books.toscrape.com, katalog scrape</span>
+      <span class="en">Step-by-step scenario: books.toscrape.com catalog scrape</span>
     </h2>
     <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">Gece 02:00'de cron job tetikleniyor. Müşteri uyurken sistem 3 rakibin tüm ürün sayfalarını tarıyor.</span>
-      <span class="en">Cron job triggers at 02:00. While the client sleeps, the system scans all product pages of 3 competitors.</span>
+      <span class="tr">books.toscrape.com — sayfa başına 20 kitap, katalog sayfaları. Kaç sayfa çekileceği ScraperConfig'den okunuyor.</span>
+      <span class="en">books.toscrape.com — 20 books per page, catalog pages. Number of pages to scrape read from ScraperConfig.</span>
     </p>
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Async çekme: 2363 kayıt, 4.2s</span><span class="en">Async scrape: 2363 records, 4.2s</span></h3>
+        <h3><span class="tr">Async çekme ve CSS parse</span><span class="en">Async fetch and CSS parse</span></h3>
         <p>
-          <span class="tr">example.com → 847 ürün (1.2s). shop.example.io → 1204 ürün (2.8s). news.example.net → ilk denemede timeout, retry=2'de başarılı → 312 ürün. Toplam: 2363 kayıt, 4.2 saniye. Sıralı yapılsaydı ≈48 saniye.</span>
-          <span class="en">example.com → 847 items (1.2s). shop.example.io → 1204 items (2.8s). news.example.net → timeout on first try, success on retry=2 → 312 items. Total: 2363 records, 4.2 seconds. Sequential would take ≈48 seconds.</span>
+          <span class="tr">httpx ile sayfalar async olarak çekildi. Her katalog sayfasındaki article.product_pod elementleri seçildi. Her kitap için: h3 a (başlık), p.star-rating class'ından 1-5 yıldız, .price_color (GBP fiyatı), .availability (stok durumu), source_url ve scraped_at damgası. selectolax backend ile parse edildi.</span>
+          <span class="en">Pages fetched async via httpx. article.product_pod elements selected on each catalog page. Per book: h3 a (title), 1-5 stars from p.star-rating class, .price_color (GBP price), .availability (stock status), source_url and scraped_at timestamp. Parsed with selectolax backend.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Pydantic doğrulama: 12 kayıt reddedildi</span><span class="en">Pydantic validation: 12 records rejected</span></h3>
+        <h3><span class="tr">Pydantic + Pandera doğrulama</span><span class="en">Pydantic + Pandera validation</span></h3>
         <p>
-          <span class="tr">2363 kayıttan 12'si Pydantic modelden geçemedi: 7'sinde fiyat alanı boş (HTML'de selector bulunamamış), 3'ünde fiyat string ama float bekleniyor ("N/A"), 2'si eksik ürün başlığı. Bunlar hata log'una yazıldı, pipeline durdurmadı.</span>
-          <span class="en">12 of 2363 records failed Pydantic validation: 7 with empty price field (selector not found in HTML), 3 with price as string but float expected ("N/A"), 2 with missing product title. These were written to error log, pipeline didn't stop.</span>
+          <span class="tr">Her kayıt Pydantic modeline geçirildi: title (str), price (float, GBP), rating (int 1-5), availability (str), source_url (HttpUrl), scraped_at (datetime). Pandera schema: fiyat ≥ 0, rating 1–5 aralığında, source_url geçerli books.toscrape.com URL'si. Hatalı kayıtlar log'a düştü, pipeline durmadı.</span>
+          <span class="en">Each record passed through Pydantic model: title (str), price (float, GBP), rating (int 1-5), availability (str), source_url (HttpUrl), scraped_at (datetime). Pandera schema: price ≥ 0, rating in 1–5 range, source_url valid books.toscrape.com URL. Bad records logged, pipeline continued.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Pandera + export: 2351 temiz kayıt</span><span class="en">Pandera + export: 2351 clean records</span></h3>
+        <h3><span class="tr">JSON manifest + CSV/Parquet export</span><span class="en">JSON manifest + CSV/Parquet export</span></h3>
         <p>
-          <span class="tr">2351 geçerli kayıt Pandera schema'dan geçirildi (fiyat ≥ 0, ürün_adı boş olamaz, kaynak_url valide URL). Schema geçildi → Parquet formatında diske yazıldı. Sabah müşteri açtığında güncel rakip fiyat tablosu hazır.</span>
-          <span class="en">2351 valid records passed Pandera schema (price ≥ 0, product_name cannot be empty, source_url must be valid URL). Schema passed → written to disk as Parquet. When the client opens it in the morning, competitor price table is current.</span>
+          <span class="tr">scrape_manifest.json her çalıştırmada yazıldı: run_id, pages_requested, records_exported, timestamp. Temiz kayıtlar CSV ve Parquet olarak diske yazıldı. Manifest ile hangi çalıştırmanın kaç kayıt ürettiği izlenebiliyor — pipeline reproducible.</span>
+          <span class="en">scrape_manifest.json written per run: run_id, pages_requested, records_exported, timestamp. Clean records written to disk as CSV and Parquet. Manifest lets you track how many records each run produced — pipeline is reproducible.</span>
         </p>
       </div>
     </div>

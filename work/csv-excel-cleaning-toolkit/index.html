@@ -37,8 +37,8 @@
       </div>
       <h1 class="lhero-title">CSV / Excel Cleaning Toolkit</h1>
       <p class="lhero-sub">
-        <span class="tr">Müşteriden gelen bozuk CSV'yi alır, temizler, istediğin formata çevirir. Encoding sorunu, encoding'i algılar. Tip sorunu, tipi düzeltir.</span>
-        <span class="en">Takes a broken CSV from a client, cleans it, converts to the format you need. Encoding problem? Detects it. Type problem? Fixes it.</span>
+        <span class="tr">CLI ile CSV/Excel'i oku, başlıkları normalize et, metin tıraşla, email'leri küçük harfe çevir, $ ve , içeren karışık sayısal sütunları coerce et (%80 parse oranı eşiği), IQR çarpanı=1.5 ile aykırı değerleri işaretle, tekilleştir — Markdown temizleme raporu ve CleaningOptions Pydantic profili ile çıktıyı müşteriye ilet.</span>
+        <span class="en">CLI reads CSV/Excel, normalizes headers, trims text, lowercases emails, coerces mixed-format numeric columns (strips $ and comma, threshold 80% parse rate), flags IQR outliers (multiplier=1.5), deduplicates — delivers output with Markdown cleaning report and repeatable CleaningOptions Pydantic profile.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/csv-excel-cleaning-toolkit" target="_blank" rel="noopener">
@@ -101,18 +101,18 @@
       </div>
       <div class="feature">
         <div class="feature-icon">🔢</div>
-        <h3><span class="tr">Tip çıkarımı ve dönüşüm</span><span class="en">Type inference & conversion</span></h3>
+        <h3><span class="tr">Sayısal coercion + tarih tespiti</span><span class="en">Numeric coercion + date detection</span></h3>
         <p>
-          <span class="tr">Sayı gibi görünen string'leri, tarih gibi görünen metinleri otomatik dönüştürür. Pandas 3.x StringDtype uyumlu.</span>
-          <span class="en">Auto-converts strings that look like numbers, text that looks like dates. Compatible with Pandas 3.x StringDtype.</span>
+          <span class="tr">$ ve virgül içeren karışık formatları (ör. "$1,299.00") float'a coerce eder — sütunun %80'i parse edilebiliyorsa aktif olur. Tarih tespiti: %80 eşleşme oranı (YYYY-MM-DD deseni) gerektiriyor. Pandas 3.x StringDtype uyumlu.</span>
+          <span class="en">Coerces mixed formats with $ and commas (e.g. "$1,299.00") to float — activates when 80% of the column parses successfully. Date detection requires 80% match rate (YYYY-MM-DD pattern). Compatible with Pandas 3.x StringDtype.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">🗑️</div>
-        <h3><span class="tr">Duplicate kaldırma</span><span class="en">Duplicate removal</span></h3>
+        <h3><span class="tr">Duplicate kaldırma + IQR outlier</span><span class="en">Deduplication + IQR outlier</span></h3>
         <p>
-          <span class="tr">Tam eşleşme ile tekrarlayan satırları bulur. İstersen sadece raporlar, istersen siler.</span>
-          <span class="en">Finds repeating rows by exact match. Reports only, or deletes — your choice.</span>
+          <span class="tr">Tam eşleşme ile tekrarlayan satırları kaldırır. Aykırı değer tespiti: IQR çarpanı=1.5 (Q1 − 1.5×IQR altı veya Q3 + 1.5×IQR üstü). Silmez — işaretler. Karar müşteride kalır.</span>
+          <span class="en">Removes duplicate rows by exact match. Outlier flagging: IQR multiplier=1.5 (below Q1 − 1.5×IQR or above Q3 + 1.5×IQR). Doesn't delete — flags. Decision stays with the client.</span>
         </p>
       </div>
       <div class="feature">
@@ -133,10 +133,10 @@
       </div>
       <div class="feature">
         <div class="feature-icon">💻</div>
-        <h3>CLI arayüzü</h3>
+        <h3>CleaningOptions + Markdown rapor</h3>
         <p>
-          <span class="tr">Script veya terminal üzerinden doğrudan çalıştırılabilir. Otomasyon pipeline'larına kolayca eklenir.</span>
-          <span class="en">Runnable directly from script or terminal. Easily added to automation pipelines.</span>
+          <span class="tr">CleaningOptions Pydantic profili JSON'dan yüklenir — aynı kurallar farklı müşteri dosyalarında tekrarlanabilir. Pandera çıktı doğrulaması: 10 hata örneğine kadar raporlanır. Markdown temizleme raporu: öncesi/sonrası istatistikler.</span>
+          <span class="en">CleaningOptions Pydantic profile is JSON-loadable — same rules repeatable across different client files. Pandera output validation: reports up to 10 failure cases. Markdown cleaning report: before/after stats.</span>
         </p>
       </div>
     </div>
@@ -155,7 +155,7 @@
       </div>
       <div class="tech-row">
         <span class="tech-key">chardet ← fallback</span>
-        <span class="tech-val"><span class="tr">Kör fallback zinciri (UTF-8 dene, başarısız → Latin-1) Türkçe için çalışmaz: Latin-1, Windows-1254'teki bazı Türkçe karakterleri (ş, ğ, İ) decode eder ama yanlış karakterle. chardet dosyanın byte frekans dağılımını analiz ederek encoding'i tahmin eder. Windows-1254 için güvenilirlik %97+.</span><span class="en">Blind fallback chain (try UTF-8, fail → Latin-1) doesn't work for Turkish: Latin-1 can decode some Turkish chars (ş, ğ, İ) in Windows-1254 but with wrong characters. chardet analyzes byte frequency distribution to estimate encoding. Reliability for Windows-1254: 97%+.</span></span>
+        <span class="tech-val"><span class="tr">Kör fallback zinciri (UTF-8 dene, başarısız → Latin-1) Türkçe için çalışmaz: Latin-1, Windows-1254'teki bazı Türkçe karakterleri (ş, ğ, İ) decode eder ama yanlış karakterle. chardet dosyanın byte frekans dağılımını analiz ederek encoding'i tahmin eder. Windows-1254 için güvenilirlik %97+. Email regex doğrulaması da bu adımda çalışır — email sütunları küçük harfe çevrilip regex ile kontrol edilir.</span><span class="en">Blind fallback chain (try UTF-8, fail → Latin-1) doesn't work for Turkish: Latin-1 can decode some Turkish chars (ş, ğ, İ) in Windows-1254 but with wrong characters. chardet analyzes byte frequency distribution to estimate encoding. Reliability for Windows-1254: 97%+. Email regex validation also runs at this step — email columns are lowercased and regex-checked.</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key">pandas StringDtype</span>
@@ -186,16 +186,16 @@
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
         <h3><span class="tr">Temizleme raporu: 4 sorun türü</span><span class="en">Cleaning report: 4 issue types</span></h3>
         <p>
-          <span class="tr">nulls_filled: 1247 hücre (revenue → medyan, şehir → "bilinmiyor"). duplicates_removed: 83 satır tam eşleşme. types_fixed: 6 sütun (tarihler datetime'a, fiyatlar float'a). outliers_flagged: 12 satır (revenue z-score &gt; 3.5) — silinmedi, işaretlendi. Temiz satır sayısı: 49.905.</span>
-          <span class="en">nulls_filled: 1247 cells (revenue → median, city → "unknown"). duplicates_removed: 83 rows exact match. types_fixed: 6 columns (dates to datetime, prices to float). outliers_flagged: 12 rows (revenue z-score &gt; 3.5) — not deleted, flagged. Clean row count: 49,905.</span>
+          <span class="tr">nulls_filled: 1247 hücre (revenue → medyan, şehir → "bilinmiyor"). duplicates_removed: 83 satır tam eşleşme. types_fixed: 6 sütun (tarihler %80+ YYYY-MM-DD eşleşmesiyle datetime'a, fiyatlar %80+ parse oranıyla float'a). outliers_flagged: 12 satır (IQR çarpanı=1.5 ile) — silinmedi, işaretlendi. Pandera çıktı doğrulaması: 10 hata örneği raporlandı. Temiz satır sayısı: 49.905.</span>
+          <span class="en">nulls_filled: 1247 cells (revenue → median, city → "unknown"). duplicates_removed: 83 rows exact match. types_fixed: 6 columns (dates at 80%+ YYYY-MM-DD match to datetime, prices at 80%+ parse rate to float). outliers_flagged: 12 rows (IQR multiplier=1.5) — not deleted, flagged. Pandera output validation: 10 failure cases reported. Clean row count: 49,905.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
         <h3><span class="tr">Çift format export: xlsx + csv</span><span class="en">Dual format export: xlsx + csv</span></h3>
         <p>
-          <span class="tr">Muhasebe ekibi xlsx istiyor (pivot table yapacaklar), veri mühendisi CSV istiyor (pipeline'a girecek). Aynı temizlenmiş DataFrame'den ikisi de tek komutla çıktı. Pandera schema son kontrol geçti → her iki dosya doğrulandı.</span>
-          <span class="en">Accounting team wants xlsx (they'll build pivot tables), data engineer wants CSV (going into the pipeline). Both exported from the same cleaned DataFrame in one command. Pandera schema final check passed → both files validated.</span>
+          <span class="tr">Muhasebe ekibi xlsx istiyor (pivot table yapacaklar), veri mühendisi CSV istiyor (pipeline'a girecek). Aynı temizlenmiş DataFrame'den ikisi de tek komutla çıktı. Pandera schema son kontrol geçti. Markdown temizleme raporu: öncesi/sonrası istatistikler, reddedilen satır listesi, uygulanan kural özeti. CleaningOptions profili JSON olarak kaydedildi — farklı müşteri dosyasında aynı kurallar tek satırla yükleniyor.</span>
+          <span class="en">Accounting team wants xlsx (they'll build pivot tables), data engineer wants CSV (going into the pipeline). Both exported from the same cleaned DataFrame in one command. Pandera schema final check passed. Markdown cleaning report: before/after stats, rejected row list, applied rule summary. CleaningOptions profile saved as JSON — same rules load in one line for a different client file.</span>
         </p>
       </div>
     </div>

@@ -31,14 +31,14 @@
     <div class="lhero-inner">
       <div class="lhero-kicker">
         <span class="btag btag-py">Python</span>
-        <span class="btag">XGBoost · ikili sınıflandırma</span>
-        <span class="btag">SHAP TreeExplainer · DiCE</span>
-        <span class="btag">ATR · volume z-score · EMA trend</span>
+        <span class="btag">RandomForest · ikili sınıflandırma</span>
+        <span class="btag">SHAP TreeExplainer</span>
+        <span class="btag">R-multiple · ATR% · volume_z · trend_score</span>
       </div>
       <h1 class="lhero-title">TradingView Strategy Risk Lab</h1>
       <p class="lhero-sub">
-        <span class="tr">Strategy Tester %60 win rate gösteriyor ama canlı işlemde para kaybediyorsun. Neden? Hangi koşullarda strateji başarısız oluyor? Bu sistem her işlemi sınıflandırır: kötü işlem mi değil mi — ve neden, hangi koşulları değiştirirsen kaçınabilirsin.</span>
-        <span class="en">Strategy Tester shows 60% win rate but you're losing money live. Why? Under what conditions does the strategy fail? This system classifies every trade: bad trade or not — and why, and what conditions to change to avoid it.</span>
+        <span class="tr">Kaggle AAPL OHLCV verisiyle 240 işleme kadar R-multiple bazlı trade geçmişi üretir. RandomForest kötü işlemleri sınıflandırır (bad_trade_threshold_r=0.0), SHAP hangi ATR/hacim koşullarının kayıpla bittiğini gösterir, counterfactual filtre önerileri çıkarır.</span>
+        <span class="en">Builds up to 240 trades with R-multiple from Kaggle AAPL OHLCV. RandomForest classifies bad trades (bad_trade_threshold_r=0.0), SHAP shows which ATR/volume conditions predict losses, counterfactual filter suggestions surface specific feature ranges where failure spikes.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">
@@ -68,20 +68,20 @@
 
   <div class="lmetrics">
     <div class="lmetric">
-      <strong>ikili</strong>
-      <span><span class="tr">sınıflandırma</span><span class="en">classification</span></span>
+      <strong>240</strong>
+      <span><span class="tr">işleme kadar R-multiple</span><span class="en">trades, R-multiple</span></span>
     </div>
     <div class="lmetric">
       <strong>SHAP</strong>
       <span><span class="tr">neden kötü işlem?</span><span class="en">why bad trade?</span></span>
     </div>
     <div class="lmetric">
-      <strong>DiCE</strong>
-      <span><span class="tr">hangi koşulda gir?</span><span class="en">when to enter?</span></span>
+      <strong>ROC-AUC</strong>
+      <span><span class="tr">holdout seti</span><span class="en">holdout set</span></span>
     </div>
     <div class="lmetric">
-      <strong>10</strong>
-      <span><span class="tr">ticker, 2 yıl veri</span><span class="en">tickers, 2yr data</span></span>
+      <strong>AAPL</strong>
+      <span><span class="tr">Kaggle OHLCV verisi</span><span class="en">Kaggle OHLCV dataset</span></span>
     </div>
   </div>
 
@@ -104,8 +104,8 @@
         <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔍</div>
         <h3><span class="tr">Problem tipi: ikili sınıflandırma</span><span class="en">Problem type: binary classification</span></h3>
         <p>
-          <span class="tr">Hedef değişken: bad_trade = 1 eğer trade_return &lt; -1%, aksi halde 0. Her işlemi ikiye ayırıyoruz. Hangi özellikler kötü işlemleri ayırt ediyor? ATR (volatilite), volume z-score (hacim anomalisi), EMA trend yönü — bunlar girdi değişkenleri.</span>
-          <span class="en">Target variable: bad_trade = 1 if trade_return &lt; -1%, else 0. Binary split on every trade. Which features distinguish bad trades? ATR (volatility), volume z-score (volume anomaly), EMA trend direction — these are the features.</span>
+          <span class="tr">Hedef değişken: bad_trade = 1 eğer pnl_r ≤ bad_trade_threshold_r (0.0), aksi halde 0. pnl_r = ((çıkış−giriş)/giriş × yön) / max(atr_pct, 0.003). Girdi feature'lar: atr_pct (volatilite), volume_z (20-bar rolling z-score), trend_score (±5 ile kısıtlı).</span>
+          <span class="en">Target variable: bad_trade = 1 if pnl_r ≤ bad_trade_threshold_r (0.0), else 0. pnl_r = ((exit−entry)/entry × direction) / max(atr_pct, 0.003). Input features: atr_pct (volatility), volume_z (20-bar rolling z-score), trend_score (clamped ±5).</span>
         </p>
       </div>
       <div class="feature">
@@ -122,31 +122,35 @@
   <!-- WHY XGBOOST -->
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">
-      <span class="tr">Neden XGBoost? sklearn GradientBoosting veya Random Forest değil?</span>
-      <span class="en">Why XGBoost? Not sklearn GradientBoosting or Random Forest?</span>
+      <span class="tr">Neden RandomForest? Veri seti ve metrikler</span>
+      <span class="en">Why RandomForest? Dataset and metrics</span>
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key">Random Forest</span>
-        <span class="tech-val"><span class="tr">İyi baseline ama sklearn'deki SHAP implementasyonu RandomForest için 3 boyutlu array döndürür: (n_samples, n_features, n_classes). Bu şekli yanlış handle eden kod sessizce çöküyor. XGBoost'ta bu sorun yok. Ayrıca RF missing value'ları native desteklemiyor.</span><span class="en">Good baseline but sklearn's SHAP for RandomForest returns 3D array: (n_samples, n_features, n_classes). Code that handles this shape wrong silently breaks. XGBoost doesn't have this issue. Also RF doesn't natively handle missing values.</span></span>
+        <span class="tech-key"><span class="tr">Veri seti</span><span class="en">Dataset</span></span>
+        <span class="tech-val"><span class="tr">Kaggle algorithmic-trading (serkanp) — AAPL.csv OHLCV. 240 işleme kadar trade geçmişi üretildi: her trade için pnl_r = ((çıkış−giriş)/giriş × yön) / max(atr_pct, 0.003) hesaplandı. bad_trade_threshold_r=0.0: pnl_r ≤ 0 → bad_trade=1.</span><span class="en">Kaggle algorithmic-trading (serkanp) — AAPL.csv OHLCV. Built up to 240 trades: per-trade pnl_r = ((exit−entry)/entry × direction) / max(atr_pct, 0.003). bad_trade_threshold_r=0.0: pnl_r ≤ 0 → bad_trade=1.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">sklearn GBM</span>
-        <span class="tech-val"><span class="tr">Küçük dataset'te iyi çalışır. 1500 işlem için yeterli olurdu. Ama XGBoost'un L1+L2 regularizasyonu (alpha + lambda parametreleri) over-dense tree'lere karşı daha iyi korur. Ayrıca XGBoost'un histogram tabanlı bölmesi %40 daha hızlı.</span><span class="en">Works fine on small datasets. Would be sufficient for 1500 trades. But XGBoost's L1+L2 regularization (alpha + lambda) provides better protection against over-dense trees. Also XGBoost's histogram splits are ~40% faster.</span></span>
+        <span class="tech-key">RandomForest</span>
+        <span class="tech-val"><span class="tr">240 işlem küçük bir dataset. RandomForest'ın bagging yaklaşımı bu boyutta overfitting'e karşı dayanıklı. SHAP TreeExplainer RF ile uyumlu. Çıktı metrikleri: win_rate, bad_trade_rate, profit_factor, average_r, max_drawdown_r, ROC-AUC (holdout seti). bad_trade_rate &gt; baseline olduğunda fragile kurulum koşulları raporlanır.</span><span class="en">240 trades is a small dataset. RandomForest's bagging approach is robust against overfitting at this size. SHAP TreeExplainer is compatible with RF. Output metrics: win_rate, bad_trade_rate, profit_factor, average_r, max_drawdown_r, ROC-AUC (holdout). When bad_trade_rate &gt; baseline, fragile setup conditions are reported.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key" style="color:#ff4800">XGBoost</span>
-        <span class="tech-val"><span class="tr">Native NaN desteği (market open'da volume_zscore tanımsız olabilir). L1+L2 regularizasyon birleşik. SHAP TreeExplainer tam uyumlu — shape sorunu yok. feature_types parametresi ile kategorikal (symbol) doğrudan geçilebilir. Seçim nedeni: hem performans hem araç ekosistemi.</span><span class="en">Native NaN support (volume_zscore may be undefined at market open). Combined L1+L2 regularization. SHAP TreeExplainer fully compatible — no shape issues. feature_types handles categoricals (symbol) directly. Selection reason: both performance and tooling ecosystem.</span></span>
+        <span class="tech-key" style="color:#ff4800">SHAP analizi</span>
+        <span class="tech-val"><span class="tr">SHAP TreeExplainer hangi atr_pct / volume_z / trend_score kombinasyonlarının kayıpla bittiğini gösterir. Başarısızlık oranının yükseldiği spesifik feature değer aralıkları yüzeye çıkar. Counterfactual filtre önerileri: "atr_pct &gt; X veya volume_z &gt; Y olduğunda giriş yapma" gibi Pine Script filtresine dönüşür.</span><span class="en">SHAP TreeExplainer shows which atr_pct / volume_z / trend_score combinations predict losses. Surfaces specific feature value ranges where failure rate spikes. Counterfactual filter suggestions: e.g. "don't enter when atr_pct &gt; X or volume_z &gt; Y" — translates to Pine Script entry filter.</span></span>
       </div>
     </div>
     <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
-      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">FEATURE PIPELINE — gerçek yfinance verisi</div>
-      <div><span style="color:#6b6858"># ATR%: son 14 günlük ortalama true range / kapanış fiyatı</span></div>
-      <div><span style="color:#f2f0ea">atr_pct = atr14 / close * <span style="color:#ff4800">100</span></span></div>
-      <div style="margin-top:.3rem;"><span style="color:#6b6858"># Volume z-score: hacim ne kadar standart sapmadan uzakta?</span></div>
-      <div><span style="color:#f2f0ea">vol_z = (volume - vol_mean20) / vol_std20</span></div>
-      <div style="margin-top:.3rem;"><span style="color:#6b6858"># EMA trend: EMA20 - EMA50 (+ = uptrend, - = counter-trend)</span></div>
-      <div><span style="color:#f2f0ea">ema_trend = (ema20 - ema50) / close</span></div>
+      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">FEATURE PIPELINE — Kaggle AAPL.csv</div>
+      <div><span style="color:#6b6858"># ATR%: volatilite, payda olarak min 0.003 ile kırpılmış</span></div>
+      <div><span style="color:#f2f0ea">atr_pct = atr14 / close  <span style="color:#6b6858"># (R-multiple paydasında da kullanılır)</span></span></div>
+      <div style="margin-top:.3rem;"><span style="color:#6b6858"># volume_z: 20-bar rolling z-score</span></div>
+      <div><span style="color:#f2f0ea">vol_mean = volume.rolling(<span style="color:#ff4800">20</span>).mean()</span></div>
+      <div><span style="color:#f2f0ea">vol_std  = volume.rolling(<span style="color:#ff4800">20</span>).std()</span></div>
+      <div><span style="color:#f2f0ea">volume_z = (volume - vol_mean) / vol_std</span></div>
+      <div style="margin-top:.3rem;"><span style="color:#6b6858"># trend_score: ham trend sinyali ±5 ile kısıtlandı</span></div>
+      <div><span style="color:#f2f0ea">trend_score = trend_raw.clip(<span style="color:#ff4800">-5</span>, <span style="color:#ff4800">5</span>)</span></div>
+      <div style="margin-top:.3rem;"><span style="color:#6b6858"># R-multiple: kaybı ATR ile normalize eder, karşılaştırılabilir</span></div>
+      <div><span style="color:#f2f0ea">pnl_r = ((exit - entry) / entry * direction) / max(atr_pct, <span style="color:#ff4800">0.003</span>)</span></div>
     </div>
   </section>
 
@@ -171,10 +175,10 @@
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Risk skoru: 0.82 (yüksek risk)</span><span class="en">Risk score: 0.82 (high risk)</span></h3>
+        <h3><span class="tr">Bad trade skoru: 0.82 (yüksek risk)</span><span class="en">Bad trade score: 0.82 (high risk)</span></h3>
         <p>
-          <span class="tr">SHAP açıklaması: atr_pct +0.31 (yüksek volatilite risk artırıyor), volume_zscore +0.24 (anormal hacim belirsizlik yaratıyor), ema_trend +0.18 (counter-trend giriş çok daha sık kayıpla bitiyor). Base değer: 0.09. Toplam: 0.82.</span>
-          <span class="en">SHAP breakdown: atr_pct +0.31 (high volatility increases risk), volume_zscore +0.24 (unusual volume creates uncertainty), ema_trend +0.18 (counter-trend entries lose much more often). Base value: 0.09. Total: 0.82.</span>
+          <span class="tr">RandomForest bad_trade olasılığı: 0.82. SHAP açıklaması: atr_pct +0.31 (yüksek volatilite, R-multiple paydasını küçültüyor), volume_z +0.24 (anormal hacim, 20-bar z-score &gt; 2.5), trend_score +0.18 (±5 kısıtlamasına yakın negatif değer). Base değer: 0.09. Toplam: 0.82.</span>
+          <span class="en">RandomForest bad_trade probability: 0.82. SHAP breakdown: atr_pct +0.31 (high volatility shrinks R-multiple denominator), volume_z +0.24 (unusual volume, 20-bar z-score &gt; 2.5), trend_score +0.18 (near-boundary negative, close to ±5 clamp). Base value: 0.09. Total: 0.82.</span>
         </p>
       </div>
       <div class="feature">
@@ -200,10 +204,10 @@
     </p>
     <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:2rem;">
       <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 1 — VERİYİ TANI (keşifsel analiz)</div>
-      <div><span style="color:#6b6858"># yfinance ile 2 yıl günlük veri, 10 sembol</span></div>
-      <div><span style="color:#f2f0ea">df = yf.download(tickers, period=<span style="color:#ff4800">"2y"</span>, interval=<span style="color:#ff4800">"1d"</span>)</span></div>
+      <div><span style="color:#6b6858"># Kaggle AAPL.csv — OHLCV verisi</span></div>
+      <div><span style="color:#f2f0ea">df = pd.read_csv(<span style="color:#ff4800">"AAPL.csv"</span>, parse_dates=[<span style="color:#ff4800">"Date"</span>])</span></div>
       <div style="margin-top:.4rem;"><span style="color:#6b6858"># Kaç satır var? Null oranı?</span></div>
-      <div><span style="color:#f2f0ea">print(df.shape)  <span style="color:#6b6858"># (504, 60) — 504 iş günü × 10 sembol × 6 sütun</span></span></div>
+      <div><span style="color:#f2f0ea">print(df.shape)  <span style="color:#6b6858"># satır sayısı × OHLCV sütunları</span></span></div>
       <div><span style="color:#f2f0ea">print(df.isnull().mean())  <span style="color:#6b6858"># Hangi sütunlarda null var?</span></span></div>
       <div style="margin-top:.4rem;"><span style="color:#6b6858"># Tarih sırası doğru mu? Gap var mı?</span></div>
       <div><span style="color:#f2f0ea">date_diff = df.index.to_series().diff()  <span style="color:#6b6858"># .diff() sıralı farklar</span></span></div>
@@ -251,15 +255,15 @@
     <div class="tech-table">
       <div class="tech-row">
         <span class="tech-key">ML</span>
-        <span class="tech-val">XGBoost · binary:logistic · native NaN · L1+L2 regularization</span>
+        <span class="tech-val">RandomForest classifier · bad_trade_threshold_r=0.0 · win_rate / bad_trade_rate / profit_factor / average_r / max_drawdown_r / ROC-AUC</span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Açıklanabilirlik</span><span class="en">Explainability</span></span>
-        <span class="tech-val">SHAP TreeExplainer · DiCE counterfactuals · evidence contract</span>
+        <span class="tech-val">SHAP TreeExplainer · counterfactual filtre önerileri · başarısızlık oranının yükseldiği feature aralıkları</span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Veri</span><span class="en">Data</span></span>
-        <span class="tech-val"><span class="tr">1500 gerçek trade · yfinance AAPL/MSFT/NVDA/AMZN/GOOGL/META/TSLA/AMD/NFLX/JPM · 2 yıl günlük</span><span class="en">1500 real trades · yfinance AAPL/MSFT/NVDA/AMZN/GOOGL/META/TSLA/AMD/NFLX/JPM · 2yr daily</span></span>
+        <span class="tech-val"><span class="tr">Kaggle algorithmic-trading (serkanp) · AAPL.csv OHLCV · 240 işleme kadar · pnl_r = R-multiple</span><span class="en">Kaggle algorithmic-trading (serkanp) · AAPL.csv OHLCV · up to 240 trades · pnl_r = R-multiple</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key">API</span>

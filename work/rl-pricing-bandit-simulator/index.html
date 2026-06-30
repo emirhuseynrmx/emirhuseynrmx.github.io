@@ -37,8 +37,8 @@
       </div>
       <h1 class="lhero-title">RL Pricing Bandit Simulator</h1>
       <p class="lhero-sub">
-        <span class="tr">Problem: hangi fiyat en fazla satar? A/B testi 6 hafta sürer, bu kadar süre kararsız kalamassın. Thompson Sampling her ziyaretçiden öğrenerek optimum fiyata kendiliğinden yakınsıyor — haftalarca beklemeden.</span>
-        <span class="en">Problem: which price converts best? A/B test takes 6 weeks. Thompson Sampling learns from every visitor and converges to the optimal price on its own — no waiting required.</span>
+        <span class="tr">Geçmiş fiyatlandırma CSV'sini (visitor_id, segment, traffic_source, device, returning_user, converted, observed_price_usd) replay ederek Beta posteriorlarını günceller, hangi fiyat kademesinin (starter $29 / growth $49 / premium $79) en yüksek beklenen marjini verdiğini gösterir, canlıya geçmeden önce kontrollü A/B önerir.</span>
+        <span class="en">Replays historical pricing CSV (visitor_id, segment, traffic_source, device, returning_user, converted, observed_price_usd) to update Beta posteriors, shows which price tier (starter $29 / growth $49 / premium $79) gives highest expected margin, recommends controlled A/B before going live.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">
@@ -160,8 +160,8 @@
       <span class="en">Real scenario: SaaS pricing experiment</span>
     </h2>
     <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">Müşteri: e-ticaret için envanter yönetim SaaS'ı. 3 plan: $29 Starter, $49 Growth, $79 Premium. "Hangi plan en iyi performans gösteriyor?" diye soruyorlar ama 2 haftadan fazla bekleyemiyorlar. Trafik ~250 ziyaretçi/gün.</span>
-      <span class="en">Client: inventory management SaaS for e-commerce. 3 plans: $29 Starter, $49 Growth, $79 Premium. "Which plan performs best?" — but they can't wait more than 2 weeks. Traffic ~250 visitors/day.</span>
+      <span class="tr">3 kol: starter_29 ($29, marj $22), growth_49 ($49, marj $38), premium_79 ($79, marj $61). Gerçek dönüşüm oranları: starter %12, growth %9, premium %5.5. min_margin_usd=$10 guard aktif. Segmentler: smb / midmarket / enterprise.</span>
+      <span class="en">3 arms: starter_29 ($29, margin $22), growth_49 ($49, margin $38), premium_79 ($79, margin $61). True conversion rates: starter 12%, growth 9%, premium 5.5%. min_margin_usd=$10 guard active. Segments: smb / midmarket / enterprise.</span>
     </p>
     <div class="features-grid">
       <div class="feature">
@@ -182,10 +182,10 @@
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Round 247: E[margin] analizi ters sonuç veriyor</span><span class="en">Round 247: E[margin] analysis flips the result</span></h3>
+        <h3><span class="tr">Round 247: E[margin] analizi karşılaştırması</span><span class="en">Round 247: E[margin] comparison</span></h3>
         <p>
-          <span class="tr">%12.7 dönüşümde premium_79 = $10.03 beklenen marjin. %18.3 dönüşümde growth_49 = $8.97. Daha az dönüşüm ama daha yüksek fiyat — toplam gelir üstün. Müşteri $79 planını ön plana çıkardı, aylık gelir %22 arttı.</span>
-          <span class="en">12.7% conversion at $79 = $10.03 expected margin. 18.3% conversion at $49 = $8.97. Fewer conversions, higher price — total revenue wins. Client pushed $79 plan to prominence, monthly revenue +22%.</span>
+          <span class="tr">premium_79: %5.5 gerçek dönüşüm × $61 marj = $3.36 beklenen marj/ziyaretçi. growth_49: %9 × $38 = $3.42. starter_29: %12 × $22 = $2.64. Thompson Sampling bu beklenen marjlara göre daha fazla trafik growth_49'a yönlendirdi. Offline replay canlıya geçmeden önce "bandit ne öğrenirdi?" sorusunu cevapler.</span>
+          <span class="en">premium_79: 5.5% true conv × $61 margin = $3.36 expected margin/visitor. growth_49: 9% × $38 = $3.42. starter_29: 12% × $22 = $2.64. Thompson Sampling routed more traffic to growth_49 based on these expected margins. Offline replay answers "what would the bandit have learned?" before going live.</span>
         </p>
       </div>
     </div>
@@ -212,7 +212,7 @@
       </div>
       <div class="tech-row">
         <span class="tech-key">Replay</span>
-        <span class="tech-val"><span class="tr">3000 satır gerçek SaaS pricing event'i ($29/$49/$79 segment bazlı dönüşüm oranları)</span><span class="en">3000-row real SaaS pricing events (segment-based conversion rates per arm)</span></span>
+        <span class="tech-val"><span class="tr">examples/ecommerce_pricing_events.csv · visitor_id, segment (smb/midmarket/enterprise), traffic_source, device, returning_user, converted, observed_price_usd · starter 12% / growth 9% / premium 5.5% gerçek dönüşüm oranları</span><span class="en">examples/ecommerce_pricing_events.csv · visitor_id, segment (smb/midmarket/enterprise), traffic_source, device, returning_user, converted, observed_price_usd · true conversion rates starter 12% / growth 9% / premium 5.5%</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
@@ -222,21 +222,33 @@
   </section>
   <section class="lsection" data-scenario="true">
     <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo</span>
-      <span class="en">Step-by-step scenario</span>
+      <span class="tr">Adım adım senaryo: ecommerce_pricing_events.csv replay</span>
+      <span class="en">Step-by-step scenario: ecommerce_pricing_events.csv replay</span>
     </h2>
     <div class="features-grid">
       <div class="feature">
-        <h3><span class="tr">Arm setup</span><span class="en">Arm setup</span></h3>
-        <p><span class="tr">Define prices, margins, inventory constraints, and the reward event that counts as success.</span><span class="en">Define prices, margins, inventory constraints, and the reward event that counts as success.</span></p>
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Kol kurulumu ve CSV yükleme</span><span class="en">Arm setup and CSV load</span></h3>
+        <p>
+          <span class="tr">3 kol: starter_29 ($29, marj $22), growth_49 ($49, marj $38), premium_79 ($79, marj $61). min_margin_usd=$10 guard. examples/ecommerce_pricing_events.csv: visitor_id (UUID), segment (smb/midmarket/enterprise), traffic_source (organic_search/referral/paid_search/product_hunt), device, returning_user (bool), converted (bool), observed_price_usd.</span>
+          <span class="en">3 arms: starter_29 ($29, margin $22), growth_49 ($49, margin $38), premium_79 ($79, margin $61). min_margin_usd=$10 guard. examples/ecommerce_pricing_events.csv: visitor_id (UUID), segment (smb/midmarket/enterprise), traffic_source (organic_search/referral/paid_search/product_hunt), device, returning_user (bool), converted (bool), observed_price_usd.</span>
+        </p>
       </div>
       <div class="feature">
-        <h3><span class="tr">Offline replay</span><span class="en">Offline replay</span></h3>
-        <p><span class="tr">Simulate Thompson Sampling decisions and compare regret against fixed-price baselines.</span><span class="en">Simulate Thompson Sampling decisions and compare regret against fixed-price baselines.</span></p>
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Offline replay: posterior güncelleme</span><span class="en">Offline replay: posterior update</span></h3>
+        <p>
+          <span class="tr">CSV satırları sırayla replay edildi. Her satırda observed_price_usd hangi kola karşılık geliyorsa o kolun posterioru güncellendi (converted=True → alpha += 1, False → beta += 1). Gerçek dönüşüm oranları: starter %12, growth %9, premium %5.5. Re-randomizasyon yapılmadı — bu saf offline replay.</span>
+          <span class="en">CSV rows replayed sequentially. Each row updated the posterior for the matching arm based on observed_price_usd (converted=True → alpha += 1, False → beta += 1). True conversion rates: starter 12%, growth 9%, premium 5.5%. No re-randomization — this is pure offline replay.</span>
+        </p>
       </div>
       <div class="feature">
-        <h3><span class="tr">Guarded decision</span><span class="en">Guarded decision</span></h3>
-        <p><span class="tr">Return the chosen arm only after margin, stock, and price-cap rules pass.</span><span class="en">Return the chosen arm only after margin, stock, and price-cap rules pass.</span></p>
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Korumalı karar: en yüksek beklenen marj</span><span class="en">Guarded decision: highest expected margin</span></h3>
+        <p>
+          <span class="tr">Replay sonrası her koldan Beta örneklendi, marj ile çarpıldı: E[margin] = sample × marj. min_margin_usd=$10 guard geçildi. Hangi tier en yüksek beklenen marjini veriyor — kontrollü A/B öncesi bu tahmin raporlandı. Offline replay "bandit ne öğrenirdi?" sorusunu mevcut veriden cevapar.</span>
+          <span class="en">After replay, Beta sampled per arm, multiplied by margin: E[margin] = sample × margin. min_margin_usd=$10 guard checked. Which tier gives highest expected margin — this estimate reported before a controlled A/B. Offline replay answers "what would the bandit have learned?" from existing data.</span>
+        </p>
       </div>
     </div>
   </section>

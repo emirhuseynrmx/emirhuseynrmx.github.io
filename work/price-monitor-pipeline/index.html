@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Price Monitor Pipeline — Emir H. İnci</title>
-  <meta name="description" content="FastAPI + async scraping + Thompson Sampling ile fiyat takip sistemi. İdempotent API, rate limiting, ML-based pricing signals."/>
+  <meta name="description" content="watchlist.json'dan çalışan async fiyat takip sistemi. httpx + BeautifulSoup, CSS price_selector, Avrupa/US fiyat formatı, hedef fiyat uyarısı, CSV snapshot + JSON manifest."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
@@ -31,14 +31,14 @@
     <div class="lhero-inner">
       <div class="lhero-kicker">
         <span class="btag btag-py">Python</span>
-        <span class="btag">FastAPI · httpx · asyncio</span>
-        <span class="btag">Thompson Sampling</span>
-        <span class="btag">Redis</span>
+        <span class="btag">async httpx · BeautifulSoup</span>
+        <span class="btag">watchlist.json · CSS selectors</span>
+        <span class="btag">CSV snapshot · JSON manifest</span>
       </div>
       <h1 class="lhero-title">Price Monitor Pipeline</h1>
       <p class="lhero-sub">
-        <span class="tr">Gerçek zamanlı fiyat izleme sistemi. Rakip fiyatlarını çeker, ML ile anormal değişimleri işaretler ve idempotent FastAPI üzerinden servis eder.</span>
-        <span class="en">Real-time price monitoring system. Scrapes competitor prices, flags anomalies with ML, and serves results via idempotent FastAPI.</span>
+        <span class="tr">watchlist.json'u oku (name, URL, CSS price_selector, target_price), httpx ile canlı sayfaları çek, Avrupa ve US fiyat formatlarını parse et, hedef fiyat altına düşünce uyar, her çalıştırmanın CSV snapshot'ını ve JSON manifest'ini yaz. API gerekmez — sadece CSS selector'lar.</span>
+        <span class="en">Read watchlist.json (name, URL, CSS price_selector, target_price), fetch live pages with httpx, parse European and US price formats, alert when price drops to or below target, write CSV snapshot and JSON manifest per run. No API needed — just CSS selectors.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">
@@ -71,16 +71,16 @@
       <span><span class="tr">paralel fiyat çekme</span><span class="en">parallel price scraping</span></span>
     </div>
     <div class="lmetric">
-      <strong>Thompson</strong>
-      <span><span class="tr">sampling ile fiyatlama</span><span class="en">sampling for pricing</span></span>
+      <strong>2</strong>
+      <span><span class="tr">fiyat formatı (EU + US)</span><span class="en">price formats (EU + US)</span></span>
     </div>
     <div class="lmetric">
-      <strong>idempotent</strong>
-      <span>FastAPI endpoint</span>
+      <strong>15s</strong>
+      <span><span class="tr">HTTP timeout</span><span class="en">HTTP timeout</span></span>
     </div>
     <div class="lmetric">
-      <strong>CI</strong>
-      <span>GitHub Actions</span>
+      <strong>SHA-256</strong>
+      <span><span class="tr">schema parmak izi</span><span class="en">schema fingerprint</span></span>
     </div>
   </div>
 
@@ -91,51 +91,51 @@
     </h2>
     <div class="features-grid">
       <div class="feature">
-        <div class="feature-icon">📡</div>
-        <h3><span class="tr">Async fiyat scraping</span><span class="en">Async price scraping</span></h3>
+        <div class="feature-icon">📋</div>
+        <h3>watchlist.json</h3>
         <p>
-          <span class="tr">httpx + asyncio ile çok sayıda rakip URL'den aynı anda fiyat çeker. Her çekim Pydantic v2 modeliyle doğrulanır.</span>
-          <span class="en">Pulls prices from multiple competitor URLs simultaneously via httpx + asyncio. Each result validated with Pydantic v2.</span>
+          <span class="tr">Her ürün için: name, URL, css price_selector ve target_price. JSON dosyasına yeni satır ekle, pipeline bir sonraki çalıştırmada onu da izlemeye alır. Kod değişmez.</span>
+          <span class="en">Per product: name, URL, css price_selector, and target_price. Add a new entry to the JSON, pipeline picks it up next run. No code change.</span>
         </p>
       </div>
       <div class="feature">
-        <div class="feature-icon">🎲</div>
-        <h3>Thompson Sampling</h3>
+        <div class="feature-icon">🌍</div>
+        <h3><span class="tr">Çift locale fiyat parse</span><span class="en">Dual-locale price parsing</span></h3>
         <p>
-          <span class="tr">Rakip fiyatlarına bakarak en karlı fiyat aralığını tahmin eden bandit algoritması. Geçmiş veriden öğrenir, öneri üretir.</span>
-          <span class="en">Bandit algorithm that estimates the most profitable price range based on competitor data. Learns from history, produces recommendations.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🔒</div>
-        <h3><span class="tr">İdempotent API</span><span class="en">Idempotent API</span></h3>
-        <p>
-          <span class="tr">Aynı istek iki kez gelirse ikinci sefer cache'den döner. Mükerrer yazma yok, duplicate veri yok.</span>
-          <span class="en">If the same request arrives twice, the second returns from cache. No duplicate writes, no duplicate data.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⏱️</div>
-        <h3>Rate Limiting</h3>
-        <p>
-          <span class="tr">Her kaynak için ayrı rate limit tanımlanabilir. Hedef siteyi aşırı yüklemeden, sürekli izleme.</span>
-          <span class="en">Per-source rate limits configurable. Continuous monitoring without overloading the target site.</span>
+          <span class="tr">Avrupa formatı: 1.299,99 (nokta binlik, virgül ondalık). US formatı: 1,299.99 (virgül binlik, nokta ondalık). İki formatı da otomatik tanır ve float'a çevirir.</span>
+          <span class="en">European format: 1.299,99 (dot thousands, comma decimal). US format: 1,299.99 (comma thousands, dot decimal). Auto-detects both and converts to float.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">🚨</div>
-        <h3><span class="tr">Anomali işaretleme</span><span class="en">Anomaly flagging</span></h3>
+        <h3><span class="tr">Hedef fiyat uyarısı</span><span class="en">Target price alert</span></h3>
         <p>
-          <span class="tr">Fiyat normalden %X sapıyorsa kayıt işaretlenir. Webhook veya log çıktısına yönlendirilebilir.</span>
-          <span class="en">If price deviates more than X% from baseline, the record is flagged. Routes to webhook or log output.</span>
+          <span class="tr">Fiyat ≤ target_price olduğunda uyarı tetiklenir. delta = target_price − price olarak hesaplanır ve rapora yazılır. Her ürün için ayrı eşik.</span>
+          <span class="en">Alert triggers when price ≤ target_price. delta = target_price − price is computed and written to report. Separate threshold per product.</span>
         </p>
       </div>
       <div class="feature">
-        <div class="feature-icon">📦</div>
-        <h3><span class="tr">Export & storage</span><span class="en">Export & storage</span></h3>
+        <div class="feature-icon">⏱️</div>
+        <h3>HTTP timeout=15s</h3>
         <p>
-          <span class="tr">JSON, CSV ve Parquet çıktı. SQLite veya Postgres backend ile geçmiş fiyat serisi saklanır.</span>
-          <span class="en">JSON, CSV, and Parquet output. Historical price series stored in SQLite or Postgres backend.</span>
+          <span class="tr">httpx async client ile timeout=15 saniye. Cevap vermeyen siteler pipeline'ı askıda bırakmaz. Timeout olan URL'ler manifest'e hata olarak kaydedilir.</span>
+          <span class="en">httpx async client with timeout=15 seconds. Unresponsive sites don't stall the pipeline. Timed-out URLs logged as errors in the manifest.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">📁</div>
+        <h3><span class="tr">CSV snapshot + JSON manifest</span><span class="en">CSV snapshot + JSON manifest</span></h3>
+        <p>
+          <span class="tr">Her çalıştırma: timestamp'li CSV snapshot (tüm mevcut fiyatlar) ve JSON manifest (schema fingerprint: SHA-256 ilk 16 karakter, kaç URL kontrol edildi, kaç uyarı tetiklendi).</span>
+          <span class="en">Each run: timestamped CSV snapshot (all current prices) and JSON manifest (schema fingerprint: SHA-256 first 16 chars, URLs checked, alerts triggered).</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <h3><span class="tr">CSS selector tabanlı</span><span class="en">CSS selector-based</span></h3>
+        <p>
+          <span class="tr">API anahtarı yok, scraper aboneliği yok — sadece tarayıcıda inspect et, fiyat elementinin CSS selector'ını al, watchlist'e ekle. BeautifulSoup ile güvenilir parse.</span>
+          <span class="en">No API key, no scraper subscription — just inspect in browser, grab the CSS selector of the price element, add to watchlist. Reliable parsing via BeautifulSoup.</span>
         </p>
       </div>
     </div>
@@ -149,52 +149,52 @@
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
-        <span class="tech-val"><span class="tr">Elektronik perakendeci. Rakip ani indirim yaparsa saatler sonra öğreniyor — o sırada rakip satışları alıyor. Günde 2 kez elle fiyat kontrol ediyorlar. Hafta sonları kontrol yok. Yıllık tahmini kayıp: €40K+.</span><span class="en">Electronics retailer. When a competitor runs a flash sale, they find out hours later — competitor is taking the sales. Manual price check twice a day. No checks on weekends. Estimated annual loss: €40K+.</span></span>
+        <span class="tech-key"><span class="tr">Kullanım senaryosu</span><span class="en">Use case</span></span>
+        <span class="tech-val"><span class="tr">Ürün URL'si, CSS price_selector ve hedef fiyat olan bir watchlist'in var. Fiyat hedefin altına düştüğünde haberdar olmak istiyorsun. Elle takip: günde 2 kontrol, hafta sonları yok, rakip indirim açıkken sen uyuyorsun. Bu pipeline bunu otomatikleştirir — API aboneliği olmadan.</span><span class="en">You have a watchlist with product URLs, CSS price selectors, and target prices. You want to be notified when a price drops to your target. Manual tracking: 2 checks a day, nothing on weekends, sleeping when the competitor runs a sale. This pipeline automates it — without API subscriptions.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">z-score ← ML</span>
-        <span class="tech-val"><span class="tr">Fiyat anormalisi için IsolationForest veya DBSCAN denemedim. Neden? Fiyat serisinde yapısal kırılma tek bir anda gerçekleşiyor ve rolling z-score bunu ±2.5σ eşiğiyle kesin yakalar. ML modeli bu kadar az veriyle (200 ürün, haftalık fiyat) overfits. z-score deterministik, açıklanabilir, eşik müşteri ayarlayabilir.</span><span class="en">I didn't try IsolationForest or DBSCAN for price anomalies. Why? Structural breaks in a price series happen at a single moment, and rolling z-score catches this exactly at ±2.5σ threshold. ML models overfit with this little data (200 products, weekly prices). z-score is deterministic, explainable, threshold adjustable by client.</span></span>
+        <span class="tech-key">BeautifulSoup ←</span>
+        <span class="tech-val"><span class="tr">Fiyat scraping için özel API veya headless browser neden gerekmiyor? Çoğu e-ticaret sitesinde fiyat statik HTML'de render ediliyor — CSS selector ile doğrudan seçilebilir. BeautifulSoup yeterli, Selenium veya Playwright gereksiz yük. httpx timeout=15s ile ağ hataları yönetiliyor.</span><span class="en">Why no dedicated API or headless browser for price scraping? On most e-commerce sites, prices render in static HTML — directly selectable by CSS selector. BeautifulSoup is sufficient, Selenium or Playwright unnecessary overhead. Network errors handled via httpx timeout=15s.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">Thompson S. ←</span>
-        <span class="tech-val"><span class="tr">Hangi ürünü ne sıklıkla kontrol et? Sabit interval (30s/hepsi) gereksiz kaynak kullanımı. Thompson Sampling: çok hareket eden ürüne → daha sık kontrol, stabil fiyatlıya → daha seyrek. Reward: fiyat değişimi oldu mu? Posterioru buna göre güncelle.</span><span class="en">Which product to check how often? Fixed 30s for all products wastes resources. Thompson Sampling: high-volatility product → check more often, stable price → check less. Reward: did the price change? Update posterior accordingly.</span></span>
+        <span class="tech-key">Locale parsing</span>
+        <span class="tech-val"><span class="tr">1.299,99 (Almanya/Türkiye/İspanya) ve 1,299.99 (ABD/İngiltere) formatları — aynı siteyi farklı lokasyondan scrape ettiğinde veya farklı ülke sitelerini izlerken ikisi de çıkabilir. Parser her iki formatı tanır, float'a çevirir ve delta = target_price − price hesaplar.</span><span class="en">1.299,99 (Germany/Turkey/Spain) and 1,299.99 (US/UK) formats — both can appear when scraping the same site from different locations or monitoring international stores. Parser recognizes both, converts to float, and computes delta = target_price − price.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">idempotency</span>
-        <span class="tech-val"><span class="tr">Scraper aynı anlık görüntüyü iki kez gönderebilir (retry). Idempotency-key ile: aynı istek gelirse DB'ye iki kez yazılmaz, cache'den döner. Mükerrer fiyat kaydı olmadığından historik grafik temiz kalır.</span><span class="en">Scraper may send the same snapshot twice (retry). With idempotency-key: if the same request arrives again, it's not written to DB twice, returned from cache. No duplicate price records, so historical chart stays clean.</span></span>
+        <span class="tech-key">SHA-256 fingerprint</span>
+        <span class="tech-val"><span class="tr">Manifest'teki schema fingerprint (SHA-256 ilk 16 karakter) sitede HTML yapısı değişirse tespit eder. Selector artık çalışmıyorsa fiyat None döner — manifest bu URL'yi "selector_miss" olarak işaretler. Sessiz başarısızlık yok.</span><span class="en">Schema fingerprint in manifest (SHA-256 first 16 chars) detects when a site's HTML structure changes. If the selector no longer works, price returns None — manifest marks that URL as "selector_miss." No silent failures.</span></span>
       </div>
     </div>
   </section>
 
   <section class="lsection">
     <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: NVDA anomali tespiti</span>
-      <span class="en">Step-by-step scenario: NVDA anomaly detected</span>
+      <span class="tr">Adım adım senaryo: watchlist'teki ürün hedef fiyata düştü</span>
+      <span class="en">Step-by-step scenario: watchlist product hits target price</span>
     </h2>
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Async fiyat çekme: 4 kaynak, 38 ürün</span><span class="en">Async price pull: 4 sources, 38 products</span></h3>
+        <h3><span class="tr">watchlist.json okundu, sayfalar çekildi</span><span class="en">watchlist.json read, pages fetched</span></h3>
         <p>
-          <span class="tr">Thompson Sampling NVDA'yı yüksek volatilitesi nedeniyle 30s'de bir kontrol ediyor (diğerleri 120s). 14:32'de scraper 4 kaynaktan NVDA fiyatı çekti: min=870.10, max=875.30. Önceki 20 günlük rolling mean=912.4, std=8.2.</span>
-          <span class="en">Thompson Sampling checks NVDA every 30s due to high volatility (others every 120s). At 14:32, scraper pulled NVDA price from 4 sources: min=870.10, max=875.30. Previous 20-day rolling mean=912.4, std=8.2.</span>
+          <span class="tr">watchlist.json'dan 3 ürün yüklendi: her birinde name, URL, css price_selector, target_price. httpx async client (timeout=15s) ile 3 URL paralel olarak çekildi. BeautifulSoup her sayfada price_selector'ı aradı. İki ürün Avrupa formatı (1.299,99), biri US formatı (1,299.99) — her ikisi de parse edildi.</span>
+          <span class="en">3 products loaded from watchlist.json: each with name, URL, css price_selector, target_price. httpx async client (timeout=15s) fetched all 3 URLs in parallel. BeautifulSoup searched for price_selector on each page. Two products European format (1.299,99), one US format (1,299.99) — both parsed correctly.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Anomali işaretlendi: z = -3.2</span><span class="en">Anomaly flagged: z = -3.2</span></h3>
+        <h3><span class="tr">Uyarı tetiklendi: fiyat ≤ hedef</span><span class="en">Alert triggered: price ≤ target</span></h3>
         <p>
-          <span class="tr">z = (875.30 − 912.4) / 8.2 = -3.2. Eşik: |z| &gt; 2.5. Koşul sağlandı → kayıt "anomaly_flag" olarak işaretlendi. Bu -4.8% düşüş, tek günde normalin 3 sigma dışında. Rekabet baskısı veya haber etkisi — insan onayı gerekiyor.</span>
-          <span class="en">z = (875.30 − 912.4) / 8.2 = -3.2. Threshold: |z| &gt; 2.5. Condition met → record marked "anomaly_flag." This -4.8% drop is 3 sigma outside normal in one day. Competitive pressure or news effect — human review needed.</span>
+          <span class="tr">Ürün A: çekilen fiyat 249,99 €, target_price=259,99 €. Koşul sağlandı: fiyat ≤ hedef. delta = 259,99 − 249,99 = 10,00 € hesaplandı. Uyarı kaydı oluşturuldu. Ürün B ve C: fiyat hedef üstünde, uyarı yok.</span>
+          <span class="en">Product A: fetched price 249.99 €, target_price=259.99 €. Condition met: price ≤ target. delta = 259.99 − 249.99 = 10.00 € computed. Alert record created. Products B and C: price above target, no alert.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Webhook → Telegram bildirimi, 90 saniyede</span><span class="en">Webhook → Telegram notification, in 90 seconds</span></h3>
+        <h3><span class="tr">CSV snapshot + JSON manifest yazıldı</span><span class="en">CSV snapshot + JSON manifest written</span></h3>
         <p>
-          <span class="tr">14:32'de fiyat çekildi. 14:33:30'da müşterinin Telegram'ına "NVDA %4.8 düştü, anomali işaretlendi" bildirimi gitti. Müşteri rakibinin fiyatını eşleştirme kararını 5 dakika içinde verdi — aynı gün ek €1.400 satış yaptı.</span>
-          <span class="en">Price pulled at 14:32. At 14:33:30, "NVDA dropped 4.8%, anomaly flagged" notification sent to client's Telegram. Client made the pricing match decision within 5 minutes — made an additional €1,400 in sales that day.</span>
+          <span class="tr">CSV snapshot: timestamp, name, url, scraped_price, target_price, delta, alert (True/False) — tüm ürünler için. JSON manifest: run_id, timestamp, URLs_checked=3, alerts_triggered=1, schema_fingerprint (SHA-256 ilk 16 karakter). Pipeline reproducible, her çalıştırma izlenebilir.</span>
+          <span class="en">CSV snapshot: timestamp, name, url, scraped_price, target_price, delta, alert (True/False) — for all products. JSON manifest: run_id, timestamp, URLs_checked=3, alerts_triggered=1, schema_fingerprint (SHA-256 first 16 chars). Pipeline reproducible, every run traceable.</span>
         </p>
       </div>
     </div>
@@ -207,24 +207,24 @@
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key">API</span>
-        <span class="tech-val">FastAPI · Uvicorn · idempotency-key cache</span>
+        <span class="tech-key"><span class="tr">Giriş</span><span class="en">Input</span></span>
+        <span class="tech-val">watchlist.json (name, URL, css price_selector, target_price)</span>
       </div>
       <div class="tech-row">
         <span class="tech-key">HTTP</span>
-        <span class="tech-val">httpx (async) · selectolax · BeautifulSoup</span>
+        <span class="tech-val">httpx (async) · timeout=15s · BeautifulSoup price parse</span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">ML</span>
-        <span class="tech-val">Thompson Sampling (Beta distribution bandit)</span>
+        <span class="tech-key"><span class="tr">Fiyat parse</span><span class="en">Price parsing</span></span>
+        <span class="tech-val"><span class="tr">Avrupa (1.299,99) + US (1,299.99) locale-aware · delta = target − price</span><span class="en">European (1.299,99) + US (1,299.99) locale-aware · delta = target − price</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
-        <span class="tech-val">Pydantic v2 · Pandera schema checks</span>
+        <span class="tech-key"><span class="tr">Çıktı</span><span class="en">Output</span></span>
+        <span class="tech-val"><span class="tr">CSV snapshot (tüm fiyatlar) · JSON manifest (run_id, SHA-256 fingerprint, alerts_triggered)</span><span class="en">CSV snapshot (all prices) · JSON manifest (run_id, SHA-256 fingerprint, alerts_triggered)</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · pytest-asyncio · httpx TestClient</span>
+        <span class="tech-val">pytest · pytest-asyncio · coverage</span>
       </div>
       <div class="tech-row">
         <span class="tech-key">CI</span>

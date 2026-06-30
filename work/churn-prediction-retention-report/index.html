@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Churn Prediction &amp; Retention Report — Emir H. İnci</title>
-  <meta name="description" content="sklearn ML pipeline ile müşteri churn tahmini. GradientBoosting classifier, feature engineering, PDF retention raporu."/>
+  <meta name="description" content="XGBoost ile Kaggle Telco Customer Churn (7.043 müşteri). SHAP feature importance, 10 desil kaldıraç tablosu, 3 risk kademesi, PDF retention raporu."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
@@ -31,14 +31,14 @@
     <div class="lhero-inner">
       <div class="lhero-kicker">
         <span class="btag btag-py">Python</span>
-        <span class="btag">sklearn · GradientBoosting</span>
-        <span class="btag">Pandas · Pydantic v2</span>
+        <span class="btag">XGBoost · SHAP TreeExplainer</span>
+        <span class="btag">Pandas · Pydantic v2 · Pandera</span>
         <span class="btag">PDF rapor</span>
       </div>
       <h1 class="lhero-title">Churn Prediction &amp; Retention Report</h1>
       <p class="lhero-sub">
-        <span class="tr">Müşteri verisini ver, kim ayrılacak söylesin. GradientBoosting model + otomatik feature engineering + PDF retention raporu — tek pipeline'da.</span>
-        <span class="en">Give customer data, find out who's about to leave. GradientBoosting model + automatic feature engineering + PDF retention report — in one pipeline.</span>
+        <span class="tr">Kaggle Telco CSV'sini ver (7.043 müşteri, 21 sütun), XGBoost eğitsin, her müşteriye churn olasılığı atsın, 3 risk kademesine (HIGH ≥0.70 / MED ≥0.40 / LOW) ayırsın — SHAP feature importance, 10 desil kaldıraç tablosu ve müşteri başına aksiyon planıyla PDF çıksın.</span>
+        <span class="en">Feed it the Kaggle Telco CSV (7,043 customers, 21 columns), XGBoost trains, assigns churn probability to each customer, segments into 3 risk tiers (HIGH ≥0.70 / MED ≥0.40 / LOW) — PDF out with SHAP feature importance, 10-decile lift table, and a per-customer retention playbook.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/churn-prediction-retention-report" target="_blank" rel="noopener">
@@ -59,7 +59,7 @@
         <div style="color:#6b6858;"><span style="color:#10b981">LOW</span> &nbsp;&nbsp;cust_id=<span style="color:#f2f0ea">C_1195</span> &nbsp;prob=<span style="color:#10b981">0.12</span> &nbsp;action=none</div>
         <div><span style="color:#ef4444">HIGH</span> &nbsp;cust_id=<span style="color:#f2f0ea">C_7733</span> &nbsp;prob=<span style="color:#ef4444">0.88</span> &nbsp;action=<span style="color:#ff4800">upgrade_offer</span></div>
         <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
-          customers=<span style="color:#ff4800">12,400</span> &nbsp;·&nbsp; high_risk=<span style="color:#ef4444">843</span> &nbsp;·&nbsp; report=<span style="color:#6b6858">PDF</span>
+          customers=<span style="color:#ff4800">7,043</span> &nbsp;·&nbsp; bootstrap=<span style="color:#ef4444">300 iters</span> &nbsp;·&nbsp; report=<span style="color:#6b6858">PDF</span>
         </div>
       </div>
     </div>
@@ -67,20 +67,20 @@
 
   <div class="lmetrics">
     <div class="lmetric">
-      <strong>ML</strong>
-      <span>GradientBoosting</span>
+      <strong>XGBoost</strong>
+      <span><span class="tr">160 ağaç, lr=0.05</span><span class="en">160 trees, lr=0.05</span></span>
     </div>
     <div class="lmetric">
-      <strong>auto</strong>
-      <span><span class="tr">feature engineering</span><span class="en">feature engineering</span></span>
+      <strong>7,043</strong>
+      <span><span class="tr">Kaggle Telco müşteri</span><span class="en">Kaggle Telco customers</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>SHAP</strong>
+      <span><span class="tr">300 satır örneklem</span><span class="en">300-row sample</span></span>
     </div>
     <div class="lmetric">
       <strong>PDF</strong>
-      <span><span class="tr">retention raporu</span><span class="en">retention report</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>CI</strong>
-      <span>GitHub Actions</span>
+      <span><span class="tr">10 desil kaldıraç tablosu</span><span class="en">10-decile lift table</span></span>
     </div>
   </div>
 
@@ -92,50 +92,50 @@
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon">🤖</div>
-        <h3>GradientBoosting</h3>
+        <h3>XGBoost</h3>
         <p>
-          <span class="tr">sklearn GradientBoostingClassifier ile eğitilmiş churn modeli. Hiperparametre tuning pipeline içinde yerleşik.</span>
-          <span class="en">Churn model trained with sklearn GradientBoostingClassifier. Hyperparameter tuning built into the pipeline.</span>
+          <span class="tr">n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9. test_size=0.3 ile holdout validasyonu, 300 bootstrap iterasyonu ile güven aralıkları.</span>
+          <span class="en">n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9. Holdout with test_size=0.3, confidence intervals from 300 bootstrap iterations.</span>
         </p>
       </div>
       <div class="feature">
-        <div class="feature-icon">⚙️</div>
-        <h3><span class="tr">Otomatik feature engineering</span><span class="en">Auto feature engineering</span></h3>
+        <div class="feature-icon">📊</div>
+        <h3><span class="tr">Kaggle Telco verisi</span><span class="en">Kaggle Telco dataset</span></h3>
         <p>
-          <span class="tr">Ham müşteri verisinden RFM segmentasyonu, tenure grupları, kullanım yoğunluğu — hepsi otomatik türetilir.</span>
-          <span class="en">From raw customer data: RFM segmentation, tenure groups, usage intensity — all derived automatically.</span>
+          <span class="tr">WA_Fn-UseC_-Telco-Customer-Churn.csv — 7.043 satır. Sütunlar: customerID, Contract, InternetService, PaymentMethod, MonthlyCharges, TotalCharges, tenure, Churn.</span>
+          <span class="en">WA_Fn-UseC_-Telco-Customer-Churn.csv — 7,043 rows. Columns: customerID, Contract, InternetService, PaymentMethod, MonthlyCharges, TotalCharges, tenure, Churn.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">🎯</div>
-        <h3><span class="tr">Risk skorlama</span><span class="en">Risk scoring</span></h3>
+        <h3><span class="tr">3 risk kademesi</span><span class="en">3 risk tiers</span></h3>
         <p>
-          <span class="tr">Her müşteriye 0-100 arası churn riski skoru. Yüksek risk segmenti ayrıca listelenir, önceliklendirilir.</span>
-          <span class="en">Churn risk score 0-100 per customer. High-risk segment listed separately and prioritized.</span>
+          <span class="tr">Eşik değerleri: HIGH ≥ 0.70, MED ≥ 0.40, LOW &lt; 0.40. Risk dosyası müşterileri segmentlere ayırır. Aksiyon kuyruğu öncelik sırasına göre sıralanır.</span>
+          <span class="en">Thresholds: HIGH ≥ 0.70, MED ≥ 0.40, LOW &lt; 0.40. Risk file segments each customer. Action queue sorted by priority.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">📄</div>
         <h3><span class="tr">PDF rapor</span><span class="en">PDF report</span></h3>
         <p>
-          <span class="tr">Model metrikleri, feature importance grafiği, risk dağılımı ve aksiyon önerileri — profesyonel PDF'e dönüşür.</span>
-          <span class="en">Model metrics, feature importance chart, risk distribution, and action recommendations — converted to professional PDF.</span>
+          <span class="tr">SHAP feature importance, 10 desil kaldıraç tablosu, risk dağılımı ve müşteri başına aksiyon önerileri — equity analizi görselleştirme stilinde PDF.</span>
+          <span class="en">SHAP feature importance, 10-decile lift table, risk distribution, and per-customer action recommendations — PDF with equity-style visualizations.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">🔍</div>
-        <h3><span class="tr">Model yorumlanabilirliği</span><span class="en">Model explainability</span></h3>
+        <h3><span class="tr">SHAP açıklanabilirlik</span><span class="en">SHAP explainability</span></h3>
         <p>
-          <span class="tr">Feature importance sıralaması raporda görünür. Hangi değişken churn'ü en çok etkiliyor — net görülebilir.</span>
-          <span class="en">Feature importance ranking visible in the report. Which variable affects churn most — clearly visible.</span>
+          <span class="tr">SHAP TreeExplainer — 300 satırlık örneklemde hesaplanır. Contract tipi, tenure ve MonthlyCharges hangi müşteri için en çok etki yapıyor — her row için ayrı açıklama.</span>
+          <span class="en">SHAP TreeExplainer — computed on 300-row sample. Contract type, tenure, and MonthlyCharges driver per customer — individual explanation per row.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">🔁</div>
-        <h3>sklearn Pipeline</h3>
+        <h3><span class="tr">Uçtan uca pipeline</span><span class="en">End-to-end pipeline</span></h3>
         <p>
-          <span class="tr">Preprocessing + model tek sklearn Pipeline nesnesi. Joblib ile serialize edilir, yeni veri gelince yeniden fit edilmeden prediction yapılabilir.</span>
-          <span class="en">Preprocessing + model as a single sklearn Pipeline object. Serialized via joblib — predict on new data without refitting.</span>
+          <span class="tr">Model script değil — tam analitik paketi: CSV → XGBoost → risk segmentasyonu → aksiyon kuyruğu → PDF. Pydantic v2 + Pandera ile schema doğrulama dahil.</span>
+          <span class="en">Not a model script — a complete analytics package: CSV → XGBoost → risk segmentation → action queue → PDF. Includes Pydantic v2 + Pandera schema validation.</span>
         </p>
       </div>
     </div>
@@ -144,57 +144,57 @@
   <!-- PROBLEM + WHY + SCENARIO -->
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">
-      <span class="tr">Problem neydi? Neden GradientBoosting?</span>
-      <span class="en">What was the problem? Why GradientBoosting?</span>
+      <span class="tr">Problem neydi? Neden XGBoost?</span>
+      <span class="en">What was the problem? Why XGBoost?</span>
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
-        <span class="tech-val"><span class="tr">SaaS şirketi, aylık abonelik iptali oranı %8.2. Müşteri hizmetleri ekibi, ayrılan müşteri ayrıldıktan sonra öğreniyor. "Zaten ayrıldı, geç kaldık" diyorlar. Önceden bilmek istiyorlar: kim 30 gün içinde ayrılacak? Ortalama aylık churn'ün şirkete maliyeti: €23.000 MRR kaybı.</span><span class="en">SaaS company with 8.2% monthly churn. Customer success team learns about churned customers after they've left. "They already left, too late" is the typical reaction. They want to know in advance: who will leave in the next 30 days? Average monthly cost: €23,000 MRR loss.</span></span>
+        <span class="tech-key"><span class="tr">Veri seti</span><span class="en">Dataset</span></span>
+        <span class="tech-val"><span class="tr">Kaggle Telco Customer Churn (blastchar/telco-customer-churn) — WA_Fn-UseC_-Telco-Customer-Churn.csv. 7.043 satır, anahtar sütunlar: Contract (Month-to-month / One year / Two year), InternetService, PaymentMethod, MonthlyCharges, TotalCharges, tenure (ay), Churn (Yes/No).</span><span class="en">Kaggle Telco Customer Churn (blastchar/telco-customer-churn) — WA_Fn-UseC_-Telco-Customer-Churn.csv. 7,043 rows, key columns: Contract (Month-to-month / One year / Two year), InternetService, PaymentMethod, MonthlyCharges, TotalCharges, tenure (months), Churn (Yes/No).</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key">Problem tipi</span>
-        <span class="tech-val"><span class="tr">İkili sınıflandırma: müşteri önümüzdeki 30 gün içinde ayrılacak mı (1) yoksa kalmaya devam edecek mi (0)? Hedef değişken: churn_30d. Eğitim verisi: son 18 aylık müşteri geçmişi, 12.400 kayıt.</span><span class="en">Binary classification: will the customer leave in the next 30 days (1) or continue (0)? Target variable: churn_30d. Training data: last 18 months of customer history, 12,400 records.</span></span>
+        <span class="tech-val"><span class="tr">İkili sınıflandırma: müşteri ayrılacak mı (Churn=Yes) yoksa kalmaya devam edecek mi (Churn=No)? test_size=0.3 ile eğitim/test bölmesi. 300 bootstrap iterasyonu ile güven aralığı hesabı. SHAP 300 satır örnekleminde çalışır.</span><span class="en">Binary classification: will the customer churn (Churn=Yes) or stay (Churn=No)? Train/test split at test_size=0.3. Confidence intervals via 300 bootstrap iterations. SHAP computed on 300-row sample.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">GBM ← LogReg</span>
-        <span class="tech-val"><span class="tr">Lojistik regresyon önce denendi. Test AUC: 0.71. GradientBoosting: test AUC 0.84. Neden daha iyi? Müşteri tenure × plan_tier × login_frequency üçlü etkileşimi doğrusal değil. Yüksek tenure + düşük plan + azalan login = churn sinyali. Bu kombinasyonu GBM ağaç bölmeleriyle doğal öğreniyor, LogReg görmüyor.</span><span class="en">Logistic regression tried first. Test AUC: 0.71. GradientBoosting: test AUC 0.84. Why better? The customer tenure × plan_tier × login_frequency triple interaction is non-linear. High tenure + low plan + declining logins = churn signal. GBM learns this through tree splits naturally, LogReg misses it.</span></span>
+        <span class="tech-key">XGBoost ← GBM</span>
+        <span class="tech-val"><span class="tr">sklearn GradientBoosting önce denendi. XGBoost n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9 ile daha iyi skor verdi. Neden? Month-to-month contract + yüksek MonthlyCharges + kısa tenure üçlü etkileşimi ağaç bölmeleriyle doğal yakalanıyor. XGBoost'un SHAP TreeExplainer entegrasyonu da temiz — her müşteri için ayrı açıklama üretildi.</span><span class="en">sklearn GradientBoosting tried first. XGBoost at n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9 scored better. Why? The Month-to-month contract + high MonthlyCharges + short tenure triple interaction is naturally captured by tree splits. XGBoost's SHAP TreeExplainer integration is also clean — individual explanation generated per customer.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">feature engineering</span>
-        <span class="tech-val"><span class="tr">Ham CRM verisi: signup_date, last_login_date, plan_tier, support_tickets_count. Türetilen feature'lar: tenure_days = today − signup_date, days_since_login = today − last_login_date, login_trend = rolling 30d avg logins / rolling 90d avg (azalış var mı?), tickets_per_month. Bu türetmeler AUC'yi 0.79'dan 0.84'e çıkardı.</span><span class="en">Raw CRM data: signup_date, last_login_date, plan_tier, support_tickets_count. Derived features: tenure_days = today − signup_date, days_since_login = today − last_login_date, login_trend = rolling 30d avg logins / rolling 90d avg (declining?), tickets_per_month. These derivations pushed AUC from 0.79 to 0.84.</span></span>
+        <span class="tech-key"><span class="tr">Çıktılar</span><span class="en">Outputs</span></span>
+        <span class="tech-val"><span class="tr">Risk dosyası: HIGH/MED/LOW segment etiketleri (eşikler 0.70 / 0.40). Aksiyon kuyruğu: önceliğe göre sıralı. PDF rapor: SHAP feature importance, 10 desil kaldıraç tablosu, equity görsel stiliyle risk dağılımı, müşteri başına retention playbook.</span><span class="en">Risk file: HIGH/MED/LOW segment labels (thresholds 0.70 / 0.40). Action queue: sorted by priority. PDF report: SHAP feature importance, 10-decile lift table, risk distribution in equity visual style, per-customer retention playbook.</span></span>
       </div>
     </div>
   </section>
 
   <section class="lsection">
     <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: 12.400 müşteri, risk raporu</span>
-      <span class="en">Step-by-step scenario: 12,400 customers, risk report</span>
+      <span class="tr">Adım adım senaryo: Kaggle Telco CSV → risk raporu</span>
+      <span class="en">Step-by-step scenario: Kaggle Telco CSV → risk report</span>
     </h2>
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Veri hazırlama: CRM export'tan feature'lara</span><span class="en">Data prep: from CRM export to features</span></h3>
+        <h3><span class="tr">Veri yükleme ve ön işleme</span><span class="en">Data load and preprocessing</span></h3>
         <p>
-          <span class="tr">customers.csv: 12.400 satır, 8 sütun. signup_date string → pd.to_datetime(). tenure_days hesaplandı. 247 müşteride last_login_date null (hiç giriş yapmamış) → days_since_login=999 ile dolduruldu (çok uzak anlamında). Plan tier label encoded. Pandera ile schema validate edildi.</span>
-          <span class="en">customers.csv: 12,400 rows, 8 columns. signup_date string → pd.to_datetime(). tenure_days calculated. 247 customers with null last_login_date (never logged in) → filled with days_since_login=999 (meaning "very far"). Plan tier label encoded. Schema validated with Pandera.</span>
+          <span class="tr">WA_Fn-UseC_-Telco-Customer-Churn.csv: 7.043 satır. TotalCharges sütunu bazı satırlarda boş string — float'a coerce edildi. Kategorik sütunlar (Contract, InternetService, PaymentMethod) label encoded. Pandera ile schema doğrulandı. Hedef değişken: Churn (Yes=1, No=0).</span>
+          <span class="en">WA_Fn-UseC_-Telco-Customer-Churn.csv: 7,043 rows. TotalCharges column has blank strings in some rows — coerced to float. Categorical columns (Contract, InternetService, PaymentMethod) label encoded. Pandera schema validated. Target: Churn (Yes=1, No=0).</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Skor: 843 müşteri HIGH risk</span><span class="en">Score: 843 customers HIGH risk</span></h3>
+        <h3><span class="tr">XGBoost eğitimi ve SHAP analizi</span><span class="en">XGBoost training and SHAP analysis</span></h3>
         <p>
-          <span class="tr">Model eğitildi (80% train, 20% test, stratified). GridSearchCV ile n_estimators=200, max_depth=4, learning_rate=0.05. Test AUC: 0.84. 12.400 müşterinin tamamına predict_proba çalıştırıldı. Eşik &gt;0.70: 843 HIGH risk, 0.40-0.70: 2.104 MED, &lt;0.40: 9.453 LOW.</span>
-          <span class="en">Model trained (80% train, 20% test, stratified). GridSearchCV: n_estimators=200, max_depth=4, learning_rate=0.05. Test AUC: 0.84. predict_proba run on all 12,400 customers. Threshold &gt;0.70: 843 HIGH risk, 0.40-0.70: 2,104 MED, &lt;0.40: 9,453 LOW.</span>
+          <span class="tr">test_size=0.3 ile 4.930 eğitim / 2.113 test. XGBoost: n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9. 300 bootstrap iterasyonu ile güven aralığı. SHAP TreeExplainer 300 satır örnekleminde çalıştırıldı. En güçlü sürücüler: Contract tipi, tenure, MonthlyCharges.</span>
+          <span class="en">4,930 train / 2,113 test at test_size=0.3. XGBoost: n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9. Confidence intervals from 300 bootstrap iterations. SHAP TreeExplainer on 300-row sample. Top drivers: Contract type, tenure, MonthlyCharges.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Müşteri başarısı harekete geçti</span><span class="en">Customer success took action</span></h3>
+        <h3><span class="tr">Risk segmentasyonu ve PDF çıktısı</span><span class="en">Risk segmentation and PDF output</span></h3>
         <p>
-          <span class="tr">PDF rapordaki HIGH risk listesi (843 kişi) müşteri başarısı ekibine verildi. İlk 2 haftada 843'ün 312'sine indirim/yükseltme teklifi yapıldı. %38'i (%118 kişi) teklifi kabul etti ve kaldı. Ortalama MRR değeri €149 → aylık kurtarılan MRR: €17.582. Yatırım geri dönüşü: 1 ay içinde.</span>
-          <span class="en">HIGH risk list (843 people) from PDF report given to customer success team. In the first 2 weeks, 312 of 843 received discount/upgrade offer. 38% (118 people) accepted and stayed. Average MRR value €149 → monthly saved MRR: €17,582. Return on investment: within 1 month.</span>
+          <span class="tr">7.043 müşterinin tamamına predict_proba çalıştırıldı. Eşik ≥0.70: HIGH risk, ≥0.40: MED risk, &lt;0.40: LOW risk. Önceliğe göre sıralı aksiyon kuyruğu oluşturuldu. PDF: SHAP grafikleri, 10 desil kaldıraç tablosu, her segment için retention playbook — equity analizi görsel stiliyle.</span>
+          <span class="en">predict_proba run on all 7,043 customers. Threshold ≥0.70: HIGH risk, ≥0.40: MED risk, &lt;0.40: LOW risk. Action queue built sorted by priority. PDF: SHAP charts, 10-decile lift table, retention playbook per segment — in equity analysis visual style.</span>
         </p>
       </div>
     </div>
@@ -208,7 +208,7 @@
     <div class="tech-table">
       <div class="tech-row">
         <span class="tech-key">ML</span>
-        <span class="tech-val">sklearn · GradientBoostingClassifier · Pipeline · GridSearchCV</span>
+        <span class="tech-val">XGBoost · SHAP TreeExplainer · 300 bootstrap · 10-decile lift table</span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>

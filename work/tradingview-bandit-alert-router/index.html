@@ -37,8 +37,8 @@
       </div>
       <h1 class="lhero-title">TradingView Alert Bandit Router</h1>
       <p class="lhero-sub">
-        <span class="tr">4 TradingView stratejin var, hepsi aynı anda sinyal veriyor. Hangisini execute edeceğini nasıl biliyorsun? Sabit %25/%25 allocation körce dağıtım. Bu sistem, hangi strateji şu an kazanıyorsa ona daha fazla rota gönderir — ve piyasa koşulları değiştikçe bunu otomatik günceller.</span>
-        <span class="en">You have 4 TradingView strategies all firing signals simultaneously. How do you know which one to execute? Fixed 25%/25% allocation is blind distribution. This system routes more signals to whichever strategy is winning right now — and automatically updates as market conditions change.</span>
+        <span class="tr">TradingView webhook'u alınır → sembol allowlist + güven eşiği (0.55) + risk bütçesi ($2.500) olmak üzere 3 bağımsız güvenlik kapısından geçirilir → alert_id üzerinde tekilleştirilir → Thompson Sampling en iyi performans gösteren kanala rota seçer → posteriorlar ödülden güncellenir. 20 gerçek alert kaydı, 4 strateji, 4 sembol.</span>
+        <span class="en">TradingView webhook arrives → passes 3 independent safety gates: symbol allowlist + confidence floor (0.55) + risk budget ($2,500) → deduplicated on alert_id → Thompson Sampling routes to best-performing channel → posteriors updated from reward. 20 real alert records, 4 strategies, 4 symbols.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/tradingview-bandit-alert-router" target="_blank" rel="noopener">
@@ -70,19 +70,19 @@
   <div class="lmetrics">
     <div class="lmetric">
       <strong>4</strong>
-      <span><span class="tr">strateji kolu</span><span class="en">strategy arms</span></span>
+      <span><span class="tr">strateji (breakout/reversion/momentum/scalp)</span><span class="en">strategies (breakout/reversion/momentum/scalp)</span></span>
     </div>
     <div class="lmetric">
-      <strong>Beta</strong>
-      <span><span class="tr">win/loss posteriors</span><span class="en">win/loss posteriors</span></span>
+      <strong>0.55</strong>
+      <span><span class="tr">güven eşiği (altı bloke)</span><span class="en">confidence floor (below=blocked)</span></span>
     </div>
     <div class="lmetric">
-      <strong>kapalı</strong>
-      <span><span class="tr">döngü feedback</span><span class="en">loop feedback</span></span>
+      <strong>$2,500</strong>
+      <span><span class="tr">maks. toplam risk</span><span class="en">max total risk</span></span>
     </div>
     <div class="lmetric">
-      <strong>risk</strong>
-      <span><span class="tr">guard + validator</span><span class="en">guard + validator</span></span>
+      <strong>20</strong>
+      <span><span class="tr">örnek alert kaydı</span><span class="en">sample alert records</span></span>
     </div>
   </div>
 
@@ -97,8 +97,8 @@
         <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📡</div>
         <h3><span class="tr">Çakışan sinyal, kör allocation</span><span class="en">Overlapping signals, blind allocation</span></h3>
         <p>
-          <span class="tr">Müşteri: 4 farklı TradingView stratejisi çalıştırıyor — RSI breakout, EMA cross, volume spike, VWAP reversion. Hepsi aynı semboller üzerinde. Aynı anda sinyal geldiğinde hangisi execute edileceği elle seçiliyor. Hafta sonu evde olmadığında opportunity kaçıyor.</span>
-          <span class="en">Client: running 4 different TradingView strategies — RSI breakout, EMA cross, volume spike, VWAP reversion. All on the same symbols. When signals fire simultaneously, arm selection is manual. When they're away from the screen, opportunities are missed.</span>
+          <span class="tr">4 strateji: breakout_v1, mean_reversion_v2, momentum_v3, scalp_v4. 4 sembol: BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT. Zaman dilimleri: 5m / 15m / 1h / 4h. Güven skoru 0.41–0.92, risk_usd $85–$600. Aynı anda sinyal gelince hangisini execute edeceğini nasıl seçiyorsun?</span>
+          <span class="en">4 strategies: breakout_v1, mean_reversion_v2, momentum_v3, scalp_v4. 4 symbols: BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT. Timeframes: 5m / 15m / 1h / 4h. Confidence 0.41–0.92, risk_usd $85–$600. When signals fire simultaneously, how do you choose which to execute?</span>
         </p>
       </div>
       <div class="feature">
@@ -128,16 +128,16 @@
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Sabit allocation</span><span class="en">Fixed allocation</span></span>
-        <span class="tech-val"><span class="tr">Her stratejiye %25 ver. Trend döneminde RSI breakout %73 win rate'e ulaşsa bile EMA cross'a hâlâ %25 trafik gidiyor. Bunu öğrenmen 3-4 ay sürüyor manuel analiz yapmazsan.</span><span class="en">Give each strategy 25%. Even if RSI breakout reaches 73% win rate in a trending market, EMA cross still gets 25% traffic. Without manual analysis it takes 3-4 months to notice this.</span></span>
+        <span class="tech-key"><span class="tr">3 güvenlik kapısı</span><span class="en">3 safety gates</span></span>
+        <span class="tech-val"><span class="tr">Herhangi bir canlı kanala ulaşmadan önce: (1) sembol allowlist kontrolü, (2) güven eşiği: confidence &lt; 0.55 → bloke, (3) risk bütçesi: max_total_risk_usd=$2.500 aşıldı mı? Üç kapı da bağımsız — biri geçilmezse alert sonlanır.</span><span class="en">Before any live channel receives the alert: (1) symbol allowlist check, (2) confidence floor: confidence &lt; 0.55 → blocked, (3) risk budget: max_total_risk_usd=$2,500 exceeded? All three gates are independent — fail one and the alert is dropped.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">Round-robin</span>
-        <span class="tech-val"><span class="tr">Sırayla dönüştür. Tamamen kör: kazanan strateji hangisi olursa olsun eşit pay alır. Hiç öğrenme yok.</span><span class="en">Rotate in sequence. Completely blind: whichever strategy is winning still gets equal share. Zero learning.</span></span>
+        <span class="tech-key">alert_id tekilleştirme</span>
+        <span class="tech-val"><span class="tr">TradingView aynı alert'i iki kez gönderebilir (retry). alert_id üzerinde deduplicate: aynı id ikinci kez gelirse kanal seçimi yapılmaz. Mükerrer emir yok.</span><span class="en">TradingView may send the same alert twice (retry). Deduplicate on alert_id: if the same id arrives again, no channel selection happens. No duplicate orders.</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key" style="color:#ff4800">Thompson Sampling</span>
-        <span class="tech-val"><span class="tr">Her strateji için Beta(alpha=wins+1, beta=losses+1) posterior tut. Her yeni alertte tüm posteriorlardan örnekle, en yüksek sample'ı olan stratejiye rota gönder. Win → o kolun alpha'sı artar. Loss → beta artar. Otomatik adaptasyon, sıfır retraining.</span><span class="en">Maintain Beta(alpha=wins+1, beta=losses+1) posterior per strategy. On each new alert, sample from all posteriors, route to the strategy with the highest sample. Win → that arm's alpha increases. Loss → beta increases. Automatic adaptation, zero retraining.</span></span>
+        <span class="tech-val"><span class="tr">Her strateji kolu (breakout_v1 / mean_reversion_v2 / momentum_v3 / scalp_v4) için Beta posterior. Ödül: confidence ≥ 0.70 → reward=1.0, değilse reward=0.3. exploration_seed=7. Her alertte posteriorlardan örnekle, en yüksek sample kazanır.</span><span class="en">Beta posterior per strategy arm (breakout_v1 / mean_reversion_v2 / momentum_v3 / scalp_v4). Reward: confidence ≥ 0.70 → reward=1.0, else reward=0.3. exploration_seed=7. Sample from all posteriors per alert, highest sample wins.</span></span>
       </div>
     </div>
     <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
@@ -154,36 +154,36 @@
   <!-- SCENARIO -->
   <section class="lsection">
     <h2 class="lsection-title">
-      <span class="tr">80 işlem sonrası durum</span>
-      <span class="en">State after 80 trades</span>
+      <span class="tr">sample_alerts.jsonl — 20 kayıt, 4 strateji</span>
+      <span class="en">sample_alerts.jsonl — 20 records, 4 strategies</span>
     </h2>
     <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">3 haftalık canlı kullanım. Piyasa trending seyretti. Ne oldu?</span>
-      <span class="en">3 weeks of live use. Market was in a trending phase. What happened?</span>
+      <span class="tr">examples/sample_alerts.jsonl: 20 gerçek alert kaydı. 4 strateji × 4 sembol × farklı zaman dilimi.</span>
+      <span class="en">examples/sample_alerts.jsonl: 20 real alert records. 4 strategies × 4 symbols × varying timeframes.</span>
     </p>
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">RSI breakout dominantlığa geçti</span><span class="en">RSI breakout became dominant</span></h3>
+        <h3><span class="tr">3 güvenlik kapısından geçiş</span><span class="en">Passing 3 safety gates</span></h3>
         <p>
-          <span class="tr">İlk 20 işlemde tüm stratejiler benzer trafik aldı (uniform prior). RSI breakout tutarlı kazanmaya başlayınca alpha/beta oranı diğerlerinden ayrıştı. 40. işlemden itibaren alertlerin %65+ RSI breakout'a gitti.</span>
-          <span class="en">First 20 trades: all strategies got similar traffic (uniform prior). As RSI breakout began winning consistently, alpha/beta ratio diverged from others. After trade 40, 65%+ of alerts routed to RSI breakout.</span>
+          <span class="tr">Örnek alert: breakout_v1, BTCUSDT, 1h, confidence=0.41, risk_usd=$85. Güven eşiği: 0.41 &lt; 0.55 → bloke edildi. Başka bir alert: momentum_v3, ETHUSDT, 15m, confidence=0.78, risk_usd=$320. Üç kapıyı da geçti → Thompson Sampling'e gönderildi.</span>
+          <span class="en">Example alert: breakout_v1, BTCUSDT, 1h, confidence=0.41, risk_usd=$85. Confidence gate: 0.41 &lt; 0.55 → blocked. Another alert: momentum_v3, ETHUSDT, 15m, confidence=0.78, risk_usd=$320. Passed all 3 gates → sent to Thompson Sampling.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Risk guard 12 işlemi engelledi</span><span class="en">Risk guard blocked 12 trades</span></h3>
+        <h3><span class="tr">Thompson Sampling kanal seçimi</span><span class="en">Thompson Sampling channel routing</span></h3>
         <p>
-          <span class="tr">Toplam 92 alert geldi. 12'si risk guard'da engellendi: 7'si max drawdown limitini aşıyordu, 5'i max position sayısı limitine takıldı. Geriye 80 execute edildi. Bu filtre olmadan 3 tanesi büyük loss'la kapanırdı.</span>
-          <span class="en">92 total alerts received. 12 blocked by risk guard: 7 exceeded max drawdown limit, 5 hit max position count. 80 executed. Without this filter, 3 would have closed with major losses.</span>
+          <span class="tr">momentum_v3 için Beta posterior örneklendi. confidence=0.78 ≥ 0.70 → reward=1.0 olarak atandı. Routing sonrası posterior güncellendi: momentum_v3'ün alpha'sı artar. alert_id üzerinde tekilleştirme — aynı alert ikinci kez gelirse kanal seçimi atlanır.</span>
+          <span class="en">Beta posterior sampled for momentum_v3. confidence=0.78 ≥ 0.70 → reward=1.0 assigned. Posterior updated after routing: momentum_v3's alpha increases. Deduplicated on alert_id — if same alert arrives again, channel selection is skipped.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Ranging market'a geçilseydi ne olurdu?</span><span class="en">What if the market turns ranging?</span></h3>
+        <h3><span class="tr">Posterior durumu güncellendi</span><span class="en">Posterior state updated</span></h3>
         <p>
-          <span class="tr">RSI breakout ranging market'ta kaybetmeye başlayacak → beta artacak → posterior ortalaması düşecek → Thompson sampling daha az seçecek. VWAP reversion kazanmaya başlayacak → alpha artacak → dominant olacak. Hiçbir müdahale gerekmeden, otomatik.</span>
-          <span class="en">RSI breakout will start losing in ranging market → beta increases → posterior mean drops → Thompson samples it less. VWAP reversion begins winning → alpha increases → becomes dominant. Automatic, no intervention needed.</span>
+          <span class="tr">20 alert işlendikten sonra posteriorlar ayrışmış olur. Yüksek confidence alertleri (≥0.70) alan stratejiler daha hızlı alpha biriktirir. exploration_seed=7 ile her çalıştırmada tutarlı keşif. Piyasa koşulları değiştikçe posteriorlar otomatik uyarlanır — yeniden eğitim gerekmez.</span>
+          <span class="en">After 20 alerts, posteriors have diverged. Strategies receiving high-confidence alerts (≥0.70) accumulate alpha faster. exploration_seed=7 ensures consistent exploration across runs. As market conditions shift, posteriors auto-adapt — no retraining needed.</span>
         </p>
       </div>
     </div>
@@ -214,7 +214,7 @@
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · 20 farklı alert tipi (BTCUSDT/ETHUSDT/SOLUSDT/BNBUSDT) · CI</span>
+        <span class="tech-val">pytest · examples/sample_alerts.jsonl (20 kayıt, breakout_v1/mean_reversion_v2/momentum_v3/scalp_v4 × BTCUSDT/ETHUSDT/SOLUSDT/BNBUSDT) · CI</span>
       </div>
     </div>
   </section>
