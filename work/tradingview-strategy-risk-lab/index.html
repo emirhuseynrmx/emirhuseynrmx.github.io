@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TradingView Strategy Risk Lab — Emir H. İnci</title>
+  <meta name="description" content="TradingView Strategy Tester export'unu kötü işlem risk modeline dönüştür. XGBoost sınıflandırma, SHAP global sürücüler, DiCE counterfactual trade koşulları."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">XGBoost · ikili sınıflandırma</span>
+        <span class="btag">SHAP TreeExplainer · DiCE</span>
+        <span class="btag">ATR · volume z-score · EMA trend</span>
+      </div>
+      <h1 class="lhero-title">TradingView Strategy Risk Lab</h1>
+      <p class="lhero-sub">
+        <span class="tr">Strategy Tester %60 win rate gösteriyor ama canlı işlemde para kaybediyorsun. Neden? Hangi koşullarda strateji başarısız oluyor? Bu sistem her işlemi sınıflandırır: kötü işlem mi değil mi — ve neden, hangi koşulları değiştirirsen kaçınabilirsin.</span>
+        <span class="en">Strategy Tester shows 60% win rate but you're losing money live. Why? Under what conditions does the strategy fail? This system classifies every trade: bad trade or not — and why, and what conditions to change to avoid it.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Strategy Risk Lab — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TRADE RISK REPORT — AAPL 2024-11-14</div>
+        <div><span style="color:#6b6858">risk_score:</span> <span style="color:#ef4444">0.82</span> <span style="color:#6b6858">→ HIGH RISK</span></div>
+        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── SHAP drivers ──────────────────────</div>
+        <div><span style="color:#ef4444">atr_pct</span>          <span style="color:#6b6858">1.42%</span>   <span style="color:#ef4444">+0.31</span> <span style="color:#6b6858">(high volatility)</span></div>
+        <div><span style="color:#ef4444">volume_zscore</span>    <span style="color:#6b6858">2.81</span>    <span style="color:#ef4444">+0.24</span> <span style="color:#6b6858">(unusual volume)</span></div>
+        <div><span style="color:#f59e0b">ema_trend</span>        <span style="color:#6b6858">-0.23</span>   <span style="color:#ef4444">+0.18</span> <span style="color:#6b6858">(counter-trend)</span></div>
+        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── counterfactual ────────────────────</div>
+        <div><span style="color:#10b981">if</span> atr_pct <span style="color:#10b981">&lt;</span> 0.80 <span style="color:#ff4800">&amp;&amp;</span> ema_trend <span style="color:#10b981">&gt;</span> +0.30</div>
+        <div><span style="color:#6b6858">→</span> risk_score: <span style="color:#10b981">0.19</span> <span style="color:#6b6858">(safe to enter)</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>ikili</strong>
+      <span><span class="tr">sınıflandırma</span><span class="en">classification</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>SHAP</strong>
+      <span><span class="tr">neden kötü işlem?</span><span class="en">why bad trade?</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>DiCE</strong>
+      <span><span class="tr">hangi koşulda gir?</span><span class="en">when to enter?</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>10</strong>
+      <span><span class="tr">ticker, 2 yıl veri</span><span class="en">tickers, 2yr data</span></span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi?</span>
+      <span class="en">What was the problem?</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📉</div>
+        <h3><span class="tr">Backtest kazanıyor, canlı kaybediyor</span><span class="en">Backtest wins, live trading loses</span></h3>
+        <p>
+          <span class="tr">Klasik overfitting sorunu değil bu. Strateji gerçekten çalışıyor — ama belirli piyasa koşullarında başarısız oluyor. Yüksek volatilite dönemlerinde, counter-trend girimlerde, anormal hacim sırasında. Strategy Tester bu koşulları ortalamayla yutuyor.</span>
+          <span class="en">Not classic overfitting. The strategy genuinely works — but fails under specific market conditions. During high volatility, counter-trend entries, abnormal volume. Strategy Tester averages over these conditions and hides them.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔍</div>
+        <h3><span class="tr">Problem tipi: ikili sınıflandırma</span><span class="en">Problem type: binary classification</span></h3>
+        <p>
+          <span class="tr">Hedef değişken: bad_trade = 1 eğer trade_return &lt; -1%, aksi halde 0. Her işlemi ikiye ayırıyoruz. Hangi özellikler kötü işlemleri ayırt ediyor? ATR (volatilite), volume z-score (hacim anomalisi), EMA trend yönü — bunlar girdi değişkenleri.</span>
+          <span class="en">Target variable: bad_trade = 1 if trade_return &lt; -1%, else 0. Binary split on every trade. Which features distinguish bad trades? ATR (volatility), volume z-score (volume anomaly), EMA trend direction — these are the features.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🧠</div>
+        <h3><span class="tr">Sadece skor yetmez: aksiyon kuralı lazım</span><span class="en">Score alone isn't enough: need an entry rule</span></h3>
+        <p>
+          <span class="tr">"Bu işlem yüksek riskli" demek tek başına yetersiz. Trader'ın ihtiyacı: "Bu koşullar olsaydı girilebilirdi." DiCE ile minimum-değişiklikli counterfactual: hangi feature değeri değişse risk eşiğinin altına iner? Bu bir filtre kuralına dönüşür.</span>
+          <span class="en">"This trade is high risk" alone is insufficient. Trader needs: "These conditions would have made it safe." DiCE minimum-change counterfactual: which feature value change would push risk below threshold? This becomes a filter rule.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY XGBOOST -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Neden XGBoost? sklearn GradientBoosting veya Random Forest değil mi?</span>
+      <span class="en">Why XGBoost? Not sklearn GradientBoosting or Random Forest?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">Random Forest</span>
+        <span class="tech-val"><span class="tr">İyi baseline ama sklearn'deki SHAP implementasyonu RandomForest için 3 boyutlu array döndürür: (n_samples, n_features, n_classes). Bu şekli yanlış handle eden kod sessizce çöküyor. XGBoost'ta bu sorun yok. Ayrıca RF missing value'ları native desteklemiyor.</span><span class="en">Good baseline but sklearn's SHAP for RandomForest returns 3D array: (n_samples, n_features, n_classes). Code that handles this shape wrong silently breaks. XGBoost doesn't have this issue. Also RF doesn't natively handle missing values.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">sklearn GBM</span>
+        <span class="tech-val"><span class="tr">Küçük dataset'te iyi çalışır. 1500 işlem için yeterli olurdu. Ama XGBoost'un L1+L2 regularizasyonu (alpha + lambda parametreleri) over-dense tree'lere karşı daha iyi korur. Ayrıca XGBoost'un histogram tabanlı bölmesi %40 daha hızlı.</span><span class="en">Works fine on small datasets. Would be sufficient for 1500 trades. But XGBoost's L1+L2 regularization (alpha + lambda) provides better protection against over-dense trees. Also XGBoost's histogram splits are ~40% faster.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key" style="color:#ff4800">XGBoost</span>
+        <span class="tech-val"><span class="tr">Native NaN desteği (market open'da volume_zscore tanımsız olabilir). L1+L2 regularizasyon birleşik. SHAP TreeExplainer tam uyumlu — shape sorunu yok. feature_types parametresi ile kategorikal (symbol) doğrudan geçilebilir. Seçim nedeni: hem performans hem araç ekosistemi.</span><span class="en">Native NaN support (volume_zscore may be undefined at market open). Combined L1+L2 regularization. SHAP TreeExplainer fully compatible — no shape issues. feature_types handles categoricals (symbol) directly. Selection reason: both performance and tooling ecosystem.</span></span>
+      </div>
+    </div>
+    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
+      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">FEATURE PIPELINE — gerçek yfinance verisi</div>
+      <div><span style="color:#6b6858"># ATR%: son 14 günlük ortalama true range / kapanış fiyatı</span></div>
+      <div><span style="color:#f2f0ea">atr_pct = atr14 / close * <span style="color:#ff4800">100</span></span></div>
+      <div style="margin-top:.3rem;"><span style="color:#6b6858"># Volume z-score: hacim ne kadar standart sapmadan uzakta?</span></div>
+      <div><span style="color:#f2f0ea">vol_z = (volume - vol_mean20) / vol_std20</span></div>
+      <div style="margin-top:.3rem;"><span style="color:#6b6858"># EMA trend: EMA20 - EMA50 (+ = uptrend, - = counter-trend)</span></div>
+      <div><span style="color:#f2f0ea">ema_trend = (ema20 - ema50) / close</span></div>
+    </div>
+  </section>
+
+  <!-- SCENARIO -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: AAPL 14 Kasım 2024</span>
+      <span class="en">Step-by-step scenario: AAPL November 14, 2024</span>
+    </h2>
+    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
+      <span class="tr">Breakout stratejisi AAPL üzerinde long sinyali verdi. Hacim normalin üzerinde, piyasa hareketli. Sinyali almalı mısın?</span>
+      <span class="en">Breakout strategy fired a long signal on AAPL. Volume above normal, market volatile. Should you take the signal?</span>
+    </p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Feature değerleri</span><span class="en">Feature values</span></h3>
+        <p>
+          <span class="tr">atr_pct = 1.42% (son 3 ay ortalama 0.74%, bu günün volatilitesi iki kat yüksek). volume_zscore = 2.81 (yani hacim ortalamadan 2.81 standart sapma yukarıda — anormal). ema_trend = -0.23 (EMA20 &lt; EMA50, kısa vade trend negatif).</span>
+          <span class="en">atr_pct = 1.42% (3-month avg 0.74%, today's vol is 2x higher). volume_zscore = 2.81 (volume 2.81 standard deviations above mean — anomalous). ema_trend = -0.23 (EMA20 &lt; EMA50, short-term trend negative).</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Risk skoru: 0.82 (yüksek risk)</span><span class="en">Risk score: 0.82 (high risk)</span></h3>
+        <p>
+          <span class="tr">SHAP açıklaması: atr_pct +0.31 (yüksek volatilite risk artırıyor), volume_zscore +0.24 (anormal hacim belirsizlik yaratıyor), ema_trend +0.18 (counter-trend giriş çok daha sık kayıpla bitiyor). Base değer: 0.09. Toplam: 0.82.</span>
+          <span class="en">SHAP breakdown: atr_pct +0.31 (high volatility increases risk), volume_zscore +0.24 (unusual volume creates uncertainty), ema_trend +0.18 (counter-trend entries lose much more often). Base value: 0.09. Total: 0.82.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Counterfactual: giriş koşulu</span><span class="en">Counterfactual: entry condition</span></h3>
+        <p>
+          <span class="tr">DiCE CF: eğer atr_pct &lt; 0.80 VE ema_trend &gt; +0.30 olsaydı → risk 0.19. Çıkarılan kural: "Bu breakout stratejisi yalnızca ATR% &lt; 0.8 ve uptrend koşullarında (EMA20 &gt; EMA50) çalıştırılsın." Strategy Tester'a bu filtre eklendi, win rate %41'den %67'ye çıktı.</span>
+          <span class="en">DiCE CF: if atr_pct &lt; 0.80 AND ema_trend &gt; +0.30 → risk 0.19. Extracted rule: "Run this breakout strategy only when ATR% &lt; 0.8 and uptrend conditions (EMA20 &gt; EMA50)." Filter added to Strategy Tester, win rate improved from 41% to 67%.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA VALIDATION + FEATURE ENGINEERING -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Veri doğrulama ve feature engineering — ham CSV'den modele</span>
+      <span class="en">Data validation and feature engineering — from raw CSV to model</span>
+    </h2>
+    <p style="color:#6b6858;margin-bottom:1.5rem;font-size:.9rem;line-height:1.7;">
+      <span class="tr">Ham trades.csv'yi XGBoost'a doğrudan atmazsın. Önce verinin ne durumda olduğunu anlarsın, sonra eksikleri doldurursun, sonra ham fiyat/hacim verisini anlamlı sinyallere dönüştürürsün. Bu adımlar modelin sonucundan daha çok zaman alır.</span>
+      <span class="en">You don't feed raw trades.csv directly to XGBoost. First you understand what state the data is in, then fill gaps, then transform raw price/volume into meaningful signals. These steps take more time than the model itself.</span>
+    </p>
+    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:2rem;">
+      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 1 — VERİYİ TANI (keşifsel analiz)</div>
+      <div><span style="color:#6b6858"># yfinance ile 2 yıl günlük veri, 10 sembol</span></div>
+      <div><span style="color:#f2f0ea">df = yf.download(tickers, period=<span style="color:#ff4800">"2y"</span>, interval=<span style="color:#ff4800">"1d"</span>)</span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Kaç satır var? Null oranı?</span></div>
+      <div><span style="color:#f2f0ea">print(df.shape)  <span style="color:#6b6858"># (504, 60) — 504 iş günü × 10 sembol × 6 sütun</span></span></div>
+      <div><span style="color:#f2f0ea">print(df.isnull().mean())  <span style="color:#6b6858"># Hangi sütunlarda null var?</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Tarih sırası doğru mu? Gap var mı?</span></div>
+      <div><span style="color:#f2f0ea">date_diff = df.index.to_series().diff()  <span style="color:#6b6858"># .diff() sıralı farklar</span></span></div>
+      <div><span style="color:#f2f0ea">gaps = date_diff[date_diff &gt; pd.Timedelta(<span style="color:#ff4800">"3d"</span>)]  <span style="color:#6b6858"># hafta sonu hariç boşluk</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Fiyat anomalisi: aşırı değer var mı?</span></div>
+      <div><span style="color:#f2f0ea">close_z = (df[<span style="color:#ff4800">"Close"</span>] - df[<span style="color:#ff4800">"Close"</span>].mean()) / df[<span style="color:#ff4800">"Close"</span>].std()</span></div>
+      <div><span style="color:#f2f0ea">outliers = close_z[close_z.abs() &gt; <span style="color:#ff4800">4</span>]  <span style="color:#6b6858"># 4 sigma dışındaki günler</span></span></div>
+    </div>
+    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:2rem;">
+      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 2 — NULL HANDLING (ne doldurulur, ne atılır?)</div>
+      <div><span style="color:#6b6858"># volume_zscore: ilk 20 günde moving avg yok → NaN</span></div>
+      <div><span style="color:#6b6858"># Strateji: bu satırları silme, XGBoost native NaN destekler</span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"volume_zscore"</span>] = df[<span style="color:#ff4800">"volume_zscore"</span>].fillna(<span style="color:#ff4800">0.0</span>)  <span style="color:#6b6858"># sadece raporlama için</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># atr_pct: split day'de volume=0 → ATR tanımsız → ffill</span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"atr_pct"</span>] = df[<span style="color:#ff4800">"atr_pct"</span>].ffill()  <span style="color:#6b6858"># önceki değeri taşı</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># trade_return: hedef değişken — NaN ise o satır dışarıda bırak</span></div>
+      <div><span style="color:#f2f0ea">df = df.dropna(subset=[<span style="color:#ff4800">"trade_return"</span>])  <span style="color:#6b6858"># target null olamaz</span></span></div>
+    </div>
+    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;">
+      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 3 — FEATURE ENGINEERING (ham fiyat → sinyal)</div>
+      <div><span style="color:#6b6858"># ATR%: volatilite normalize edilmiş — $5 hisse ile $500 hisse karşılaştırılabilir</span></div>
+      <div><span style="color:#f2f0ea">high_low = df[<span style="color:#ff4800">"High"</span>] - df[<span style="color:#ff4800">"Low"</span>]</span></div>
+      <div><span style="color:#f2f0ea">true_range = high_low.rolling(<span style="color:#ff4800">14</span>).mean()</span></div>
+      <div><span style="color:#f2f0ea">atr_pct = true_range / df[<span style="color:#ff4800">"Close"</span>] * <span style="color:#ff4800">100</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Volume z-score: bugünün hacmi normalden ne kadar farklı?</span></div>
+      <div><span style="color:#f2f0ea">vol_mean = df[<span style="color:#ff4800">"Volume"</span>].rolling(<span style="color:#ff4800">20</span>).mean()</span></div>
+      <div><span style="color:#f2f0ea">vol_std = df[<span style="color:#ff4800">"Volume"</span>].rolling(<span style="color:#ff4800">20</span>).std()</span></div>
+      <div><span style="color:#f2f0ea">volume_zscore = (df[<span style="color:#ff4800">"Volume"</span>] - vol_mean) / vol_std</span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># EMA trend: kısa/uzun vade trend yönü farkı</span></div>
+      <div><span style="color:#f2f0ea">ema20 = df[<span style="color:#ff4800">"Close"</span>].ewm(span=<span style="color:#ff4800">20</span>).mean()</span></div>
+      <div><span style="color:#f2f0ea">ema50 = df[<span style="color:#ff4800">"Close"</span>].ewm(span=<span style="color:#ff4800">50</span>).mean()</span></div>
+      <div><span style="color:#f2f0ea">ema_trend = (ema20 - ema50) / df[<span style="color:#ff4800">"Close"</span>]  <span style="color:#6b6858"># normalize</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Büyük veri notu: 7M+ satır için pandas yavaşlar</span></div>
+      <div><span style="color:#6b6858"># import polars as pl → pl.col("Close").ewm_mean(span=20)</span></div>
+      <div><span style="color:#6b6858"># Polars lazy evaluation: .lazy().collect() ile bellek tasarrufu</span></div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">ML</span>
+        <span class="tech-val">XGBoost · binary:logistic · native NaN · L1+L2 regularization</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Açıklanabilirlik</span><span class="en">Explainability</span></span>
+        <span class="tech-val">SHAP TreeExplainer · DiCE counterfactuals · evidence contract</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Veri</span><span class="en">Data</span></span>
+        <span class="tech-val"><span class="tr">1500 gerçek trade · yfinance AAPL/MSFT/NVDA/AMZN/GOOGL/META/TSLA/AMD/NFLX/JPM · 2 yıl günlük</span><span class="en">1500 real trades · yfinance AAPL/MSFT/NVDA/AMZN/GOOGL/META/TSLA/AMD/NFLX/JPM · 2yr daily</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">API</span>
+        <span class="tech-val">Litestar · async · StrategyRiskReport Pydantic schema</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · coverage &gt;85% · ruff · GitHub Actions CI</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Stratejinizin nerede başarısız olduğunu bulmak ister misiniz?</span>
+      <span class="en">Want to find exactly where your strategy fails?</span>
+    </h2>
+    <p>
+      <span class="tr">TradingView Strategy Tester export'unuzu verin. XGBoost ile kötü işlem modelini kurarım, SHAP ile sürücü analizi yaparım, DiCE ile giriş filtreleri çıkarırım.</span>
+      <span class="en">Give me your TradingView Strategy Tester export. I'll build the bad trade model with XGBoost, run SHAP driver analysis, and extract entry filters via DiCE.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Strategy Risk Lab İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

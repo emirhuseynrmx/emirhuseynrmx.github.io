@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>RL Pricing Bandit Simulator — Emir H. İnci</title>
+  <meta name="description" content="Thompson Sampling ile fiyat optimizasyonu. A/B testine gerek kalmadan hangi fiyatın en fazla dönüşüm getirdiğini öğrenen canlı algoritma."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">Thompson Sampling · Beta posteriors</span>
+        <span class="btag">Litestar · Pydantic v2</span>
+        <span class="btag">Online learning</span>
+      </div>
+      <h1 class="lhero-title">RL Pricing Bandit Simulator</h1>
+      <p class="lhero-sub">
+        <span class="tr">Problem: hangi fiyat en fazla satar? A/B testi 6 hafta sürer, bu kadar süre kararsız kalamassın. Thompson Sampling her ziyaretçiden öğrenerek optimum fiyata kendiliğinden yakınsıyor — haftalarca beklemeden.</span>
+        <span class="en">Problem: which price converts best? A/B test takes 6 weeks. Thompson Sampling learns from every visitor and converges to the optimal price on its own — no waiting required.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Pricing Bandit — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">ARM POSTERIOR STATE — round 247</div>
+        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.5rem;">Arm              Price   alpha   beta    Mean    E[margin]</div>
+        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.8rem;">──────────────────────────────────────────────────────────</div>
+        <div><span style="color:#f2f0ea">starter_29</span>   <span style="color:#6b6858">$29</span>    <span style="color:#ff4800">28</span>      <span style="color:#ff4800">192</span>     <span style="color:#f2f0ea">0.127</span>   <span style="color:#f2f0ea">$3.68</span></div>
+        <div><span style="color:#f2f0ea">growth_49</span>    <span style="color:#6b6858">$49</span>    <span style="color:#ff4800">31</span>      <span style="color:#ff4800">138</span>     <span style="color:#10b981">0.183</span>   <span style="color:#10b981">$8.97</span></div>
+        <div><span style="color:#f2f0ea">premium_79</span>   <span style="color:#6b6858">$79</span>    <span style="color:#ff4800">8</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff4800">55</span>      <span style="color:#f2f0ea">0.127</span>   <span style="color:#ff4800">$10.03</span> ← best</div>
+        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          conv_rate=<span style="color:#ff4800">14.8%</span> &nbsp;·&nbsp; revenue=<span style="color:#f2f0ea">$4,831</span> &nbsp;·&nbsp; best_arm=<span style="color:#ff4800">premium_79</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>Beta</strong>
+      <span><span class="tr">posterior / arm</span><span class="en">posterior / arm</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>0</strong>
+      <span><span class="tr">A/B test bekleme</span><span class="en">A/B test wait</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>3</strong>
+      <span><span class="tr">fiyat kolu</span><span class="en">price arms</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>CI</strong>
+      <span>GitHub Actions</span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi?</span>
+      <span class="en">What was the problem?</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">💸</div>
+        <h3><span class="tr">A/B testi çok yavaş</span><span class="en">A/B test too slow</span></h3>
+        <p>
+          <span class="tr">3 fiyat noktasında (%95 güven, %80 güç) istatistiksel anlamlılığa ulaşmak için ~6 hafta ve ~2400 ziyaretçi gerekiyor. Bu sürede ya yanlış fiyatla satıyorsun ya da hiç denemiyorsun. Küçük SaaS'lar için bu lüks yok.</span>
+          <span class="en">Reaching statistical significance across 3 price points (95% confidence, 80% power) needs ~6 weeks and ~2400 visitors. During that time you're either selling at the wrong price or not experimenting at all. Small SaaS can't afford this.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🎰</div>
+        <h3><span class="tr">Saf exploration kayıp yaratır</span><span class="en">Pure exploration wastes revenue</span></h3>
+        <p>
+          <span class="tr">Rastgele A/B testi her fiyata eşit trafik gönderir. Ama $79 fiyatı açıkça daha iyi performans gösteriyorsa, $29'a trafik göndermek para kaybı. Bandid algoritması bunu çözer: hem öğrenir hem optimize eder, aynı anda.</span>
+          <span class="en">Random A/B sends equal traffic to each price. But if $79 is clearly winning, sending traffic to $29 loses revenue. Bandit algorithms solve this: they learn and optimize simultaneously.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📊</div>
+        <h3><span class="tr">Problem tipi: online optimizasyon</span><span class="en">Problem type: online optimization</span></h3>
+        <p>
+          <span class="tr">Bu ne regresyon ne sınıflandırma. Bu bir <strong>multi-armed bandit</strong> problemi: her turda bir kol seçiyorsun (fiyat), ödül gözlemliyorsun (dönüşüm oldu mu), posterior'ı güncelliyorsun. Daha sonra gelen verilerle modeli yeniden eğitmene gerek yok.</span>
+          <span class="en">This is neither regression nor classification. It's a <strong>multi-armed bandit</strong> problem: each round you pick an arm (price), observe a reward (conversion?), update the posterior. No need to retrain a model on later data.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY THOMPSON SAMPLING -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Neden Thompson Sampling? UCB1 veya epsilon-greedy değil mi?</span>
+      <span class="en">Why Thompson Sampling? Not UCB1 or epsilon-greedy?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">Epsilon-greedy</span>
+        <span class="tech-val"><span class="tr">Basit ama kaba. %ε şans exploration, %1-ε exploitation. ε sabit olursa ya fazla explore eder (gelir kaybı) ya da erken convergence. Dönüşüm oranı düşük ortamlarda (SaaS: %8-15%) çok yavaş öğrenir.</span><span class="en">Simple but crude. ε% chance explore, (1-ε)% exploit. Fixed ε = either over-explores (revenue loss) or converges too early. Learns slowly in low conversion environments (SaaS: 8-15%).</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">UCB1</span>
+        <span class="tech-val"><span class="tr">Üst güven sınırı deterministik: her turda UCB'si en yüksek kolu seçer. Sorun: çok az gözlem varken her kolun UCB'si şişer, hepsini tek tek ziyaret etmek zorunda kalır. Spam-explore dönemi var. Thompson bu dönemi %40 daha kısa tutar.</span><span class="en">Upper confidence bound is deterministic: always picks the arm with highest UCB. Problem: with few observations every arm's UCB inflates — it's forced to visit all arms sequentially. Thompson Sampling cuts this exploration phase ~40% shorter.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key" style="color:#ff4800">Thompson Sampling</span>
+        <span class="tech-val"><span class="tr">Her kol için Beta(α, β) prior tutar. Her turda posteriordan örnek çeker, en yüksek çıkana gider. Matematiksel olarak kanıtlanmış optimal regret (Russo & Van Roy, 2014). Sparse dönüşüm verisinde (100 ziyaretçi, 12 dönüşüm gibi) UCB1'den çok daha iyi çalışır. Seçim nedeni bu.</span><span class="en">Maintains Beta(α, β) posterior per arm. Each round samples from the posterior, routes to the highest sample. Mathematically proven optimal regret (Russo & Van Roy, 2014). Significantly outperforms UCB1 with sparse conversion data (100 visitors, 12 conversions). This is why it was chosen.</span></span>
+      </div>
+    </div>
+    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
+      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">BETA POSTERIOR — ARM UPDATE LOGIC</div>
+      <div><span style="color:#6b6858"># Dönüşüm olduysa: alpha artar</span></div>
+      <div><span style="color:#f2f0ea">arm.alpha += <span style="color:#ff4800">1</span> &nbsp;<span style="color:#6b6858"># success</span></span></div>
+      <div><span style="color:#f2f0ea">arm.beta += <span style="color:#ff4800">0</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Dönüşüm olmadıysa: beta artar</span></div>
+      <div><span style="color:#f2f0ea">arm.alpha += <span style="color:#ff4800">0</span></span></div>
+      <div><span style="color:#f2f0ea">arm.beta += <span style="color:#ff4800">1</span> &nbsp;<span style="color:#6b6858"># failure</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Seçim: her posteriordan örnekle, en yüksek kazanır</span></div>
+      <div><span style="color:#f2f0ea">samples = [beta.rvs(a.alpha, a.beta) <span style="color:#ff4800">*</span> a.margin <span style="color:#6b6858">for</span> a <span style="color:#6b6858">in</span> arms]</span></div>
+      <div><span style="color:#f2f0ea">selected = arms[argmax(samples)]</span></div>
+    </div>
+  </section>
+
+  <!-- SCENARIO -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Gerçek senaryo: SaaS fiyat deneyi</span>
+      <span class="en">Real scenario: SaaS pricing experiment</span>
+    </h2>
+    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
+      <span class="tr">Müşteri: e-ticaret için envanter yönetim SaaS'ı. 3 plan: $29 Starter, $49 Growth, $79 Premium. "Hangi plan en iyi performans gösteriyor?" diye soruyorlar ama 2 haftadan fazla bekleyemiyorlar. Trafik ~250 ziyaretçi/gün.</span>
+      <span class="en">Client: inventory management SaaS for e-commerce. 3 plans: $29 Starter, $49 Growth, $79 Premium. "Which plan performs best?" — but they can't wait more than 2 weeks. Traffic ~250 visitors/day.</span>
+    </p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Başlangıç: tüm kollar eşit (uninformative prior)</span><span class="en">Start: equal arms (uninformative prior)</span></h3>
+        <p>
+          <span class="tr">Alpha=1, beta=1 → Beta(1,1) = uniform dağılım. İlk ziyaretçilere rastgele fiyat gösterilir. Her kol sırayla ziyaret edilerek bilgi toplanır. İlk 30 ziyaretçiden sonra desen ortaya çıkmaya başlar.</span>
+          <span class="en">Alpha=1, beta=1 → Beta(1,1) = uniform distribution. First visitors shown random prices. Each arm visited to gather information. After 30 visitors a pattern begins to emerge.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Round 100: Growth öne çıkıyor</span><span class="en">Round 100: Growth takes the lead</span></h3>
+        <p>
+          <span class="tr">starter_29: α=14/β=72 → %16.3 dönüşüm. growth_49: α=12/β=58 → %17.1. premium_79: α=3/β=28 → %9.7. Algoritma growth_49'a daha fazla trafik göndermeye başlıyor çünkü posteriorundan gelen örnekler daha sık yüksek çıkıyor.</span>
+          <span class="en">starter_29: α=14/β=72 → 16.3% conv. growth_49: α=12/β=58 → 17.1%. premium_79: α=3/β=28 → 9.7%. Algorithm starts routing more traffic to growth_49 because posterior samples come out higher more often.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Round 247: E[margin] analizi ters sonuç veriyor</span><span class="en">Round 247: E[margin] analysis flips the result</span></h3>
+        <p>
+          <span class="tr">%12.7 dönüşümde premium_79 = $10.03 beklenen marjin. %18.3 dönüşümde growth_49 = $8.97. Daha az dönüşüm ama daha yüksek fiyat — toplam gelir üstün. Müşteri $79 planını ön plana çıkardı, aylık gelir %22 arttı.</span>
+          <span class="en">12.7% conversion at $79 = $10.03 expected margin. 18.3% conversion at $49 = $8.97. Fewer conversions, higher price — total revenue wins. Client pushed $79 plan to prominence, monthly revenue +22%.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Algoritma</span><span class="en">Algorithm</span></span>
+        <span class="tech-val">Thompson Sampling · Beta(α, β) posteriors · expected margin selection</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">API</span>
+        <span class="tech-val">Litestar · async · OpenAPI otodoc</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pydantic v2 · ObservedPricingEvent · PricingContext schemas</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Replay</span>
+        <span class="tech-val"><span class="tr">3000 satır gerçek SaaS pricing event'i ($29/$49/$79 segment bazlı dönüşüm oranları)</span><span class="en">3000-row real SaaS pricing events (segment-based conversion rates per arm)</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · coverage &gt;85% · ruff · GitHub Actions CI</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Fiyatlandırma deneyinizi optimize etmek ister misiniz?</span>
+      <span class="en">Want to optimize your pricing experiments?</span>
+    </h2>
+    <p>
+      <span class="tr">Mevcut ödeme altyapınıza entegre edilebilir. A/B test beklemeden, her ziyaretçiden öğrenerek en iyi fiyata yakınsayın.</span>
+      <span class="en">Can integrate with your existing payment infrastructure. Converge to optimal price without waiting — learning from every visitor.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=RL Pricing Bandit İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

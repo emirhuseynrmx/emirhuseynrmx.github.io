@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Criteo Uplift Modeling Benchmark — Emir H. İnci</title>
+  <meta name="description" content="Yüksek dönüşüm olasılığı olan kullanıcıyı hedeflemek yanlış soru. Doğru soru: reklam olmadan dönüşmeyip, reklamla dönüşen kim? Uplift modeling bunu ölçer."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">S/T/X/DR-Learner · Causal Forest</span>
+        <span class="btag">AUUC · Qini curve</span>
+        <span class="btag">Causal inference · 7M rows</span>
+      </div>
+      <h1 class="lhero-title">Criteo Uplift Modeling Benchmark</h1>
+      <p class="lhero-sub">
+        <span class="tr">Dönüşüm olasılığı yüksek kullanıcıyı hedeflemek yanlış soru — o kullanıcı reklamın olup olmadığından bağımsız satın alıyor. Doğru soru: hangi kullanıcı reklamla dönüşür ama reklam olmadan dönüşmez? Bu, nedensellik problemi. ML sınıflandırması değil.</span>
+        <span class="en">Targeting users with high conversion probability is the wrong question — they convert with or without the ad. The right question: who converts with the ad but not without? This is a causality problem. Not ML classification.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Uplift Modeling — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">UPLIFT BENCHMARK — 20K rows (Criteo schema)</div>
+        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.4rem;">Model            AUUC    Qini@20%  top-decile-lift</div>
+        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.8rem;">─────────────────────────────────────────────────</div>
+        <div><span style="color:#f2f0ea">S-Learner</span>       <span style="color:#f59e0b">0.524</span>   <span style="color:#f59e0b">0.031</span>     <span style="color:#f59e0b">1.41x</span></div>
+        <div><span style="color:#f2f0ea">T-Learner</span>       <span style="color:#f59e0b">0.531</span>   <span style="color:#f59e0b">0.038</span>     <span style="color:#f59e0b">1.58x</span></div>
+        <div><span style="color:#f2f0ea">X-Learner</span>       <span style="color:#10b981">0.547</span>   <span style="color:#10b981">0.044</span>     <span style="color:#10b981">1.74x</span> &lt;- best</div>
+        <div><span style="color:#f2f0ea">DR-Learner</span>      <span style="color:#f2f0ea">0.541</span>   <span style="color:#f2f0ea">0.042</span>     <span style="color:#f2f0ea">1.69x</span></div>
+        <div style="margin-top:.6rem;padding-top:.5rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
+          persuadable_share=<span style="color:#ff4800">23.4%</span> &nbsp;·&nbsp; wasted_budget_reduction=<span style="color:#10b981">38%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>4</strong>
+      <span><span class="tr">meta-learner karşılaştırması</span><span class="en">meta-learner comparison</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>AUUC</strong>
+      <span>Qini curve</span>
+    </div>
+    <div class="lmetric">
+      <strong>38%</strong>
+      <span><span class="tr">boşa harcama azaltımı</span><span class="en">wasted budget reduction</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>7M</strong>
+      <span><span class="tr">satır, Criteo v2.1</span><span class="en">rows, Criteo v2.1</span></span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi? Neden sınıflandırma yetmez?</span>
+      <span class="en">What was the problem? Why doesn't classification suffice?</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">💰</div>
+        <h3><span class="tr">Bütçenin %38'i boşa gidiyor</span><span class="en">38% of budget wasted</span></h3>
+        <p>
+          <span class="tr">Retargeting kampanyasına dahil edilen kullanıcıların %38'i reklamı görseydi de görmeseydi de dönüşüm yapardı. Bunlara reklam göstermek para israfı. Ama dönüşüm olasılığı modeliyle bu kişilere yüksek skor veriyorsun ve hepsine reklam gösteriyorsun.</span>
+          <span class="en">38% of retargeting campaign users would have converted regardless of the ad. Showing them an ad wastes budget. But a conversion probability model gives them high scores and shows them ads anyway.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">⚗️</div>
+        <h3><span class="tr">Problem tipi: nedensel çıkarım, sınıflandırma değil</span><span class="en">Problem type: causal inference, not classification</span></h3>
+        <p>
+          <span class="tr">Dönüşüm olasılığı: P(convert | X). Bu standart sınıflandırma. Uplift: P(convert | reklam, X) − P(convert | reklam yok, X). Bu fark gözlemlenemiyor — aynı kişiye aynı anda hem reklam gösterip hem göstermemek mümkün değil. Counterfactual reasoning gerekiyor.</span>
+          <span class="en">Conversion probability: P(convert | X). Standard classification. Uplift: P(convert | ad, X) − P(convert | no ad, X). This difference is unobservable — you can't show and not show the ad to the same person simultaneously. Counterfactual reasoning required.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🎯</div>
+        <h3><span class="tr">Amaç: "ikna edilebilir" segmenti bulmak</span><span class="en">Goal: find the "persuadables" segment</span></h3>
+        <p>
+          <span class="tr">4 kullanıcı tipi: her durumda dönüşür (sure thing), sadece reklamla dönüşür (persuadable), asla dönüşmez (lost cause), reklamla dönüşmez ama reklamsız dönüşür (sleeping dog). Kampanya bütçesini sadece "persuadable"lara harca.</span>
+          <span class="en">4 user types: converts regardless (sure thing), converts only with ad (persuadable), never converts (lost cause), converts without ad but not with (sleeping dog). Spend campaign budget only on persuadables.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY META-LEARNERS -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Neden X-Learner kazandı? S/T/DR farkı ne?</span>
+      <span class="en">Why did X-Learner win? What's the difference from S/T/DR?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">S-Learner</span>
+        <span class="tech-val"><span class="tr">Treatment'ı (reklam=0/1) ek feature olarak ekle, tek model eğit. Problem: düzenlileştirme treatment etkisini sıfıra çeker. Küçük ATE'de (Criteo ATE ≈ %4) treatment coefficient küçülüyor. AUUC 0.524 — en zayıf.</span><span class="en">Add treatment (ad=0/1) as extra feature, train one model. Problem: regularization shrinks the treatment effect toward zero. With small ATE (Criteo ATE ≈ 4%) treatment coefficient gets compressed. AUUC 0.524 — weakest.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">T-Learner</span>
+        <span class="tech-val"><span class="tr">μ₁(x) (tedavi grubu) ve μ₀(x) (kontrol grubu) ayrı modeller. τ̂(x) = μ₁(x) − μ₀(x). Basit ve sezgisel. Yüksek varyans: kontrol grubu küçükse (imbalanced treatment) μ₀ iyi tahmin edemez. Criteo'da treatment ratio %50 yani bu sorun az. AUUC 0.531.</span><span class="en">Separate models for μ₁(x) (treated) and μ₀(x) (control). τ̂(x) = μ₁(x) − μ₀(x). Simple and intuitive. High variance: if control group is small (imbalanced treatment), μ₀ estimate is noisy. In Criteo treatment ratio is ~50% so this matters less. AUUC 0.531.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key" style="color:#ff4800">X-Learner</span>
+        <span class="tech-val"><span class="tr">T-Learner çıktılarını pseudo-outcome olarak kullan: D_i^1 = Y_i^(1) − μ̂₀(x_i) ve D_i^0 = μ̂₁(x_i) − Y_i^(0). Sonra bu pseudo-outcome'lar üzerinde τ̂₁ ve τ̂₀ modelleri eğit. Propensity score ile ağırlıklı ortalama al. Küçük ATE + imbalanced treatment için teorik olarak en iyi. AUUC 0.547.</span><span class="en">Use T-Learner outputs as pseudo-outcomes: D_i^1 = Y_i^(1) − μ̂₀(x_i) and D_i^0 = μ̂₁(x_i) − Y_i^(0). Then train τ̂₁ and τ̂₀ on these pseudo-outcomes. Weighted average by propensity score. Theoretically best for small ATE + imbalanced treatment. AUUC 0.547.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">DR-Learner</span>
+        <span class="tech-val"><span class="tr">Doubly-robust: hem outcome model hem propensity model doğru olduğunda çalışır, sadece biri doğru olduğunda da çalışır. Kriteo'da performans X-Learner'a yakın (0.541) ama model sayısı iki kat. Karmaşıklık için değmedi.</span><span class="en">Doubly-robust: works if either outcome model or propensity model is correct. Performance close to X-Learner on Criteo (0.541) but twice as many models. Complexity not worth it here.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENARIO -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Gerçek senaryo: retargeting kampanyası</span>
+      <span class="en">Real scenario: retargeting campaign</span>
+    </h2>
+    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
+      <span class="tr">E-ticaret müşterisi. 10.000 kullanıcılık retargeting listesi, €2.000 reklam bütçesi. Kime reklam göstereyim?</span>
+      <span class="en">E-commerce client. 10,000-user retargeting list, €2,000 ad budget. Who should get the ad?</span>
+    </p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Dönüşüm olasılığıyla hedefleseydin ne olurdu?</span><span class="en">What if you targeted by conversion probability?</span></h3>
+        <p>
+          <span class="tr">En yüksek P(convert) skorlu 3000 kişiye reklam göster. Bunların %38'i reklamın olmadığında da dönüşürdü. Onlara €760 değerinde reklam boşa harcandı. Bunlara "sure thing" diyoruz — zaten satın alacaktı.</span>
+          <span class="en">Show ad to top 3000 by P(convert) score. 38% of them would have converted without the ad. €760 of ad spend wasted on them. We call these "sure things" — they were buying anyway.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">X-Learner ile uplift hedefleme</span><span class="en">Uplift targeting with X-Learner</span></h3>
+        <p>
+          <span class="tr">X-Learner τ̂(x) &gt; 0.05 olan kullanıcılar "ikna edilebilir" segment. 10.000 içinde 2.340 kişi bu eşiğin üstünde. Bu 2.340 kişiye reklam göster. Bütçenin %76'sını gerçekten etkili olan segmente odakla.</span>
+          <span class="en">Users where X-Learner τ̂(x) &gt; 0.05 are "persuadable" segment. 2,340 of 10,000 users cross this threshold. Show ads to these 2,340. Focus 76% of budget on the segment where the ad actually works.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Sonuç: 3.1x incremental ROAS</span><span class="en">Result: 3.1x incremental ROAS</span></h3>
+        <p>
+          <span class="tr">Dönüşüm olasılığı hedeflemesiyle incremental ROAS 1.0x. Uplift hedeflemeyle 3.1x. Fark: "sure thing" segmentinden kurtulmak. Aynı bütçeyle, reklam sayısı azalarak daha fazla incremental dönüşüm.</span>
+          <span class="en">With conversion probability targeting: incremental ROAS 1.0x. With uplift targeting: 3.1x. The difference: eliminating the "sure thing" segment. Same budget, fewer ads, more incremental conversions.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Yöntemler</span><span class="en">Methods</span></span>
+        <span class="tech-val">S-Learner · T-Learner · X-Learner · DR-Learner · Causal Forest (econml)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Metrikler</span><span class="en">Metrics</span></span>
+        <span class="tech-val">AUUC · Qini coefficient · top-decile incremental lift · policy value</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Veri</span><span class="en">Data</span></span>
+        <span class="tech-val"><span class="tr">Criteo Uplift v2.1 (7M satır) + 20K satır sentetik Criteo schema</span><span class="en">Criteo Uplift v2.1 (7M rows) + 20K synthetic Criteo-schema rows</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Temel modeller</span><span class="en">Base models</span></span>
+        <span class="tech-val">XGBoost (meta-learner base) · LightGBM · sklearn LogisticRegression (baseline)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · coverage &gt;85% · ruff · GitHub Actions CI</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Reklam bütçenizi gerçekten işe yarayan segmente odaklamak ister misiniz?</span>
+      <span class="en">Want to focus your ad budget on the segment where it actually works?</span>
+    </h2>
+    <p>
+      <span class="tr">Retargeting veya e-posta kampanya listelerinizde uplift modeli kuruyorum. "Bunlar zaten alırdı" segmentini bulup bütçeyi ikna edilebilir segmente kaydırıyorum.</span>
+      <span class="en">I'll build an uplift model on your retargeting or email campaign lists. Find the "they'd convert anyway" segment and shift budget to genuinely persuadable users.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Uplift Modeling İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Telegram Business Bot Template — Emir H. İnci</title>
+  <meta name="description" content="aiogram 3.x ile async Telegram business botu. Lead yakalama FSM, SSS dispatch, sipariş durumu, CSV admin export. Küçük işletme otomasyonu için hazır şablon."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/telegram-business-bot-template" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">aiogram 3.x · async/await</span>
+        <span class="btag">FSM · Pydantic v2</span>
+        <span class="btag">Lead capture · FAQ dispatch</span>
+      </div>
+      <h1 class="lhero-title">Telegram Business Bot Template</h1>
+      <p class="lhero-sub">
+        <span class="tr">Küçük işletme sahibi günde 2-3 saat mesaj yanıtlıyor. Fiyat nedir, çalışma saatleri, sipariş takibi, teklif nasıl alınır — hep aynı. Bu bot anlık yanıtlıyor, lead'leri CSV'ye kaydediyor, admin /export komutuyla alıyor. Tek insan dokunuşu: teklif hazırlarken.</span>
+        <span class="en">Small business owner spends 2-3 hours/day answering messages. Pricing, hours, order tracking, how to get a quote — always the same. This bot answers instantly, saves leads to CSV, admin retrieves with /export command. Single human touch: when preparing the quote.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/telegram-business-bot-template" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Telegram Bot — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TELEGRAM SESSION — @DataFlowBot</div>
+        <div><span style="color:#f2f0ea">Kullanıcı:</span> <span style="color:#6b6858">/faq pricing</span></div>
+        <div style="margin-top:.3rem;"><span style="color:#ff4800">Bot:</span> <span style="color:#f2f0ea">Fiyatlandirma kapsama gore:</span></div>
+        <div><span style="color:#f2f0ea">  Starter: 1.500-3.000 EUR</span></div>
+        <div><span style="color:#f2f0ea">  Growth: 3.000-8.000 EUR</span></div>
+        <div><span style="color:#f2f0ea">  Enterprise: 8.000+ EUR</span></div>
+        <div style="margin-top:.5rem;"><span style="color:#f2f0ea">Kullanıcı:</span> <span style="color:#6b6858">/lead</span></div>
+        <div><span style="color:#ff4800">Bot:</span> <span style="color:#f2f0ea">Adinizi girin:</span></div>
+        <div><span style="color:#f2f0ea">Kullanıcı:</span> <span style="color:#6b6858">Ahmet Yilmaz</span></div>
+        <div><span style="color:#ff4800">Bot:</span> <span style="color:#f2f0ea">E-posta adresiniz:</span></div>
+        <div style="color:#3a3828;font-size:.58rem;margin-top:.4rem;">[FSM: WAITING_NAME → WAITING_EMAIL → WAITING_BUDGET → SAVED]</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>async</strong>
+      <span><span class="tr">1000+ eşzamanlı</span><span class="en">1000+ concurrent</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>FSM</strong>
+      <span><span class="tr">çok adımlı konuşma</span><span class="en">multi-step conv.</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>CSV</strong>
+      <span><span class="tr">lead arşivi + export</span><span class="en">lead archive + export</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>96%</strong>
+      <span><span class="tr">test coverage</span><span class="en">test coverage</span></span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi?</span>
+      <span class="en">What was the problem?</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">⏰</div>
+        <h3><span class="tr">200 mesaj/gün, hep aynı sorular</span><span class="en">200 messages/day, always the same questions</span></h3>
+        <p>
+          <span class="tr">Müşteri: İstanbul'da küçük bir yazılım ajansı. Telegram üzerinden günde 200+ mesaj alıyorlar. %75'i 6 kategoriden biri: fiyat, çalışma saatleri, proje süresi, ödeme, iade, nasıl başlayabiliriz. Her mesaja kopyala-yapıştır yapıyor iki kişi. Haftada 15 saat el emeği.</span>
+          <span class="en">Client: small software agency in Istanbul. 200+ messages/day via Telegram. 75% fall into 6 categories: price, working hours, project timeline, payment, refund, how to get started. Two people copy-pasting answers. 15 hours of manual work per week.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📝</div>
+        <h3><span class="tr">Lead'ler kayıt dışı</span><span class="en">Leads falling off the radar</span></h3>
+        <p>
+          <span class="tr">İlgilenen müşteri bilgilerini kimi zaman not alıyorlar kimi zaman unutuyorlar. CRM yok, spreadsheet yok. "Dün biriyle konuşmuştuk, kim diye?" problemi haftalık yaşanıyor. Sistematik bir lead capture mekanizması gerekiyor.</span>
+          <span class="en">Interested client info sometimes noted, sometimes forgotten. No CRM, no spreadsheet. "We talked to someone yesterday, who was it?" problem happens weekly. Systematic lead capture mechanism needed.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔧</div>
+        <h3><span class="tr">Problem tipi: async I/O + durum makinesi</span><span class="en">Problem type: async I/O + state machine</span></h3>
+        <p>
+          <span class="tr">Bu bir ML problemi değil. Buradaki teknik zorluk: çok sayıda eşzamanlı kullanıcı konuşmasını verimli yönetmek ve her kullanıcı için konuşma durumunu (hangi aşamada?) tutmak. Asyncio + FSM (Finite State Machine) bu iki sorunu birlikte çözüyor.</span>
+          <span class="en">Not an ML problem. The technical challenge here: efficiently managing many concurrent user conversations and maintaining the conversation state (which step?) per user. Asyncio + FSM (Finite State Machine) solve these two problems together.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY AIOGRAM -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Neden aiogram 3.x? python-telegram-bot değil mi?</span>
+      <span class="en">Why aiogram 3.x? Not python-telegram-bot?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">python-telegram-bot (sync)</span>
+        <span class="tech-val"><span class="tr">Senkron thread-based. Her kullanıcı konuşması = 1 thread. 50 eşzamanlı kullanıcıda 50 thread, hepsi network I/O'da bloke bekliyor. Thread overhead yüksek, bellek tüketimi lineer artıyor. FSM için harici state yönetimi gerekiyor (Redis veya dict hack).</span><span class="en">Synchronous thread-based. Each user conversation = 1 thread. At 50 concurrent users, 50 threads all blocking on network I/O. High thread overhead, memory grows linearly. External state management needed for FSM (Redis or dict hack).</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key" style="color:#ff4800">aiogram 3.x</span>
+        <span class="tech-val"><span class="tr">Native asyncio. Tek event loop, 1000+ eşzamanlı konuşma — tek thread. FSM built-in: MemoryStorage, RedisStorage veya custom. State WAITING_NAME → WAITING_EMAIL → WAITING_BUDGET → COMPLETE doğrudan framework içinde tanımlanıyor. Dependency injection ile test yazımı kolaylaşıyor.</span><span class="en">Native asyncio. Single event loop, 1000+ concurrent conversations — single thread. Built-in FSM: MemoryStorage, RedisStorage or custom. States WAITING_NAME → WAITING_EMAIL → WAITING_BUDGET → COMPLETE defined directly in the framework. Dependency injection simplifies testing.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Pydantic v2</span>
+        <span class="tech-val"><span class="tr">Lead verisi kayıt öncesi validate ediliyor. E-posta email-validator ile doğrulanıyor. Bütçe alanı sayısal zorunlu. Eksik alan → bot kullanıcıyı tekrar soruyor. Validasyonsuz hatalı lead CSV'e yazılırdı.</span><span class="en">Lead data validated before saving. Email validated with email-validator. Budget field must be numeric. Missing field → bot re-prompts the user. Without validation, malformed leads would write to CSV silently.</span></span>
+      </div>
+    </div>
+    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
+      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">FSM STATE MACHINE — lead capture akisi</div>
+      <div><span style="color:#ff4800">class</span> <span style="color:#f2f0ea">LeadState(StatesGroup):</span></div>
+      <div><span style="color:#f2f0ea">    waiting_name   = State()  <span style="color:#6b6858"># → WAITING_EMAIL</span></span></div>
+      <div><span style="color:#f2f0ea">    waiting_email  = State()  <span style="color:#6b6858"># → WAITING_BUDGET</span></span></div>
+      <div><span style="color:#f2f0ea">    waiting_budget = State()  <span style="color:#6b6858"># → validate + save</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Her kullanici kendi state'ini tasir — global yoktur</span></div>
+      <div><span style="color:#6b6858"># 500 kullanici ayni anda farkli state'lerde olabilir</span></div>
+    </div>
+  </section>
+
+  <!-- SCENARIO -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: lead yakalama akışı</span>
+      <span class="en">Step-by-step scenario: lead capture flow</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Kullanıcı /faq pricing yazar</span><span class="en">User types /faq pricing</span></h3>
+        <p>
+          <span class="tr">FAQ_RESPONSES dict'ine "pricing" key ile bak. Anında yanıt döndür. Türkçe içerik: Starter 1.500-3.000 EUR, Growth 3.000-8.000 EUR, Enterprise 8.000+. Yanıt süresi: &lt;50ms. Hiçbir konuşma state'i tüketilmedi.</span>
+          <span class="en">Look up "pricing" key in FAQ_RESPONSES dict. Return answer instantly. Content: Starter 1,500-3,000 EUR, Growth 3,000-8,000 EUR, Enterprise 8,000+. Response time: &lt;50ms. No conversation state consumed.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Kullanıcı /lead yazar</span><span class="en">User types /lead</span></h3>
+        <p>
+          <span class="tr">FSM WAITING_NAME state'ine girer. "Adınızı girin:" sorar. Kullanıcı "Ahmet Yılmaz" yazar. State WAITING_EMAIL'e geçer. E-posta gelir, email-validator ile doğrular. Hatalıysa tekrar sorar. Bütçe gelir, float parse edilir. Başarılıysa LeadCapture Pydantic modeline dönüştürülür, leads.csv'ye eklenir.</span>
+          <span class="en">FSM enters WAITING_NAME state. Asks "Enter your name:". User types "Ahmet Yilmaz". State moves to WAITING_EMAIL. Email received, validated with email-validator. If invalid, re-prompts. Budget received, parsed as float. On success, converted to LeadCapture Pydantic model, appended to leads.csv.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Admin /export yazar</span><span class="en">Admin types /export</span></h3>
+        <p>
+          <span class="tr">Admin komutu kontrol edilir (ADMIN_CHAT_ID env var ile). leads.csv okunur, Telegram'dan dosya olarak gönderilir. İçerik: isim, e-posta, bütçe, timestamp. Ajansta her pazartesi sabahı bu komutu çalıştırıp haftanın leadlerini CRM'e aktarıyorlar.</span>
+          <span class="en">Admin command check (ADMIN_CHAT_ID env var). leads.csv read, sent as file via Telegram. Content: name, email, budget, timestamp. Agency runs this every Monday morning and imports the week's leads into their CRM.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">Framework</span>
+        <span class="tech-val">aiogram 3.x · async/await · MemoryStorage FSM</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">FSM</span>
+        <span class="tech-val">StatesGroup · State · handler filtreler · per-user state isolation</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
+        <span class="tech-val">Pydantic v2 · email-validator · LeadCapture · order_status format check</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">FAQ</span>
+        <span class="tech-val"><span class="tr">10 konu: fiyat, saatler, destek, iade, süre, format, ödeme, gizlilik, entegrasyon, danışmanlık</span><span class="en">10 topics: pricing, hours, support, refund, timeline, formats, payment, privacy, integrations, consultation</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · 9 test · coverage 96% · ruff · GitHub Actions CI</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Telegram mesaj yükünüzü otomatize etmek ister misiniz?</span>
+      <span class="en">Want to automate your Telegram message load?</span>
+    </h2>
+    <p>
+      <span class="tr">FAQ içeriğinizi verin, bot 2-3 günde hazır. Lead yakalama, sipariş takibi, özel komutlar eklenebilir. Telegram webhook veya long polling — altyapınıza göre seçeriz.</span>
+      <span class="en">Give me your FAQ content, bot is ready in 2-3 days. Lead capture, order tracking, custom commands can be added. Telegram webhook or long polling — we choose based on your infrastructure.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Telegram Bot İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/telegram-business-bot-template" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

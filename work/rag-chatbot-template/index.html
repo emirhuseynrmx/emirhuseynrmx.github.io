@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>RAG Chatbot Template — Emir H. İnci</title>
+  <meta name="description" content="Şirket politika dokümanı üzerine lokal RAG chatbot. TF-IDF vektör deposu, kaynak gösterimiyle yanıt, chunk metadata. Harici API çağrısı yok, hallucination yok."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">RAG · TF-IDF retrieval</span>
+        <span class="btag">FastAPI · Pydantic v2</span>
+        <span class="btag">Lokal · sıfır harici API</span>
+      </div>
+      <h1 class="lhero-title">RAG Chatbot Template</h1>
+      <p class="lhero-sub">
+        <span class="tr">Destek ekibi aynı 20 soruyu günde 50 kez yanıtlıyor. Chatbot kurarsın ama GPT hallucination'ı şirket politikasını uydurmasın diye korkuyorsun. Bu şablon tamamen lokal çalışıyor: doküman ne diyorsa onu söylüyor, başka bir şey değil — ve kaynağını gösteriyor.</span>
+        <span class="en">Support team answers the same 20 questions 50 times per day. You want to deploy a chatbot but fear GPT hallucinating company policy. This template runs fully local: it says what the document says, nothing else — and shows its source.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=RAG Chatbot — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">RAG QUERY SESSION</div>
+        <div><span style="color:#6b6858">Q:</span> <span style="color:#f2f0ea">Do you work with HubSpot?</span></div>
+        <div style="margin-top:.4rem;"><span style="color:#6b6858">→ retrieving chunks... score=0.847</span></div>
+        <div style="margin-top:.4rem;"><span style="color:#ff4800">A:</span> <span style="color:#f2f0ea">Yes. We commonly integrate with Zapier, n8n,</span></div>
+        <div><span style="color:#f2f0ea">&nbsp;&nbsp; Google Workspace, HubSpot, Pipedrive, Salesforce.</span></div>
+        <div style="margin-top:.4rem;color:#6b6858;font-size:.58rem;">source: company_policy.txt § INTEGRATIONS (line 156-158)</div>
+        <div style="margin-top:.6rem;"><span style="color:#6b6858">Q:</span> <span style="color:#f2f0ea">What's the refund policy?</span></div>
+        <div style="margin-top:.4rem;"><span style="color:#6b6858">→ retrieving chunks... score=0.923</span></div>
+        <div><span style="color:#ff4800">A:</span> <span style="color:#f2f0ea">Within 7 days: full refund if spec not met...</span></div>
+        <div style="color:#6b6858;font-size:.58rem;">source: company_policy.txt § REFUND POLICY (line 52-65)</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>TF-IDF</strong>
+      <span><span class="tr">vektör retrieval</span><span class="en">vector retrieval</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>0</strong>
+      <span><span class="tr">harici API çağrısı</span><span class="en">external API calls</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>kaynak</strong>
+      <span><span class="tr">gösterimi zorunlu</span><span class="en">citation required</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>lokal</strong>
+      <span><span class="tr">GDPR uyumlu</span><span class="en">GDPR compliant</span></span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi?</span>
+      <span class="en">What was the problem?</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔁</div>
+        <h3><span class="tr">Aynı sorular, her gün tekrar</span><span class="en">Same questions, every day, repeated</span></h3>
+        <p>
+          <span class="tr">Müşteri: veri danışmanlık firması. Destek gelen soruların %70'i aynı 20 kategoriden birine giriyor: iade politikası, paket fiyatları, teslimat süresi, desteklenen formatlar, NDA, ödeme koşulları. Her yanıt 2-5 dakika el emeği.</span>
+          <span class="en">Client: data consultancy firm. 70% of support questions fall into the same 20 categories: refund policy, package prices, delivery timeline, supported formats, NDA, payment terms. Each answer takes 2-5 minutes of manual effort.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">⚠️</div>
+        <h3><span class="tr">Hallucination riski: GPT doğruyu bilmiyor</span><span class="en">Hallucination risk: GPT doesn't know your policy</span></h3>
+        <p>
+          <span class="tr">ChatGPT'ye "şirket iade politikamız ne" diye soramazsın — bilmiyor. Fine-tune yapsan bile kendi politika versiyonunuzu encode etmek zorunda kalırsın ve her değişiklikte yeniden eğitmen gerekir. RAG hem daha ucuz hem daha güvenli: doküman değişirse yeniden index al yeterli.</span>
+          <span class="en">You can't ask ChatGPT "what is our refund policy" — it doesn't know. Even with fine-tuning you'd encode a snapshot of your policy and retrain on every change. RAG is cheaper and safer: when the document changes, just re-index.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔒</div>
+        <h3><span class="tr">Problem tipi: bilgi erişimi + doğrulanabilirlik</span><span class="en">Problem type: knowledge retrieval + verifiability</span></h3>
+        <p>
+          <span class="tr">Bu ML sınıflandırması veya regresyonu değil. Bu bir retrieval problemi: soruyu alırsın, en ilgili doküman chunk'larını bulursun, o chunk'tan yanıt türetirsin. Her yanıt kaynak satır numarasıyla birlikte gelir — chatbot'un söylediği şeyi dokümanla doğrulayabilirsin.</span>
+          <span class="en">Not ML classification or regression. This is a retrieval problem: take a question, find the most relevant document chunks, derive the answer from that chunk. Every answer comes with source line numbers — you can verify what the chatbot says against the document.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY TF-IDF -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Neden TF-IDF? Dense embedding (FAISS + sentence-transformers) değil mi?</span>
+      <span class="en">Why TF-IDF? Not dense embeddings (FAISS + sentence-transformers)?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">Dense embeddings</span>
+        <span class="tech-val"><span class="tr">Anlamsal benzerlik iyi yapar. "Para iade" ve "geri ödeme" aynı chunk'a götürür. Ama yapısal politika dokümanlarında sorun çıkıyor: "7 gün" yazan yer yerine "14 gün" yazan bölümü döndürebilir çünkü ikisi de "zaman dilimi" anlamına geliyor. Ek olarak: GPU olmadan her sorgu 200-400ms gecikme.</span><span class="en">Good at semantic similarity. Maps "money back" and "refund" to the same chunk. But in structured policy docs it creates problems: may return the "14 days" section instead of "7 days" because both mean "time period." Also: 200-400ms latency per query without GPU.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key" style="color:#ff4800">TF-IDF</span>
+        <span class="tech-val"><span class="tr">Anahtar kelime eşleşmesi. "Refund policy" sorgusu için "REFUND POLICY" yazan chunk'a düzgün yönlendirir. Deterministik: aynı sorgu her zaman aynı chunk'ı döndürür — test edilebilir, hata ayıklanabilir, GDPR log'u tutulabilir. Anlık yanıt, GPU gereksiz. Politika dokümanları için ideal.</span><span class="en">Keyword matching. For "refund policy" query it correctly routes to the "REFUND POLICY" chunk. Deterministic: same query always returns same chunk — testable, debuggable, GDPR-loggable. Instant response, no GPU. Ideal for policy documents.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Sınır nerede?</span><span class="en">Where does it fail?</span></h3></span>
+        <span class="tech-val"><span class="tr">TF-IDF paraphrase'de başarısız. "What's your money-back guarantee?" → refund politikasına gitmiyor çünkü "money-back guarantee" terimi dokümanda geçmiyor. Çözüm: BM25 + synonym expansion veya hybrid (TF-IDF + minimal embedding). Bu template saf TF-IDF — karmaşıklığı müşterinin ihtiyacına göre ölçeklendirilebilir.</span><span class="en">TF-IDF fails on paraphrase. "What's your money-back guarantee?" → doesn't find refund policy because "money-back guarantee" doesn't appear in the document. Solution: BM25 + synonym expansion or hybrid (TF-IDF + minimal embedding). This template is pure TF-IDF — complexity scales with client need.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENARIO -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım: müşteri soruyor, chatbot yanıtlıyor</span>
+      <span class="en">Step by step: customer asks, chatbot answers</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Doküman indexleme</span><span class="en">Document indexing</span></h3>
+        <p>
+          <span class="tr">company_policy.txt 180 satır, 10 bölüm. Chunk'lama: bölüm başlıklarına göre paragraf bazlı bölme, ~15 satır/chunk. Her chunk için TF-IDF vektörü hesapla ve bellekte tut. Index boyutu: 83KB. Başlangıç süresi: &lt;2 saniye.</span>
+          <span class="en">company_policy.txt is 180 lines, 10 sections. Chunking: paragraph-based split on section headers, ~15 lines/chunk. Compute TF-IDF vector for each chunk, hold in memory. Index size: 83KB. Startup time: &lt;2 seconds.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Soru: "Can you integrate with HubSpot?"</span><span class="en">Question: "Can you integrate with HubSpot?"</span></h3>
+        <p>
+          <span class="tr">Soruyu TF-IDF vektörüne dönüştür. Tüm chunk'larla cosine similarity hesapla. En yüksek score: 0.847, "INTEGRATIONS" bölümü. Bu chunk'tan "We commonly integrate with... HubSpot" cümlesi alınıp yanıt oluşturuldu. Kaynak: company_policy.txt satır 156-158.</span>
+          <span class="en">Convert query to TF-IDF vector. Compute cosine similarity against all chunks. Highest score: 0.847, "INTEGRATIONS" section. Sentence "We commonly integrate with... HubSpot" extracted from that chunk. Source: company_policy.txt lines 156-158.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Doğrulanamayan soru → çekilir</span><span class="en">Unverifiable question → declined</span></h3>
+        <p>
+          <span class="tr">"Rakiplerinizden daha mı iyisiniz?" sorusuna doküman yanıt veremiyor. TF-IDF score eşiğin altında (score &lt; 0.3). Chatbot "Bu konuda politika belgem yok, lütfen direkt iletişime geçin" diyor. Üretilmiş yanıt yok.</span>
+          <span class="en">"Are you better than your competitors?" — the document can't answer this. TF-IDF score falls below threshold (score &lt; 0.3). Chatbot says "I don't have policy documentation on this, please contact us directly." No generated answer.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">Retrieval</span>
+        <span class="tech-val">scikit-learn TfidfVectorizer · cosine similarity · threshold filtering</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">API</span>
+        <span class="tech-val">FastAPI · async · /query endpoint · /health · OpenAPI dokümantasyon</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Doküman</span><span class="en">Document</span></span>
+        <span class="tech-val"><span class="tr">180 satır DataFlow Analytics politikası · 10 bölüm · fiyatlandırma/iade/destek/GDPR</span><span class="en">180-line DataFlow Analytics policy · 10 sections · pricing/refund/support/GDPR</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Kaynak</span>
+        <span class="tech-val"><span class="tr">Her yanıt doküman adı + bölüm başlığı + satır numarasıyla etiketlenir</span><span class="en">Every answer tagged with document name + section heading + line number</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · 20 gerçek iş sorusu · coverage &gt;85% · ruff · CI</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Destek sorularınızı kendi politika dokümanınızla otomatize etmek ister misiniz?</span>
+      <span class="en">Want to automate support questions using your own policy document?</span>
+    </h2>
+    <p>
+      <span class="tr">Politika belgenizi verin, RAG chatbot kurarım. Kaynak gösterimiyle yanıt, hallucination yok, GDPR uyumlu. Telegram bot veya web widget entegrasyonu da eklenebilir.</span>
+      <span class="en">Give me your policy document, I'll set up the RAG chatbot. Source-cited answers, no hallucination, GDPR compliant. Telegram bot or web widget integration can be added.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=RAG Chatbot İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Counterfactual Lead Scoring Lab — Emir H. İnci</title>
+  <meta name="description" content="XGBoost lead skor + SHAP neden bu score aldı + DiCE counterfactual bu lead'i nasıl kapatırım. Satış ekibine kör skor değil, aksiyon planı verir."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/">← EHİ</a>
+    <div class="nav-links">
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/counterfactual-lead-scoring-lab" target="_blank" rel="noopener">GitHub ↗</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python</span>
+        <span class="btag">XGBoost · binary classification</span>
+        <span class="btag">SHAP TreeExplainer · DiCE</span>
+        <span class="btag">Litestar · Pydantic v2</span>
+      </div>
+      <h1 class="lhero-title">Counterfactual Lead Scoring Lab</h1>
+      <p class="lhero-sub">
+        <span class="tr">Satış ekibine kör skor vermek yetmez. "Bu lead 0.31 aldı" hiçbir işe yaramaz. Bu sistem skor verir, nedeni açıklar (SHAP), ve "bu lead'i nasıl kapatırım?" sorusunu yanıtlar (DiCE counterfactual). Aksiyon planıyla birlikte.</span>
+        <span class="en">Giving sales a blind score doesn't help. "This lead scored 0.31" is useless. This system gives a score, explains why (SHAP), and answers "how do I close this lead?" (DiCE counterfactual). Complete with an action plan.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="https://github.com/emirhuseynrmx/counterfactual-lead-scoring-lab" target="_blank" rel="noopener">
+          <span class="tr">Kaynak kodu gör</span>
+          <span class="en">View source</span>
+        </a>
+        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Lead Scoring — İş Teklifi">
+          <span class="tr">Bu araç için beni işe al</span>
+          <span class="en">Hire me for this</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">LEAD REPORT — L-4812</div>
+        <div><span style="color:#6b6858">score:</span> <span style="color:#ef4444">0.31</span> <span style="color:#6b6858">tier:</span> <span style="color:#ef4444">COLD</span></div>
+        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── SHAP drivers ──────────────────────</div>
+        <div><span style="color:#ef4444">budget_eur</span>     <span style="color:#6b6858">1200 EUR</span>  <span style="color:#ef4444">-0.38</span> <span style="color:#6b6858">(below threshold)</span></div>
+        <div><span style="color:#ef4444">has_dm_contact</span> <span style="color:#6b6858">False</span>     <span style="color:#ef4444">-0.29</span> <span style="color:#6b6858">(no decision maker)</span></div>
+        <div><span style="color:#f2f0ea">company_size</span>   <span style="color:#6b6858">8</span>         <span style="color:#6b6858">-0.11</span></div>
+        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── counterfactual ────────────────────</div>
+        <div><span style="color:#10b981">if</span> budget_eur <span style="color:#10b981">&gt;=</span> 2000 <span style="color:#ff4800">&amp;&amp;</span> has_dm_contact <span style="color:#10b981">== True</span></div>
+        <div><span style="color:#6b6858">→</span> score: <span style="color:#10b981">0.74</span> <span style="color:#6b6858">tier:</span> <span style="color:#10b981">QUALIFIED</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>XGBoost</strong>
+      <span><span class="tr">sınıflandırma</span><span class="en">classification</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>SHAP</strong>
+      <span><span class="tr">neden bu skor?</span><span class="en">why this score?</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>DiCE</strong>
+      <span><span class="tr">nasıl kapatabilirim?</span><span class="en">how do I close it?</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>0.87</strong>
+      <span>AUC ROC</span>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi?</span>
+      <span class="en">What was the problem?</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📋</div>
+        <h3><span class="tr">Haftada 200 lead, sıfır önceliklendirme</span><span class="en">200 leads/week, zero prioritization</span></h3>
+        <p>
+          <span class="tr">Müşteri: B2B SaaS satış ekibi. Haftada 200 gelen lead, 4 satışçı. Kim ilk aranacak? Şu an alfabetik sırayla gidiyorlar. Demo talep edip formu dolduranlar aynı öncelikteyken, "iletişim formu doldurdum" diyenlerle de aynı öncelekte.</span>
+          <span class="en">Client: B2B SaaS sales team. 200 inbound leads/week, 4 reps. Who gets called first? Currently: alphabetical order. Demo requests and "I filled a contact form" leads are treated identically.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🤷</div>
+        <h3><span class="tr">Skor tek başına işe yaramıyor</span><span class="en">Score alone doesn't help</span></h3>
+        <p>
+          <span class="tr">"Bu lead 0.31 aldı" dersin, satışçı "tamam peki ne yapayım?" der. Skor vermek bir tahmindir, aksiyon planı değil. Satışçının ihtiyacı olan şey: "Bu lead'in bütçesi düşük, karar vericiyle konuşamıyoruz — şu şartlar gerçekleşseydi qualified olurdu."</span>
+          <span class="en">"This lead scored 0.31" means nothing to a rep. A score is a prediction, not an action plan. What the rep needs: "This lead has low budget and we haven't reached the decision maker — it would qualify if these two conditions changed."</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🎯</div>
+        <h3><span class="tr">Problem tipi: ikili sınıflandırma + yorumlanabilirlik</span><span class="en">Problem type: binary classification + explainability</span></h3>
+        <p>
+          <span class="tr">Bu saf bir regresyon değil, çıktı ikili: lead convert oldu mu olmadı mı (1/0). Ama sadece tahmin yetmez — SHAP ile hangi özellik skoru neden etkiledi, DiCE ile hangi minimum değişiklik skoru threshold'un üstüne çıkarıyor.</span>
+          <span class="en">Not regression — binary output: did lead convert (1/0). But prediction alone isn't enough — SHAP explains which feature pushed the score, DiCE finds the minimum change that would push the score above threshold.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY XGBOOST -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Neden XGBoost? Lojistik regresyon yetmez miydi?</span>
+      <span class="en">Why XGBoost? Wouldn't logistic regression suffice?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">Logistic Reg.</span>
+        <span class="tech-val"><span class="tr">Doğrusallık varsayımı yapar. budget_eur × company_size etkileşimi için manuel polynomial feature gerekir. industry="retail" ile "enterprise" etkisini ayrı bağlam veremez — her industry kategorisi bağımsız katsayı alır ama bütçe-segment çakışmasını göremez. Test AUC: 0.78.</span><span class="en">Assumes linearity. budget_eur × company_size interaction needs manual polynomial feature. Can't model budget-segment co-effect naturally — each industry gets its own coefficient but interactions remain invisible. Test AUC: 0.78.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key" style="color:#ff4800">XGBoost</span>
+        <span class="tech-val"><span class="tr">Histogram tabanlı bölme. budget_eur &lt; 2000 VE has_dm_contact=False kombinasyonu otomatik öğrenilir — manuel cross feature yazmaya gerek yok. Eksik değerleri native destekler (bazı leadler source field doldurmamış). Test AUC: 0.87. Asıl kazanç: TreeExplainer ile SHAP hesabı kesin ve hızlı.</span><span class="en">Histogram-based splits. budget_eur &lt; 2000 AND has_dm_contact=False combination learned automatically — no manual cross features needed. Handles missing values natively (some leads don't fill source field). Test AUC: 0.87. Key advantage: exact fast SHAP via TreeExplainer.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">SHAP neden</span>
+        <span class="tech-val"><span class="tr">Permutation importance global dağılım verir. SHAP her lead için bireysel açıklama verir: "Bu lead'in skoru düşük çünkü spesifik olarak budget_eur=-0.38 katkı yaptı." DiCE counterfactual için hangi özelliğin ne yönde değişeceğini bilmek şart — SHAP bu yönü gösterir.</span><span class="en">Permutation importance gives global distribution. SHAP gives individual per-lead explanation: "This lead scored low because budget_eur specifically contributed -0.38." DiCE needs to know which feature to change in which direction — SHAP reveals this direction.</span></span>
+      </div>
+    </div>
+    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
+      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">SHAP — TREEXPLAINER (tam özet)</div>
+      <div><span style="color:#6b6858"># sv shape: (n_samples, n_features) ikili sınıflandırmada</span></div>
+      <div><span style="color:#6b6858"># RandomForest → (n_samples, n_features, n_classes) → sv[:,:,1] al</span></div>
+      <div><span style="color:#f2f0ea">explainer = shap.TreeExplainer(model)</span></div>
+      <div><span style="color:#f2f0ea">sv = explainer.shap_values(X_test)</span></div>
+      <div><span style="color:#f2f0ea">mean_abs = np.abs(sv).mean(axis=<span style="color:#ff4800">0</span>)  <span style="color:#6b6858"># global importance</span></span></div>
+      <div><span style="color:#f2f0ea">individual = sv[lead_idx]  <span style="color:#6b6858"># per-lead explanation</span></span></div>
+    </div>
+  </section>
+
+  <!-- SCENARIO -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: lead L-4812</span>
+      <span class="en">Step-by-step scenario: lead L-4812</span>
+    </h2>
+    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
+      <span class="tr">LinkedIn'den gelen bir lead. Perakende sektörü, 8 kişilik şirket, bütçe 1200 EUR bildirmiş. Karar vericiye ulaşılmamış. Satışçı "bu lead iyi mi kötü mü" soruyor.</span>
+      <span class="en">Inbound lead from LinkedIn. Retail sector, 8-person company, stated budget 1200 EUR. Decision maker not yet reached. Rep asks "is this lead good or bad?"</span>
+    </p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">XGBoost skoru: 0.31 (COLD tier)</span><span class="en">XGBoost score: 0.31 (COLD tier)</span></h3>
+        <p>
+          <span class="tr">Threshold: 0.50 qualified, 0.25-0.50 warm, &lt;0.25 cold. 0.31 warm/cold sınırında. Satışçıya sadece bu bilgiyi versek ne yapardı? Muhtemelen "biraz bekliyorum" diyip geçerdi.</span>
+          <span class="en">Thresholds: 0.50+ qualified, 0.25-0.50 warm, below 0.25 cold. 0.31 sits on warm/cold boundary. If we only gave this score, rep would say "I'll wait" and move on.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">SHAP açıklaması: tam olarak neden?</span><span class="en">SHAP explanation: exactly why?</span></h3>
+        <p>
+          <span class="tr">budget_eur: -0.38 (1200 EUR çok düşük, tipik dönüşüm 2500+ EUR budgetle geliyor). has_decision_maker_contact: -0.29 (karar verici yok). company_size: -0.11 (küçük şirket). source=linkedin: +0.09 (LinkedIn'den gelenler biraz daha yüksek intent). Net skor: 0.31.</span>
+          <span class="en">budget_eur: -0.38 (1200 EUR too low, typical conversions come with 2500+ EUR budget). has_dm_contact: -0.29 (no decision maker reached). company_size: -0.11 (small company). source=linkedin: +0.09 (LinkedIn leads slightly higher intent). Net score: 0.31.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">DiCE counterfactual: "nasıl kapatırım?"</span><span class="en">DiCE counterfactual: "how do I close it?"</span></h3>
+        <p>
+          <span class="tr">DiCE minimum-distance CF: budget_eur ≥ 2000 VE has_decision_maker_contact = True → score 0.74 (QUALIFIED). Satışçıya verilen aksiyon: "Annual plan var mı sor (bütçe artar), karar vericiyi bul." Bu ikisi gerçekleşirse pipeline'a al.</span>
+          <span class="en">DiCE min-distance CF: budget_eur ≥ 2000 AND has_dm_contact = True → score 0.74 (QUALIFIED). Action handed to rep: "Ask about annual plan (budget goes up), find decision maker." If both true, move to pipeline.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATA VALIDATION + FEATURE ENGINEERING -->
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Veri doğrulama — CRM'den modele kadar olan yol</span>
+      <span class="en">Data validation — from CRM export to model</span>
+    </h2>
+    <p style="color:#6b6858;margin-bottom:1.5rem;font-size:.9rem;line-height:1.7;">
+      <span class="tr">CRM'den gelen lead verisi her zaman temiz değil. Bazı leadler bütçe alanını boş bırakmış, bazıları "5000" yazmış bazıları "beş bin TL", bazı e-postalar geçersiz. Model eğitmeden önce bu sorunları düzeltmek zorundasın — yoksa model çöpü öğrenir.</span>
+      <span class="en">CRM lead data is never clean. Some leads left the budget field empty, some wrote "5000", some "five thousand TL", some emails are invalid. These problems must be fixed before training — otherwise the model learns garbage.</span>
+    </p>
+    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:1.5rem;">
+      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 1 — VERİYİ KEŞFET</div>
+      <div><span style="color:#f2f0ea">df = pd.read_csv(<span style="color:#ff4800">"leads.csv"</span>)</span></div>
+      <div><span style="color:#f2f0ea">print(df.dtypes)  <span style="color:#6b6858"># budget_eur object mi float64 mı?</span></span></div>
+      <div><span style="color:#f2f0ea">print(df.isnull().sum())  <span style="color:#6b6858"># hangi sütunlar eksik?</span></span></div>
+      <div><span style="color:#f2f0ea">print(df[<span style="color:#ff4800">"budget_eur"</span>].value_counts().head(<span style="color:#ff4800">20</span>))  <span style="color:#6b6858"># "5k", "~3000", "-" gibi değerler</span></span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Dönüşüm oranı: pozitif/negatif dengesizlik var mı?</span></div>
+      <div><span style="color:#f2f0ea">print(df[<span style="color:#ff4800">"converted"</span>].value_counts(normalize=<span style="color:#ff4800">True</span>))</span></div>
+      <div><span style="color:#6b6858"># → 0: 0.82, 1: 0.18 → imbalance var, scale_pos_weight ayarla</span></div>
+    </div>
+    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:1.5rem;">
+      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 2 — NULL VE TİP SORUNLARI</div>
+      <div><span style="color:#6b6858"># budget_eur: boş, "-", "~" prefix'li string'ler → temizle</span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"budget_eur"</span>] = (</span></div>
+      <div><span style="color:#f2f0ea">    df[<span style="color:#ff4800">"budget_eur"</span>]</span></div>
+      <div><span style="color:#f2f0ea">    .str.replace(<span style="color:#ff4800">r"[^0-9.]"</span>, <span style="color:#ff4800">""</span>, regex=<span style="color:#ff4800">True</span>)  <span style="color:#6b6858"># rakam/nokta dışını sil</span></span></div>
+      <div><span style="color:#f2f0ea">    .replace(<span style="color:#ff4800">""</span>, np.nan)  <span style="color:#6b6858"># boş string → NaN</span></span></div>
+      <div><span style="color:#f2f0ea">    .astype(<span style="color:#ff4800">float</span>)</span></div>
+      <div><span style="color:#f2f0ea">)</span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># budget NaN ise: medyanla doldur (silmek yerine)</span></div>
+      <div><span style="color:#f2f0ea">budget_median = df[<span style="color:#ff4800">"budget_eur"</span>].median()  <span style="color:#6b6858"># = 2400 EUR</span></span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"budget_eur"</span>] = df[<span style="color:#ff4800">"budget_eur"</span>].fillna(budget_median)</span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># XGBoost kategorikler için: LabelEncoder veya feature_types</span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"industry"</span>] = LabelEncoder().fit_transform(df[<span style="color:#ff4800">"industry"</span>].fillna(<span style="color:#ff4800">"unknown"</span>))</span></div>
+    </div>
+    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;">
+      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 3 — FEATURE ENGINEERING (yeni sütunlar türetmek)</div>
+      <div><span style="color:#6b6858"># Zaman bazlı feature: form doldurulma saati iş saati mi?</span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"submitted_at"</span>] = pd.to_datetime(df[<span style="color:#ff4800">"submitted_at"</span>])</span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"hour"</span>] = df[<span style="color:#ff4800">"submitted_at"</span>].dt.hour  <span style="color:#6b6858"># sabah 9-18 arası daha yüksek intent</span></span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"is_business_hours"</span>] = df[<span style="color:#ff4800">"hour"</span>].between(<span style="color:#ff4800">9</span>, <span style="color:#ff4800">18</span>).astype(<span style="color:#ff4800">int</span>)</span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Source etkisi: önceki 30 günde bu source'dan kaç lead geldi?</span></div>
+      <div><span style="color:#f2f0ea">source_counts = df.groupby(<span style="color:#ff4800">"source"</span>)[<span style="color:#ff4800">"converted"</span>].mean()  <span style="color:#6b6858"># conv rate / source</span></span></div>
+      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"source_conv_rate"</span>] = df[<span style="color:#ff4800">"source"</span>].map(source_counts)</span></div>
+      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Pydantic ile son doğrulama: modele gitmeden önce şema kontrol</span></div>
+      <div><span style="color:#f2f0ea">validated = [LeadFeatures(**row) <span style="color:#ff4800">for</span> row <span style="color:#ff4800">in</span> df.to_dict(<span style="color:#ff4800">"records"</span>)]</span></div>
+      <div><span style="color:#6b6858"># ValidationError → o satırı log'la, atla, modeli kirletme</span></div>
+    </div>
+  </section>
+
+  <!-- TECHNICAL -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Teknik detaylar</span>
+      <span class="en">Technical details</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key">ML</span>
+        <span class="tech-val">XGBoost · binary:logistic · histogram method · L1+L2 regularization</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Açıklanabilirlik</span><span class="en">Explainability</span></span>
+        <span class="tech-val">SHAP TreeExplainer · DiCE diverse counterfactuals (varied=3 CF per lead)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">API</span>
+        <span class="tech-val">Litestar · async endpoints · evidence contract per prediction</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Tier sistemi</span><span class="en">Tier system</span></span>
+        <span class="tech-val">HOT ≥0.70 · QUALIFIED 0.50-0.70 · WARM 0.25-0.50 · COLD &lt;0.25</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
+        <span class="tech-val">pytest · Pydantic v2 schema validation · coverage &gt;85% · ruff · CI</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Satış ekibinize aksiyon planı vermek ister misiniz?</span>
+      <span class="en">Want to give your sales team an action plan, not just a score?</span>
+    </h2>
+    <p>
+      <span class="tr">CRM'inizden lead verisi alır, XGBoost eğitir, SHAP+DiCE ile her lead için "neden bu skor, nasıl kapatırım" raporu çıkarım.</span>
+      <span class="en">I'll take lead data from your CRM, train XGBoost, and generate a "why this score, how to close it" report for every lead via SHAP+DiCE.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Lead Scoring İşi">
+        <span class="tr">Teklif al</span>
+        <span class="en">Get a quote</span>
+      </a>
+      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/counterfactual-lead-scoring-lab" target="_blank" rel="noopener">
+        <span class="tr">GitHub'da incele</span>
+        <span class="en">View on GitHub</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Hüseyin İnci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>
