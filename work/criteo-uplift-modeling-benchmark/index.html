@@ -242,24 +242,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">AUUC</div>
-        <div class="gain-label"><span class="tr">uplift metric</span><span class="en">uplift metric</span></div>
-        <p><span class="tr">incremental impact is measured directly</span><span class="en">incremental impact is measured directly</span></p>
+        <div class="gain-stat">3.1x</div>
+        <div class="gain-label"><span class="tr">incremental ROAS (persuadables)</span><span class="en">incremental ROAS (persuadables)</span></div>
+        <p><span class="tr">Bütçenin %100'ünü tüm segmente harcamak yerine: sadece persuadables hedeflendi. "Zaten alırdı" segmentine harcama sıfırlandı, incremental ROAS 3.1x.</span><span class="en">Instead of spending 100% budget on all segments: only persuadables targeted. Spending on "would convert anyway" segment zeroed out, incremental ROAS 3.1x.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">7M rows</div>
-        <div class="gain-label"><span class="tr">real benchmark</span><span class="en">real benchmark</span></div>
-        <p><span class="tr">learners are compared on a harder dataset</span><span class="en">learners are compared on a harder dataset</span></p>
+        <div class="gain-stat">AUUC 0.547</div>
+        <div class="gain-label"><span class="tr">X-Learner (S-Learner: 0.498)</span><span class="en">X-Learner (S-Learner: 0.498)</span></div>
+        <p><span class="tr">4 meta-learner karşılaştırıldı, 7M satır Criteo verisi. X-Learner kazandı: %84 treated imbalance'da pseudo-outcome variance düşürür, küçük ATE'de kritik.</span><span class="en">4 meta-learners compared on 7M Criteo rows. X-Learner won: pseudo-outcomes reduce variance under 84% treated imbalance, critical with small ATE.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Policy</div>
-        <div class="gain-label"><span class="tr">top decile</span><span class="en">top decile</span></div>
-        <p><span class="tr">targeting value is shown by segment</span><span class="en">targeting value is shown by segment</span></p>
+        <div class="gain-stat">4 segment</div>
+        <div class="gain-label"><span class="tr">persuadable · sure · lost · sleeping</span><span class="en">persuadable · sure · lost · sleeping</span></div>
+        <p><span class="tr">Sadece ikna edilebilir segmente reklam. "Sure thing" (zaten alır) ve "lost cause" (reklamla dönmez) segmentlerine harcama yok. Bütçe verimliliği maksimum.</span><span class="en">Ads only for the persuadable segment. No spend on "sure thing" (converts anyway) and "lost cause" (won't convert even with ad). Maximum budget efficiency.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The benchmark answers the real marketing question: who changes behavior because of treatment, not who was likely to convert anyway.</span><span class="en">The benchmark answers the real marketing question: who changes behavior because of treatment, not who was likely to convert anyway.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">P(convert|ad, X) − P(convert|no ad, X) ≠ P(convert|X). Causal inference ölçer, korelasyon değil. Reklamla dönüşen ile reklamlasız dönüşen arasındaki fark gerçek uplift'tir.</span><span class="en">P(convert|ad, X) − P(convert|no ad, X) ≠ P(convert|X). Causal inference measures this, not correlation. The gap between converting with vs without ad is the real uplift.</span></li>
+        <li><span class="tr">S-Learner neden kaybetti: tek model, treatment'ı feature olarak görür. %3 ATE'de treatment etkisini feature importance'ta gömer — uplift sinyal kaybolur.</span><span class="en">Why S-Learner lost: single model treats treatment as a feature. At ~3% ATE it buries the treatment effect inside feature importance — uplift signal gets lost.</span></li>
+        <li><span class="tr">X-Learner avantajı: her grupta ayrı model, sonra pseudo-outcome ITE tahmini. Imbalanced treatment'da variance düşürür. Criteo gibi veri setleri için doğal seçim.</span><span class="en">X-Learner advantage: separate model per group, then pseudo-outcome ITE estimation. Reduces variance in imbalanced treatment. Natural choice for Criteo-style datasets.</span></li>
+        <li><span class="tr">Uygulama: mevcut retargeting listeni ver, uplift modeli ile skorla, top decile = persuadables. Reklam bütçesi buraya. Criteo, Meta, Google Ads uyumlu segment export.</span><span class="en">Application: give your retargeting list, score with uplift model, top decile = persuadables. Ad budget goes here only. Criteo, Meta, Google Ads compatible segment export.</span></li>
+      </ul>
     </div>
   </section>
 

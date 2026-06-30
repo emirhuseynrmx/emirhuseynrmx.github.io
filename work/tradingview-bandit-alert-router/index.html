@@ -226,24 +226,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Webhook</div>
-        <div class="gain-label"><span class="tr">validated</span><span class="en">validated</span></div>
-        <p><span class="tr">bad alerts are rejected before routing</span><span class="en">bad alerts are rejected before routing</span></p>
+        <div class="gain-stat">%68</div>
+        <div class="gain-label"><span class="tr">80 trade sonrası EMA çekme ağırlığı</span><span class="en">EMA pull weight after 80 trades</span></div>
+        <p><span class="tr">4 strateji (RSI/EMA/Volume/VWAP) aynı sermayeyi paylaşıyor. 80 trade sonra Beta posterior: EMA Alpha=55, Beta=26. Otomatik ağırlık kayması.</span><span class="en">4 strategies (RSI/EMA/Volume/VWAP) share the same capital. After 80 trades Beta posterior: EMA Alpha=55, Beta=26. Automatic weight shift.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Bandit</div>
-        <div class="gain-label"><span class="tr">strategy choice</span><span class="en">strategy choice</span></div>
-        <p><span class="tr">routes learn from reward feedback</span><span class="en">routes learn from reward feedback</span></p>
+        <div class="gain-stat">adaptif</div>
+        <div class="gain-label"><span class="tr">piyasa rejimi değişince</span><span class="en">when market regime shifts</span></div>
+        <p><span class="tr">Trend piyasasında EMA baskın. Chop'ta volume strategy öne geçer. Manuel strateji değişikliği gerekmez — bandit kendi öğrenir ve kaydırır.</span><span class="en">EMA dominates in trending markets. Volume strategy takes over in choppy conditions. No manual strategy switching needed — bandit learns and shifts.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Audit</div>
-        <div class="gain-label"><span class="tr">decision log</span><span class="en">decision log</span></div>
-        <p><span class="tr">each routed alert leaves a replayable record</span><span class="en">each routed alert leaves a replayable record</span></p>
+        <div class="gain-stat">audit log</div>
+        <div class="gain-label"><span class="tr">her karar kayıt altında</span><span class="en">every decision on record</span></div>
+        <p><span class="tr">Hangi alert, hangi strateji, hangi posterior state, hangi reward — log'da. Geriye dönük analiz yapılabilir. "Neden şu an EMA seçildi?" sorusu cevaplanır.</span><span class="en">Which alert, which strategy, which posterior state, which reward — all logged. Retrospective analysis possible. "Why was EMA chosen then?" has an answer.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The router is not a trading promise. It is an alert operations layer with validation, guardrails, and feedback tracking.</span><span class="en">The router is not a trading promise. It is an alert operations layer with validation, guardrails, and feedback tracking.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Sabit strateji = piyasa değişince kayıp. Beta posterior sürekli güncellenir. Rejim değişikliği algılanmadan önce kayıp minimize edilir — gecikmeli değil anlık.</span><span class="en">Fixed strategy = losses when market changes. Beta posterior updates continuously. Losses minimized before regime shift is even detected — instant, not lagging.</span></li>
+        <li><span class="tr">Thompson Sampling reward: position P&L + (1 - drawdown%) bileşik skor. Sadece kazanan/kaybeden değil — kazanırken ne kadar risk alındı da hesaba katılır.</span><span class="en">Thompson Sampling reward: position P&L + (1 - drawdown%) composite score. Not just win/loss — how much risk was taken while winning also counts.</span></li>
+        <li><span class="tr">TradingView entegrasyonu: alert formatı değişmez. Webhook URL değişir. Mevcut Pine Script strategy'lerini sıfırdan yazmadan bu router'a bağlanır.</span><span class="en">TradingView integration: alert format unchanged. Webhook URL changes. Existing Pine Script strategies connect to this router without rewriting.</span></li>
+        <li><span class="tr">Guardrail: position_size, symbol ve action alanları webhook'ta validate edilir. Geçersiz alert reddedilir. Strateji hatasından kaynaklanan kazara emir gitmez.</span><span class="en">Guardrail: position_size, symbol, and action fields validated on webhook. Invalid alerts rejected. No accidental orders from strategy bugs.</span></li>
+      </ul>
     </div>
   </section>
 

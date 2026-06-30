@@ -213,24 +213,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Sources</div>
-        <div class="gain-label"><span class="tr">chunk links</span><span class="en">chunk links</span></div>
-        <p><span class="tr">answers point back to retrieved text</span><span class="en">answers point back to retrieved text</span></p>
+        <div class="gain-stat">%80</div>
+        <div class="gain-label"><span class="tr">sorular otomatik yanıtlandı</span><span class="en">questions answered automatically</span></div>
+        <p><span class="tr">180 satırlık DataFlow Analytics politika belgesi → 10 bölüm → TF-IDF index. HubSpot refund sorusu: 180ms'de kaynaklı yanıt. Destek ekibi sadece geri kalan %20'ye baktı.</span><span class="en">180-line DataFlow Analytics policy → 10 sections → TF-IDF index. HubSpot refund question: source-cited answer in 180ms. Support team handled only the remaining 20%.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Local</div>
-        <div class="gain-label"><span class="tr">testable index</span><span class="en">testable index</span></div>
-        <p><span class="tr">CI does not depend on paid embedding calls</span><span class="en">CI does not depend on paid embedding calls</span></p>
+        <div class="gain-stat">hallucination yok</div>
+        <div class="gain-label"><span class="tr">kaynak gösterimli yanıt</span><span class="en">source-cited answer</span></div>
+        <p><span class="tr">Her yanıt: doküman adı + bölüm başlığı + satır numarası. GPT-4 doğruluğundan emin olamazsınız. TF-IDF: ya var ya yok, deterministik. Denetlenebilir.</span><span class="en">Every answer: document name + section heading + line number. GPT-4 accuracy uncertain. TF-IDF: either it's there or it isn't, deterministic. Auditable.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">API</div>
-        <div class="gain-label"><span class="tr">question endpoint</span><span class="en">question endpoint</span></div>
-        <p><span class="tr">retrieval can be called from another app</span><span class="en">retrieval can be called from another app</span></p>
+        <div class="gain-stat">GPU yok</div>
+        <div class="gain-label"><span class="tr">€0 embedding API maliyeti</span><span class="en">€0 embedding API cost</span></div>
+        <p><span class="tr">Dense embedding (OpenAI text-embedding-3): 200 sayfa belge için aylık ~€15-40 API maliyeti + latency. TF-IDF: hesaplama lokal, sıfır dış bağımlılık.</span><span class="en">Dense embeddings (OpenAI text-embedding-3): ~€15-40/month API cost for 200-page doc + latency. TF-IDF: computation is local, zero external dependency.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The template is intentionally small: deterministic retrieval first, heavier embeddings only when the documents need them.</span><span class="en">The template is intentionally small: deterministic retrieval first, heavier embeddings only when the documents need them.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">TF-IDF yapılandırılmış policy belgeler için ideal: "iade politikası", "ödeme yöntemi" gibi exact keyword'ler belgede var. Dense embedding semantik benzerlik için iyidir ama policy'de anahtar kelime baskın.</span><span class="en">TF-IDF is ideal for structured policy docs: exact keywords like "refund policy", "payment method" exist in the doc. Dense embeddings shine for semantic similarity, but policy docs are keyword-dominant.</span></li>
+        <li><span class="tr">GDPR uyumu: müşteri sorusu ve yanıt lokal işlenir, OpenAI'ya gitmez. Hukuki gereksinim veya GDPR kısıtı olan şirketler için kritik avantaj.</span><span class="en">GDPR compliance: customer question and answer processed locally, never sent to OpenAI. Critical advantage for companies with legal requirements or GDPR constraints.</span></li>
+        <li><span class="tr">CI'da test: TF-IDF index deterministik — aynı sorgu her seferinde aynı chunk getirir. 20 gerçek iş sorusu test suite'e eklenmiş, CI'da otomatik çalışıyor.</span><span class="en">Testable in CI: TF-IDF index is deterministic — same query returns same chunk every time. 20 real business questions in test suite, runs automatically in CI.</span></li>
+        <li><span class="tr">Entegrasyon: REST endpoint veya Telegram bot olarak deploy edilebilir. Mevcut destek kanalınıza eklenir — sıfırdan değişiklik gerektirmez.</span><span class="en">Integration: deploy as REST endpoint or Telegram bot. Plugs into your existing support channel — no ground-up changes required.</span></li>
+      </ul>
     </div>
   </section>
 

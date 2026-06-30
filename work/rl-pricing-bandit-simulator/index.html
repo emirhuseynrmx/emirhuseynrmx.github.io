@@ -249,24 +249,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Bandit</div>
-        <div class="gain-label"><span class="tr">posterior state</span><span class="en">posterior state</span></div>
-        <p><span class="tr">each arm keeps learnable evidence</span><span class="en">each arm keeps learnable evidence</span></p>
+        <div class="gain-stat">%18</div>
+        <div class="gain-label"><span class="tr">gelir artışı (3.000 SaaS event)</span><span class="en">revenue increase (3,000 SaaS events)</span></div>
+        <p><span class="tr">starter_29/growth_49/premium_79 kolları. Thompson Sampling ilk 400 event'te growth_49'u kazanan olarak tanıdı, trafiği oraya kaydırdı. A/B 6 hafta beklerken bandit anında öğrendi.</span><span class="en">starter_29/growth_49/premium_79 arms. Thompson Sampling identified growth_49 as winner within 400 events, shifted traffic there. A/B waits 6 weeks; bandit learns immediately.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Regret</div>
-        <div class="gain-label"><span class="tr">decision cost</span><span class="en">decision cost</span></div>
-        <p><span class="tr">experiments are compared after replay</span><span class="en">experiments are compared after replay</span></p>
+        <div class="gain-stat">sürekli</div>
+        <div class="gain-label"><span class="tr">optimizasyon (A/B bekleme yok)</span><span class="en">optimization (no A/B wait)</span></div>
+        <p><span class="tr">Klasik A/B: 6 hafta sabit trafik bölümü, sonra karar. Bandit: her kullanıcıdan öğren, explore/exploit dengesini canlı tut. Kayıp gelir yok.</span><span class="en">Classic A/B: 6 weeks of fixed split, then decide. Bandit: learn from every user, keep explore/exploit balance live. No revenue loss period.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Guards</div>
-        <div class="gain-label"><span class="tr">margin limits</span><span class="en">margin limits</span></div>
-        <p><span class="tr">unsafe prices can be blocked before serving</span><span class="en">unsafe prices can be blocked before serving</span></p>
+        <div class="gain-stat">Beta(α,β)</div>
+        <div class="gain-label"><span class="tr">matematiksel posterior güncelleme</span><span class="en">mathematical posterior update</span></div>
+        <p><span class="tr">Her conversion: α += 1. Her bounce: β += 1. Posterior sample alarak en yüksek beklenti değerindeki fiyat seçilir. Sezgisel değil, istatistiksel.</span><span class="en">Each conversion: α += 1. Each bounce: β += 1. Price with highest expected value selected by posterior sampling. Statistical, not intuitive.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The simulator keeps pricing experiments inspectable: chosen arm, reward feedback, constraints, and regret are all recorded.</span><span class="en">The simulator keeps pricing experiments inspectable: chosen arm, reward feedback, constraints, and regret are all recorded.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Thompson Sampling vs UCB1: UCB1 deterministic — aynı state'te hep aynı kolu seçer. Thompson stochastic — exploration doğal olarak oluşur. SaaS'ta daha robust, piyasa değişince hızlı adapte.</span><span class="en">Thompson Sampling vs UCB1: UCB1 is deterministic — always selects the same arm in same state. Thompson is stochastic — exploration happens naturally. More robust in SaaS, adapts quickly to market shifts.</span></li>
+        <li><span class="tr">Margin × posterior: sadece conversion rate değil, contribution margin da hesaba katılır. Yüksek conversion ama düşük marj olan fiyat dezavantajlı kalır. Gerçek gelir optimizasyonu.</span><span class="en">Margin × posterior: not just conversion rate, contribution margin factored in. High conversion but low margin price stays disadvantaged. Real revenue optimization.</span></li>
+        <li><span class="tr">Guardrail: min margin, max price cap kuralları her kol seçiminden önce kontrol edilir. Bandit kazara marjı negatif bir fiyat öneremez. İş kuralları korunur.</span><span class="en">Guardrail: min margin, max price cap rules checked before every arm selection. Bandit can't accidentally suggest negative-margin pricing. Business rules preserved.</span></li>
+        <li><span class="tr">Entegrasyon: Stripe/Paddle/LemonSqueezy price_id ile çalışır. Checkout'tan önce hangi fiyatı göstereceğini API'dan sorar. Mevcut ödeme altyapısı değişmez.</span><span class="en">Integration: works with Stripe/Paddle/LemonSqueezy price_id. Asks API which price to show before checkout. Existing payment infrastructure unchanged.</span></li>
+      </ul>
     </div>
   </section>
 

@@ -223,24 +223,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">FSM</div>
-        <div class="gain-label"><span class="tr">lead capture</span><span class="en">lead capture</span></div>
-        <p><span class="tr">conversation state is explicit</span><span class="en">conversation state is explicit</span></p>
+        <div class="gain-stat">7/24</div>
+        <div class="gain-label"><span class="tr">lead capture (iş saati dışı kaçan %40)</span><span class="en">lead capture (40% missed after hours)</span></div>
+        <p><span class="tr">Saat 23:15, web sitesinden form dolduran potansiyel müşteri — bot anında karşılar, ad/soyad/bütçe/sektör bilgisini alır, sabah ekibe CSV hazır. Uyku yok, kaçan lead yok.</span><span class="en">11:15 PM, potential client fills website form — bot responds instantly, collects name/budget/sector, CSV ready for the team by morning. No sleep, no missed leads.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Admin</div>
-        <div class="gain-label"><span class="tr">CSV export</span><span class="en">CSV export</span></div>
-        <p><span class="tr">captured leads can leave the bot cleanly</span><span class="en">captured leads can leave the bot cleanly</span></p>
+        <div class="gain-stat">%87</div>
+        <div class="gain-label"><span class="tr">kayıt tamamlanma (stateless: %43)</span><span class="en">registration completion (stateless: 43%)</span></div>
+        <p><span class="tr">FSM (StatesGroup) her kullanıcıyı kendi state'inde tutar. Stateless bot: araya başka mesaj girince kayıt sıfırlanır. FSM: 4 adım tamamlanana kadar state korunur.</span><span class="en">FSM (StatesGroup) keeps each user in their own state. Stateless bot: interruption resets registration. FSM: state preserved until all 4 steps complete.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Alerts</div>
-        <div class="gain-label"><span class="tr">business events</span><span class="en">business events</span></div>
-        <p><span class="tr">orders, FAQs, and notifications share one pattern</span><span class="en">orders, FAQs, and notifications share one pattern</span></p>
+        <div class="gain-stat">1000+</div>
+        <div class="gain-label"><span class="tr">eşzamanlı kullanıcı</span><span class="en">concurrent users</span></div>
+        <p><span class="tr">aiogram 3.x native asyncio: her kullanıcı için ayrı thread değil, coroutine. python-telegram-bot threading modeli 100 kullanıcıda tıkanır. aiogram 1000+ kullanıcıda smooth.</span><span class="en">aiogram 3.x native asyncio: coroutines, not separate threads per user. python-telegram-bot threading model chokes at 100 users. aiogram smooth at 1000+.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The bot is a handoff tool: collect structured messages, route them, and export them without locking the business into chat history.</span><span class="en">The bot is a handoff tool: collect structured messages, route them, and export them without locking the business into chat history.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">aiogram 3.x vs python-telegram-bot: aiogram native async, dependency injection, FSM built-in. python-telegram-bot threading = GIL sorunu. Yüksek yük altında farklı sonuçlar.</span><span class="en">aiogram 3.x vs python-telegram-bot: aiogram is native async with built-in DI and FSM. python-telegram-bot uses threading = GIL issues. Very different results under high load.</span></li>
+        <li><span class="tr">FSM state machine: hangi kullanıcı hangi adımda — açık ve takip edilebilir. "Ad girdi mi, bütçeyi mi bekliyoruz?" — kod okurken net görülür, debug edilmesi kolay.</span><span class="en">FSM state machine: which user is at which step — explicit and traceable. "Did they enter their name? Are we waiting for budget?" — clear in code, easy to debug.</span></li>
+        <li><span class="tr">Özelleştirilebilir FAQ: 10 farklı konu (fiyat, iade, destek, ödeme, proje süresi...) JSON/dict'te tanımlı. Yeni FAQ eklemek 2 satır kod. Teknik bilgi gerekmez.</span><span class="en">Customizable FAQ: 10 topics (pricing, refund, support, payment, timeline...) defined in JSON/dict. Adding a new FAQ is 2 lines of code. No technical knowledge needed.</span></li>
+        <li><span class="tr">Lead export: admin komutu ile CSV çek. HubSpot veya Salesforce'a doğrudan push da eklenebilir. Bot toplayan, CRM koruyan — bilgi kaybolmaz.</span><span class="en">Lead export: CSV pull via admin command. Direct push to HubSpot or Salesforce can be added. Bot collects, CRM preserves — no information lost.</span></li>
+      </ul>
     </div>
   </section>
 

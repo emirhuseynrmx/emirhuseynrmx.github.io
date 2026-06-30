@@ -241,24 +241,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
+        <div class="gain-stat">8 sn</div>
+        <div class="gain-label"><span class="tr">10.000 satır CRM temizleme</span><span class="en">10,000-row CRM cleaning</span></div>
+        <p><span class="tr">7 farklı sorun tipi (email, telefon, boş, duplikat, encoding, formül, tip uyumsuzluğu) tek API çağrısında tespit ve düzeltme. Litestar async endpoint.</span><span class="en">7 different issue types detected and fixed in a single API call. Litestar async endpoint.</span></p>
+      </div>
+      <div class="gain-card">
+        <div class="gain-stat">dil fark etmez</div>
+        <div class="gain-label"><span class="tr">REST API = her stack ile çalışır</span><span class="en">REST API = works with any stack</span></div>
+        <p><span class="tr">HubSpot → Node.js → API çağrısı. Salesforce → Ruby → API. Python bilmek gerekmiyor. JSON gönder, temiz JSON al.</span><span class="en">HubSpot → Node.js → API call. No Python needed. Send JSON, receive clean JSON.</span></p>
+      </div>
+      <div class="gain-card">
         <div class="gain-stat">Litestar</div>
-        <div class="gain-label"><span class="tr">small API surface</span><span class="en">small API surface</span></div>
-        <p><span class="tr">upload records or CSV text</span><span class="en">upload records or CSV text</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">Safe CSV</div>
-        <div class="gain-label"><span class="tr">spreadsheet guard</span><span class="en">spreadsheet guard</span></div>
-        <p><span class="tr">formula-like values are neutralized</span><span class="en">formula-like values are neutralized</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">Profile</div>
-        <div class="gain-label"><span class="tr">quality report</span><span class="en">quality report</span></div>
-        <p><span class="tr">invalid email, phone, and duplicate counts</span><span class="en">invalid email, phone, and duplicate counts</span></p>
+        <div class="gain-label"><span class="tr">FastAPI'dan ~%20 daha hızlı</span><span class="en">~20% faster than FastAPI</span></div>
+        <p><span class="tr">Async-first mimari, native OpenAPI dökümantasyonu, daha düşük middleware overhead. Yüksek hacimli RapidAPI trafiği için doğru seçim.</span><span class="en">Async-first architecture, native OpenAPI docs, lower middleware overhead. Right for high-volume RapidAPI traffic.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">Lead lists usually fail at import time. This API catches the boring data problems before they reach a CRM.</span><span class="en">Lead lists usually fail at import time. This API catches the boring data problems before they reach a CRM.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Kütüphane değil API: müşteri Python bilmeden entegre eder. pip install gerektirmez, versiyon çakışması olmaz. HTTP bilen herkes kullanabilir.</span><span class="en">API not library: client integrates without knowing Python. No pip install, no version conflicts. Anyone who knows HTTP can use it.</span></li>
+        <li><span class="tr">FastAPI → Litestar geçişi: idempotency, rate limiting, audit log middleware korundu. Sadece router katmanı değişti. Dış API davranışı aynı.</span><span class="en">FastAPI → Litestar migration: idempotency, rate limiting, audit log middleware preserved. Only router layer changed. External API behavior unchanged.</span></li>
+        <li><span class="tr">Otomatik tip çıkarımı: sütun adına bakarak email mi, telefon mu, tarih mi tahmin eder. Manuel mapping gerekmez. Yanlış tahminse override edilebilir.</span><span class="en">Auto type inference: guesses email, phone, or date from column name. No manual mapping needed. Can be overridden if wrong.</span></li>
+        <li><span class="tr">RapidAPI entegrasyonu: X-RapidAPI-Proxy-Secret doğrulaması, sabit pencere rate limiter, idempotency key desteği. Marketplace'e hazır.</span><span class="en">RapidAPI integration: proxy secret validation, fixed-window rate limiter, idempotency key support. Ready for marketplace listing.</span></li>
+      </ul>
     </div>
   </section>
 

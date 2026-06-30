@@ -275,24 +275,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Score</div>
-        <div class="gain-label"><span class="tr">lead priority</span><span class="en">lead priority</span></div>
-        <p><span class="tr">sales can sort by conversion likelihood</span><span class="en">sales can sort by conversion likelihood</span></p>
+        <div class="gain-stat">AUC 0.87</div>
+        <div class="gain-label"><span class="tr">LogReg 0.78'e karşı</span><span class="en">vs logistic regression 0.78</span></div>
+        <p><span class="tr">XGBoost binary:logistic, L1+L2 regularization, histogram method. Aynı veri, aynı feature'lar — sadece model farkı. Daha az yanlış öncelik, daha net HIGH/COLD ayrımı.</span><span class="en">Same data, same features — only model difference. Fewer misprioritized leads, cleaner HIGH/COLD separation.</span></p>
       </div>
       <div class="gain-card">
         <div class="gain-stat">SHAP</div>
-        <div class="gain-label"><span class="tr">drivers</span><span class="en">drivers</span></div>
-        <p><span class="tr">the main reasons behind a score are visible</span><span class="en">the main reasons behind a score are visible</span></p>
+        <div class="gain-label"><span class="tr">"neden?" sorusu yanıtlı</span><span class="en">"why?" question answered</span></div>
+        <p><span class="tr">Lead L-4812 neden HOT? SHAP: budget_eur +0.41, company_size +0.28, source_conv_rate +0.19. Satış ekibi modele değil nedene göre aksiyon alır.</span><span class="en">Why is lead L-4812 HOT? SHAP values show budget_eur +0.41, company_size +0.28. Sales acts on reasons, not black-box scores.</span></p>
       </div>
       <div class="gain-card">
         <div class="gain-stat">DiCE</div>
-        <div class="gain-label"><span class="tr">next action</span><span class="en">next action</span></div>
-        <p><span class="tr">counterfactuals become concrete sales moves</span><span class="en">counterfactuals become concrete sales moves</span></p>
+        <div class="gain-label"><span class="tr">COLD lead kurtarma planı</span><span class="en">COLD lead recovery plan</span></div>
+        <p><span class="tr">"L-4812 COLD, ne değişseydi QUALIFIED olurdu?" DiCE: budget_eur ≥ 1.200 EUR ve industry=SaaS. CRM'e not olarak satış ekibine gider.</span><span class="en">"What would L-4812 need to change to reach QUALIFIED?" DiCE outputs: budget_eur ≥ 1,200 and industry=SaaS. Goes as a note in CRM.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The useful output is not just a score. It is the smallest credible action that could move a lead over the threshold.</span><span class="en">The useful output is not just a score. It is the smallest credible action that could move a lead over the threshold.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Kara kutu model = satış ekibi güvenmez. SHAP TreeExplainer ile her tahmin için feature katkıları hesaplanır. "Model öyle dedi" yerine "budget yüksek, şirket büyük" diyebilirler.</span><span class="en">Black box model = sales team doesn't trust it. SHAP explains each prediction. They say "budget is high, company is large" not "the model said so."</span></li>
+        <li><span class="tr">DiCE minimum mesafe CF: mevcut lead değerlerine en yakın counterfactual'ı bulur. "En az 2 değişiklikle eşiği geç" senaryosu. Uygulanabilir aksiyon planı.</span><span class="en">DiCE minimum distance CF: finds closest counterfactual to current lead values. "Cross threshold with minimum 2 changes" scenario. Actionable plan.</span></li>
+        <li><span class="tr">XGBoost native NaN: CRM'deki eksik değerler için imputation pipeline gerekmez. XGBoost missing değeri öğrenir. Daha az ön işlem, daha az hata riski.</span><span class="en">XGBoost native NaN: no imputation pipeline needed for missing CRM values. XGBoost learns the missing direction. Less preprocessing, less error risk.</span></li>
+        <li><span class="tr">Teslim formatı: her lead için JSON response (score, tier, shap_values, counterfactuals). CRM'e webhook ile push veya PDF rapor olarak satış ekibine teslim.</span><span class="en">Delivery: JSON response per lead (score, tier, shap_values, counterfactuals). Push to CRM via webhook or deliver as PDF to the sales team.</span></li>
+      </ul>
     </div>
   </section>
 

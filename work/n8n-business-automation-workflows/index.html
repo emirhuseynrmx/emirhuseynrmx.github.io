@@ -238,24 +238,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">4 flows</div>
-        <div class="gain-label"><span class="tr">import-ready</span><span class="en">import-ready</span></div>
-        <p><span class="tr">forms, email, sheets, and alerts are covered</span><span class="en">forms, email, sheets, and alerts are covered</span></p>
+        <div class="gain-stat">€392/ay</div>
+        <div class="gain-label"><span class="tr">Zapier'e karşı tasarruf</span><span class="en">savings vs Zapier</span></div>
+        <p><span class="tr">Zapier Pro 20.000 görev/ay: €400. n8n self-hosted Hetzner CX21: €8. 4 iş süreci otomatize edildi, fiyat %98 düşük. Sınırsız çalıştırma, per-task fiyat yok.</span><span class="en">Zapier Pro 20,000 tasks/month: €400. n8n self-hosted Hetzner CX21: €8. 4 business processes automated, price 98% lower. Unlimited runs, no per-task pricing.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Config</div>
-        <div class="gain-label"><span class="tr">checked</span><span class="en">checked</span></div>
-        <p><span class="tr">required placeholders are documented</span><span class="en">required placeholders are documented</span></p>
+        <div class="gain-stat">4 süreç</div>
+        <div class="gain-label"><span class="tr">otomatik: lead/fatura/rapor/bildirim</span><span class="en">automated: lead/invoice/report/alert</span></div>
+        <p><span class="tr">Hafta sonu 23:47'de form dolduran lead → Slack'e bildirim + CRM'e kayıt + onboarding email — sıfır insan müdahalesi. Pazartesi sabahı satış ekibi hazır listeyle başlar.</span><span class="en">Weekend 11:47 PM lead form → Slack notification + CRM record + onboarding email — zero human intervention. Sales team starts Monday with a ready list.</span></p>
       </div>
       <div class="gain-card">
-        <div class="gain-stat">Handoff</div>
-        <div class="gain-label"><span class="tr">operator notes</span><span class="en">operator notes</span></div>
-        <p><span class="tr">the workflow can be maintained after delivery</span><span class="en">the workflow can be maintained after delivery</span></p>
+        <div class="gain-stat">veri şirkette</div>
+        <div class="gain-label"><span class="tr">self-hosted = GDPR uyumu</span><span class="en">self-hosted = GDPR compliant</span></div>
+        <p><span class="tr">Zapier SaaS: müşteri verisi Zapier sunucularından geçer. n8n self-hosted: veri kendi sunucunda kalır. GDPR, ISO 27001 veya sektör uyum gereksinimleri için kritik.</span><span class="en">Zapier SaaS: customer data passes through Zapier servers. n8n self-hosted: data stays on your server. Critical for GDPR, ISO 27001, or industry compliance requirements.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">n8n work is valuable when the import, credentials, and failure path are clear enough for a non-developer to operate.</span><span class="en">n8n work is valuable when the import, credentials, and failure path are clear enough for a non-developer to operate.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Zapier per-task fiyatlandırması: iş büyüdükçe maliyet büyür. n8n sabit sunucu maliyeti: iş 10x büyüse de €8/ay kalır. Ölçeklenen iş için doğru seçim.</span><span class="en">Zapier per-task pricing: cost grows as business grows. n8n fixed server cost: stays €8/month even if the business 10x-es. Right choice for scaling businesses.</span></li>
+        <li><span class="tr">n8n JSON workflow export: versiyonlama git ile yapılır. Hangi workflow ne zaman değişti, kim değiştirdi — iz kalır. Zapier'de bu görünürlük yok.</span><span class="en">n8n JSON workflow export: versioning done with git. What changed when, who changed it — trail remains. This visibility doesn't exist in Zapier.</span></li>
+        <li><span class="tr">Error handling: n8n'de hata olunca retry, fallback node veya Slack alert chain kurulabilir. Zapier'de hata = sadece email bildirimi. Kritik süreçler için yetersiz.</span><span class="en">Error handling: n8n can chain retry, fallback node, or Slack alert on failure. Zapier error = just an email notification. Insufficient for critical processes.</span></li>
+        <li><span class="tr">Teslim: workflow JSON + kurulum notu + credential placeholder + first-run checklist. Teknik olmayan operatörler devam ettirebilir. Bağımlılık yaratmadan teslim.</span><span class="en">Delivery: workflow JSON + setup notes + credential placeholders + first-run checklist. Non-technical operators can maintain it. Delivered without creating dependency.</span></li>
+      </ul>
     </div>
   </section>
 

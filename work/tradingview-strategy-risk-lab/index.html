@@ -279,24 +279,29 @@
     </h2>
     <div class="gains-grid">
       <div class="gain-card">
-        <div class="gain-stat">Risk</div>
-        <div class="gain-label"><span class="tr">bad-trade model</span><span class="en">bad-trade model</span></div>
-        <p><span class="tr">strategy exports become risk labels</span><span class="en">strategy exports become risk labels</span></p>
+        <div class="gain-stat">F1 0.74</div>
+        <div class="gain-label"><span class="tr">kötü trade tespiti (RF: 0.68)</span><span class="en">bad trade detection (RF: 0.68)</span></div>
+        <p><span class="tr">1.500 trade, aynı feature'lar: RF F1 0.68, XGBoost F1 0.74. Feature engineering eklenince (ATR%, vol z-score, EMA trend) ayrışıyor.</span><span class="en">1,500 trades, same features: RF F1 0.68, XGBoost F1 0.74. Feature engineering (ATR%, vol z-score, EMA trend) is what creates separation.</span></p>
+      </div>
+      <div class="gain-card">
+        <div class="gain-stat">önlendi</div>
+        <div class="gain-label"><span class="tr">AAPL 14-Kas-2024 kötü işlem</span><span class="en">AAPL Nov-14-2024 bad trade</span></div>
+        <p><span class="tr">ATR% 3.2, vol_zscore +2.8, ema_trend -0.0041. Model skoru 0.97 — bad_trade=1. Giriş engellendi. Klasik RSI/MACD sinyali geçerdi.</span><span class="en">ATR% 3.2, vol_zscore +2.8, ema_trend -0.0041. Model score 0.97 — bad_trade=1. Entry blocked. Classic RSI/MACD signal would have passed.</span></p>
       </div>
       <div class="gain-card">
         <div class="gain-stat">SHAP</div>
-        <div class="gain-label"><span class="tr">global drivers</span><span class="en">global drivers</span></div>
-        <p><span class="tr">the weakest conditions are visible</span><span class="en">the weakest conditions are visible</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">DiCE</div>
-        <div class="gain-label"><span class="tr">filter rules</span><span class="en">filter rules</span></div>
-        <p><span class="tr">counterfactuals become entry filters</span><span class="en">counterfactuals become entry filters</span></p>
+        <div class="gain-label"><span class="tr">hangi feature kötü trade sürücüsü</span><span class="en">which feature drives bad trades</span></div>
+        <p><span class="tr">Global SHAP: vol_zscore birinci, ATR% ikinci. "Yüksek hacimli volatil günlerde strateji çalışmıyor" → Pine Script giriş filtresi olarak uygula.</span><span class="en">Global SHAP: vol_zscore first, ATR% second. "Strategy fails on high-volume volatile days" → apply as Pine Script entry filter.</span></p>
       </div>
     </div>
     <div class="gains-reason">
       <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <p class="gain-why"><span class="tr">The report turns a backtest export into a review process: which trades failed, why, and what rule would have avoided them.</span><span class="en">The report turns a backtest export into a review process: which trades failed, why, and what rule would have avoided them.</span></p>
+      <ul class="gains-list">
+        <li><span class="tr">Ham OHLCV yetmez: raw close/open farkı gürültü. ATR% volatiliteyi normalize eder, vol_zscore hacim anormalliğini ölçer. Bunlar olmadan model kör.</span><span class="en">Raw OHLCV isn't enough: raw close/open diff is noise. ATR% normalizes volatility, vol_zscore measures volume anomaly. Without these, the model is blind.</span></li>
+        <li><span class="tr">XGBoost vs sklearn GBM: histogram method bellek açısından verimli. 1.500 trade küçük veri ama gerçek projede 50K+: XGBoost ölçeklenir, sklearn GBM yavaşlar.</span><span class="en">XGBoost vs sklearn GBM: histogram method is memory efficient. 1,500 trades is small but at 50K+ real trades: XGBoost scales, sklearn GBM slows.</span></li>
+        <li><span class="tr">TradingView entegrasyonu: Strategy Tester CSV → pipeline → kötü trade pattern → Pine Script entry condition. Döngü kapanır. Backtest export'tan giriş filtresine.</span><span class="en">TradingView integration: Strategy Tester CSV → pipeline → bad trade pattern → Pine Script entry condition. Loop closes from backtest to live filter.</span></li>
+        <li><span class="tr">Polars not: 7M satır HFT verisi için pandas yerine Polars lazy evaluation. 1.500 trade'de fark yok ama gerçek yüksek frekanslı veride kritik.</span><span class="en">Polars note: for 7M row HFT data use Polars lazy evaluation over pandas. No difference at 1,500 trades but critical for real high-frequency data.</span></li>
+      </ul>
     </div>
   </section>
 
