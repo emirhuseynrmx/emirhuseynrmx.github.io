@@ -141,6 +141,65 @@
     </div>
   </section>
 
+  <!-- PROBLEM + WHY + SCENARIO -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi? Neden bu yaklaşım?</span>
+      <span class="en">What was the problem? Why this approach?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
+        <span class="tech-val"><span class="tr">Elektronik perakendeci. Rakip ani indirim yaparsa saatler sonra öğreniyor — o sırada rakip satışları alıyor. Günde 2 kez elle fiyat kontrol ediyorlar. Hafta sonları kontrol yok. Yıllık tahmini kayıp: €40K+.</span><span class="en">Electronics retailer. When a competitor runs a flash sale, they find out hours later — competitor is taking the sales. Manual price check twice a day. No checks on weekends. Estimated annual loss: €40K+.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">z-score ← ML</span>
+        <span class="tech-val"><span class="tr">Fiyat anormalisi için IsolationForest veya DBSCAN denemedim. Neden? Fiyat serisinde yapısal kırılma tek bir anda gerçekleşiyor ve rolling z-score bunu ±2.5σ eşiğiyle kesin yakalar. ML modeli bu kadar az veriyle (200 ürün, haftalık fiyat) overfits. z-score deterministik, açıklanabilir, eşik müşteri ayarlayabilir.</span><span class="en">I didn't try IsolationForest or DBSCAN for price anomalies. Why? Structural breaks in a price series happen at a single moment, and rolling z-score catches this exactly at ±2.5σ threshold. ML models overfit with this little data (200 products, weekly prices). z-score is deterministic, explainable, threshold adjustable by client.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Thompson S. ←</span>
+        <span class="tech-val"><span class="tr">Hangi ürünü ne sıklıkla kontrol et? Sabit interval (30s/hepsi) gereksiz kaynak kullanımı. Thompson Sampling: çok hareket eden ürüne → daha sık kontrol, stabil fiyatlıya → daha seyrek. Reward: fiyat değişimi oldu mu? Posterioru buna göre güncelle.</span><span class="en">Which product to check how often? Fixed 30s for all products wastes resources. Thompson Sampling: high-volatility product → check more often, stable price → check less. Reward: did the price change? Update posterior accordingly.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">idempotency</span>
+        <span class="tech-val"><span class="tr">Scraper aynı anlık görüntüyü iki kez gönderebilir (retry). Idempotency-key ile: aynı istek gelirse DB'ye iki kez yazılmaz, cache'den döner. Mükerrer fiyat kaydı olmadığından historik grafik temiz kalır.</span><span class="en">Scraper may send the same snapshot twice (retry). With idempotency-key: if the same request arrives again, it's not written to DB twice, returned from cache. No duplicate price records, so historical chart stays clean.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: NVDA anomali tespiti</span>
+      <span class="en">Step-by-step scenario: NVDA anomaly detected</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Async fiyat çekme: 4 kaynak, 38 ürün</span><span class="en">Async price pull: 4 sources, 38 products</span></h3>
+        <p>
+          <span class="tr">Thompson Sampling NVDA'yı yüksek volatilitesi nedeniyle 30s'de bir kontrol ediyor (diğerleri 120s). 14:32'de scraper 4 kaynaktan NVDA fiyatı çekti: min=870.10, max=875.30. Önceki 20 günlük rolling mean=912.4, std=8.2.</span>
+          <span class="en">Thompson Sampling checks NVDA every 30s due to high volatility (others every 120s). At 14:32, scraper pulled NVDA price from 4 sources: min=870.10, max=875.30. Previous 20-day rolling mean=912.4, std=8.2.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Anomali işaretlendi: z = -3.2</span><span class="en">Anomaly flagged: z = -3.2</span></h3>
+        <p>
+          <span class="tr">z = (875.30 − 912.4) / 8.2 = -3.2. Eşik: |z| &gt; 2.5. Koşul sağlandı → kayıt "anomaly_flag" olarak işaretlendi. Bu -4.8% düşüş, tek günde normalin 3 sigma dışında. Rekabet baskısı veya haber etkisi — insan onayı gerekiyor.</span>
+          <span class="en">z = (875.30 − 912.4) / 8.2 = -3.2. Threshold: |z| &gt; 2.5. Condition met → record marked "anomaly_flag." This -4.8% drop is 3 sigma outside normal in one day. Competitive pressure or news effect — human review needed.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Webhook → Telegram bildirimi, 90 saniyede</span><span class="en">Webhook → Telegram notification, in 90 seconds</span></h3>
+        <p>
+          <span class="tr">14:32'de fiyat çekildi. 14:33:30'da müşterinin Telegram'ına "NVDA %4.8 düştü, anomali işaretlendi" bildirimi gitti. Müşteri rakibinin fiyatını eşleştirme kararını 5 dakika içinde verdi — aynı gün ek €1.400 satış yaptı.</span>
+          <span class="en">Price pulled at 14:32. At 14:33:30, "NVDA dropped 4.8%, anomaly flagged" notification sent to client's Telegram. Client made the pricing match decision within 5 minutes — made an additional €1,400 in sales that day.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">
       <span class="tr">Teknik detaylar</span>

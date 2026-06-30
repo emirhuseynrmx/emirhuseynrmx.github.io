@@ -142,6 +142,65 @@
     </div>
   </section>
 
+  <!-- PROBLEM + WHY + SCENARIO -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi? Neden REST API?</span>
+      <span class="en">What was the problem? Why a REST API?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
+        <span class="tech-val"><span class="tr">Ajans, 5 farklı müşteriden veri alıyor: biri Excel, biri API JSON, biri Salesforce export, biri Google Sheets CSV, biri PostgreSQL dump. Her proje başında aynı temizleme adımları tekrar yazılıyor. Toplam haftalık kayıp: 8+ saat.</span><span class="en">Agency receives data from 5 different clients: one Excel, one API JSON, one Salesforce export, one Google Sheets CSV, one PostgreSQL dump. Same cleaning steps rewritten at the start of every project. Weekly waste: 8+ hours.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">API ← kütüphane</span>
+        <span class="tech-val"><span class="tr">Neden kütüphane değil? Python kütüphanesi yalnızca Python projeleri çağırabilir. REST API dil bağımsız: n8n workflow'u, Google Sheets Apps Script, Retool dashboard, hatta müşterinin Excel makrosu POST atabilir. Tek kod, herkes kullanır.</span><span class="en">Why not a library? A Python library can only be called from Python projects. REST API is language-agnostic: n8n workflow, Google Sheets Apps Script, Retool dashboard, even the client's Excel macro can POST to it. One codebase, everyone uses it.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">otomatik tip çıkarımı</span>
+        <span class="tech-val"><span class="tr">pd.read_csv() varsayılan olarak her şeyi string okur — tipler elle belirtilmeden. Bu API: sütunu inceler, %90+ değeri float olarak parse edilebiliyorsa → float, "2024-01-15" formatına uyuyorsa → datetime, "true"/"false" içeriyorsa → bool. Manuel schema gereksiz.</span><span class="en">pd.read_csv() by default reads everything as string — types must be specified manually. This API: inspects each column, if 90%+ values can be parsed as float → float, if they match "2024-01-15" format → datetime, if they contain "true"/"false" → bool. No manual schema needed.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Pandera son adım</span>
+        <span class="tech-val"><span class="tr">Temizlendikten sonra da output schema doğrulaması yapılır. Neden? Temizleme süreci beklenmedik sonuç üretebilir (medyan imputation negatif değer çıkardıysa?). Pandera bunu yakalar — downstream ML pipeline'ına kirli veri geçmez.</span><span class="en">Schema validation runs on the output after cleaning too. Why? The cleaning process can produce unexpected results (what if median imputation produced a negative value?). Pandera catches this — no dirty data reaches the downstream ML pipeline.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: 10.000 satır satış verisi</span>
+      <span class="en">Step-by-step scenario: 10,000-row sales dataset</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">POST /validate — 18ms yanıt</span><span class="en">POST /validate — 18ms response</span></h3>
+        <p>
+          <span class="tr">10.000 satır, 24 sütun CSV multipart/form-data ile gönderildi. API pandas ile okudu, tip çıkarımı yaptı, sorunları tespit etti. Yanıt: quality_score=94.2, issues_found=7. Toplam süre 18ms — FastAPI async IO sayesinde bloke yok.</span>
+          <span class="en">10,000 rows, 24 columns CSV sent as multipart/form-data. API read with pandas, ran type inference, detected issues. Response: quality_score=94.2, issues_found=7. Total time 18ms — no blocking thanks to FastAPI async IO.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">7 sorun, 5'i otomatik düzeltildi</span><span class="en">7 issues, 5 auto-fixed</span></h3>
+        <p>
+          <span class="tr">Tip yanlışlığı (3): "2024/01/15" string → datetime, "1.234,56" Avrupa formatı → float, "TRUE" string → bool. Null imputation (2): revenue sütunu medyanla (€4.250), segment sütunu mod ile ("enterprise") dolduruldu. Duplicate (1): 83 tekrar satır silindi. Outlier (1): 2 satır işaretlendi, silinmedi.</span>
+          <span class="en">Type mismatch (3): "2024/01/15" string → datetime, "1.234,56" European format → float, "TRUE" string → bool. Null imputation (2): revenue column filled with median (€4,250), segment column with mode ("enterprise"). Duplicate (1): 83 repeat rows removed. Outlier (1): 2 rows flagged, not deleted.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Downstream ML pipeline sorunsuz çalıştı</span><span class="en">Downstream ML pipeline ran without issues</span></h3>
+        <p>
+          <span class="tr">Temizlenmiş veri JSON response'ta döndü. Müşterin n8n workflow'u bu response'u alıp XGBoost churn modelinin input'una gönderdi. Pandera output schema doğrulaması geçildi — modele kirli veri gitmedi. Churn prediction başarıyla tamamlandı.</span>
+          <span class="en">Cleaned data returned in JSON response. Client's n8n workflow took this response and fed it to the XGBoost churn model input. Pandera output schema validation passed — no dirty data reached the model. Churn prediction completed successfully.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">
       <span class="tr">Teknik detaylar</span>

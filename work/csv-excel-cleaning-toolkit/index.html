@@ -142,6 +142,65 @@
     </div>
   </section>
 
+  <!-- PROBLEM + WHY + SCENARIO -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi? Encoding ile nasıl başa çıkıldı?</span>
+      <span class="en">What was the problem? How was encoding handled?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
+        <span class="tech-val"><span class="tr">Türk perakende zinciri. Muhasebe Excel'i Windows-1254 encoding'le kaydedilmiş (eski Office varsayılanı). pd.read_csv() → UnicodeDecodeError. "İstanbul" → "ÄstanÂbul", "ğ" → "Ã°". Veri bozulmuş gibi görünüyor ama sorun encoding. Her proje başında manüel codecs denemesi: UTF-8 → Latin-1 → Windows-1254. 30 dakika boşa gidiyor.</span><span class="en">Turkish retail chain. Accounting Excel saved with Windows-1254 encoding (old Office default). pd.read_csv() → UnicodeDecodeError. "İstanbul" → "ÄstanÂbul", "ğ" → "Ã°". Data looks corrupted but it's just encoding. Manual codecs trial at each project start: UTF-8 → Latin-1 → Windows-1254. 30 minutes wasted.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">chardet ← fallback</span>
+        <span class="tech-val"><span class="tr">Kör fallback zinciri (UTF-8 dene, başarısız → Latin-1) Türkçe için çalışmaz: Latin-1, Windows-1254'teki bazı Türkçe karakterleri (ş, ğ, İ) decode eder ama yanlış karakterle. chardet dosyanın byte frekans dağılımını analiz ederek encoding'i tahmin eder. Windows-1254 için güvenilirlik %97+.</span><span class="en">Blind fallback chain (try UTF-8, fail → Latin-1) doesn't work for Turkish: Latin-1 can decode some Turkish chars (ş, ğ, İ) in Windows-1254 but with wrong characters. chardet analyzes byte frequency distribution to estimate encoding. Reliability for Windows-1254: 97%+.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">pandas StringDtype</span>
+        <span class="tech-val"><span class="tr">Pandas 3.x varsayılan string tipi artık object değil StringDtype. Bu fark önemli: StringDtype NA-aware (pd.NA kullanır, np.nan değil), bellekte daha verimli, string işlemlerde daha hızlı. Eski pandas kodu StringDtype ile TypeError verebilir — bu araç 3.x uyumlu yazıldı.</span><span class="en">Pandas 3.x default string type is now StringDtype, not object. This matters: StringDtype is NA-aware (uses pd.NA, not np.nan), more memory-efficient, faster string operations. Old pandas code can throw TypeError with StringDtype — this toolkit is written for 3.x compatibility.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">openpyxl ← xlrd</span>
+        <span class="tech-val"><span class="tr">xlrd 2.0'dan itibaren yalnızca .xls (eski format) destekliyor, .xlsx desteklemiyor. openpyxl modern .xlsx için doğru seçim. Müşterinin dosyası .xlsx ise openpyxl, .xls ise xlrd — araç ikisini de otomatik seçiyor.</span><span class="en">xlrd from 2.0 onwards only supports .xls (old format), not .xlsx. openpyxl is the right choice for modern .xlsx. If client's file is .xlsx → openpyxl, if .xls → xlrd — the toolkit selects automatically.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: 50.000 satır satış verisi, bozuk encoding</span>
+      <span class="en">Step-by-step scenario: 50,000-row sales data, broken encoding</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">chardet: encoding = Windows-1254, güven %99.1</span><span class="en">chardet: encoding = Windows-1254, confidence 99.1%</span></h3>
+        <p>
+          <span class="tr">sales_data.csv dosyası önce chardet'e gönderildi. İlk 10KB byte analizi: Windows-1254 encoding, güven skoru 99.1%. pd.read_csv() encoding="windows-1254" ile tekrar okundu. "İstanbul", "ğ", "ş" karakterleri doğru geldi. Encoding sorunu 2 saniyede çözüldü.</span>
+          <span class="en">sales_data.csv first sent to chardet. Analysis of first 10KB bytes: Windows-1254 encoding, confidence 99.1%. pd.read_csv() re-read with encoding="windows-1254". "İstanbul", "ğ", "ş" characters came through correctly. Encoding problem solved in 2 seconds.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Temizleme raporu: 4 sorun türü</span><span class="en">Cleaning report: 4 issue types</span></h3>
+        <p>
+          <span class="tr">nulls_filled: 1247 hücre (revenue → medyan, şehir → "bilinmiyor"). duplicates_removed: 83 satır tam eşleşme. types_fixed: 6 sütun (tarihler datetime'a, fiyatlar float'a). outliers_flagged: 12 satır (revenue z-score &gt; 3.5) — silinmedi, işaretlendi. Temiz satır sayısı: 49.905.</span>
+          <span class="en">nulls_filled: 1247 cells (revenue → median, city → "unknown"). duplicates_removed: 83 rows exact match. types_fixed: 6 columns (dates to datetime, prices to float). outliers_flagged: 12 rows (revenue z-score &gt; 3.5) — not deleted, flagged. Clean row count: 49,905.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Çift format export: xlsx + csv</span><span class="en">Dual format export: xlsx + csv</span></h3>
+        <p>
+          <span class="tr">Muhasebe ekibi xlsx istiyor (pivot table yapacaklar), veri mühendisi CSV istiyor (pipeline'a girecek). Aynı temizlenmiş DataFrame'den ikisi de tek komutla çıktı. Pandera schema son kontrol geçti → her iki dosya doğrulandı.</span>
+          <span class="en">Accounting team wants xlsx (they'll build pivot tables), data engineer wants CSV (going into the pipeline). Both exported from the same cleaned DataFrame in one command. Pandera schema final check passed → both files validated.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">
       <span class="tr">Teknik detaylar</span>

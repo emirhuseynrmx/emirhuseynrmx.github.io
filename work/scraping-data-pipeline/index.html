@@ -144,6 +144,69 @@
     </div>
   </section>
 
+  <!-- PROBLEM + WHY + SCENARIO -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi? Neden bu yaklaşım?</span>
+      <span class="en">What was the problem? Why this approach?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
+        <span class="tech-val"><span class="tr">E-ticaret şirketi, 3 rakibin 500 ürününü takip ediyordu — elle, Google Sheets'e kopyala-yapıştır. Haftada 6 saat. Rakip site tasarımı değişince script çöküyor, yeniden kod yazılıyor.</span><span class="en">E-commerce company tracking 500 products across 3 competitors — manually, copy-paste to Google Sheets. 6 hours/week. When the competitor's site redesigns, the script breaks, code must be rewritten.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">selectolax ←</span>
+        <span class="tech-val"><span class="tr">BeautifulSoup4 Python'da yazılmış, yavaş. selectolax C tabanlı lexbor engine — aynı HTML'i parse etmek için selectolax 0.08s, BS4 0.82s (10x). 1000 sayfada bu fark 12 dakika vs 800 saniye. Büyük scrape'lerde seçim değişmiyor.</span><span class="en">BeautifulSoup4 is written in Python, slow. selectolax uses C-based lexbor engine — parsing the same HTML: selectolax 0.08s, BS4 0.82s (10x). At 1000 pages that's 12 minutes vs 800 seconds. For large-scale scraping, no contest.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">async httpx ←</span>
+        <span class="tech-val"><span class="tr">requests senkron: 100 sayfa × 0.5s/sayfa = 50 saniye bekleme. httpx + asyncio: 100 istek aynı anda gönderilir, toplam süre en yavaş isteğin süresi ≈ 1.8s. Concurrency=12 olarak ayarlandı (hedef sunucuyu zorlamamak için).</span><span class="en">requests is synchronous: 100 pages × 0.5s/page = 50 seconds wait. httpx + asyncio: 100 requests sent simultaneously, total time = slowest request ≈ 1.8s. Concurrency set to 12 (to avoid overwhelming the target server).</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Config-driven ←</span>
+        <span class="tech-val"><span class="tr">Rakip site CSS selector'ı değişirse kodu açmak zorunda kalma. targets.json'da url, selector, field mapping güncelle, çalıştır. Müşteri bu güncellemeyi kendisi yapabiliyor — teknik bilgi gerekmez.</span><span class="en">If a competitor's CSS selector changes, no need to open the code. Update url, selector, field mapping in targets.json and run. Client can make this update themselves — no technical knowledge required.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: 3 site, 2363 kayıt</span>
+      <span class="en">Step-by-step scenario: 3 sites, 2363 records</span>
+    </h2>
+    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
+      <span class="tr">Gece 02:00'de cron job tetikleniyor. Müşteri uyurken sistem 3 rakibin tüm ürün sayfalarını tarıyor.</span>
+      <span class="en">Cron job triggers at 02:00. While the client sleeps, the system scans all product pages of 3 competitors.</span>
+    </p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Async çekme: 2363 kayıt, 4.2s</span><span class="en">Async scrape: 2363 records, 4.2s</span></h3>
+        <p>
+          <span class="tr">example.com → 847 ürün (1.2s). shop.example.io → 1204 ürün (2.8s). news.example.net → ilk denemede timeout, retry=2'de başarılı → 312 ürün. Toplam: 2363 kayıt, 4.2 saniye. Sıralı yapılsaydı ≈48 saniye.</span>
+          <span class="en">example.com → 847 items (1.2s). shop.example.io → 1204 items (2.8s). news.example.net → timeout on first try, success on retry=2 → 312 items. Total: 2363 records, 4.2 seconds. Sequential would take ≈48 seconds.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Pydantic doğrulama: 12 kayıt reddedildi</span><span class="en">Pydantic validation: 12 records rejected</span></h3>
+        <p>
+          <span class="tr">2363 kayıttan 12'si Pydantic modelden geçemedi: 7'sinde fiyat alanı boş (HTML'de selector bulunamamış), 3'ünde fiyat string ama float bekleniyor ("N/A"), 2'si eksik ürün başlığı. Bunlar hata log'una yazıldı, pipeline durdurmadı.</span>
+          <span class="en">12 of 2363 records failed Pydantic validation: 7 with empty price field (selector not found in HTML), 3 with price as string but float expected ("N/A"), 2 with missing product title. These were written to error log, pipeline didn't stop.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Pandera + export: 2351 temiz kayıt</span><span class="en">Pandera + export: 2351 clean records</span></h3>
+        <p>
+          <span class="tr">2351 geçerli kayıt Pandera schema'dan geçirildi (fiyat ≥ 0, ürün_adı boş olamaz, kaynak_url valide URL). Schema geçildi → Parquet formatında diske yazıldı. Sabah müşteri açtığında güncel rakip fiyat tablosu hazır.</span>
+          <span class="en">2351 valid records passed Pandera schema (price ≥ 0, product_name cannot be empty, source_url must be valid URL). Schema passed → written to disk as Parquet. When the client opens it in the morning, competitor price table is current.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- ── TECH STACK ── -->
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">

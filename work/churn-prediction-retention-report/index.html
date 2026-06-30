@@ -141,6 +141,65 @@
     </div>
   </section>
 
+  <!-- PROBLEM + WHY + SCENARIO -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi? Neden GradientBoosting?</span>
+      <span class="en">What was the problem? Why GradientBoosting?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
+        <span class="tech-val"><span class="tr">SaaS şirketi, aylık abonelik iptali oranı %8.2. Müşteri hizmetleri ekibi, ayrılan müşteri ayrıldıktan sonra öğreniyor. "Zaten ayrıldı, geç kaldık" diyorlar. Önceden bilmek istiyorlar: kim 30 gün içinde ayrılacak? Ortalama aylık churn'ün şirkete maliyeti: €23.000 MRR kaybı.</span><span class="en">SaaS company with 8.2% monthly churn. Customer success team learns about churned customers after they've left. "They already left, too late" is the typical reaction. They want to know in advance: who will leave in the next 30 days? Average monthly cost: €23,000 MRR loss.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Problem tipi</span>
+        <span class="tech-val"><span class="tr">İkili sınıflandırma: müşteri önümüzdeki 30 gün içinde ayrılacak mı (1) yoksa kalmaya devam edecek mi (0)? Hedef değişken: churn_30d. Eğitim verisi: son 18 aylık müşteri geçmişi, 12.400 kayıt.</span><span class="en">Binary classification: will the customer leave in the next 30 days (1) or continue (0)? Target variable: churn_30d. Training data: last 18 months of customer history, 12,400 records.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">GBM ← LogReg</span>
+        <span class="tech-val"><span class="tr">Lojistik regresyon önce denendi. Test AUC: 0.71. GradientBoosting: test AUC 0.84. Neden daha iyi? Müşteri tenure × plan_tier × login_frequency üçlü etkileşimi doğrusal değil. Yüksek tenure + düşük plan + azalan login = churn sinyali. Bu kombinasyonu GBM ağaç bölmeleriyle doğal öğreniyor, LogReg görmüyor.</span><span class="en">Logistic regression tried first. Test AUC: 0.71. GradientBoosting: test AUC 0.84. Why better? The customer tenure × plan_tier × login_frequency triple interaction is non-linear. High tenure + low plan + declining logins = churn signal. GBM learns this through tree splits naturally, LogReg misses it.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">feature engineering</span>
+        <span class="tech-val"><span class="tr">Ham CRM verisi: signup_date, last_login_date, plan_tier, support_tickets_count. Türetilen feature'lar: tenure_days = today − signup_date, days_since_login = today − last_login_date, login_trend = rolling 30d avg logins / rolling 90d avg (azalış var mı?), tickets_per_month. Bu türetmeler AUC'yi 0.79'dan 0.84'e çıkardı.</span><span class="en">Raw CRM data: signup_date, last_login_date, plan_tier, support_tickets_count. Derived features: tenure_days = today − signup_date, days_since_login = today − last_login_date, login_trend = rolling 30d avg logins / rolling 90d avg (declining?), tickets_per_month. These derivations pushed AUC from 0.79 to 0.84.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: 12.400 müşteri, risk raporu</span>
+      <span class="en">Step-by-step scenario: 12,400 customers, risk report</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Veri hazırlama: CRM export'tan feature'lara</span><span class="en">Data prep: from CRM export to features</span></h3>
+        <p>
+          <span class="tr">customers.csv: 12.400 satır, 8 sütun. signup_date string → pd.to_datetime(). tenure_days hesaplandı. 247 müşteride last_login_date null (hiç giriş yapmamış) → days_since_login=999 ile dolduruldu (çok uzak anlamında). Plan tier label encoded. Pandera ile schema validate edildi.</span>
+          <span class="en">customers.csv: 12,400 rows, 8 columns. signup_date string → pd.to_datetime(). tenure_days calculated. 247 customers with null last_login_date (never logged in) → filled with days_since_login=999 (meaning "very far"). Plan tier label encoded. Schema validated with Pandera.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Skor: 843 müşteri HIGH risk</span><span class="en">Score: 843 customers HIGH risk</span></h3>
+        <p>
+          <span class="tr">Model eğitildi (80% train, 20% test, stratified). GridSearchCV ile n_estimators=200, max_depth=4, learning_rate=0.05. Test AUC: 0.84. 12.400 müşterinin tamamına predict_proba çalıştırıldı. Eşik &gt;0.70: 843 HIGH risk, 0.40-0.70: 2.104 MED, &lt;0.40: 9.453 LOW.</span>
+          <span class="en">Model trained (80% train, 20% test, stratified). GridSearchCV: n_estimators=200, max_depth=4, learning_rate=0.05. Test AUC: 0.84. predict_proba run on all 12,400 customers. Threshold &gt;0.70: 843 HIGH risk, 0.40-0.70: 2,104 MED, &lt;0.40: 9,453 LOW.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">Müşteri başarısı harekete geçti</span><span class="en">Customer success took action</span></h3>
+        <p>
+          <span class="tr">PDF rapordaki HIGH risk listesi (843 kişi) müşteri başarısı ekibine verildi. İlk 2 haftada 843'ün 312'sine indirim/yükseltme teklifi yapıldı. %38'i (%118 kişi) teklifi kabul etti ve kaldı. Ortalama MRR değeri €149 → aylık kurtarılan MRR: €17.582. Yatırım geri dönüşü: 1 ay içinde.</span>
+          <span class="en">HIGH risk list (843 people) from PDF report given to customer success team. In the first 2 weeks, 312 of 843 received discount/upgrade offer. 38% (118 people) accepted and stayed. Average MRR value €149 → monthly saved MRR: €17,582. Return on investment: within 1 month.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">
       <span class="tr">Teknik detaylar</span>

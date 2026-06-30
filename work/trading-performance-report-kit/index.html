@@ -142,6 +142,65 @@
     </div>
   </section>
 
+  <!-- PROBLEM + WHY + SCENARIO -->
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Problem neydi? Neden matplotlib ve reportlab?</span>
+      <span class="en">What was the problem? Why matplotlib and reportlab?</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
+        <span class="tech-val"><span class="tr">Prop trading firması, 4 trader'ı var. Her ay sonunda her trader için ayrı performans raporu hazırlanıyor — Excel'de, elle. Sharpe oranı, max drawdown, monthly P&L breakdown. Her rapor 3-4 saat sürüyor ve hesaplama hataları oluyor. 4 trader × 12 ay = 48 el yapımı rapor.</span><span class="en">Prop trading firm with 4 traders. Every month-end, a separate performance report for each trader — in Excel, by hand. Sharpe ratio, max drawdown, monthly P&L breakdown. Each report takes 3-4 hours with calculation errors. 4 traders × 12 months = 48 hand-made reports.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">matplotlib ← Plotly</span>
+        <span class="tech-val"><span class="tr">Plotly interactive, tarayıcıda güzel. Ama amaç PDF raporu — PDF'e interaktif grafik gömülemez. matplotlib statik PNG üretir, reportlab bu PNG'yi yüksek çözünürlükte PDF'e yerleştirir. Plotly için kWeasyPrint veya Kaleido ek bağımlılık gerekir, risk artar. matplotlib tek bir pip install.</span><span class="en">Plotly is interactive, looks great in browser. But the goal is PDF reports — you can't embed interactive charts in PDF. matplotlib produces static PNG, reportlab places this PNG into PDF at high resolution. Plotly needs WeasyPrint or Kaleido as extra dependencies, increasing risk. matplotlib is a single pip install.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">veri hazırlama</span>
+        <span class="tech-val"><span class="tr">Ham trade log'u birçok sorun içeriyor: tarih sütunu string ("2024-01-15 09:32" format), fiyat sütunları bazen None, aynı trade_id'ye çift kayıt (partial fills). pd.to_datetime() + ffill + groupby trade_id aggregate. df.diff() ile günlük PnL farkı hesaplanıyor.</span><span class="en">Raw trade log has many issues: date column as string ("2024-01-15 09:32" format), price columns sometimes None, duplicate trade_id (partial fills). pd.to_datetime() + ffill + groupby trade_id aggregate. Daily PnL delta calculated with df.diff().</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Sharpe hesabı</span>
+        <span class="tech-val"><span class="tr">Sharpe = (mean_daily_return − rf_rate) / std_daily_return × √252. Yıllık olarak normalize etmek için √252 çarpımı (252 işlem günü). rf_rate müşteri parametreden giriyor (varsayılan: 0.04 / 252 günlük). Sortino sadece negatif günlerin std'sini kullanır.</span><span class="en">Sharpe = (mean_daily_return − rf_rate) / std_daily_return × √252. Multiplied by √252 to annualize (252 trading days). rf_rate comes from client parameter (default: 0.04 / 252 daily). Sortino uses only std of negative days.</span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Adım adım senaryo: 847 işlem, 6 aylık log</span>
+      <span class="en">Step-by-step scenario: 847 trades, 6-month log</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
+        <h3><span class="tr">Veri doğrulama: 847 → 841 geçerli işlem</span><span class="en">Data validation: 847 → 841 valid trades</span></h3>
+        <p>
+          <span class="tr">trades.csv okundu: 847 satır. Pydantic ile her satır validate edildi. 6 satır reddedildi: 4'ünde entry_price None (partial fill kayıt hatası), 2'sinde exit_time entry_time'dan önce (saat dilimi hatası). Bu 6 satır log'a yazıldı, rapor 841 geçerli işlem üzerinden hesaplandı.</span>
+          <span class="en">trades.csv read: 847 rows. Each row validated with Pydantic. 6 rows rejected: 4 with entry_price None (partial fill recording error), 2 with exit_time before entry_time (timezone bug). These 6 written to log, report calculated on 841 valid trades.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
+        <h3><span class="tr">Metrikler: Sharpe 1.42, Max DD −8.3%</span><span class="en">Metrics: Sharpe 1.42, Max DD −8.3%</span></h3>
+        <p>
+          <span class="tr">Toplam P&L: +$12.847. Günlük return serisi: df["pnl"].diff() → numpy ile std ve mean. Sharpe: (0.0043 − 0.000159) / 0.0031 × √252 = 1.42. Max drawdown: cummax().sub(equity_curve) ile tepe-dip fark. En derin düşüş: Kasım ayında −8.3%, 12 günde toparlandı.</span>
+          <span class="en">Total P&L: +$12,847. Daily return series: df["pnl"].diff() → std and mean with numpy. Sharpe: (0.0043 − 0.000159) / 0.0031 × √252 = 1.42. Max drawdown: peak-trough via cummax().sub(equity_curve). Deepest drop: −8.3% in November, recovered in 12 days.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
+        <h3><span class="tr">PDF: 8 sayfa, 3 grafik, 30 saniyede</span><span class="en">PDF: 8 pages, 3 charts, in 30 seconds</span></h3>
+        <p>
+          <span class="tr">matplotlib'den 3 PNG: equity curve, drawdown chart, monthly P&L heatmap. reportlab ile 8 sayfa PDF: kapak (trader adı, dönem), metrikler tablosu, grafikler. Önceki el yapımı raporun yerine 30 saniye. Müşteri artık ay sonu cron job çalıştırıyor, sabah PDF hazır.</span>
+          <span class="en">3 PNGs from matplotlib: equity curve, drawdown chart, monthly P&L heatmap. 8-page PDF via reportlab: cover (trader name, period), metrics table, charts. Replaces the previous hand-made report in 30 seconds. Client now runs a month-end cron job, PDF is ready in the morning.</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">
       <span class="tr">Teknik detaylar</span>
