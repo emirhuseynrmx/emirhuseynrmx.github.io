@@ -31,14 +31,14 @@
     <div class="lhero-inner">
       <div class="lhero-kicker">
         <span class="btag btag-py">Python</span>
-        <span class="btag">RAG · TF-IDF retrieval</span>
-        <span class="btag">FastAPI · Pydantic v2</span>
-        <span class="btag">Lokal · sıfır harici API</span>
+        <span class="btag">RAG · TF-IDF cosine similarity</span>
+        <span class="btag">FastAPI /ask · CLI · LLM-free</span>
+        <span class="btag">vector_store/store.json · top_k=3</span>
       </div>
       <h1 class="lhero-title">RAG Chatbot Template</h1>
       <p class="lhero-sub">
-        <span class="tr">Destek ekibi aynı 20 soruyu günde 50 kez yanıtlıyor. Chatbot kurarsın ama GPT hallucination'ı şirket politikasını uydurmasın diye korkuyorsun. Bu şablon tamamen lokal çalışıyor: doküman ne diyorsa onu söylüyor, başka bir şey değil — ve kaynağını gösteriyor.</span>
-        <span class="en">Support team answers the same 20 questions 50 times per day. You want to deploy a chatbot but fear GPT hallucinating company policy. This template runs fully local: it says what the document says, nothing else — and shows its source.</span>
+        <span class="tr">Yerel metin dokümanlarını JSON destekli TF-IDF deposuna alır (vector_store/store.json). /ask endpoint'ine soru gönder — cosine similarity ile top-k chunk'ı bulur (varsayılan k=3, maks 10), benzerlik skoru 4 ondalık basamakla döner, chunk önizlemesi 240 karakterde kesilir. Kasıtlı LLM-free: kendi LLM çağrını build_answer()'a yerleştirirsin. API key bağımlılığı yok, hallucination yok.</span>
+        <span class="en">Ingests local text documents into a JSON-backed TF-IDF store (vector_store/store.json). POST a question to the /ask endpoint — finds top-k chunks by cosine similarity (default k=3, max 10), returns similarity score rounded to 4 decimal places, chunk preview truncated at 240 chars. Deliberately LLM-free: substitute your own LLM call in build_answer(). No API key dependency, no hallucination.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/rag-chatbot-template" target="_blank" rel="noopener">
@@ -151,18 +151,18 @@
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Doküman indexleme</span><span class="en">Document indexing</span></h3>
+        <h3><span class="tr">Doküman alımı → vector_store/store.json</span><span class="en">Document ingest → vector_store/store.json</span></h3>
         <p>
-          <span class="tr">company_policy.txt 180 satır, 10 bölüm. Chunk'lama: bölüm başlıklarına göre paragraf bazlı bölme, ~15 satır/chunk. Her chunk için TF-IDF vektörü hesapla ve bellekte tut. Index boyutu: 83KB. Başlangıç süresi: &lt;2 saniye.</span>
-          <span class="en">company_policy.txt is 180 lines, 10 sections. Chunking: paragraph-based split on section headers, ~15 lines/chunk. Compute TF-IDF vector for each chunk, hold in memory. Index size: 83KB. Startup time: &lt;2 seconds.</span>
+          <span class="tr">Yerel metin dokümanlarını ingest et. TF-IDF indeksi vector_store/store.json'a yazılır. Chunk önizlemesi 240 karakterde kesilir. Doküman değişirse yeniden indeks için dosyayı değiştir yeter — sıfır ML eğitimi, sıfır GPU.</span>
+          <span class="en">Ingest local text documents. TF-IDF index written to vector_store/store.json. Chunk preview truncated at 240 chars. When the document changes, swap the file and re-ingest — zero ML training, zero GPU.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Soru: "Can you integrate with HubSpot?"</span><span class="en">Question: "Can you integrate with HubSpot?"</span></h3>
+        <h3><span class="tr">POST /ask — top-k retrieval</span><span class="en">POST /ask — top-k retrieval</span></h3>
         <p>
-          <span class="tr">Soruyu TF-IDF vektörüne dönüştür. Tüm chunk'larla cosine similarity hesapla. En yüksek score: 0.847, "INTEGRATIONS" bölümü. Bu chunk'tan "We commonly integrate with... HubSpot" cümlesi alınıp yanıt oluşturuldu. Kaynak: company_policy.txt satır 156-158.</span>
-          <span class="en">Convert query to TF-IDF vector. Compute cosine similarity against all chunks. Highest score: 0.847, "INTEGRATIONS" section. Sentence "We commonly integrate with... HubSpot" extracted from that chunk. Source: company_policy.txt lines 156-158.</span>
+          <span class="tr">Soruyu TF-IDF vektörüne dönüştür. Tüm chunk'larla cosine similarity hesapla. Varsayılan top_k=3 (maks 10) en yüksek skorlu chunk döner. Benzerlik skoru 4 ondalık basamakla raporlanır: 0.8470. Her yanıtta context block + kaynak atıfları. Eşik altı: "Bu konuda belge bulunamadı."</span>
+          <span class="en">Convert question to TF-IDF vector. Compute cosine similarity against all chunks. Default top_k=3 (max 10) returns highest-scoring chunks. Similarity score reported to 4 decimal places: 0.8470. Each answer includes context block + source citations. Below threshold: "No document found for this topic."</span>
         </p>
       </div>
       <div class="feature">
@@ -185,18 +185,22 @@
     <div class="tech-table">
       <div class="tech-row">
         <span class="tech-key">Retrieval</span>
-        <span class="tech-val">scikit-learn TfidfVectorizer · cosine similarity · threshold filtering</span>
+        <span class="tech-val">scikit-learn TfidfVectorizer · cosine similarity · top_k=3 (maks 10) · skor 4 ondalık basamak</span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">API</span>
-        <span class="tech-val">FastAPI · async · /query endpoint · /health · OpenAPI dokümantasyon</span>
+        <span class="tech-key">API + CLI</span>
+        <span class="tech-val">FastAPI /ask endpoint · CLI arayüzü · chunk önizlemesi 240 karakterde kesilir</span>
       </div>
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Doküman</span><span class="en">Document</span></span>
-        <span class="tech-val"><span class="tr">180 satır DataFlow Analytics politikası · 10 bölüm · fiyatlandırma/iade/destek/GDPR</span><span class="en">180-line DataFlow Analytics policy · 10 sections · pricing/refund/support/GDPR</span></span>
+        <span class="tech-key"><span class="tr">Depo</span><span class="en">Store</span></span>
+        <span class="tech-val">vector_store/store.json · <span class="tr">JSON destekli TF-IDF indeksi · yeniden indeks için dokümanı değiştir yeter</span><span class="en">JSON-backed TF-IDF index · swap the document to re-index</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">Kaynak</span>
+        <span class="tech-key">LLM-free</span>
+        <span class="tech-val"><span class="tr">Saf retrieval — build_answer()'a kendi LLM çağrını ekle. API key yok, hallucination yok, GPU yok.</span><span class="en">Pure retrieval — drop your own LLM call into build_answer(). No API key, no hallucination, no GPU.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Kaynak gösterimi</span><span class="en">Citation</span></span>
         <span class="tech-val"><span class="tr">Her yanıt doküman adı + bölüm başlığı + satır numarasıyla etiketlenir</span><span class="en">Every answer tagged with document name + section heading + line number</span></span>
       </div>
       <div class="tech-row">

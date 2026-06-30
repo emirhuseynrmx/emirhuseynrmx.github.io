@@ -37,8 +37,8 @@
       </div>
       <h1 class="lhero-title">Telegram Business Bot</h1>
       <p class="lhero-sub">
-        <span class="tr">Küçük işletme sahibi günde 2-3 saat mesaj yanıtlıyor. Fiyat nedir, çalışma saatleri, sipariş takibi, teklif nasıl alınır — hep aynı. Bu bot anlık yanıtlıyor, lead'leri CSV'ye kaydediyor, admin /export komutuyla alıyor. Tek insan dokunuşu: teklif hazırlarken.</span>
-        <span class="en">Small business owner spends 2-3 hours/day answering messages. Pricing, hours, order tracking, how to get a quote — always the same. This bot answers instantly, saves leads to CSV, admin retrieves with /export command. Single human touch: when preparing the quote.</span>
+        <span class="tr">Aiogram 3.x ile küçük işletme botu. Komutlar: /start, /lead (FSM ile iletişim bilgisi alımı), /faq &lt;konu&gt; (yapılandırılmış yanıtlar), /status &lt;sipariş_id&gt; (sipariş sorgulama), /export_leads (sadece admin). Admin kapısı settings.admin_ids ile. Lead'ler leads_csv_path'e eklenir. Tüm ayarlar env'den — kod değişikliği olmadan deploy edilebilir.</span>
+        <span class="en">Aiogram 3.x bot for small businesses. Commands: /start, /lead (FSM contact capture), /faq &lt;topic&gt; (configured answers), /status &lt;order_id&gt; (order lookup), /export_leads (admin only). Admin gate via settings.admin_ids. Leads appended to leads_csv_path. All settings from env — deploy-ready without code changes.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/telegram-business-bot-template" target="_blank" rel="noopener">
@@ -177,10 +177,10 @@
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Admin /export yazar</span><span class="en">Admin types /export</span></h3>
+        <h3><span class="tr">Admin /export_leads yazar</span><span class="en">Admin types /export_leads</span></h3>
         <p>
-          <span class="tr">Admin komutu kontrol edilir (ADMIN_CHAT_ID env var ile). leads.csv okunur, Telegram'dan dosya olarak gönderilir. İçerik: isim, e-posta, bütçe, timestamp. Ajansta her pazartesi sabahı bu komutu çalıştırıp haftanın leadlerini CRM'e aktarıyorlar.</span>
-          <span class="en">Admin command check (ADMIN_CHAT_ID env var). leads.csv read, sent as file via Telegram. Content: name, email, budget, timestamp. Agency runs this every Monday morning and imports the week's leads into their CRM.</span>
+          <span class="tr">Admin kapısı kontrol edilir: gönderen settings.admin_ids listesinde mi? Değilse reddedilir. leads_csv_path'teki CSV okunur, Telegram'dan dosya olarak gönderilir. İçerik: isim, e-posta, bütçe, timestamp. FAQ yanıtları ve sipariş durumları config'den — bu bilgileri değiştirmek için kod açmana gerek yok.</span>
+          <span class="en">Admin gate check: is the sender in settings.admin_ids? If not, rejected. CSV at leads_csv_path is read and sent as a file via Telegram. Content: name, email, budget, timestamp. FAQ answers and order statuses come from config — no need to open code to update them.</span>
         </p>
       </div>
     </div>
@@ -206,8 +206,12 @@
         <span class="tech-val">Pydantic v2 · email-validator · LeadCapture · order_status format check</span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">FAQ</span>
-        <span class="tech-val"><span class="tr">10 konu: fiyat, saatler, destek, iade, süre, format, ödeme, gizlilik, entegrasyon, danışmanlık</span><span class="en">10 topics: pricing, hours, support, refund, timeline, formats, payment, privacy, integrations, consultation</span></span>
+        <span class="tech-key"><span class="tr">Komutlar</span><span class="en">Commands</span></span>
+        <span class="tech-val">/start · /lead · /faq &lt;topic&gt; · /status &lt;order_id&gt; · /export_leads (admin only)</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Admin kapısı</span>
+        <span class="tech-val">settings.admin_ids · <span class="tr">/export_leads yalnızca bu ID listesindeki kullanıcılara açık</span><span class="en">/export_leads only accessible to users in this ID list</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>

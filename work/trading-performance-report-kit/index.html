@@ -37,8 +37,8 @@
       </div>
       <h1 class="lhero-title">Trading Performance Report Kit</h1>
       <p class="lhero-sub">
-        <span class="tr">İşlem geçmişini CSV olarak ver, PDF rapor al. PnL, Sharpe oranı, max drawdown, equity curve — hepsi otomatik hesaplanır ve çizimlenir.</span>
-        <span class="en">Give trade history as CSV, get a PDF report. PnL, Sharpe ratio, max drawdown, equity curve — all calculated and charted automatically.</span>
+        <span class="tr">Kaggle algoritmik alım-satım verisi (serkanp) — AAPL.csv OHLCV. 8/21 MA crossover simüle eder → 180'e kadar kapalı işlem (AAPL-0025 - AAPL-0875). Her giriş için pozisyon boyutu: 1.000 $/giriş_fiyatı hisse. Komisyon: maks(0,50 $, nosyonelin %0,05'i). Çıktı: 5 CSV + equity_curve.png / drawdown.png / dashboard.png + 2 grafik daha + performance_report.pdf. manifest.json her çıktı dosyasını yeniden üretilebilirlik denetimi için eşler.</span>
+        <span class="en">Kaggle algorithmic trading dataset (serkanp) — AAPL.csv OHLCV. Simulates 8/21 MA crossover → up to 180 closed trades (IDs AAPL-0025 through AAPL-0875). Position size: $1,000/entry_price shares per entry. Fee: max($0.50, 0.05% of notional). Output: 5 CSVs + equity_curve.png / drawdown.png / dashboard.png + 2 more charts + performance_report.pdf. manifest.json maps every output file for reproducibility audit.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">
@@ -53,14 +53,14 @@
     </div>
     <div class="lhero-preview">
       <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TRADING REPORT — PORTFOLIO METRICS</div>
-        <div style="color:#6b6858;">period: <span style="color:#f2f0ea">2024-01-01 → 2024-12-31</span></div>
-        <div>total_return &nbsp;<span style="color:#10b981;font-weight:700">+34.7%</span></div>
-        <div>sharpe_ratio &nbsp;<span style="color:#ff4800;font-weight:700">1.84</span></div>
-        <div>max_drawdown &nbsp;<span style="color:#ef4444">-8.2%</span></div>
-        <div>win_rate &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f2f0ea">61.3%</span></div>
+        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TRADING REPORT — AAPL MA CROSSOVER</div>
+        <div style="color:#6b6858;">dataset: <span style="color:#f2f0ea">Kaggle AAPL.csv OHLCV (serkanp)</span></div>
+        <div>strategy &nbsp;&nbsp;&nbsp;<span style="color:#f2f0ea">8/21 MA crossover</span></div>
+        <div>total_trades &nbsp;<span style="color:#ff4800;font-weight:700">≤180</span> <span style="color:#6b6858">(AAPL-0025 → AAPL-0875)</span></div>
+        <div>sharpe &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#10b981;font-weight:700">annualized, 252-day</span></div>
+        <div>fee &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f2f0ea">max($0.50, 0.05% notional)</span></div>
         <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
-          trades=<span style="color:#ff4800">1,847</span> &nbsp;·&nbsp; report=<span style="color:#6b6858">PDF (A4)</span> &nbsp;·&nbsp; charts=<span style="color:#6b6858">Plotly</span>
+          outputs=<span style="color:#ff4800">5 CSV + 5 charts + PDF</span> &nbsp;·&nbsp; manifest.json <span style="color:#6b6858">maps every file</span>
         </div>
       </div>
     </div>
@@ -68,20 +68,20 @@
 
   <div class="lmetrics">
     <div class="lmetric">
-      <strong>PDF</strong>
-      <span><span class="tr">profesyonel rapor</span><span class="en">professional report</span></span>
+      <strong>180</strong>
+      <span><span class="tr">kapalı işlem (AAPL MA)</span><span class="en">closed trades (AAPL MA)</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>5 CSV</strong>
+      <span><span class="tr">+ 5 grafik + PDF</span><span class="en">+ 5 charts + PDF</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>manifest</strong>
+      <span><span class="tr">.json her çıktıyı eşler</span><span class="en">.json maps every output</span></span>
     </div>
     <div class="lmetric">
       <strong>Sharpe</strong>
-      <span><span class="tr">oran hesaplama</span><span class="en">ratio calculation</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>equity</strong>
-      <span><span class="tr">curve çizimi</span><span class="en">curve chart</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>CI</strong>
-      <span>GitHub Actions</span>
+      <span><span class="tr">252 gün yıllık</span><span class="en">252-day annualized</span></span>
     </div>
   </div>
 
@@ -93,50 +93,50 @@
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon">📈</div>
-        <h3><span class="tr">PnL analizi</span><span class="en">PnL analysis</span></h3>
+        <h3><span class="tr">MA crossover simülasyonu → trade_ledger.csv</span><span class="en">MA crossover simulation → trade_ledger.csv</span></h3>
         <p>
-          <span class="tr">Gerçekleşmiş ve gerçekleşmemiş kâr/zarar, günlük/haftalık/aylık breakdown. Sıfırdan hesaplanır, tabloya dönüştürülür.</span>
-          <span class="en">Realized and unrealized P&amp;L, daily/weekly/monthly breakdown. Calculated from scratch and turned into tables.</span>
+          <span class="tr">AAPL OHLCV üzerinde 8/21 MA crossover simüle eder. Her giriş için 1.000 $/giriş_fiyatı hisse pozisyon boyutu. Komisyon: maks(0,50 $, nosyonelin %0,05'i). Kapalı işlemler AAPL-0025 - AAPL-0875 ID'leriyle trade_ledger.csv'ye yazılır.</span>
+          <span class="en">Simulates 8/21 MA crossover on AAPL OHLCV. Position size $1,000/entry_price shares per entry. Fee: max($0.50, 0.05% of notional). Closed trades written to trade_ledger.csv with IDs AAPL-0025 through AAPL-0875.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">📐</div>
-        <h3>Sharpe &amp; Sortino</h3>
+        <h3><span class="tr">Metrikler: performance_metrics.csv</span><span class="en">Metrics: performance_metrics.csv</span></h3>
         <p>
-          <span class="tr">Risk-adjusted getiri metrikleri. Yıllık Sharpe oranı, Sortino oranı, Calmar oranı — hepsi otomatik.</span>
-          <span class="en">Risk-adjusted return metrics. Annualized Sharpe ratio, Sortino ratio, Calmar ratio — all automatic.</span>
+          <span class="tr">total_trades, net_pnl, return_pct, win_rate, profit_factor, expectancy, avg_win, avg_loss, payoff_ratio, max_drawdown, max_drawdown_pct, Sharpe (yıllık, varsayılan 252 gün). Tüm metrikler performance_metrics.csv'ye yazılır.</span>
+          <span class="en">total_trades, net_pnl, return_pct, win_rate, profit_factor, expectancy, avg_win, avg_loss, payoff_ratio, max_drawdown, max_drawdown_pct, Sharpe (annualized, default 252 days). All metrics written to performance_metrics.csv.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">📉</div>
-        <h3>Max Drawdown</h3>
+        <h3><span class="tr">5 grafik: equity_curve / drawdown / dashboard</span><span class="en">5 charts: equity_curve / drawdown / dashboard</span></h3>
         <p>
-          <span class="tr">Tepe-dip drawdown hesaplaması. En kötü düşüş dönemi, süresi ve toparlanma süresi raporlanır.</span>
-          <span class="en">Peak-to-trough drawdown calculation. Worst decline period, duration, and recovery time are reported.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📊</div>
-        <h3>Equity Curve</h3>
-        <p>
-          <span class="tr">matplotlib ile kümülatif getiri grafiği. Benchmark ile karşılaştırma seçeneği. Yüksek çözünürlüklü PNG olarak PDF'e gömülür.</span>
-          <span class="en">Cumulative return chart via matplotlib. Optional benchmark comparison. High-res PNG embedded in PDF.</span>
+          <span class="tr">equity_curve.png, drawdown.png, dashboard.png + 2 ek grafik. Hepsi yüksek çözünürlüklü PNG olarak kaydedilir. manifest.json hangi dosyanın ne çıktı olduğunu eşler — reproducibility denetimi için.</span>
+          <span class="en">equity_curve.png, drawdown.png, dashboard.png + 2 additional charts. All saved as high-res PNG. manifest.json maps which file is which output — for reproducibility audit.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">📄</div>
-        <h3><span class="tr">PDF export</span><span class="en">PDF export</span></h3>
+        <h3><span class="tr">performance_report.pdf</span><span class="en">performance_report.pdf</span></h3>
         <p>
-          <span class="tr">reportlab ile profesyonel layout. Logo, başlık, metrikler tablosu, grafikler — tek PDF dosyasında.</span>
-          <span class="en">Professional layout via reportlab. Logo, title, metrics table, charts — in a single PDF file.</span>
+          <span class="tr">reportlab ile profesyonel layout. Kapak, metrikler tablosu (performance_metrics.csv'den), grafik sayfaları, işlem detayları. Yatırımcıya sunulabilir format. manifest.json dahil tüm çıktılar izlenebilir.</span>
+          <span class="en">Professional layout via reportlab. Cover, metrics table (from performance_metrics.csv), chart pages, trade details. Investor-presentable format. All outputs including manifest.json are traceable.</span>
         </p>
       </div>
       <div class="feature">
-        <div class="feature-icon">🔧</div>
-        <h3><span class="tr">Özelleştirilebilir</span><span class="en">Customizable</span></h3>
+        <div class="feature-icon">📊</div>
+        <h3><span class="tr">daily_equity.csv + monthly_returns.csv</span><span class="en">daily_equity.csv + monthly_returns.csv</span></h3>
         <p>
-          <span class="tr">Hangi metrikler görünsün, hangi tarih aralığı, hangi renk şeması — config dosyasından ayarlanır.</span>
-          <span class="en">Which metrics to show, date range, color scheme — configured from a config file.</span>
+          <span class="tr">Günlük öz sermaye eğrisi ve aylık getiri dağılımı ayrı CSV'lere yazılır. symbol_breakdown.csv de dahil — AAPL çıktıları sembol bazında ayrılmış.</span>
+          <span class="en">Daily equity curve and monthly return distribution written to separate CSVs. symbol_breakdown.csv also included — AAPL outputs broken out by symbol.</span>
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🗂️</div>
+        <h3>manifest.json</h3>
+        <p>
+          <span class="tr">Her çıktı dosyasını (5 CSV + 5 grafik + PDF) açıklama, oluşturulma zamanı ve bağımlılıkla eşler. Hangi grafik hangi veriden üretildi — elle takip gerekmez.</span>
+          <span class="en">Maps every output file (5 CSVs + 5 charts + PDF) to description, creation time, and dependency. Which chart was produced from which data — no manual tracking needed.</span>
         </p>
       </div>
     </div>
@@ -150,8 +150,8 @@
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Müşteri sorunu</span><span class="en">Client problem</span></span>
-        <span class="tech-val"><span class="tr">Prop trading firması, 4 trader'ı var. Her ay sonunda her trader için ayrı performans raporu hazırlanıyor — Excel'de, elle. Sharpe oranı, max drawdown, monthly P&L breakdown. Her rapor 3-4 saat sürüyor ve hesaplama hataları oluyor. 4 trader × 12 ay = 48 el yapımı rapor.</span><span class="en">Prop trading firm with 4 traders. Every month-end, a separate performance report for each trader — in Excel, by hand. Sharpe ratio, max drawdown, monthly P&L breakdown. Each report takes 3-4 hours with calculation errors. 4 traders × 12 months = 48 hand-made reports.</span></span>
+        <span class="tech-key"><span class="tr">Gerçek veri kaynağı</span><span class="en">Real dataset</span></span>
+        <span class="tech-val"><span class="tr">Kaggle algoritmik alım-satım (serkanp) — AAPL.csv OHLCV. 8/21 MA crossover simülasyonu → 180'e kadar kapalı işlem. Pozisyon boyutu: 1.000 $/giriş_fiyatı hisse. Komisyon: maks(0,50 $, nosyonelin %0,05'i).</span><span class="en">Kaggle algorithmic trading dataset (serkanp) — AAPL.csv OHLCV. 8/21 MA crossover simulation → up to 180 closed trades. Position size: $1,000/entry_price shares. Fee: max($0.50, 0.05% of notional).</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key">matplotlib ← Plotly</span>
@@ -170,32 +170,32 @@
 
   <section class="lsection">
     <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: 847 işlem, 6 aylık log</span>
-      <span class="en">Step-by-step scenario: 847 trades, 6-month log</span>
+      <span class="tr">Adım adım senaryo: AAPL OHLCV → 180 işlem → PDF</span>
+      <span class="en">Step-by-step scenario: AAPL OHLCV → 180 trades → PDF</span>
     </h2>
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Veri doğrulama: 847 → 841 geçerli işlem</span><span class="en">Data validation: 847 → 841 valid trades</span></h3>
+        <h3><span class="tr">AAPL.csv → MA crossover simülasyonu</span><span class="en">AAPL.csv → MA crossover simulation</span></h3>
         <p>
-          <span class="tr">trades.csv okundu: 847 satır. Pydantic ile her satır validate edildi. 6 satır reddedildi: 4'ünde entry_price None (partial fill kayıt hatası), 2'sinde exit_time entry_time'dan önce (saat dilimi hatası). Bu 6 satır log'a yazıldı, rapor 841 geçerli işlem üzerinden hesaplandı.</span>
-          <span class="en">trades.csv read: 847 rows. Each row validated with Pydantic. 6 rows rejected: 4 with entry_price None (partial fill recording error), 2 with exit_time before entry_time (timezone bug). These 6 written to log, report calculated on 841 valid trades.</span>
+          <span class="tr">Kaggle algoritmik alım-satım (serkanp) AAPL.csv OHLCV yüklendi. 8/21 günlük MA crossover sinyal üretir. Her giriş için pozisyon boyutu: 1.000 $/giriş_fiyatı hisse. Komisyon: maks(0,50 $, nosyonelin %0,05'i). Sonuç: 180'e kadar kapalı işlem, ID'ler AAPL-0025'ten AAPL-0875'e.</span>
+          <span class="en">Kaggle algorithmic trading (serkanp) AAPL.csv OHLCV loaded. 8/21 daily MA crossover generates signals. Position size: $1,000/entry_price shares per entry. Fee: max($0.50, 0.05% of notional). Result: up to 180 closed trades with IDs AAPL-0025 through AAPL-0875.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Metrikler: Sharpe 1.42, Max DD −8.3%</span><span class="en">Metrics: Sharpe 1.42, Max DD −8.3%</span></h3>
+        <h3><span class="tr">5 CSV + 5 grafik üretimi</span><span class="en">5 CSVs + 5 charts generated</span></h3>
         <p>
-          <span class="tr">Toplam P&L: +$12.847. Günlük return serisi: df["pnl"].diff() → numpy ile std ve mean. Sharpe: (0.0043 − 0.000159) / 0.0031 × √252 = 1.42. Max drawdown: cummax().sub(equity_curve) ile tepe-dip fark. En derin düşüş: Kasım ayında −8.3%, 12 günde toparlandı.</span>
-          <span class="en">Total P&L: +$12,847. Daily return series: df["pnl"].diff() → std and mean with numpy. Sharpe: (0.0043 − 0.000159) / 0.0031 × √252 = 1.42. Max drawdown: peak-trough via cummax().sub(equity_curve). Deepest drop: −8.3% in November, recovered in 12 days.</span>
+          <span class="tr">performance_metrics.csv (Sharpe yıllık 252 gün, max_drawdown, win_rate, profit_factor, expectancy, payoff_ratio), trade_ledger.csv, daily_equity.csv, monthly_returns.csv, symbol_breakdown.csv. Grafikler: equity_curve.png, drawdown.png, dashboard.png + 2 ek. manifest.json her dosyayı bağımlılıkla eşler.</span>
+          <span class="en">performance_metrics.csv (Sharpe annualized 252 days, max_drawdown, win_rate, profit_factor, expectancy, payoff_ratio), trade_ledger.csv, daily_equity.csv, monthly_returns.csv, symbol_breakdown.csv. Charts: equity_curve.png, drawdown.png, dashboard.png + 2 more. manifest.json maps every file with dependencies.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">PDF: 8 sayfa, 3 grafik, 30 saniyede</span><span class="en">PDF: 8 pages, 3 charts, in 30 seconds</span></h3>
+        <h3><span class="tr">performance_report.pdf + manifest.json</span><span class="en">performance_report.pdf + manifest.json</span></h3>
         <p>
-          <span class="tr">matplotlib'den 3 PNG: equity curve, drawdown chart, monthly P&L heatmap. reportlab ile 8 sayfa PDF: kapak (trader adı, dönem), metrikler tablosu, grafikler. Önceki el yapımı raporun yerine 30 saniye. Müşteri artık ay sonu cron job çalıştırıyor, sabah PDF hazır.</span>
-          <span class="en">3 PNGs from matplotlib: equity curve, drawdown chart, monthly P&L heatmap. 8-page PDF via reportlab: cover (trader name, period), metrics table, charts. Replaces the previous hand-made report in 30 seconds. Client now runs a month-end cron job, PDF is ready in the morning.</span>
+          <span class="tr">reportlab ile PDF: kapak, metrikler tablosu, 5 grafik sayfası, trade detayları. Hangi CSV hangi grafiği besledi, hangi metrik hangi formülle hesaplandı — manifest.json'da kayıtlı. Önceki el yapımı raporun yerine saniyeler içinde. Cron job'a ekle, sabah PDF hazır.</span>
+          <span class="en">reportlab PDF: cover, metrics table, 5 chart pages, trade details. Which CSV fed which chart, which metric was calculated with which formula — recorded in manifest.json. Replaces the previous hand-made report in seconds. Add to cron job, PDF ready in the morning.</span>
         </p>
       </div>
     </div>
@@ -208,28 +208,28 @@
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>
-        <span class="tech-val">Pandas 3.x · numpy · scipy</span>
+        <span class="tech-key"><span class="tr">Veri kaynağı</span><span class="en">Dataset</span></span>
+        <span class="tech-val">Kaggle AAPL.csv OHLCV (serkanp) · 8/21 MA crossover · AAPL-0025 → AAPL-0875 ID'leri</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Çıktılar</span><span class="en">Outputs</span></span>
+        <span class="tech-val">5 CSV (performance_metrics, trade_ledger, daily_equity, monthly_returns, symbol_breakdown) · 5 grafik · performance_report.pdf · manifest.json</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Metrikler</span><span class="en">Metrics</span></span>
+        <span class="tech-val">net_pnl · return_pct · win_rate · profit_factor · expectancy · avg_win · avg_loss · payoff_ratio · max_drawdown · Sharpe (252 gün yıllık)</span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Grafikler</span><span class="en">Charts</span></span>
-        <span class="tech-val">matplotlib · seaborn (style layer)</span>
+        <span class="tech-val">matplotlib · equity_curve.png · drawdown.png · dashboard.png + 2 ek grafik</span>
       </div>
       <div class="tech-row">
         <span class="tech-key">PDF</span>
-        <span class="tech-val">reportlab · Platypus layout engine</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
-        <span class="tech-val">Pydantic v2 · Pandera schema</span>
+        <span class="tech-val">reportlab · Platypus layout engine · performance_report.pdf</span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · parametrize · coverage &gt;85%</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">CI</span>
-        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
+        <span class="tech-val">pytest · parametrize · coverage &gt;85% · ruff · GitHub Actions CI</span>
       </div>
     </div>
   </section>

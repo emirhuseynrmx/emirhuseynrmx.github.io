@@ -128,20 +128,20 @@
     </h2>
     <div class="tech-table">
       <div class="tech-row">
-        <span class="tech-key">lead-capture</span>
-        <span class="tech-val"><span class="tr">Typeform/Tally webhook → Sheets append → GPT-4o 3 cümle özet → Telegram alert. 24 saat içinde işlem yoksa otomatik hatırlat mesajı.</span><span class="en">Typeform/Tally webhook → Sheets append → GPT-4o 3-sentence summary → Telegram alert. Auto reminder if no action within 24 hours.</span></span>
+        <span class="tech-key">lead_form_to_sheets.json</span>
+        <span class="tech-val"><span class="tr">Lead formu (Typeform/Tally webhook) → Google Sheets append + zaman damgası. active:false, benzersiz node ID'leri, meta.templateNote içeriyor. Kimlik bilgileri placeholder; workflow_catalog.json'da hangi credential gerektiği belgelenmiş.</span><span class="en">Lead capture form (Typeform/Tally webhook) → Google Sheets append + timestamp. active:false, unique node IDs, meta.templateNote included. Credentials are placeholders; workflow_catalog.json documents which credentials are required.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">email-digest</span>
-        <span class="tech-val"><span class="tr">Gmail'i her 30 dakikada tara. "Proje teklifi", "iş birliği" gibi anahtar kelimelerle filtrele. GPT-4o ile her e-postayı tek satıra özetle. Günlük sabah 08:00'de özet listesini Telegram'a gönder.</span><span class="en">Scan Gmail every 30 minutes. Filter by keywords like "project proposal", "collaboration". GPT-4o summarize each email to one line. Send daily digest to Telegram at 08:00 each morning.</span></span>
+        <span class="tech-key">email_to_ai_summary.json</span>
+        <span class="tech-val"><span class="tr">IMAP e-posta tetikleyicisi → OpenAI özetleme → SMTP ilet. Gelen e-postayı tek satıra özetler, belirtilen adrese yönlendirir. Kategori: small-business-automation.</span><span class="en">IMAP email trigger → OpenAI summarization → SMTP forward. Summarizes incoming email to one line and routes to specified address. Category: small-business-automation.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">alert-router</span>
-        <span class="tech-val"><span class="tr">Webhook alır (monitoring, form, veya custom trigger). Severity'ye göre ayır: CRITICAL → anında Telegram + e-posta, WARNING → Telegram, INFO → sadece Sheets log. Boşta geçirilen hafta sonlarında bile kritik uyarılar anında iletildi.</span><span class="en">Receives webhook (monitoring, form, or custom trigger). Split by severity: CRITICAL → instant Telegram + email, WARNING → Telegram, INFO → Sheets log only. Critical alerts delivered instantly even through idle weekends.</span></span>
+        <span class="tech-key">telegram_alert_router.json</span>
+        <span class="tech-val"><span class="tr">Webhook alır → severity'ye göre Telegram mesajı yönlendirir. CRITICAL → anında alert, WARNING → özet, INFO → log. Küçük işletme izleme ve bildirim için tasarlandı.</span><span class="en">Receives webhook → routes Telegram message by severity. CRITICAL → instant alert, WARNING → summary, INFO → log. Designed for small-business monitoring and notification.</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key">sales-digest</span>
-        <span class="tech-val"><span class="tr">Her gün 18:00'de Sheets'teki günlük satış verilerini çek. Bugünkü gelir, tamamlanan proje sayısı, pipeline durumu. Otomatik hesapla ve Telegram'a özet gönder. Yönetici dashboard açmadan günü bitirir.</span><span class="en">Every day at 18:00, pull daily sales data from Sheets. Today's revenue, projects completed, pipeline status. Calculate automatically and send summary to Telegram. Manager ends the day without opening a dashboard.</span></span>
+        <span class="tech-key">daily_sales_digest.json</span>
+        <span class="tech-val"><span class="tr">Günlük cron → Google Sheets'ten satış verisini çek → Telegram özet gönder. Günlük gelir, tamamlanan iş sayısı, pipeline durumu. Dashboard açmadan yöneticinin gününü bitirir.</span><span class="en">Daily cron → pull sales data from Google Sheets → send Telegram digest. Daily revenue, completed jobs count, pipeline status. Manager ends the day without opening a dashboard.</span></span>
       </div>
     </div>
   </section>
@@ -211,21 +211,30 @@
   </section>
   <section class="lsection" data-scenario="true">
     <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo</span>
-      <span class="en">Step-by-step scenario</span>
+      <span class="tr">Şablonu nasıl kullanırsın?</span>
+      <span class="en">How to use a template</span>
     </h2>
     <div class="features-grid">
       <div class="feature">
-        <h3><span class="tr">Workflow intake</span><span class="en">Workflow intake</span></h3>
-        <p><span class="tr">Pick the trigger, destination, credentials, and expected failure behavior before building nodes.</span><span class="en">Pick the trigger, destination, credentials, and expected failure behavior before building nodes.</span></p>
+        <h3><span class="tr">workflow_catalog.json ile başla</span><span class="en">Start with workflow_catalog.json</span></h3>
+        <p>
+          <span class="tr">Pydantic ile doğrulanmış katalog şeması: her şablonu kullanım alanı + gerekli credential'lar ile eşleştirir. "Lead formu mu istiyorum?" → lead_form_to_sheets.json. "Hangi API key gerekiyor?" → katalogda yazıyor. Tahmin etmek yok.</span>
+          <span class="en">Pydantic-validated catalog schema: maps each template to use case + required credentials. "Do I want lead form?" → lead_form_to_sheets.json. "Which API keys do I need?" → listed in the catalog. No guessing.</span>
+        </p>
       </div>
       <div class="feature">
-        <h3><span class="tr">Import check</span><span class="en">Import check</span></h3>
-        <p><span class="tr">Validate placeholders, sheet names, Telegram chat IDs, and required environment values.</span><span class="en">Validate placeholders, sheet names, Telegram chat IDs, and required environment values.</span></p>
+        <h3><span class="tr">JSON'u içe aktar + placeholder doldur</span><span class="en">Import JSON + fill placeholders</span></h3>
+        <p>
+          <span class="tr">Her workflow active:false olarak gönderilir — yanlışlıkla çalıştırma yok. Benzersiz node ID'leri çakışmayı önler. Sheets adı, Telegram chat ID, OpenAI API key placeholder'larını doldur. Kurulum notu ve first-run checklist dahil.</span>
+          <span class="en">Every workflow ships with active:false — no accidental runs. Unique node IDs prevent conflicts. Fill in Sheets name, Telegram chat ID, OpenAI API key placeholders. Setup notes and first-run checklist included.</span>
+        </p>
       </div>
       <div class="feature">
-        <h3><span class="tr">Operator handoff</span><span class="en">Operator handoff</span></h3>
-        <p><span class="tr">Ship the workflow JSON with setup notes, test payloads, and the first-run checklist.</span><span class="en">Ship the workflow JSON with setup notes, test payloads, and the first-run checklist.</span></p>
+        <h3><span class="tr">Test payload ile doğrula</span><span class="en">Validate with test payload</span></h3>
+        <p>
+          <span class="tr">Her şablonda örnek test payload'u var. n8n'in "Execute Workflow" butonuyla gerçek veriyle çalıştırmadan önce test et. Email → AI özetleme → SMTP yönlendirme akışı 2 dakikada doğrulanır. Teknik olmayan operatörler devam ettirebilir — bağımlılık yaratmadan teslim.</span>
+          <span class="en">Each template includes a sample test payload. Test with n8n's "Execute Workflow" button before running on real data. Email → AI summarization → SMTP routing flow verified in 2 minutes. Non-technical operators can maintain it — delivered without creating dependency.</span>
+        </p>
       </div>
     </div>
   </section>

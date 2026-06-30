@@ -31,14 +31,14 @@
     <div class="lhero-inner">
       <div class="lhero-kicker">
         <span class="btag btag-py">Python</span>
-        <span class="btag">S/T/X/DR-Learner · Causal Forest</span>
-        <span class="btag">AUUC · Qini curve</span>
-        <span class="btag">Causal inference · 7M rows</span>
+        <span class="btag">S/T/DR-Learner · optional Causal Forest</span>
+        <span class="btag">AUUC · 50-bootstrap CI</span>
+        <span class="btag">20K synthetic Criteo-schema rows</span>
       </div>
       <h1 class="lhero-title">Criteo Uplift Modeling Benchmark</h1>
       <p class="lhero-sub">
-        <span class="tr">Dönüşüm olasılığı yüksek kullanıcıyı hedeflemek yanlış soru — o kullanıcı reklamın olup olmadığından bağımsız satın alıyor. Doğru soru: hangi kullanıcı reklamla dönüşür ama reklam olmadan dönüşmez? Bu, nedensellik problemi. ML sınıflandırması değil.</span>
-        <span class="en">Targeting users with high conversion probability is the wrong question — they convert with or without the ad. The right question: who converts with the ad but not without? This is a causality problem. Not ML classification.</span>
+        <span class="tr">Dönüşüm olasılığı yüksek kullanıcıyı hedeflemek yanlış soru. Doğru soru: hangi kullanıcı reklamla dönüşür ama reklam olmadan dönüşmez? Bu nedensellik problemi. 20.000 satırlık sentetik Criteo-schema verisi (generate_synthetic.py): 12 özellik (5 yoğun Gaussian, 4 seyrek binary p=0.3, 3 Poisson-sayım), %85 işlem oranı, ziyaret ATE=0.04, dönüşüm ek etkisi=0.01. S/T/DR-Learner karşılaştırması, 50-bootstrap CI ile AUUC, 4-segment politika, kaçınılabilir kampanya harcaması tahmini.</span>
+        <span class="en">Targeting high conversion probability users is the wrong question. The right question: who converts with the ad but not without? That's causality. 20,000-row synthetic Criteo-schema data (generate_synthetic.py): 12 features (5 dense Gaussian, 4 sparse binary p=0.3, 3 Poisson-count), ~85% treatment rate, visit ATE=0.04, conversion additional effect=0.01. S/T/DR-Learner benchmark, AUUC with 50-bootstrap CI, 4-segment policy, avoidable campaign spend estimate.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">
@@ -77,12 +77,12 @@
       <span>Qini curve</span>
     </div>
     <div class="lmetric">
-      <strong>38%</strong>
-      <span><span class="tr">boşa harcama azaltımı</span><span class="en">wasted budget reduction</span></span>
+      <strong>ATE 4%</strong>
+      <span><span class="tr">ziyaret uplift, +1% dönüşüm</span><span class="en">visit uplift, +1% conversion</span></span>
     </div>
     <div class="lmetric">
-      <strong>7M</strong>
-      <span><span class="tr">satır, Criteo v2.1</span><span class="en">rows, Criteo v2.1</span></span>
+      <strong>20K</strong>
+      <span><span class="tr">satır, sentetik Criteo şeması</span><span class="en">rows, synthetic Criteo schema</span></span>
     </div>
   </div>
 
@@ -201,7 +201,7 @@
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Veri</span><span class="en">Data</span></span>
-        <span class="tech-val"><span class="tr">Criteo Uplift v2.1 (7M satır) + 20K satır sentetik Criteo schema</span><span class="en">Criteo Uplift v2.1 (7M rows) + 20K synthetic Criteo-schema rows</span></span>
+        <span class="tech-val"><span class="tr">generate_synthetic.py ile 20.000 satır sentetik Criteo-schema — 12 özellik (f0-f11), treatment ~%85, visit ATE=0.04, conv_effect=0.01</span><span class="en">20,000-row synthetic Criteo-schema via generate_synthetic.py — 12 features (f0-f11), treatment ~85%, visit ATE=0.04, conv_effect=0.01</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Temel modeller</span><span class="en">Base models</span></span>
@@ -215,21 +215,30 @@
   </section>
   <section class="lsection" data-scenario="true">
     <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo</span>
-      <span class="en">Step-by-step scenario</span>
+      <span class="tr">Adım adım: benchmark nasıl çalışır?</span>
+      <span class="en">Step-by-step: how the benchmark runs</span>
     </h2>
     <div class="features-grid">
       <div class="feature">
-        <h3><span class="tr">Treatment contract</span><span class="en">Treatment contract</span></h3>
-        <p><span class="tr">Load treatment, outcome, and feature columns; reject rows that blur exposure and conversion timing.</span><span class="en">Load treatment, outcome, and feature columns; reject rows that blur exposure and conversion timing.</span></p>
+        <h3><span class="tr">Veri üretimi + treatment kontratı</span><span class="en">Data generation + treatment contract</span></h3>
+        <p>
+          <span class="tr">generate_synthetic.py: 20.000 satır, 12 özellik (f0-f4 Gaussian yoğun, f5-f8 binary p=0.3, f9-f11 Poisson-sayım), treatment ~%85 oranında, visit outcome ATE=0.04, conversion ek etkisi=0.01. Treatment ve outcome sütunları açıkça contract'a bağlanır — zamanlama bulanıklığı reddedilir.</span>
+          <span class="en">generate_synthetic.py: 20,000 rows, 12 features (f0-f4 dense Gaussian, f5-f8 binary p=0.3, f9-f11 Poisson-count), treatment ~85% rate, visit outcome ATE=0.04, conversion additional effect=0.01. Treatment and outcome columns explicitly contracted — timing ambiguity rejected.</span>
+        </p>
       </div>
       <div class="feature">
-        <h3><span class="tr">Learner comparison</span><span class="en">Learner comparison</span></h3>
-        <p><span class="tr">Run S/T/X/DR-style learners and compare AUUC, Qini, and top-decile incremental lift.</span><span class="en">Run S/T/X/DR-style learners and compare AUUC, Qini, and top-decile incremental lift.</span></p>
+        <h3><span class="tr">Learner karşılaştırması: AUUC + 50-bootstrap CI</span><span class="en">Learner comparison: AUUC + 50-bootstrap CI</span></h3>
+        <p>
+          <span class="tr">S-Learner, T-Learner, DR-Learner (+ opsiyonel Causal Forest) karşılaştırılır. Her model için AUUC 50-bootstrap CI ile hesaplanır. Top-decile uplift %10'luk dilimde. positive_uplift_threshold ve negative_uplift_threshold 4-segment politika üretir: "Önce hedefle / Temastan kaçın / Önceliklendirme / Düşük öncelik."</span>
+          <span class="en">S-Learner, T-Learner, DR-Learner (+ optional Causal Forest) compared. AUUC computed for each with 50-bootstrap CI. Top-decile uplift at 10% cut. positive_uplift_threshold and negative_uplift_threshold produce 4-segment policy: "Target first / Avoid contact / Do not prioritize / Low priority."</span>
+        </p>
       </div>
       <div class="feature">
-        <h3><span class="tr">Policy readout</span><span class="en">Policy readout</span></h3>
-        <p><span class="tr">Export the targeting segments that create incremental conversions instead of high-propensity noise.</span><span class="en">Export the targeting segments that create incremental conversions instead of high-propensity noise.</span></p>
+        <h3><span class="tr">Politika çıktısı: kaçınılabilir harcama tahmini</span><span class="en">Policy readout: avoidable spend estimate</span></h3>
+        <p>
+          <span class="tr">"Avoid contact" segmenti (negatif uplift) kampanyadan çıkarılır. Bu segment boyutu × birim maliyet = kaçınılabilir kampanya harcaması. Standart CTR optimizasyonu bunu göremez — çünkü bu kullanıcılar zaten dönüşüyor, sadece reklam olmadan da dönüşürdü.</span>
+          <span class="en">"Avoid contact" segment (negative uplift) removed from campaign. Segment size × unit cost = avoidable campaign spend. Standard CTR optimization can't see this — because these users convert anyway, they would have converted without the ad too.</span>
+        </p>
       </div>
     </div>
   </section>

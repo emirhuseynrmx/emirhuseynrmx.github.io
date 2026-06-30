@@ -37,8 +37,8 @@
       </div>
       <h1 class="lhero-title">Data Quality Cleaning API</h1>
       <p class="lhero-sub">
-        <span class="tr">Ham veriyi endpoint'e gönder, temiz veri al. Tip çıkarımı, eksik değer doldurma, duplicate tespiti — hepsi tek API call'da.</span>
-        <span class="en">Send raw data to the endpoint, get clean data back. Type inference, missing value imputation, duplicate detection — all in a single API call.</span>
+        <span class="tr">Litestar async REST API: CSV text veya dosya yükle, temizlenmiş JSON al. /v1/email/normalize, /v1/phone/normalize, /v1/domain/parse, /v1/csv/profile, /v1/csv/clean, /v1/records/clean, /ops/audit — 7 endpoint. Rate limit: 120 istek/60 saniye (sabit pencere). İdempotency cache: 256 giriş. Maksimum CSV: 1.000.000 karakter, 5.000 kayıt, 2.000 batch. RapidAPI marketplace için tasarlandı.</span>
+        <span class="en">Litestar async REST API: send CSV text or file upload, receive cleaned JSON. /v1/email/normalize, /v1/phone/normalize, /v1/domain/parse, /v1/csv/profile, /v1/csv/clean, /v1/records/clean, /ops/audit — 7 endpoints. Rate limit: 120 req/60s fixed window. Idempotency cache: 256 entries. Max CSV: 1,000,000 chars, 5,000 records, 2,000 batch. Designed for resale on RapidAPI marketplace.</span>
       </p>
       <div class="lhero-actions">
         <a class="btn-primary" href="https://github.com/emirhuseynrmx/data-quality-cleaning-api" target="_blank" rel="noopener">
@@ -93,50 +93,50 @@
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon">🔍</div>
-        <h3><span class="tr">Otomatik tip çıkarımı</span><span class="en">Auto type inference</span></h3>
+        <h3><span class="tr">/v1/csv/profile — sütun profili</span><span class="en">/v1/csv/profile — column profiling</span></h3>
         <p>
-          <span class="tr">Sütun tiplerini elle belirtmene gerek yok. API string, sayı, tarih ve boolean'ı kendisi tespit eder.</span>
-          <span class="en">No need to specify column types manually. The API detects strings, numbers, dates, and booleans itself.</span>
+          <span class="tr">CSV metnini gönder, her sütun için tip çıkarımı + eksik değer sayısı + istatistik özeti al. Maksimum 1.000.000 karakter CSV veya 5.000 kayıt. İdempotency: X-Idempotency-Key başlığıyla aynı istek 256 girişlik önbellekten döner.</span>
+          <span class="en">Send CSV text, get type inference + missing count + stat summary per column. Max 1,000,000 char CSV or 5,000 records. Idempotency: same request with X-Idempotency-Key header returns from 256-entry cache.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">🧹</div>
-        <h3><span class="tr">Eksik değer doldurma</span><span class="en">Missing value imputation</span></h3>
+        <h3><span class="tr">/v1/records/clean — kayıt temizleme</span><span class="en">/v1/records/clean — record cleaning</span></h3>
         <p>
-          <span class="tr">Sayısal sütunlar için medyan, kategorik için mod. Ya da özel bir doldurma stratejisi parametre olarak geçilebilir.</span>
-          <span class="en">Median for numeric columns, mode for categorical. Or pass a custom imputation strategy as a parameter.</span>
+          <span class="tr">Trim, e-posta küçük harf, E.164 telefon normalizasyonu, formül nötrleştirme (=CMD gibi injection önleme), anahtar alanlara göre dedup. Maksimum 2.000 kayıt/batch. Her istek için /ops/audit'te denetim kaydı.</span>
+          <span class="en">Trim, lowercase emails, E.164 phone normalization, formula neutralization (=CMD injection prevention), dedup by key fields. Max 2,000 records/batch. Audit log entry in /ops/audit for every request.</span>
         </p>
       </div>
       <div class="feature">
-        <div class="feature-icon">👥</div>
-        <h3><span class="tr">Duplicate tespiti</span><span class="en">Duplicate detection</span></h3>
+        <div class="feature-icon">📧</div>
+        <h3><span class="tr">/v1/email/normalize — e-posta doğrulama</span><span class="en">/v1/email/normalize — email validation</span></h3>
         <p>
-          <span class="tr">Tam eşleşme ve fuzzy match seçenekleriyle tekrarlayan satırları bulur ve raporlar. Silme veya işaretleme yapılabilir.</span>
-          <span class="en">Finds repeating rows with exact-match or fuzzy-match options. Can delete or flag duplicates.</span>
+          <span class="tr">5 hardcoded tek kullanımlık e-posta domain'i (mailinator, guerrillamail ve diğerleri) reddeder. Geçerli e-postayı normalize eder. Disposable domain listesi genişletilebilir config ile.</span>
+          <span class="en">Rejects 5 hardcoded disposable email domains (mailinator, guerrillamail, and others). Normalizes valid emails. Disposable domain list extensible via config.</span>
         </p>
       </div>
       <div class="feature">
         <div class="feature-icon">📋</div>
-        <h3><span class="tr">Kalite raporu</span><span class="en">Quality report</span></h3>
+        <h3><span class="tr">/ops/audit — denetim kuyruğu</span><span class="en">/ops/audit — audit tail endpoint</span></h3>
         <p>
-          <span class="tr">Her response'ta: eksiklik oranı, tip dağılımı, anomali sayısı, temizlenen satır sayısı.</span>
-          <span class="en">Every response includes: null rate, type distribution, anomaly count, cleaned row count.</span>
+          <span class="tr">Her API isteğinin denetim kaydını döner: endpoint, istek boyutu, temizlenen kayıt sayısı, zaman damgası. Üretim ortamında RapidAPI trafiğini izlemek için tasarlandı.</span>
+          <span class="en">Returns audit log for every API request: endpoint, request size, records cleaned, timestamp. Designed to monitor RapidAPI traffic in production.</span>
         </p>
       </div>
       <div class="feature">
-        <div class="feature-icon">⚙️</div>
-        <h3>Pandera Schema</h3>
+        <div class="feature-icon">🔑</div>
+        <h3><span class="tr">RapidAPI auth + rate limiter</span><span class="en">RapidAPI auth + rate limiter</span></h3>
         <p>
-          <span class="tr">Output veri her zaman Pandera schema'dan geçer. Temizledikten sonra bile beklenen formatta olduğu garanti altında.</span>
-          <span class="en">Output data always passes through a Pandera schema. Even after cleaning, the expected format is guaranteed.</span>
+          <span class="tr">X-RapidAPI-Proxy-Secret başlığı doğrulaması. Sabit pencere rate limiter: 120 istek/60 saniye. Aşıldığında 429 döner. RapidAPI marketplace'e listeleme için hazır — yerel kullanım için değil.</span>
+          <span class="en">X-RapidAPI-Proxy-Secret header validation. Fixed-window rate limiter: 120 req/60s. Returns 429 when exceeded. Ready for RapidAPI marketplace listing — not just local use.</span>
         </p>
       </div>
       <div class="feature">
-        <div class="feature-icon">🔌</div>
-        <h3><span class="tr">Kolay entegrasyon</span><span class="en">Easy integration</span></h3>
+        <div class="feature-icon">📞</div>
+        <h3><span class="tr">/v1/phone/normalize + /v1/domain/parse</span><span class="en">/v1/phone/normalize + /v1/domain/parse</span></h3>
         <p>
-          <span class="tr">JSON veya multipart/form-data ile CSV yükle. Temiz veriyi JSON veya CSV olarak geri al. Ekstra kütüphane gerekmez.</span>
-          <span class="en">Upload CSV via JSON or multipart/form-data. Get clean data back as JSON or CSV. No extra libraries needed.</span>
+          <span class="tr">Telefon numarasını E.164 formatına çevirir (uluslararası ön ek dahil). Domain'i bileşenlerine ayırır: subdomain, apex, TLD, kayıtlı mı değil mi. JSON veya CSV çıktı.</span>
+          <span class="en">Converts phone number to E.164 format (including international prefix). Parses domain into components: subdomain, apex, TLD, registered or not. JSON or CSV output.</span>
         </p>
       </div>
     </div>
@@ -209,27 +209,23 @@
     <div class="tech-table">
       <div class="tech-row">
         <span class="tech-key">API</span>
-        <span class="tech-val">Litestar · Pydantic v2 request/response models</span>
+        <span class="tech-val">Litestar async-first · 7 endpoint · Pydantic v2 request/response models</span>
       </div>
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Veri işleme</span><span class="en">Data processing</span></span>
-        <span class="tech-val">Pandas 3.x · numpy</span>
+        <span class="tech-key"><span class="tr">Limitler</span><span class="en">Limits</span></span>
+        <span class="tech-val"><span class="tr">Rate: 120 istek/60s (sabit pencere) · CSV maks: 1.000.000 karakter · 5.000 kayıt · 2.000 batch</span><span class="en">Rate: 120 req/60s fixed window · CSV max: 1,000,000 chars · 5,000 records · 2,000 batch</span></span>
       </div>
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
-        <span class="tech-val">Pandera strict schema · TypeAdapter</span>
+        <span class="tech-key"><span class="tr">Üretim kontrolleri</span><span class="en">Production controls</span></span>
+        <span class="tech-val">RapidAPI X-Proxy-Secret auth · idempotency cache 256 giriş · /ops/audit tail</span>
       </div>
       <div class="tech-row">
-        <span class="tech-key"><span class="tr">Export</span><span class="en">Output</span></span>
-        <span class="tech-val">JSON response · CSV file download</span>
+        <span class="tech-key"><span class="tr">Temizleme</span><span class="en">Cleaning</span></span>
+        <span class="tech-val"><span class="tr">E.164 telefon · e-posta lowercase + 5 disposable domain reddi · formül nötrleştirme · anahtar dedup</span><span class="en">E.164 phone · email lowercase + 5 disposable domain rejection · formula neutralization · key dedup</span></span>
       </div>
       <div class="tech-row">
         <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · Litestar TestClient · coverage &gt;85%</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">CI</span>
-        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
+        <span class="tech-val">pytest · Litestar TestClient · coverage &gt;85% · ruff · GitHub Actions CI</span>
       </div>
     </div>
   </section>
