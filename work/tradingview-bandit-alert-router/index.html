@@ -87,6 +87,15 @@
   </div>
 
   <!-- PROBLEM -->
+  <section class="business-impact">
+    <div class="impact-label">Business Impact</div>
+    <p>
+      <span class="tr">Örnek run 80 alert'i işlerken 12'sini risk kapılarında bloke edip 68'ini yürütülebilir akışa alıyor. Bu, TradingView webhooklarını doğrudan emir/kanal akışına sokmak yerine allowlist, confidence floor, risk budget ve dedupe katmanından geçirir.</span>
+      <span class="en">The sample run processes 80 alerts, blocks 12 at risk gates, and leaves 68 executable. That puts TradingView webhooks behind allowlist, confidence floor, risk budget, and dedupe layers instead of routing them directly.</span>
+    </p>
+    <div class="impact-evidence">Evidence: total_alerts=80, risk_blocked=12, executed=68, 20 sample alert records.</div>
+  </section>
+
   <section class="lsection">
     <h2 class="lsection-title">
       <span class="tr">Problem neydi?</span>

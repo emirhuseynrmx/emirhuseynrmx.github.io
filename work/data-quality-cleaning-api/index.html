@@ -85,6 +85,15 @@
     </div>
   </div>
 
+  <section class="business-impact">
+    <div class="impact-label">Business Impact</div>
+    <p>
+      <span class="tr">10.000 satır ve 24 sütunluk CSV isteğinde quality_score=94.2, issues_found=7 ve 18ms işlem süresi raporlandı. Bu API kirli CRM/Sheets verisini modele veya import akışına girmeden önce tek HTTP sınırında yakalar.</span>
+      <span class="en">A 10,000-row, 24-column CSV request reports quality_score=94.2, issues_found=7, and an 18ms processing time. The API catches dirty CRM/Sheets data at one HTTP boundary before it reaches a model or import workflow.</span>
+    </p>
+    <div class="impact-evidence">Evidence: Litestar API scenario, 7 endpoints, 120 req/60s rate limit, 5,000-record batch cap.</div>
+  </section>
+
   <section class="lsection">
     <h2 class="lsection-title">
       <span class="tr">Ne yapar?</span>
