@@ -312,13 +312,23 @@
 }
 .business-impact p{
   max-width:68rem;margin:0;
-  color:#d8d2c4;font-size:1.02rem;line-height:1.75;
+  padding:1.1rem 1.25rem 1.1rem 1.5rem;
+  background:linear-gradient(135deg,#0d0a07 0%,#080604 100%);
+  border:1px solid #1e1b12;
+  border-left:3px solid #ff4800;
+  border-radius:0 10px 10px 0;
+  color:#d8d2c4;font-size:1.02rem;line-height:1.8;
 }
 .impact-evidence{
-  margin-top:.9rem;color:#5f594b;
-  font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.65;
+  margin-top:.65rem;
+  padding:.55rem 1.25rem .55rem 1.5rem;
+  background:#06050300;
+  color:#4a4438;
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.65;
+  border-left:3px solid #1a1812;
 }
 @media(max-width:760px){
-  .business-impact{padding:1.75rem 1.5rem 0}
-  .business-impact p{font-size:.95rem}
+  .business-impact{padding:1.25rem 1rem 0}
+  .business-impact p{font-size:.93rem;padding:.9rem 1rem .9rem 1.15rem;line-height:1.75}
+  .impact-evidence{padding:.45rem .9rem .45rem 1.15rem;font-size:.62rem}
 }
