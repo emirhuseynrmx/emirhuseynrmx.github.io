@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>RAG Chatbot Template — Emir H. İnci</title>
+  <title>RAG Chatbot — Emir H. İnci</title>
   <meta name="description" content="Şirket politika dokümanı üzerine lokal RAG chatbot. TF-IDF vektör deposu, kaynak gösterimiyle yanıt, chunk metadata. Harici API çağrısı yok, hallucination yok."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -35,7 +35,7 @@
         <span class="btag">FastAPI /ask · CLI · LLM-free</span>
         <span class="btag">vector_store/store.json · top_k=3</span>
       </div>
-      <h1 class="lhero-title">RAG Chatbot Template</h1>
+      <h1 class="lhero-title">RAG Chatbot</h1>
       <p class="lhero-sub">
         <span class="tr">Yerel metin dokümanlarını JSON destekli TF-IDF deposuna alır (vector_store/store.json). /ask endpoint'ine soru gönder — cosine similarity ile top-k chunk'ı bulur (varsayılan k=3, maks 10), benzerlik skoru 4 ondalık basamakla döner, chunk önizlemesi 240 karakterde kesilir. Kasıtlı LLM-free: kendi LLM çağrını build_answer()'a yerleştirirsin. API key bağımlılığı yok, hallucination yok.</span>
         <span class="en">Ingests local text documents into a JSON-backed TF-IDF store (vector_store/store.json). POST a question to the /ask endpoint — finds top-k chunks by cosine similarity (default k=3, max 10), returns similarity score rounded to 4 decimal places, chunk preview truncated at 240 chars. Deliberately LLM-free: substitute your own LLM call in build_answer(). No API key dependency, no hallucination.</span>
