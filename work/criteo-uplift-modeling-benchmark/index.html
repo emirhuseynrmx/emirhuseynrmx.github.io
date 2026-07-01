@@ -129,6 +129,27 @@
     </div>
   </section>
 
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Optuna HPO — neden gerekli?</span>
+      <span class="en">Optuna HPO — why it's needed</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Problem</span><span class="en">Problem</span></span>
+        <span class="tech-val"><span class="tr">S/T/X/DR-Learner'ların hepsi LightGBM tabanlı temel modeller kullanır. Aynı hiperparametreler tüm meta-öğrenicileri etkiler. LightGBM'in n_estimators, learning_rate, num_leaves, min_child_samples, subsample ve colsample_bytree değerleri birbiriyle etkileşimlidir. 7M satırlık Criteo verisinde yanlış bir kombinasyon hem yavaş hem kötü model üretir.</span><span class="en">S/T/X/DR-Learners all use LightGBM base models. The same hyperparameters affect all meta-learners. LightGBM's n_estimators, learning_rate, num_leaves, min_child_samples, subsample and colsample_bytree interact. On 7M-row Criteo data, a wrong combination produces both slow and poor models.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Çözüm: TPE (subsample)</span><span class="en">Solution: TPE (subsample)</span></span>
+        <span class="tech-val"><span class="tr">Optuna TPE 30.000 satırlık alt-örneklemde 20 trial çalıştırır. 3-katlı stratifiye CV — eğitim verisi dışında asla değerlendirme yapılmaz. MedianPruner kötü giden denemeleri erken keser. En iyi LightGBM parametreleri bulunan tam veriye uygulanır.</span><span class="en">Optuna TPE runs 20 trials on a 30,000-row subsample. 3-fold stratified CV — validation and test sets never enter the HPO loop. MedianPruner stops poor trials early. Best LightGBM params are applied to the full training set.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Holdout disiplini</span><span class="en">Holdout discipline</span></span>
+        <span class="tech-val"><span class="tr">HPO yalnızca eğitim split'inde çalışır. Validation ve test setleri HPO süreci boyunca hiç görülmez. Bulunan parametreler tüm meta-öğrenicilere (S/T/X/DR) uygulanır. hpo_validation evidence check: kaç trial çalıştığı ve en iyi CV-AUC değeri raporlanır.</span><span class="en">HPO runs only on the training split. Validation and test sets are never seen during HPO. Found params are applied to all meta-learners (S/T/X/DR). hpo_validation evidence check: number of trials run and best CV-AUC reported.</span></span>
+      </div>
+    </div>
+  </section>
+
   <!-- WHY META-LEARNERS -->
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">

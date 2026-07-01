@@ -128,6 +128,27 @@
     </div>
   </section>
 
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Optuna HPO — neden gerekli?</span>
+      <span class="en">Optuna HPO — why it's needed</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Problem</span><span class="en">Problem</span></span>
+        <span class="tech-val"><span class="tr">XGBoost'un n_estimators, max_depth, learning_rate, subsample, colsample_bytree, reg_alpha, reg_lambda ve min_child_weight değerleri hem veri boyutuna hem birbirine bağlıdır. 240 trade gibi küçük datasetlerde özellikle max_depth ve min_child_weight yanlış seçilirse model ezberleme veya underfitting gözlenir. Manuel deneme-yanılma güvenilmez.</span><span class="en">XGBoost's n_estimators, max_depth, learning_rate, subsample, colsample_bytree, reg_alpha, reg_lambda and min_child_weight all depend on dataset size and each other. On small datasets like 240 trades, wrong max_depth or min_child_weight leads to overfitting or underfitting. Manual trial-and-error is unreliable.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Çözüm: TPE</span><span class="en">Solution: TPE</span></span>
+        <span class="tech-val"><span class="tr">Optuna TPE 40 trial ile olası parametre uzayını geçmiş sonuçlara dayanarak örnekler. MedianPruner kötü giden denemeleri erken keser. scale_pos_weight sınıf dengesizliğini otomatik ele alır. Holdout hiçbir trial boyunca görülmez.</span><span class="en">Optuna TPE samples the parameter space in 40 trials, guided by past results. MedianPruner stops poor trials early. scale_pos_weight handles class imbalance automatically. Holdout is never seen during any trial.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Sonuç</span><span class="en">Result</span></span>
+        <span class="tech-val"><span class="tr">5-katlı StratifiedKFold CV yalnızca eğitim setinde çalışır. En iyi CV-AUC bulunduktan sonra tam eğitim setinde final model fit edilir. HPO özeti counterfactual_suggestions[0]'a yazılır: trial sayısı, CV-AUC ve holdout AUC yan yana görülür.</span><span class="en">5-fold StratifiedKFold CV runs on training set only. After best CV-AUC is found, final model is fit on full training set. HPO summary written to counterfactual_suggestions[0]: trial count, CV-AUC and holdout AUC shown side by side.</span></span>
+      </div>
+    </div>
+  </section>
+
   <!-- WHY XGBOOST -->
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">

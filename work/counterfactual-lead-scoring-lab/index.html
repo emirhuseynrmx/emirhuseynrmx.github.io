@@ -128,6 +128,27 @@
     </div>
   </section>
 
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Optuna HPO — neden gerekli?</span>
+      <span class="en">Optuna HPO — why it's needed</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Problem</span><span class="en">Problem</span></span>
+        <span class="tech-val"><span class="tr">GradientBoosting'in n_estimators, max_depth, learning_rate, subsample, min_samples_split ve min_samples_leaf parametreleri birbiriyle etkileşimlidir. Sabit parametreler belirli veri şekilleri için optimum olabilir, genel gelmez. Grid search kombinasyon sayısı üstel büyüdüğü için kullanılmaz.</span><span class="en">GradientBoosting's n_estimators, max_depth, learning_rate, subsample, min_samples_split and min_samples_leaf all interact. Fixed params may be optimal for specific data shapes but don't generalise. Grid search is unusable because the combination count grows exponentially.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Çözüm: TPE</span><span class="en">Solution: TPE</span></span>
+        <span class="tech-val"><span class="tr">Optuna Tree-structured Parzen Estimator geçmiş denemelerden öğrenerek sonraki noktayı akıllıca seçer. 40 trial MedianPruner ile — kötü giden denemeler erken kesilir, toplam çalışma süresi kısalır.</span><span class="en">Optuna Tree-structured Parzen Estimator learns from past trials to pick the next candidate intelligently. 40 trials with MedianPruner — poor-performing trials are stopped early, keeping total runtime low.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Holdout disiplini</span><span class="en">Holdout discipline</span></span>
+        <span class="tech-val"><span class="tr">Her trial yalnızca eğitim setinde 5-katlı StratifiedKFold CV çalıştırır. Holdout seti HPO süresince hiç görülmez. En iyi parametreler bulunduktan sonra full train set'te fit edilir, ilk kez test setinde değerlendirilir. hpo_validation: pass evidence check olarak raporlanır.</span><span class="en">Each trial runs 5-fold StratifiedKFold CV on the training set only. Holdout is never seen during HPO. After best params are found, fit on full train set and evaluated on test set for the first time. hpo_validation: pass reported as an evidence check.</span></span>
+      </div>
+    </div>
+  </section>
+
   <!-- WHY GRADIENTBOOSTING -->
   <section class="lsection lsection-dark">
     <h2 class="lsection-title">

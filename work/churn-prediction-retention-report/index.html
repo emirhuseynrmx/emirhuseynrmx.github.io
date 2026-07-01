@@ -101,10 +101,10 @@
     <div class="features-grid">
       <div class="feature">
         <div class="feature-icon">🤖</div>
-        <h3>XGBoost</h3>
+        <h3>XGBoost + Optuna HPO</h3>
         <p>
-          <span class="tr">n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9. test_size=0.3 ile holdout validasyonu, 300 bootstrap iterasyonu ile güven aralıkları.</span>
-          <span class="en">n_estimators=160, max_depth=3, learning_rate=0.05, subsample=0.9. Holdout with test_size=0.3, confidence intervals from 300 bootstrap iterations.</span>
+          <span class="tr">40 Optuna TPE denemesiyle otomatik hiperparametre optimizasyonu. 5-katlı stratifiye CV yalnızca eğitim setinde çalışır — holdout hiç görülmez. En iyi parametreler final modele aktarılır. ROC-AUC: 0.8436.</span>
+          <span class="en">Automatic hyperparameter optimisation via 40 Optuna TPE trials. 5-fold stratified CV runs on training set only — holdout never seen. Best params fed to final model. ROC-AUC: 0.8436.</span>
         </p>
       </div>
       <div class="feature">
@@ -146,6 +146,31 @@
           <span class="tr">Model script değil — tam analitik paketi: CSV → XGBoost → risk segmentasyonu → aksiyon kuyruğu → PDF. Pydantic v2 + Pandera ile schema doğrulama dahil.</span>
           <span class="en">Not a model script — a complete analytics package: CSV → XGBoost → risk segmentation → action queue → PDF. Includes Pydantic v2 + Pandera schema validation.</span>
         </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark">
+    <h2 class="lsection-title">
+      <span class="tr">Optuna HPO — neden gerekli?</span>
+      <span class="en">Optuna HPO — why it's needed</span>
+    </h2>
+    <div class="tech-table">
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Problem</span><span class="en">Problem</span></span>
+        <span class="tech-val"><span class="tr">XGBoost'un n_estimators, max_depth, learning_rate, subsample, colsample_bytree, reg_lambda ve min_child_weight parametrelerinin tümü birbiriyle etkileşimlidir. Elle seçilen bir değer seti, bir parametre iyi göründüğü için diğerini körü körüne sabitlemiş olabilir. Grid search ise kombinasyon sayısı üstel büyüdüğü için pratikte çalışmaz.</span><span class="en">XGBoost's n_estimators, max_depth, learning_rate, subsample, colsample_bytree, reg_lambda and min_child_weight all interact. A manually chosen set may lock one param at a value that looks good in isolation but silently hurts the others. Grid search is impractical because the combination count grows exponentially.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Çözüm: TPE</span><span class="en">Solution: TPE</span></span>
+        <span class="tech-val"><span class="tr">Optuna Tree-structured Parzen Estimator, geçmiş denemelerden öğrenerek bir sonraki noktayı akıllıca seçer. 40 denemede rassal aramanın yüzlerce denemede bulduğu bölgeye ulaşır. MedianPruner kötü giden denemeleri erken keser — toplam süre düşer.</span><span class="en">Optuna Tree-structured Parzen Estimator learns from past trials to pick the next point intelligently. In 40 trials it reaches regions that random search finds in hundreds of trials. MedianPruner stops poor trials early — keeping total runtime low.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Holdout disiplini</span><span class="en">Holdout discipline</span></span>
+        <span class="tech-val"><span class="tr">Her trial yalnızca eğitim setinde 5-katlı StratifiedKFold CV çalıştırır. Test seti (holdout) hiçbir trial boyunca görülmez. HPO tamamlandıktan sonra en iyi parametreler tam eğitim setinde fit edilir ve ilk kez test setinde değerlendirilir. Bu yöntem olmadan final skorun iyimser olması kaçınılmazdır.</span><span class="en">Each trial runs 5-fold StratifiedKFold CV on the training set only. The test (holdout) set is never seen during any trial. After HPO completes, the best params are fit on the full training set and evaluated on the test set for the first time. Without this discipline, the final score would inevitably be optimistically biased.</span></span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key"><span class="tr">Kanıt</span><span class="en">Evidence</span></span>
+        <span class="tech-val"><span class="tr">40 trial, 5-fold CV, seed=42. evidence_checks içinde hpo_validation: pass kaydı. ROC-AUC holdout: 0.8436.</span><span class="en">40 trials, 5-fold CV, seed=42. hpo_validation: pass recorded in evidence_checks. Holdout ROC-AUC: 0.8436.</span></span>
       </div>
     </div>
   </section>
