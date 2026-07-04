@@ -3,159 +3,433 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Calybris Core — Arşiv</title>
-  <meta name="robots" content="noindex"/>
+  <title>Calybris Core - 0.5.0 Upcoming</title>
+  <meta name="description" content="Calybris Core 0.5.0 upcoming: CALY-PROOF v1, calybris-verify, decision certificates, stateful proofs, signed provenance, Python conformance, and the 0.4.x release bridge."/>
+  <meta name="robots" content="index, follow"/>
+  <meta name="author" content="Emir Hüseyin İnci"/>
+  <link rel="canonical" href="https://emirhuseyin.tech/calybris/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Calybris Core - 0.5.0 Upcoming"/>
+  <meta property="og:description" content="The proof-carrying decision kernel is moving toward CALY-PROOF v1, verifier CLI, stateful certificates, and cross-language conformance."/>
+  <meta property="og:url" content="https://emirhuseyin.tech/calybris/"/>
+  <meta name="twitter:card" content="summary"/>
+  <meta name="theme-color" content="#060504"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../main.css"/>
   <style>
-    body { background:#060504; }
-
-    .archive-bar {
-      background:#1a1208;
-      border-bottom:1px solid #2a1e08;
-      padding:.55rem 2rem;
-      text-align:center;
-      font-family:'JetBrains Mono',monospace;
-      font-size:.58rem;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      color:#6b5a30;
+    *, *::before, *::after { box-sizing:border-box; }
+    :root {
+      --bg:#060504;
+      --surface:#0d0b09;
+      --surface-2:#14110e;
+      --line:#242019;
+      --line-strong:#3a3127;
+      --text:#f2f0ea;
+      --muted:#9a9588;
+      --dim:#686254;
+      --accent:#ff4800;
+      --teal:#7dd3c7;
+      --gold:#d4aa4d;
+      --mono:'JetBrains Mono', monospace;
+      --sans:'Inter', sans-serif;
     }
-    .archive-bar a { color:#ff4800; text-decoration:none; }
-    .archive-bar a:hover { text-decoration:underline; }
+
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+    }
+
+    a { color:inherit; }
+    code { font-family:var(--mono); overflow-wrap:anywhere; }
+
+    .release-bar {
+      border-bottom:1px solid var(--line);
+      background:#0b0907;
+      color:var(--muted);
+      font-family:var(--mono);
+      font-size:.72rem;
+      padding:.7rem 1.25rem;
+      text-align:center;
+    }
+    .release-bar strong { color:var(--accent); font-weight:800; }
+    .release-bar a { color:var(--teal); text-decoration:none; }
+    .release-bar a:hover { text-decoration:underline; }
 
     .calybris-wrap {
-      max-width:54rem;
+      width:min(100%, 76rem);
       margin:0 auto;
-      padding:7rem 2.5rem 5rem;
+      padding:3.5rem 2rem 4rem;
     }
 
-    .calybris-eyebrow {
-      font-family:'JetBrains Mono',monospace;
-      font-size:.6rem;
-      letter-spacing:.14em;
-      text-transform:uppercase;
-      color:#3a3828;
-      margin-bottom:1.5rem;
+    .hero {
+      display:grid;
+      grid-template-columns:minmax(0, 1.08fr) minmax(20rem, .92fr);
+      gap:2.5rem;
+      align-items:center;
+      min-height:30rem;
+      padding:0;
+    }
+
+    .brand-line {
       display:flex;
       align-items:center;
-      gap:.75rem;
+      gap:.85rem;
+      margin-bottom:1.4rem;
+      color:var(--muted);
+      font-family:var(--mono);
+      font-size:.78rem;
+      font-weight:700;
     }
-    .calybris-eyebrow::before {
-      content:'';
-      display:inline-block;
-      width:2rem;
-      height:1px;
-      background:#2a2818;
+    .brand-line img {
+      width:2.4rem;
+      height:2.4rem;
+      border-radius:8px;
+      background:#111;
+      border:1px solid var(--line);
+      padding:.28rem;
+    }
+
+    .status-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      border:1px solid rgba(125, 211, 199, .32);
+      background:rgba(125, 211, 199, .07);
+      color:var(--teal);
+      border-radius:999px;
+      padding:.42rem .7rem;
+      font-family:var(--mono);
+      font-size:.72rem;
+      font-weight:700;
+      margin-bottom:1.1rem;
+    }
+    .status-dot {
+      width:.5rem;
+      height:.5rem;
+      border-radius:999px;
+      background:var(--teal);
     }
 
     .calybris-title {
-      font-size:clamp(2.8rem,7vw,5rem);
+      margin:0;
+      color:var(--text);
+      font-size:4.4rem;
+      line-height:.98;
       font-weight:900;
-      letter-spacing:-.04em;
-      line-height:1;
-      color:#f2f0ea;
-      margin-bottom:.5rem;
+      letter-spacing:0;
     }
-    .calybris-title span { color:#ff4800; }
+    .calybris-title span { color:var(--accent); }
 
-    .calybris-tagline {
-      font-family:'JetBrains Mono',monospace;
-      font-size:.75rem;
-      color:#5a5848;
-      letter-spacing:.04em;
-      margin-bottom:2rem;
+    .calybris-kicker {
+      margin:1.15rem 0 0;
+      color:var(--gold);
+      font-family:var(--mono);
+      font-size:.9rem;
+      font-weight:700;
     }
 
     .calybris-desc {
-      font-size:1rem;
-      color:#6b6858;
+      margin:1.35rem 0 0;
+      max-width:46rem;
+      color:var(--muted);
+      font-size:1.06rem;
       line-height:1.75;
-      max-width:42rem;
-      margin-bottom:2.5rem;
     }
+    .calybris-desc strong { color:var(--text); font-weight:700; }
+    .calybris-desc code { color:var(--teal); font-size:.92em; }
 
-    .calybris-tags {
+    .hero-actions {
       display:flex;
-      gap:.5rem;
       flex-wrap:wrap;
-      margin-bottom:3rem;
+      gap:.8rem;
+      margin-top:1.75rem;
     }
-    .calybris-tag {
-      font-family:'JetBrains Mono',monospace;
-      font-size:.58rem;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color:#5a5850;
-      background:#141210;
-      border:1px solid #201e1c;
-      border-radius:4px;
-      padding:.3rem .7rem;
+    .button {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:2.8rem;
+      padding:.78rem 1rem;
+      border-radius:8px;
+      font-family:var(--mono);
+      font-size:.78rem;
+      font-weight:800;
+      text-decoration:none;
+      border:1px solid var(--accent);
+      background:var(--accent);
+      color:#160804;
+    }
+    .button.secondary {
+      border-color:var(--line-strong);
+      background:transparent;
+      color:var(--text);
     }
 
-    .calybris-divider {
-      border:0;
-      border-top:1px solid #1a1812;
-      margin:2.5rem 0;
+    .proof-panel {
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#0a0807;
+      overflow:hidden;
+      box-shadow:0 24px 80px rgba(0,0,0,.32);
     }
-
-    .use-cases {
-      display:grid;
-      grid-template-columns:1fr 1fr;
+    .proof-panel-top {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       gap:1rem;
-      margin-bottom:2.5rem;
+      padding:.85rem 1rem;
+      border-bottom:1px solid var(--line);
+      background:var(--surface);
+      font-family:var(--mono);
+      font-size:.72rem;
+      color:var(--dim);
     }
-    .use-case {
-      background:#0c0a08;
-      border:1px solid #1a1812;
-      border-radius:12px;
-      padding:1.25rem 1.4rem;
+    .proof-panel-top strong { color:var(--text); }
+    .proof-window {
+      padding:1.35rem;
+      display:grid;
+      gap:1rem;
     }
-    .use-case-label {
-      font-family:'JetBrains Mono',monospace;
-      font-size:.55rem;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      color:#ff4800;
-      margin-bottom:.6rem;
+    .proof-logo {
+      display:flex;
+      align-items:center;
+      gap:.8rem;
+      padding-bottom:.9rem;
+      border-bottom:1px solid var(--line);
     }
-    .use-case p {
-      font-family:'JetBrains Mono',monospace;
-      font-size:.7rem;
-      color:#5a5848;
-      line-height:1.7;
+    .proof-logo img {
+      width:3.4rem;
+      height:3.4rem;
+      border-radius:8px;
+      background:#111;
+      border:1px solid var(--line);
+      padding:.36rem;
+    }
+    .proof-logo strong {
+      display:block;
+      font-size:1rem;
+    }
+    .proof-logo span {
+      display:block;
+      color:var(--dim);
+      font-family:var(--mono);
+      font-size:.72rem;
+      margin-top:.2rem;
+    }
+    .proof-line {
+      display:grid;
+      grid-template-columns:8rem minmax(0, 1fr);
+      gap:.75rem;
+      align-items:start;
+      font-family:var(--mono);
+      font-size:.76rem;
+      line-height:1.65;
+    }
+    .proof-line span:first-child { color:var(--dim); }
+    .proof-line span:last-child { color:var(--muted); overflow-wrap:anywhere; }
+    .proof-line strong { color:var(--teal); }
+    .proof-line .hot { color:var(--accent); }
+
+    .stat-strip {
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:1px;
+      margin-top:2.4rem;
+      border:1px solid var(--line);
+      border-radius:8px;
+      overflow:hidden;
+      background:var(--line);
+    }
+    .stat {
+      background:var(--surface);
+      padding:1rem;
+      min-width:0;
+    }
+    .stat strong {
+      display:block;
+      color:var(--text);
+      font-family:var(--mono);
+      font-size:1.05rem;
+      margin-bottom:.35rem;
+    }
+    .stat span {
+      color:var(--dim);
+      font-size:.82rem;
+      line-height:1.55;
     }
 
-    .calybris-note {
-      font-family:'JetBrains Mono',monospace;
+    .section {
+      padding-top:4rem;
+    }
+    .section-head {
+      display:grid;
+      grid-template-columns:minmax(0, .85fr) minmax(0, 1.15fr);
+      gap:2rem;
+      align-items:end;
+      margin-bottom:1.2rem;
+    }
+    .section-label {
+      color:var(--accent);
+      font-family:var(--mono);
+      font-size:.75rem;
+      font-weight:800;
+      margin-bottom:.55rem;
+    }
+    .section h2 {
+      margin:0;
+      font-size:2rem;
+      line-height:1.14;
+      letter-spacing:0;
+    }
+    .section-head p {
+      margin:0;
+      color:var(--muted);
+      line-height:1.75;
+      font-size:.98rem;
+    }
+
+    .version-grid {
+      display:grid;
+      grid-template-columns:1.2fr .9fr .9fr;
+      gap:1rem;
+    }
+    .version-card {
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:var(--surface);
+      padding:1.2rem;
+      min-width:0;
+    }
+    .version-card.featured {
+      border-color:rgba(255,72,0,.52);
+      background:#120d0a;
+    }
+    .version-meta {
+      color:var(--dim);
+      font-family:var(--mono);
       font-size:.72rem;
-      color:#3a3828;
-      line-height:1.8;
-      border-left:2px solid #2a1e08;
-      padding-left:1.25rem;
-      margin-bottom:3rem;
+      font-weight:700;
+      margin-bottom:.75rem;
+    }
+    .version-card h3 {
+      margin:0 0 .75rem;
+      font-size:1.25rem;
+      line-height:1.2;
+      color:var(--text);
+    }
+    .version-card p {
+      margin:0 0 1rem;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:.93rem;
+    }
+    .chip-list {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.45rem;
+    }
+    .chip {
+      border:1px solid var(--line-strong);
+      border-radius:999px;
+      padding:.35rem .58rem;
+      color:var(--muted);
+      font-family:var(--mono);
+      font-size:.68rem;
+      line-height:1.25;
+      overflow-wrap:anywhere;
+    }
+    .version-card.featured .chip {
+      border-color:rgba(255,72,0,.35);
+      color:#f0c1ad;
+    }
+
+    .proof-grid {
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:1rem;
+    }
+    .proof-card {
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:var(--surface);
+      padding:1rem;
+      min-width:0;
+    }
+    .proof-card > span {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:2rem;
+      height:2rem;
+      border-radius:8px;
+      background:#18120d;
+      border:1px solid var(--line-strong);
+      color:var(--accent);
+      font-family:var(--mono);
+      font-weight:800;
+      margin-bottom:.85rem;
+    }
+    .proof-card h3 {
+      margin:0 0 .6rem;
+      color:var(--text);
+      font-size:1rem;
+      line-height:1.25;
+    }
+    .proof-card p {
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      font-size:.9rem;
+    }
+
+    .release-note {
+      margin-top:1.4rem;
+      border-left:2px solid var(--teal);
+      background:rgba(125,211,199,.05);
+      padding:1rem 1.15rem;
+      color:var(--muted);
+      font-family:var(--mono);
+      font-size:.78rem;
+      line-height:1.75;
     }
 
     .calybris-back {
       display:inline-flex;
       align-items:center;
-      gap:.5rem;
-      font-family:'JetBrains Mono',monospace;
-      font-size:.68rem;
-      font-weight:700;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      color:#ff4800;
+      gap:.55rem;
+      margin-top:3rem;
+      font-family:var(--mono);
+      font-size:.78rem;
+      font-weight:800;
+      color:var(--accent);
       text-decoration:none;
-      transition:gap .2s;
     }
-    .calybris-back:hover { gap:.75rem; }
+    .calybris-back:hover { text-decoration:underline; }
 
-    @media(max-width:600px){
-      .use-cases{grid-template-columns:1fr}
-      .calybris-wrap{padding:5rem 1.5rem 3rem}
+    @media (max-width:900px) {
+      .calybris-wrap { padding:3rem 1.25rem 3.5rem; }
+      .hero { grid-template-columns:1fr; min-height:auto; }
+      .calybris-title { font-size:3.35rem; }
+      .stat-strip { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+      .section-head { grid-template-columns:1fr; gap:.8rem; }
+      .version-grid { grid-template-columns:1fr; }
+      .proof-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width:560px) {
+      .release-bar { text-align:left; }
+      .calybris-title { font-size:2.55rem; }
+      .calybris-desc { font-size:.98rem; }
+      .hero-actions { flex-direction:column; }
+      .button { width:100%; }
+      .proof-panel { display:none; }
+      .proof-line { grid-template-columns:1fr; gap:.15rem; }
+      .stat-strip, .proof-grid { grid-template-columns:1fr; }
+      .section h2 { font-size:1.55rem; }
     }
   </style>
 </head>
@@ -164,91 +438,279 @@
   <div class="c-dot" id="c-dot" aria-hidden="true"></div>
   <div class="c-ring" id="c-ring" aria-hidden="true"></div>
 
-<div class="archive-bar">
-  <span class="tr">Arşiv — aktif geliştirme yok</span>
-  <span class="en">Archive — no active development</span>
-  &nbsp;·&nbsp;
-  <a href="/">
-    <span class="tr">Ana sayfaya dön →</span>
-    <span class="en">Back to home →</span>
-  </a>
-</div>
-
-<div class="calybris-wrap">
-
-  <div class="calybris-eyebrow">
-    <span class="tr">arşivlenmiş proje · Rust crate</span>
-    <span class="en">archived project · Rust crate</span>
+  <div class="release-bar">
+    <span class="tr"><strong>0.5.0 upcoming</strong> · Calybris Core tekrar release hattında · <a href="/">Ana sayfa</a></span>
+    <span class="en"><strong>0.5.0 upcoming</strong> · Calybris Core is back on the release track · <a href="/">Home</a></span>
   </div>
 
-  <h1 class="calybris-title">Calybris<span> Core</span></h1>
-  <div class="calybris-tagline">
-    <span class="tr">deterministic proof-carrying decision kernel</span>
-    <span class="en">deterministic proof-carrying decision kernel</span>
-  </div>
+  <main class="calybris-wrap">
+    <section class="hero" aria-labelledby="calybris-title">
+      <div>
+        <div class="brand-line">
+          <img src="assets/calybris-mark.svg" alt="Calybris mark"/>
+          <span>Calybris Core</span>
+        </div>
 
-  <p class="calybris-desc tr">
-    Bir aksiyonun neden kabul, ikame veya reddedildiğini açıklamak ve tekrar oynatmak zorunda
-    olan sistemler için domain-agnostic karar çekirdeği. LLM router değil, exchange değil —
-    saf bir karar primitifi: <code style="color:#ff4800;font-size:.85em">aday + kısıtlar → karar + digest + WAL + bütçe kanıtı</code>.
-  </p>
-  <p class="calybris-desc en">
-    A domain-neutral deterministic primitive for systems that must explain and replay
-    why an action was allowed, substituted, or rejected.
-    Not an LLM framework. Not an exchange.
-    Just: <code style="color:#ff4800;font-size:.85em">candidate + policy → decision + digests + optional WAL + budget proof</code>.
-  </p>
+        <div class="status-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="tr">0.5.0 geliyor</span>
+          <span class="en">0.5.0 is coming</span>
+        </div>
 
-  <div class="calybris-tags">
-    <span class="calybris-tag">Rust</span>
-    <span class="calybris-tag">#![forbid(unsafe_code)]</span>
-    <span class="calybris-tag">Apache-2.0</span>
-    <span class="calybris-tag">proptest · Loom · Miri</span>
-    <span class="calybris-tag">HMAC-SHA256 WAL</span>
-    <span class="calybris-tag">integer-only</span>
-  </div>
+        <h1 class="calybris-title" id="calybris-title">Calybris<span> Core</span></h1>
 
-  <div class="use-cases">
-    <div class="use-case">
-      <div class="use-case-label">
-        <span class="tr">Kullanım 1</span><span class="en">Use case 1</span>
+        <p class="calybris-kicker">
+          <span class="tr">deterministic proof-carrying decision kernel</span>
+          <span class="en">deterministic proof-carrying decision kernel</span>
+        </p>
+
+        <p class="calybris-desc tr">
+          <strong>0.4.0</strong> bu sayfanın son ana sürüm çizgisiydi. <strong>0.4.5</strong> Python binding ve commerce adapter katmanını hazırladı. Sıradaki <strong>0.5.0</strong> ise Calybris'i sadece karar veren bir çekirdekten, bağımsız olarak doğrulanabilen <code>CALY-PROOF v1</code> audit yüzeyine taşıyor.
+        </p>
+        <p class="calybris-desc en">
+          <strong>0.4.0</strong> was the last major line highlighted here. <strong>0.4.5</strong> prepared the Python binding and commerce adapter layer. The upcoming <strong>0.5.0</strong> moves Calybris from a decision kernel into an independently verifiable <code>CALY-PROOF v1</code> audit surface.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button" href="#release-notes">
+            <span class="tr">Sürüm notları</span>
+            <span class="en">Release notes</span>
+          </a>
+          <a class="button secondary" href="#proof-stack">
+            <span class="tr">Proof stack</span>
+            <span class="en">Proof stack</span>
+          </a>
+        </div>
       </div>
-      <p>
-        <span class="tr">LLM routing — bütçe, gecikme, kalite ve risk kısıtları altında model seç / ikame et / reddet.</span>
-        <span class="en">LLM routing — select / substitute / reject models under budget, latency, quality, risk.</span>
-      </p>
-    </div>
-    <div class="use-case">
-      <div class="use-case-label">
-        <span class="tr">Kullanım 2</span><span class="en">Use case 2</span>
+
+      <aside class="proof-panel" aria-label="Calybris proof preview">
+        <div class="proof-panel-top">
+          <strong>CALY-PROOF v1</strong>
+          <span>upcoming/0.5.0</span>
+        </div>
+        <div class="proof-window">
+          <div class="proof-logo">
+            <img src="assets/calybris-app-dark.svg" alt="Calybris application icon"/>
+            <div>
+              <strong>Decision receipt</strong>
+              <span>candidate + policy + state -> certificate</span>
+            </div>
+          </div>
+          <div class="proof-line">
+            <span>digests</span>
+            <span><strong>policy</strong> / input / decision / ledger / state</span>
+          </div>
+          <div class="proof-line">
+            <span>verifier</span>
+            <span><strong>calybris-verify</strong> chain · audit · policy · --json</span>
+          </div>
+          <div class="proof-line">
+            <span>trajectory</span>
+            <span>state_digest_before -> <strong>state_digest_after</strong></span>
+          </div>
+          <div class="proof-line">
+            <span>signature</span>
+            <span><strong>Ed25519</strong> provenance · signer · timestamp</span>
+          </div>
+          <div class="proof-line">
+            <span>result</span>
+            <span><span class="hot">tamper / truncate / wrong policy</span> reject fail-closed</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <div class="stat-strip" aria-label="Calybris release status">
+      <div class="stat">
+        <strong>0.4.0</strong>
+        <span class="tr">son ana sürüm çizgisi</span>
+        <span class="en">last major line</span>
       </div>
-      <p>
-        <span class="tr">Pre-trade guard — pozisyon, risk ve gecikme limitleri altında aday emirleri kabul / ikame / reddet.</span>
-        <span class="en">Pre-trade guard — admit / substitute / reject candidate orders under exposure, risk, latency limits.</span>
-      </p>
+      <div class="stat">
+        <strong>0.4.5</strong>
+        <span class="tr">Python + adapter köprüsü</span>
+        <span class="en">Python + adapter bridge</span>
+      </div>
+      <div class="stat">
+        <strong>0.5.0</strong>
+        <span class="tr">upcoming proof release</span>
+        <span class="en">upcoming proof release</span>
+      </div>
+      <div class="stat">
+        <strong>CALY-PROOF</strong>
+        <span class="tr">byte-exact audit contract</span>
+        <span class="en">byte-exact audit contract</span>
+      </div>
     </div>
-  </div>
 
-  <hr class="calybris-divider"/>
+    <section class="section" id="release-notes">
+      <div class="section-head">
+        <div>
+          <div class="section-label">
+            <span class="tr">release hattı</span>
+            <span class="en">release track</span>
+          </div>
+          <h2>
+            <span class="tr">0.5.0, kanıt formatını ürün yüzeyine çıkarıyor.</span>
+            <span class="en">0.5.0 brings the proof format to the product surface.</span>
+          </h2>
+        </div>
+        <p class="tr">
+          Changelog'un yeni omurgası kısa: 0.4.0 çekirdeği üretim ergonomisine taşıdı, 0.4.5 Python ve commerce adapter hattını ekledi, 0.5.0 karar izlerini üçüncü tarafların doğrulayabileceği kanıt paketine dönüştürüyor.
+        </p>
+        <p class="en">
+          The new changelog arc is simple: 0.4.0 moved the kernel into production ergonomics, 0.4.5 added the Python and commerce adapter path, and 0.5.0 turns decision trails into proof bundles third parties can verify.
+        </p>
+      </div>
 
-  <div class="calybris-note">
-    <span class="tr">
-      // Öncelik listesinin dışında — başka projeler öne geçti.<br/>
-      // Çekirdek çalışıyor; unit / proptest / Loom / Miri coverage var.<br/>
-      // İleride farklı bir kapsamda dönebilir.
-    </span>
-    <span class="en">
-      // Out of priority scope — other projects took precedence.<br/>
-      // Core works; unit / proptest / Loom / Miri coverage in place.<br/>
-      // May return in a different scope later.
-    </span>
-  </div>
+      <div class="version-grid">
+        <article class="version-card featured">
+          <div class="version-meta">
+            <span class="tr">upcoming · 2026-07-04</span>
+            <span class="en">upcoming · 2026-07-04</span>
+          </div>
+          <h3>0.5.0 · CALY-PROOF v1</h3>
+          <p class="tr">
+            Byte-exact digest contract, hash-chained WAL doğrulaması, state trajectory, signed provenance ve karar sertifikaları tek audit yüzeyinde birleşiyor.
+          </p>
+          <p class="en">
+            Byte-exact digest contracts, hash-chained WAL verification, state trajectories, signed provenance, and decision certificates converge into one audit surface.
+          </p>
+          <div class="chip-list">
+            <span class="chip">CALY_PROOF.md</span>
+            <span class="chip">golden vectors</span>
+            <span class="chip">conformance suite</span>
+            <span class="chip">calybris-verify --json</span>
+            <span class="chip">stateful proofs</span>
+            <span class="chip">Ed25519 provenance</span>
+            <span class="chip">decision certificates</span>
+            <span class="chip">WASM verification path</span>
+            <span class="chip">threat model</span>
+          </div>
+        </article>
 
-  <a href="/" class="calybris-back">
-    ← <span class="tr">ana sayfa</span><span class="en">home</span>
-  </a>
+        <article class="version-card">
+          <div class="version-meta">
+            <span class="tr">köprü sürüm · 2026-07-01</span>
+            <span class="en">bridge release · 2026-07-01</span>
+          </div>
+          <h3>0.4.5 · Python + adapters</h3>
+          <p class="tr">
+            PyO3 binding, maturin packaging, batch routing ve <code>calybris_commerce</code> adapter ile çekirdek Rust dışında da denenebilir hale geldi.
+          </p>
+          <p class="en">
+            PyO3 bindings, maturin packaging, batch routing, and the <code>calybris_commerce</code> adapter made the Rust core testable outside Rust.
+          </p>
+          <div class="chip-list">
+            <span class="chip">Python binding</span>
+            <span class="chip">KernelModel API</span>
+            <span class="chip">EcomEngine.route_batch</span>
+            <span class="chip">trace_mode summary</span>
+            <span class="chip">docs/PYTHON.md</span>
+          </div>
+        </article>
 
-</div>
+        <article class="version-card">
+          <div class="version-meta">
+            <span class="tr">son ana çizgi · 2026-06-29</span>
+            <span class="en">last major line · 2026-06-29</span>
+          </div>
+          <h3>0.4.0 · production core</h3>
+          <p class="tr">
+            Config builder'ları, async WAL, snapshot/persistence, observability ve production gateway örneğiyle çekirdek daha güvenli çalıştırma katmanına çıktı.
+          </p>
+          <p class="en">
+            Config builders, async WAL, snapshots, persistence, observability, and the production gateway example moved the core into safer operations.
+          </p>
+          <div class="chip-list">
+            <span class="chip">EngineConfig</span>
+            <span class="chip">InputBuilder</span>
+            <span class="chip">async WAL</span>
+            <span class="chip">crash recovery</span>
+            <span class="chip">EngineMetrics</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="proof-stack">
+      <div class="section-head">
+        <div>
+          <div class="section-label">
+            <span class="tr">0.5.0 odak alanı</span>
+            <span class="en">0.5.0 focus</span>
+          </div>
+          <h2>
+            <span class="tr">Karar sadece üretilmiyor, sonradan ispatlanıyor.</span>
+            <span class="en">The decision is not just produced; it is proven later.</span>
+          </h2>
+        </div>
+        <p class="tr">
+          Yeni hat, audit ortamında Calybris çalıştırmadan bile aynı karar izinin bozulmadığını göstermeye odaklanıyor: digest tag'leri, pinned fixtures, CLI verdict'leri ve imzalı sertifikalar.
+        </p>
+        <p class="en">
+          The new line focuses on proving that the same decision trail was not altered, even without running Calybris in the audit environment: digest tags, pinned fixtures, CLI verdicts, and signed certificates.
+        </p>
+      </div>
+
+      <div class="proof-grid">
+        <article class="proof-card">
+          <span>01</span>
+          <h3>
+            <span class="tr">Byte-exact digest</span>
+            <span class="en">Byte-exact digest</span>
+          </h3>
+          <p class="tr">Policy, input, decision, ledger ve state digest'leri versiyonlu tag'lerle bağlanıyor.</p>
+          <p class="en">Policy, input, decision, ledger, and state digests are bound with versioned tags.</p>
+        </article>
+
+        <article class="proof-card">
+          <span>02</span>
+          <h3>
+            <span class="tr">Auditor CLI</span>
+            <span class="en">Auditor CLI</span>
+          </h3>
+          <p class="tr"><code>calybris-verify</code> chain, audit ve policy komutlarıyla CI uyumlu verdict üretiyor.</p>
+          <p class="en"><code>calybris-verify</code> emits CI-friendly verdicts for chain, audit, and policy checks.</p>
+        </article>
+
+        <article class="proof-card">
+          <span>03</span>
+          <h3>
+            <span class="tr">Decision certificates</span>
+            <span class="en">Decision certificates</span>
+          </h3>
+          <p class="tr">Audit bundle, WAL pozisyonu, state trajectory ve optional signer tek envelope içinde kapanıyor.</p>
+          <p class="en">The audit bundle, WAL position, state trajectory, and optional signer close into one envelope.</p>
+        </article>
+
+        <article class="proof-card">
+          <span>04</span>
+          <h3>
+            <span class="tr">Cross-language contract</span>
+            <span class="en">Cross-language contract</span>
+          </h3>
+          <p class="tr">Rust ve Python golden testleri aynı fixture'ları okuyup aynı digest'leri üretmek zorunda.</p>
+          <p class="en">Rust and Python golden tests must read the same fixtures and produce the same digests.</p>
+        </article>
+      </div>
+
+      <div class="release-note">
+        <span class="tr">
+          Not: Bu sayfa 0.5.0'ı upcoming olarak konumluyor. Yayın tamamlanana kadar 0.4.0 son ana çizgi, 0.4.5 ise Python/adapters köprüsü olarak anlatılıyor.
+        </span>
+        <span class="en">
+          Note: This page positions 0.5.0 as upcoming. Until the publish is complete, 0.4.0 remains the last major line and 0.4.5 is documented as the Python/adapters bridge.
+        </span>
+      </div>
+    </section>
+
+    <a href="/" class="calybris-back">
+      <span aria-hidden="true">←</span>
+      <span class="tr">ana sayfa</span>
+      <span class="en">home</span>
+    </a>
+  </main>
 
 <script>
 (function(){
