@@ -494,6 +494,7 @@ html.lang-en .tr{display:none}
 /* UPCOMING PROJECTS */
 .upcoming-grid{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;
+  perspective:1400px;
 }
 .ucard{
   position:relative;min-height:27rem;
@@ -502,26 +503,37 @@ html.lang-en .tr{display:none}
   padding:1.65rem;
   display:grid;grid-template-rows:auto 1fr auto;gap:1.2rem;
   overflow:hidden;
-  opacity:0;transform:translateY(22px);
-  transition:opacity .45s calc(var(--ri,0)*.07s) ease,transform .45s calc(var(--ri,0)*.07s) ease,border-color .2s,box-shadow .2s;
+  transform-style:preserve-3d;
+  /* JS drives --rx/--ry (deg) and --gx/--gy (spotlight %) on hover */
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  opacity:0;
+  transition:opacity .5s calc(var(--ri,0)*.07s) ease,transform .35s ease,border-color .25s,box-shadow .25s;
 }
+.ucard.revealed{opacity:1}
 .ucard::before{
-  content:'';position:absolute;left:1.65rem;right:1.65rem;top:0;height:2px;
+  content:'';position:absolute;left:1.65rem;right:1.65rem;top:0;height:2px;z-index:3;
   background:linear-gradient(90deg,#ff4800,rgba(255,72,0,0));
 }
-.ucard.revealed{opacity:1;transform:none}
-.ucard:hover{border-color:#ff480055;box-shadow:0 20px 70px rgba(255,72,0,.1)}
+/* cursor-tracking spotlight sheen */
+.ucard::after{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(340px circle at var(--gx,50%) var(--gy,0%),rgba(255,72,0,.10),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.ucard:hover{border-color:#ff480066;box-shadow:0 34px 90px rgba(255,72,0,.14),0 10px 30px rgba(0,0,0,.5)}
+.ucard:hover::after{opacity:1}
+.ucard>*{position:relative;z-index:2}
 .ucard-kicker{
-  display:block;margin-bottom:.8rem;
+  display:block;margin-bottom:.8rem;transform:translateZ(28px);
   font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:800;
   letter-spacing:.12em;text-transform:uppercase;color:#ff4800;
 }
 .ucard h3{
-  font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.05;
+  font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.05;transform:translateZ(38px);
   letter-spacing:-.035em;margin-bottom:.75rem;
 }
-.ucard p{max-width:35rem;color:#989688;font-size:.88rem;line-height:1.7}
-.ucard-meta{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1rem}
+.ucard p{max-width:35rem;color:#989688;font-size:.88rem;line-height:1.7;transform:translateZ(18px)}
+.ucard-meta{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1rem;transform:translateZ(24px)}
 .ucard-meta span{
   font-family:'JetBrains Mono',monospace;font-size:.55rem;font-weight:700;
   letter-spacing:.07em;text-transform:uppercase;color:#6b6858;
@@ -530,62 +542,92 @@ html.lang-en .tr{display:none}
 }
 .ucard-arrow{
   font-family:'JetBrains Mono',monospace;font-size:.64rem;font-weight:800;
-  letter-spacing:.08em;text-transform:uppercase;color:#3a3830;
+  letter-spacing:.08em;text-transform:uppercase;color:#3a3830;transform:translateZ(24px);
   transition:color .15s,transform .15s;
 }
-.ucard:hover .ucard-arrow{color:#ff4800;transform:translateX(4px)}
+.ucard:hover .ucard-arrow{color:#ff4800}
 .ucard-visual{
   position:relative;min-height:12rem;border:1px solid #17140f;border-radius:12px;
-  background:#060504;overflow:hidden;
+  background:#050403;overflow:hidden;transform:translateZ(45px);
+  transform-style:preserve-3d;
 }
+.ucard-visual>*{transform-style:preserve-3d}
 .ucard-visual::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,72,0,.08),transparent 55%);
+  content:'';position:absolute;inset:0;z-index:4;
+  background:linear-gradient(135deg,rgba(255,72,0,.10),transparent 55%);
   pointer-events:none;
 }
+
+/* ── BlackSwan: 3D federated network ── */
 .ucard-visual-bank{
+  perspective:640px;
   background:
     linear-gradient(90deg,rgba(255,72,0,.05) 1px,transparent 1px),
     linear-gradient(180deg,rgba(255,72,0,.05) 1px,transparent 1px),
-    #060504;
+    #050403;
   background-size:34px 34px;
 }
-.bank-node,.bank-core{
-  position:absolute;display:grid;place-items:center;
+.fed-scene{
+  position:absolute;inset:0;transform-style:preserve-3d;
+  transform:rotateX(52deg) rotateZ(0deg);
+  animation:fedSpin 26s linear infinite;
+}
+@keyframes fedSpin{to{transform:rotateX(52deg) rotateZ(360deg)}}
+.fed-node,.fed-core{
+  position:absolute;left:50%;top:50%;display:grid;place-items:center;
   font-family:'JetBrains Mono',monospace;font-weight:800;
   border-radius:10px;border:1px solid #2a1808;
-  background:#120b06;color:#ff6b35;
+  background:#140c06;color:#ff6b35;
 }
-.bank-node{width:3rem;height:3rem;font-size:.7rem}
-.bank-node-a{left:12%;top:21%}
-.bank-node-b{right:13%;top:20%}
-.bank-node-c{left:19%;bottom:18%}
-.bank-core{
-  width:4.4rem;height:4.4rem;left:50%;top:50%;transform:translate(-50%,-50%);
-  border-color:#ff480077;box-shadow:0 0 36px rgba(255,72,0,.16);
+.fed-node{width:2.9rem;height:2.9rem;font-size:.68rem;margin:-1.45rem 0 0 -1.45rem}
+.fed-node-a{transform:translate3d(-6.4rem,-1.6rem,2.4rem)}
+.fed-node-b{transform:translate3d(6.2rem,-2.1rem,1.2rem)}
+.fed-node-c{transform:translate3d(-.6rem,5.4rem,3.2rem)}
+.fed-core{
+  width:4.2rem;height:4.2rem;margin:-2.1rem 0 0 -2.1rem;font-size:.82rem;color:#ffd9c2;
+  border-color:#ff4800aa;background:radial-gradient(circle,#3a1305,#140c06);
+  box-shadow:0 0 40px rgba(255,72,0,.35),inset 0 0 18px rgba(255,72,0,.25);
+  transform:translateZ(1.6rem);
 }
-.audit-line{
-  position:absolute;right:11%;bottom:24%;width:38%;height:2px;
-  background:linear-gradient(90deg,rgba(255,72,0,0),#ff4800);
-  transform:rotate(-18deg);transform-origin:right center;
+.fed-link{
+  position:absolute;left:50%;top:50%;height:2px;transform-origin:left center;
+  background:linear-gradient(90deg,rgba(255,72,0,.75),rgba(255,72,0,0));
 }
-.ucard-visual-plasma{display:grid;place-items:center}
-.plasma-ring{
-  width:8.8rem;height:8.8rem;border-radius:50%;
-  border:2px solid rgba(255,72,0,.68);
-  box-shadow:0 0 34px rgba(255,72,0,.22),inset 0 0 30px rgba(255,72,0,.12);
+.fed-link-a{width:6.6rem;transform:translate(-.2rem,-.1rem) translateZ(1.4rem) rotate(194deg)}
+.fed-link-b{width:6.6rem;transform:translate(-.2rem,-.1rem) translateZ(1.4rem) rotate(-19deg)}
+.fed-link-c{width:5.9rem;transform:translate(-.2rem,-.1rem) translateZ(1.4rem) rotate(96deg)}
+
+/* ── PlasmaGuard: 3D tokamak torus ── */
+.ucard-visual-plasma{perspective:560px}
+.torus{
+  position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
+  transform:rotateX(64deg);
+  animation:torusSpin 14s linear infinite;
 }
-.plasma-pulse{
-  position:absolute;width:11rem;height:3.2rem;border-radius:50%;
-  border:1px solid rgba(246,183,60,.55);
-  transform:rotate(-11deg);
+@keyframes torusSpin{to{transform:rotateX(64deg) rotateZ(360deg)}}
+.torus-ring{
+  position:absolute;border-radius:50%;border:2px solid rgba(255,72,0,.5);
+  left:50%;top:50%;transform:translate(-50%,-50%);
 }
+.torus-ring:nth-child(1){width:4.4rem;height:4.4rem;border-color:rgba(246,183,60,.75);box-shadow:0 0 22px rgba(246,183,60,.3)}
+.torus-ring:nth-child(2){width:6.6rem;height:6.6rem;border-color:rgba(255,72,0,.6)}
+.torus-ring:nth-child(3){width:8.8rem;height:8.8rem;border-color:rgba(255,72,0,.4)}
+.torus-ring:nth-child(4){width:11rem;height:11rem;border-color:rgba(255,72,0,.22)}
+.torus-core{
+  position:absolute;left:50%;top:50%;width:2.2rem;height:2.2rem;border-radius:50%;
+  transform:translate(-50%,-50%) rotateX(-64deg);
+  background:radial-gradient(circle,#ffe6c7,#ff6b1a 55%,#7a2c05);
+  box-shadow:0 0 40px rgba(255,120,40,.6),0 0 90px rgba(255,72,0,.35);
+  animation:corePulse 2.6s ease-in-out infinite;
+}
+@keyframes corePulse{0%,100%{opacity:.85;transform:translate(-50%,-50%) rotateX(-64deg) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) rotateX(-64deg) scale(1.12)}}
 .plasma-gate{
-  position:absolute;right:1rem;bottom:1rem;
+  position:absolute;right:1rem;bottom:1rem;z-index:5;transform:translateZ(30px);
   font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:800;
   letter-spacing:.12em;color:#ff4800;
-  border:1px solid rgba(255,72,0,.35);border-radius:4px;
+  border:1px solid rgba(255,72,0,.4);border-radius:4px;
   padding:.35rem .55rem;background:#100906;
+  box-shadow:0 0 18px rgba(255,72,0,.25);
 }
 
 /* ── RESPONSIVE ── */

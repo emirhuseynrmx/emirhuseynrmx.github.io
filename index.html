@@ -292,11 +292,15 @@
           </div>
         </div>
         <div class="ucard-visual ucard-visual-bank" aria-hidden="true">
-          <div class="bank-node bank-node-a">A</div>
-          <div class="bank-node bank-node-b">B</div>
-          <div class="bank-node bank-node-c">C</div>
-          <div class="bank-core">PD</div>
-          <div class="audit-line"></div>
+          <div class="fed-scene">
+            <div class="fed-link fed-link-a"></div>
+            <div class="fed-link fed-link-b"></div>
+            <div class="fed-link fed-link-c"></div>
+            <div class="fed-core">PD</div>
+            <div class="fed-node fed-node-a">A</div>
+            <div class="fed-node fed-node-b">B</div>
+            <div class="fed-node fed-node-c">C</div>
+          </div>
         </div>
         <span class="ucard-arrow">case page -></span>
       </a>
@@ -316,8 +320,13 @@
           </div>
         </div>
         <div class="ucard-visual ucard-visual-plasma" aria-hidden="true">
-          <div class="plasma-ring"></div>
-          <div class="plasma-pulse"></div>
+          <div class="torus">
+            <div class="torus-ring"></div>
+            <div class="torus-ring"></div>
+            <div class="torus-ring"></div>
+            <div class="torus-ring"></div>
+            <div class="torus-core"></div>
+          </div>
           <div class="plasma-gate">ABORT</div>
         </div>
         <span class="ucard-arrow">case page -></span>
@@ -708,6 +717,32 @@ if('IntersectionObserver' in window){
 }else{
   document.querySelectorAll(revealCls).forEach(function(el){el.classList.add('revealed');});
 }
+
+/* 3D TILT — upcoming cards follow the cursor */
+(function(){
+  var fine=window.matchMedia('(pointer:fine)').matches;
+  var calm=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(!fine||calm)return;
+  document.querySelectorAll('.ucard').forEach(function(card){
+    var raf=null;
+    card.addEventListener('mousemove',function(e){
+      if(raf)return;
+      raf=requestAnimationFrame(function(){
+        raf=null;
+        var r=card.getBoundingClientRect();
+        var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+        card.style.setProperty('--ry',(px-0.5)*10+'deg');
+        card.style.setProperty('--rx',(0.5-py)*8+'deg');
+        card.style.setProperty('--gx',px*100+'%');
+        card.style.setProperty('--gy',py*100+'%');
+      });
+    });
+    card.addEventListener('mouseleave',function(){
+      card.style.setProperty('--ry','0deg');
+      card.style.setProperty('--rx','0deg');
+    });
+  });
+})();
 
 /* 3D DECK */
 (function(){
