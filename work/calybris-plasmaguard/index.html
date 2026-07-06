@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="tr" class="lang-tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Calybris PlasmaGuard — Upcoming Project</title>
+  <meta name="description" content="Calybris PlasmaGuard: FAIR-MAST gerçek tokamak verisiyle disruption riski, conformal ML, Rust replay engine, Calybris policy gates ve verified WAL."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../../main.css"/>
+  <link rel="stylesheet" href="../../work.css"/>
+</head>
+<body>
+
+  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
+  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+
+  <nav class="nav" id="nav">
+    <a class="nav-brand" href="/"><- EHI</a>
+    <div class="nav-links">
+      <a href="/#upcoming"><span class="tr">upcoming</span><span class="en">upcoming</span></a>
+      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
+    </div>
+    <div class="nav-end">
+      <a class="btn-ghost btn-sm" href="../../calybris/">Calybris Core</a>
+      <button class="lang-btn" id="lang-btn">TR / EN</button>
+    </div>
+  </nav>
+
+  <section class="lhero">
+    <div class="lhero-inner">
+      <div class="lhero-kicker">
+        <span class="btag btag-py">Python ML</span>
+        <span class="btag">Rust replay</span>
+        <span class="btag">FAIR-MAST</span>
+        <span class="btag">Calybris Core</span>
+      </div>
+      <h1 class="lhero-title">Calybris PlasmaGuard</h1>
+      <p class="lhero-sub">
+        <span class="tr">Gerçek tokamak shot'larından disruption riski çıkaran ve bu riski denetlenebilir CONTINUE / MITIGATE / ABORT karar zincirine çeviren Calybris dikeyi.</span>
+        <span class="en">A Calybris vertical that learns disruption risk from real tokamak shots and turns it into auditable CONTINUE / MITIGATE / ABORT decisions.</span>
+      </p>
+      <div class="lhero-actions">
+        <a class="btn-primary" href="#architecture">
+          <span class="tr">Sistemi gör</span>
+          <span class="en">View system</span>
+        </a>
+        <a class="btn-ghost" href="#roadmap">
+          <span class="tr">Roadmap</span>
+          <span class="en">Roadmap</span>
+        </a>
+      </div>
+    </div>
+    <div class="lhero-preview">
+      <div class="project-console">
+        <div class="console-label">shot replay stream</div>
+        <div class="console-row"><span class="console-key">source</span><span class="console-val">FAIR-MAST · 11,573 public shots · Zarr signal archive</span></div>
+        <div class="console-row"><span class="console-key">t=-84ms</span><span class="console-val">risk=4210 bps · conformal_hi=5300 · action=CONTINUE</span></div>
+        <div class="console-row"><span class="console-key">t=-57ms</span><span class="console-val hot">risk=7420 bps · conformal_hi=8810 · action=MITIGATE</span></div>
+        <div class="console-row"><span class="console-key">t=-41ms</span><span class="console-val hot">risk=9130 bps · Ip collapse window detected · action=ABORT</span></div>
+        <div class="console-row"><span class="console-key">verify</span><span class="console-val ok">golden replay digest stable · WAL chain valid</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="lmetrics">
+    <div class="lmetric">
+      <strong>11.5k</strong>
+      <span><span class="tr">MAST shot</span><span class="en">MAST shots</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>39</strong>
+      <span><span class="tr">sinyal ailesi</span><span class="en">signal families</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>1ms</strong>
+      <span><span class="tr">ortak zaman grid'i</span><span class="en">shared time grid</span></span>
+    </div>
+    <div class="lmetric">
+      <strong>3</strong>
+      <span><span class="tr">policy action</span><span class="en">policy actions</span></span>
+    </div>
+  </div>
+
+  <section class="business-impact">
+    <div class="impact-label">Upcoming Build</div>
+    <p>
+      <span class="tr">PlasmaGuard, Calybris'i finans dışında bir alanda çalıştırıyor: ML riski floating-point'te tahmin ediyor, Rust motoru bunu fixed-point bps'e indiriyor ve aynı shot her oynatıldığında aynı denetlenebilir karar zincirini üretiyor.</span>
+      <span class="en">PlasmaGuard runs Calybris in a domain outside finance: ML estimates risk in floating point, the Rust engine quantizes it to fixed-point bps, and the same shot always replays into the same auditable decision chain.</span>
+    </p>
+    <div class="impact-evidence">Evidence target: FAIR-MAST public data, reproducible current-quench labels, LightGBM + conformal bands, Calybris policy gates, verified WAL replay.</div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Ne yapıyor?</span>
+      <span class="en">What it does</span>
+    </h2>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="flow-num">01</div>
+        <h3><span class="tr">Gerçek fizik verisi</span><span class="en">Real physics data</span></h3>
+        <p><span class="tr">Kaynak FAIR-MAST: halka açık MAST tokamak shot arşivi, metadata API ve Zarr sinyal verisi. Demo sentetik sinyal değil.</span><span class="en">The source is FAIR-MAST: public MAST tokamak shots, metadata API, and Zarr signal data. The demo is not synthetic telemetry.</span></p>
+      </div>
+      <div class="feature">
+        <div class="flow-num">02</div>
+        <h3><span class="tr">Belirsizliğe göre tedbir</span><span class="en">Uncertainty-aware safety</span></h3>
+        <p><span class="tr">Conformal üst sınır eşiği geçerse sistem "emin değilim" diye rahatlamaz; MITIGATE tarafına fail-closed yaklaşır.</span><span class="en">If the conformal upper bound crosses the threshold, the system does not relax; it moves toward fail-closed MITIGATE behavior.</span></p>
+      </div>
+      <div class="feature">
+        <div class="flow-num">03</div>
+        <h3><span class="tr">İş bölümü net</span><span class="en">Clear separation</span></h3>
+        <p><span class="tr">ML riski üretiyor, kararı Calybris veriyor. Float dünyası karar sınırının dışında kaldığı için replay deterministik ve denetlenebilir kalıyor.</span><span class="en">ML produces the risk; Calybris makes the decision. Floats stay outside the decision boundary, so replays remain deterministic and auditable.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark" id="architecture">
+    <h2 class="lsection-title">
+      <span class="tr">Sistem akışı</span>
+      <span class="en">System flow</span>
+    </h2>
+    <div class="project-flow">
+      <div class="flow-step">
+        <span class="flow-num">DATA</span>
+        <h3>FAIR-MAST</h3>
+        <p><span class="tr">Metadata API + Zarr sinyalleri; seçici indirme ve parquet cache.</span><span class="en">Metadata API + Zarr signals; selective download and parquet cache.</span></p>
+      </div>
+      <div class="flow-step">
+        <span class="flow-num">LABEL</span>
+        <h3>Current Quench</h3>
+        <p><span class="tr">Ip sinyalinden flat-top sonrası collapse etiketi, versiyonlu ve QC edilebilir.</span><span class="en">Current-collapse labels from Ip after flat-top, versioned and QC-ready.</span></p>
+      </div>
+      <div class="flow-step">
+        <span class="flow-num">MODEL</span>
+        <h3>Conformal ML</h3>
+        <p><span class="tr">LightGBM, isotonic calibration, split-conformal risk bandı.</span><span class="en">LightGBM, isotonic calibration, split-conformal risk bands.</span></p>
+      </div>
+      <div class="flow-step">
+        <span class="flow-num">ENGINE</span>
+        <h3>Calybris Replay</h3>
+        <p><span class="tr">Fixed-point bps risk, policy gates, hysteresis, verified WAL.</span><span class="en">Fixed-point bps risk, policy gates, hysteresis, verified WAL.</span></p>
+      </div>
+    </div>
+    <div class="tech-table" style="margin-top:2rem">
+      <div class="tech-row">
+        <span class="tech-key">Signals</span>
+        <span class="tech-val">Ip · density / Greenwald · radiation · D-alpha · vertical motion · li / EFIT · Mirnov · NBI power</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Actions</span>
+        <span class="tech-val">CONTINUE · MITIGATE · ABORT, with risk threshold, hysteresis, conformal upper bound, and missing-signal fallback</span>
+      </div>
+      <div class="tech-row">
+        <span class="tech-key">Dashboard</span>
+        <span class="tech-val">shot replay · risk curve + conformal band · gate decision strip · warning-time badge · WAL chain status</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection">
+    <h2 class="lsection-title">
+      <span class="tr">Faul-injection testleri</span>
+      <span class="en">Fault-injection tests</span>
+    </h2>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <span>missing signal</span>
+        <h3><span class="tr">Eksik sinyal</span><span class="en">Missing signal</span></h3>
+        <p><span class="tr">Kilit sinyal yoksa sistem CONTINUE üretmez; fail-closed MITIGATE kararı ve audit event çıkar.</span><span class="en">If a critical signal is missing, the system does not continue normally; it emits fail-closed MITIGATE and an audit event.</span></p>
+      </div>
+      <div class="proof-card">
+        <span>uncertainty</span>
+        <h3><span class="tr">Geniş conformal band</span><span class="en">Wide conformal band</span></h3>
+        <p><span class="tr">Tahmin ortalaması düşük ama üst sınır tehlikeliyse policy belirsizliği risk gibi ele alır.</span><span class="en">When mean risk is low but the upper bound is dangerous, the policy treats uncertainty as risk.</span></p>
+      </div>
+      <div class="proof-card">
+        <span>replay</span>
+        <h3><span class="tr">Digest uyuşmazlığı</span><span class="en">Digest mismatch</span></h3>
+        <p><span class="tr">Aynı shot ikinci replay'de farklı WAL digest üretirse test kırılır; determinism ürün şartıdır.</span><span class="en">If the same shot produces a different WAL digest on replay, the test fails; determinism is a product requirement.</span></p>
+      </div>
+      <div class="proof-card">
+        <span>provenance</span>
+        <h3><span class="tr">İmzasız policy</span><span class="en">Unsigned policy</span></h3>
+        <p><span class="tr">Eşik değişikliği Ed25519 provenance taşımıyorsa replay kabul edilmez ve dashboard zinciri güvensiz işaretler.</span><span class="en">If threshold changes lack Ed25519 provenance, replay is rejected and the dashboard marks the chain unsafe.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lsection lsection-dark" id="roadmap">
+    <h2 class="lsection-title">
+      <span class="tr">Roadmap</span>
+      <span class="en">Roadmap</span>
+    </h2>
+    <div class="roadmap-list">
+      <div class="roadmap-item"><b>Phase 0</b><span><span class="tr">Monorepo, Rust/Python CI, DATA_CARD ve policy taslağı.</span><span class="en">Monorepo, Rust/Python CI, DATA_CARD and policy draft.</span></span></div>
+      <div class="roadmap-item"><b>Phase 1</b><span><span class="tr">FAIR-MAST fetcher, sinyal matrisi, current-quench labeler.</span><span class="en">FAIR-MAST fetcher, signal matrix, current-quench labeler.</span></span></div>
+      <div class="roadmap-item"><b>Phase 2</b><span><span class="tr">1ms özellik grid'i, LightGBM, calibration, conformal bands.</span><span class="en">1ms feature grid, LightGBM, calibration, conformal bands.</span></span></div>
+      <div class="roadmap-item"><b>Phase 3</b><span><span class="tr">Rust engine, policy gates, WAL, golden replay.</span><span class="en">Rust engine, policy gates, WAL, golden replay.</span></span></div>
+      <div class="roadmap-item"><b>Phase 4</b><span><span class="tr">Shot-replay dashboard, warning-time metrics, demo GIF.</span><span class="en">Shot-replay dashboard, warning-time metrics, demo GIF.</span></span></div>
+    </div>
+    <div class="honest-note">
+      <span class="tr">Kapsam: disruption etiketi metadata'da hazır gelmiyor. Ip current-quench algoritmasıyla türetiliyor, eşikler versiyonlanıyor ve örnekler manuel QC'den geçiyor. Bu iş, projenin güven kazandığı yerin bir parçası.</span>
+      <span class="en">Scope: disruption labels aren't provided in the metadata. They're derived from the Ip current-quench algorithm, thresholds are versioned, and samples go through manual QC. That work is part of how the project earns trust.</span>
+    </div>
+  </section>
+
+  <section class="lcta">
+    <h2>
+      <span class="tr">Calybris'in füzyon güvenliği tarafındaki karşılığı.</span>
+      <span class="en">Calybris, applied to fusion safety.</span>
+    </h2>
+    <p>
+      <span class="tr">Gerçek shot verisi, belirsizlik ölçümü, deterministik replay ve audit zinciri tek bir sistemde bir araya geliyor.</span>
+      <span class="en">Real shot data, measured uncertainty, deterministic replay, and an audit chain come together in one system.</span>
+    </p>
+    <div class="lcta-actions">
+      <a class="btn-primary" href="../../calybris/">Calybris Core</a>
+      <a class="btn-ghost" href="/#upcoming"><span class="tr">Upcoming'e dön</span><span class="en">Back to upcoming</span></a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <a href="/"><- <span class="tr">Ana sayfa</span><span class="en">Home</span></a>
+    <span class="footer-dot">·</span>
+    <span>Emir Huseyin Inci</span>
+    <span class="footer-dot">·</span>
+    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+  </footer>
+
+  <script src="../../work-interactions.js"></script>
+<script>
+(function(){
+  var H=document.documentElement;
+  var lang=localStorage.getItem('ehi-lang')||'tr';
+  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
+  document.getElementById('lang-btn').addEventListener('click',function(){
+    var en=H.classList.contains('lang-en');
+    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
+    localStorage.setItem('ehi-lang',en?'tr':'en');
+  });
+  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
+  var mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',function(e){
+    mx=e.clientX;my=e.clientY;
+    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
+  });
+  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
+  document.querySelectorAll('a,button').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
+    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
+  });
+  var nav=document.getElementById('nav'),lastY=0;
+  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
+})();
+</script>
+</body>
+</html>

@@ -28,6 +28,7 @@
     <a class="nav-brand" href="/">EHİ</a>
     <div class="nav-links">
       <a href="#work"><span class="tr">işler</span><span class="en">work</span></a>
+      <a href="#upcoming"><span class="tr">yakında</span><span class="en">upcoming</span></a>
       <a href="#tools"><span class="tr">araçlar</span><span class="en">tools</span></a>
       <a href="#research"><span class="tr">araştırma</span><span class="en">research</span></a>
       <a href="#stack">stack</a>
@@ -232,22 +233,22 @@
             </div>
             <h3>Calybris Core</h3>
             <p>
-              <span class="tr">Deterministik proof-carrying karar çekirdeği. Aday + kısıt → karar + digest + WAL. LLM routing ve pre-trade guard referans kullanımları. Arşivlendi.</span>
-              <span class="en">Deterministic proof-carrying decision kernel. Candidate + policy → decision + digests + WAL. LLM routing and pre-trade guard as reference use cases. Archived.</span>
+              <span class="tr">Deterministik proof-carrying karar çekirdeği. Aday + kısıt → karar + digest + WAL. LLM routing ve pre-trade guard referans kullanımları. v0.5.0 crates.io'da yayında.</span>
+              <span class="en">Deterministic proof-carrying decision kernel. Candidate + policy → decision + digests + WAL. LLM routing and pre-trade guard as reference use cases. v0.5.0 published on crates.io.</span>
             </p>
             <div class="dcard-cta">
               <a class="dcard-link" href="./calybris/">
-                <span class="tr">Arşive bak</span><span class="en">View archive</span> →
+                <span class="tr">Core'a bak</span><span class="en">View core</span> →
               </a>
-              <span class="dcard-out" style="color:#3a3828">arşivlendi · apache-2.0</span>
+              <span class="dcard-out">v0.5.0 · apache-2.0</span>
             </div>
           </div>
           <div class="dcard-panel">
             <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">decision kernel</span></div>
             <div class="dcard-prow"><span class="dcard-pkey">lang</span><span class="dcard-pval">Rust (no unsafe)</span></div>
             <div class="dcard-prow"><span class="dcard-pkey">audit</span><span class="dcard-pval">HMAC-SHA256 WAL</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">status</span><span class="dcard-pval" style="color:#3a3828">archived</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">ci</span><span class="dcard-pval" style="color:#2a2818">Loom · Miri · proptest</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">status</span><span class="dcard-pval hi">v0.5.0 · active</span></div>
+            <div class="dcard-prow"><span class="dcard-pkey">ci</span><span class="dcard-pval">Loom · Miri · proptest</span></div>
           </div>
         </div>
 
@@ -258,6 +259,69 @@
         <button class="deck-btn" id="deck-next"><span class="tr">sonraki</span><span class="en">next</span> →</button>
       </div>
       <p class="deck-hint">← → <span class="tr">ok tuşları da çalışıyor</span><span class="en">keyboard arrows also work</span></p>
+    </div>
+  </section>
+
+  <!-- ── UPCOMING PROJECTS ── -->
+  <section class="section" id="upcoming">
+    <header class="section-head">
+      <span class="section-num">01B</span>
+      <h2 class="section-title">
+        <span class="tr">Upcoming Projects</span>
+        <span class="en">Upcoming Projects</span>
+      </h2>
+      <p class="section-sub">
+        <span class="tr">Şu an geliştirdiğim iki sistem: bankalar için federatif kredi riski, füzyon araştırması için Calybris tabanlı disruption güvenlik motoru. İkisi de gerçek veriyle, kırılmayı hedefleyen testlerle ve tekrar oynatılabilir karar iziyle çalışıyor.</span>
+        <span class="en">Two systems I'm building now: federated credit risk for banks, and a Calybris-based disruption guard for fusion research. Both run on real data, tests written to break them, and a replayable decision trail.</span>
+      </p>
+    </header>
+
+    <div class="upcoming-grid">
+      <a class="ucard" href="./work/blackswan/">
+        <div class="ucard-copy">
+          <span class="ucard-kicker">BlackSwan · Banking ML</span>
+          <h3>Federated Credit Risk Cockpit</h3>
+          <p>
+            <span class="tr">Kaggle Lending Club verisiyle bankalara anlatılabilir, Calybris audit sınırına bağlanan federatif kredi karar sistemi.</span>
+            <span class="en">A federated credit decision system built for banking pilots, using Kaggle Lending Club data and a Calybris audit boundary.</span>
+          </p>
+          <div class="ucard-meta">
+            <span>Rust + Python</span>
+            <span>Next.js cockpit</span>
+            <span>fault injection</span>
+          </div>
+        </div>
+        <div class="ucard-visual ucard-visual-bank" aria-hidden="true">
+          <div class="bank-node bank-node-a">A</div>
+          <div class="bank-node bank-node-b">B</div>
+          <div class="bank-node bank-node-c">C</div>
+          <div class="bank-core">PD</div>
+          <div class="audit-line"></div>
+        </div>
+        <span class="ucard-arrow">case page -></span>
+      </a>
+
+      <a class="ucard" href="./work/calybris-plasmaguard/">
+        <div class="ucard-copy">
+          <span class="ucard-kicker">Calybris PlasmaGuard · Fusion Safety</span>
+          <h3>Tokamak Disruption Guard</h3>
+          <p>
+            <span class="tr">FAIR-MAST gerçek tokamak shot'ları, conformal ML ve Rust replay motoruyla CONTINUE / MITIGATE / ABORT karar zinciri.</span>
+            <span class="en">FAIR-MAST tokamak shots, conformal ML, and a Rust replay engine that turns risk into CONTINUE / MITIGATE / ABORT decisions.</span>
+          </p>
+          <div class="ucard-meta">
+            <span>FAIR-MAST</span>
+            <span>Calybris Core</span>
+            <span>verified WAL</span>
+          </div>
+        </div>
+        <div class="ucard-visual ucard-visual-plasma" aria-hidden="true">
+          <div class="plasma-ring"></div>
+          <div class="plasma-pulse"></div>
+          <div class="plasma-gate">ABORT</div>
+        </div>
+        <span class="ucard-arrow">case page -></span>
+      </a>
     </div>
   </section>
 
@@ -630,7 +694,7 @@ window.addEventListener('scroll',function(){
 },{passive:true});
 
 /* SCROLL REVEAL */
-var revealCls='.rcard,.cert-item,.stack-row,.clink,.mcard';
+var revealCls='.rcard,.cert-item,.stack-row,.clink,.mcard,.ucard';
 if('IntersectionObserver' in window){
   var obs=new IntersectionObserver(function(entries){
     entries.forEach(function(e){
