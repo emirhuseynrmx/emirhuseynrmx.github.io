@@ -1,7 +1,7 @@
 {
   "schema_version": "calybris-handover-report/1",
   "tool_version": "0.1.1",
-  "generated_at": "2026-07-10T18:54:41.730525+00:00",
+  "generated_at": "2026-07-10T23:18:12.969197+00:00",
   "repository": {
     "source": "https://github.com/emirhuseynrmx/aegis",
     "project_name": "Aegis",
@@ -310,5 +310,5 @@
     "selected_candidate_id": 1,
     "note": "Calybris selected candidate 1 (action=execute_requested, reason=requested_model_maximizes_utility). Candidate 1=ACCEPT, 2=CONDITIONAL_ACCEPTANCE, 3=REJECT. Audited policy=python-saas-v1@1, effective_risk_bps=1700."
   },
-  "report_digest": "0a6b9c1a62a37932c5d6330af3f6ecb25722af46a75428a1b62e4a4ca9495f26"
+  "report_digest": "9f437902264cbb37970ac5904f4efee6a2b9fed86c113e60da949a532ae05795"
 }
