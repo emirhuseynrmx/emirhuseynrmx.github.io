@@ -1,0 +1,314 @@
+{
+  "schema_version": "calybris-handover-report/1",
+  "tool_version": "0.1.1",
+  "generated_at": "2026-07-10T18:54:41.730525+00:00",
+  "repository": {
+    "source": "https://github.com/emirhuseynrmx/aegis",
+    "project_name": "Aegis",
+    "path": "https://github.com/emirhuseynrmx/aegis",
+    "commit_sha": "994c36cc3f0b2c5126ba0c8fb7eeb01753f4a2b0",
+    "branch": "main",
+    "dirty": false
+  },
+  "policy_id": "python-saas-v1",
+  "policy_version": 1,
+  "policy_digest": "8edde23252224963fadf36f5a850d717dfdb1da9805e1ee031cabaf6052a209b",
+  "score": 83,
+  "verdict": "accept",
+  "risk_bps": 1700,
+  "confidence_bps": 9475,
+  "findings": [
+    {
+      "check_id": "build.lock",
+      "category": "Build",
+      "title": "Dependencies are locked",
+      "status": "fail",
+      "severity": "high",
+      "weight": 5,
+      "summary": "None of the expected files were found: uv.lock, poetry.lock, requirements.lock, Cargo.lock, package-lock.json, pnpm-lock.yaml, yarn.lock.",
+      "evidence": [],
+      "remediation": "Commit a lockfile or a fully pinned reproducible dependency set.",
+      "blocker": false
+    },
+    {
+      "check_id": "build.manifest",
+      "category": "Build",
+      "title": "Dependency manifest exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 7,
+      "summary": "Found pyproject.toml.",
+      "evidence": [
+        "pyproject.toml"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "data.migrations",
+      "category": "Data",
+      "title": "Database migrations are versioned",
+      "status": "warn",
+      "severity": "medium",
+      "weight": 5,
+      "summary": "No migration directory was detected. This may be valid for a stateless project.",
+      "evidence": [],
+      "remediation": "If the service has persistent state, add versioned migrations and rollback guidance.",
+      "blocker": false
+    },
+    {
+      "check_id": "data.recovery",
+      "category": "Data",
+      "title": "Backup and restore are documented",
+      "status": "pass",
+      "severity": "info",
+      "weight": 6,
+      "summary": "Backup/restore evidence was detected.",
+      "evidence": [
+        "data/artifacts/preprocessor_state.json",
+        "frontend/src/components/AegisDeepDive.tsx",
+        "frontend/src/components/CustomerProfile.tsx",
+        "frontend/src/types/api.ts",
+        "frontend/tests/e2e/aegis.spec.ts",
+        "load_tests/locustfile.py",
+        "src/churn/api/routes/sandbox.py",
+        "src/churn/api/schemas.py",
+        "src/churn/counterfactuals/causal_dice.py",
+        "src/churn/counterfactuals/feasibility_engine.py"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "ci.workflow",
+      "category": "Delivery",
+      "title": "CI workflow exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 6,
+      "summary": "Found .github/workflows/ci.yml.",
+      "evidence": [
+        ".github/workflows/ci.yml"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "deploy.container",
+      "category": "Deployment",
+      "title": "Container build is defined",
+      "status": "pass",
+      "severity": "info",
+      "weight": 6,
+      "summary": "Found Dockerfile.",
+      "evidence": [
+        "Dockerfile"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "docs.readme",
+      "category": "Documentation",
+      "title": "README exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 6,
+      "summary": "Found README.md.",
+      "evidence": [
+        "README.md"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "env.example",
+      "category": "Environment",
+      "title": "Environment contract exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 7,
+      "summary": "Found .env.example.",
+      "evidence": [
+        ".env.example"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "governance.ownership",
+      "category": "Governance",
+      "title": "Ownership is documented",
+      "status": "fail",
+      "severity": "medium",
+      "weight": 4,
+      "summary": "None of the expected files were found: CODEOWNERS, .github/CODEOWNERS, MAINTAINERS.md, OWNERS.",
+      "evidence": [],
+      "remediation": "Document code ownership, operational owner and escalation contact.",
+      "blocker": false
+    },
+    {
+      "check_id": "legal.license",
+      "category": "Governance",
+      "title": "License is explicit",
+      "status": "pass",
+      "severity": "info",
+      "weight": 3,
+      "summary": "Found LICENSE.",
+      "evidence": [
+        "LICENSE"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "repo.large_files",
+      "category": "Maintainability",
+      "title": "No oversized repository artifacts",
+      "status": "pass",
+      "severity": "info",
+      "weight": 3,
+      "summary": "No files over 20 MiB were detected.",
+      "evidence": [],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "repo.todo",
+      "category": "Maintainability",
+      "title": "Unresolved work is visible",
+      "status": "pass",
+      "severity": "info",
+      "weight": 2,
+      "summary": "No TODO/FIXME/HACK markers were detected.",
+      "evidence": [],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "ops.health",
+      "category": "Operations",
+      "title": "Health/readiness signal exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 5,
+      "summary": "Health or readiness implementation was detected.",
+      "evidence": [
+        "README.md",
+        "docker-compose.yml",
+        "docs/deployment_guide.md",
+        "docs/pilot_setup.md",
+        "frontend/next.config.ts",
+        "frontend/src/app/DashboardClient.tsx",
+        "frontend/src/app/page.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/tests/e2e/aegis.spec.ts",
+        "load_tests/locustfile.py"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "ops.logging",
+      "category": "Operations",
+      "title": "Structured logging evidence",
+      "status": "pass",
+      "severity": "info",
+      "weight": 4,
+      "summary": "Structured logging signals were detected.",
+      "evidence": [
+        "src/churn/api/utils.py",
+        "src/churn/db/alembic/env.py"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "ops.runbook",
+      "category": "Operations",
+      "title": "Runbook and rollback guidance",
+      "status": "pass",
+      "severity": "info",
+      "weight": 7,
+      "summary": "Operational guidance was detected.",
+      "evidence": [
+        "src/churn/db/partition_manager.py",
+        "src/churn/db/session.py"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "reliability.resilience",
+      "category": "Reliability",
+      "title": "Timeout/retry/idempotency evidence",
+      "status": "pass",
+      "severity": "info",
+      "weight": 7,
+      "summary": "Resilience controls were detected.",
+      "evidence": [
+        "docker-compose.yml",
+        "frontend/package-lock.json",
+        "frontend/playwright.config.ts",
+        "frontend/src/app/page.tsx",
+        "frontend/src/app/settings/page.tsx",
+        "frontend/src/components/AegisDeepDive.tsx",
+        "frontend/src/components/WhatIfPanel.tsx",
+        "frontend/src/components/aegis-static.ts",
+        "frontend/src/features/deep-dive/AegisDeepDiveContainer.tsx",
+        "frontend/src/hooks/useAsyncPrediction.ts"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "security.secrets",
+      "category": "Security",
+      "title": "No obvious committed secrets",
+      "status": "warn",
+      "severity": "low",
+      "weight": 10,
+      "summary": "Detected 1 generic secret-like value(s) in test/example files.",
+      "evidence": [
+        "tests/api/test_auth.py:generic-secret"
+      ],
+      "remediation": "Keep test credentials synthetic and clearly labelled as fixtures.",
+      "blocker": false
+    },
+    {
+      "check_id": "tests.present",
+      "category": "Testing",
+      "title": "Automated tests exist",
+      "status": "pass",
+      "severity": "info",
+      "weight": 8,
+      "summary": "Automated test sources were detected.",
+      "evidence": [
+        "tests"
+      ],
+      "remediation": null,
+      "blocker": false
+    }
+  ],
+  "summary": {
+    "passed": 14,
+    "warnings": 2,
+    "failed": 2,
+    "skipped": 0,
+    "blockers": 0,
+    "critical": 0,
+    "total": 18
+  },
+  "evidence_digest": "58c53b2236cb178009e769f2e469cdb6231ea61d80441f0a641a8cfb58ddb95b",
+  "decision_proof": {
+    "engine": "calybris-core",
+    "verified": true,
+    "policy_digest": "a022ff000a2af53b13b1851a322adfac9c65f735f627e2157db24e126cad1167",
+    "input_digest": "54224a70d96cda5bcb79835a6a47ae60b938fb67fa73c9bdc3e33cf9955ae4d1",
+    "decision_digest": "659886c752a14ac81558f9d897e0b930905d43ef139d64d3b197e75f02f28033",
+    "replay_valid": true,
+    "selected_candidate_id": 1,
+    "note": "Calybris selected candidate 1 (action=execute_requested, reason=requested_model_maximizes_utility). Candidate 1=ACCEPT, 2=CONDITIONAL_ACCEPTANCE, 3=REJECT. Audited policy=python-saas-v1@1, effective_risk_bps=1700."
+  },
+  "report_digest": "0a6b9c1a62a37932c5d6330af3f6ecb25722af46a75428a1b62e4a4ca9495f26"
+}

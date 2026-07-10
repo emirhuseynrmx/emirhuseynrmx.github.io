@@ -1,0 +1,271 @@
+{
+  "schema_version": "calybris-handover-report/1",
+  "tool_version": "0.1.1",
+  "generated_at": "2026-07-10T18:54:53.950666+00:00",
+  "repository": {
+    "source": "https://github.com/emirhuseynrmx/price-monitor-pipeline",
+    "project_name": "Price Monitor Pipeline",
+    "path": "https://github.com/emirhuseynrmx/price-monitor-pipeline",
+    "commit_sha": "c028a23988e45703bef11bb470edb3f5ed321a1c",
+    "branch": "main",
+    "dirty": true
+  },
+  "policy_id": "python-saas-v1",
+  "policy_version": 1,
+  "policy_digest": "8edde23252224963fadf36f5a850d717dfdb1da9805e1ee031cabaf6052a209b",
+  "score": 57,
+  "verdict": "conditional_acceptance",
+  "risk_bps": 5080,
+  "confidence_bps": 8950,
+  "findings": [
+    {
+      "check_id": "build.lock",
+      "category": "Build",
+      "title": "Dependencies are locked",
+      "status": "fail",
+      "severity": "high",
+      "weight": 5,
+      "summary": "None of the expected files were found: uv.lock, poetry.lock, requirements.lock, Cargo.lock, package-lock.json, pnpm-lock.yaml, yarn.lock.",
+      "evidence": [],
+      "remediation": "Commit a lockfile or a fully pinned reproducible dependency set.",
+      "blocker": false
+    },
+    {
+      "check_id": "build.manifest",
+      "category": "Build",
+      "title": "Dependency manifest exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 7,
+      "summary": "Found pyproject.toml.",
+      "evidence": [
+        "pyproject.toml"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "data.migrations",
+      "category": "Data",
+      "title": "Database migrations are versioned",
+      "status": "warn",
+      "severity": "medium",
+      "weight": 5,
+      "summary": "No migration directory was detected. This may be valid for a stateless project.",
+      "evidence": [],
+      "remediation": "If the service has persistent state, add versioned migrations and rollback guidance.",
+      "blocker": false
+    },
+    {
+      "check_id": "data.recovery",
+      "category": "Data",
+      "title": "Backup and restore are documented",
+      "status": "warn",
+      "severity": "high",
+      "weight": 6,
+      "summary": "No backup or restore documentation was detected.",
+      "evidence": [],
+      "remediation": "Document and test backup/restore, including RPO and RTO expectations.",
+      "blocker": false
+    },
+    {
+      "check_id": "ci.workflow",
+      "category": "Delivery",
+      "title": "CI workflow exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 6,
+      "summary": "Found .github/workflows/ci.yml.",
+      "evidence": [
+        ".github/workflows/ci.yml"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "deploy.container",
+      "category": "Deployment",
+      "title": "Container build is defined",
+      "status": "fail",
+      "severity": "medium",
+      "weight": 6,
+      "summary": "None of the expected files were found: Dockerfile, Containerfile.",
+      "evidence": [],
+      "remediation": "Add a deterministic container build or document the supported deployment artifact.",
+      "blocker": false
+    },
+    {
+      "check_id": "docs.readme",
+      "category": "Documentation",
+      "title": "README exists",
+      "status": "pass",
+      "severity": "info",
+      "weight": 6,
+      "summary": "Found README.md.",
+      "evidence": [
+        "README.md"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "env.example",
+      "category": "Environment",
+      "title": "Environment contract exists",
+      "status": "fail",
+      "severity": "high",
+      "weight": 7,
+      "summary": "None of the expected files were found: .env.example, .env.template, env.example.",
+      "evidence": [],
+      "remediation": "Add a secret-free .env.example documenting every required variable.",
+      "blocker": true
+    },
+    {
+      "check_id": "governance.ownership",
+      "category": "Governance",
+      "title": "Ownership is documented",
+      "status": "fail",
+      "severity": "medium",
+      "weight": 4,
+      "summary": "None of the expected files were found: CODEOWNERS, .github/CODEOWNERS, MAINTAINERS.md, OWNERS.",
+      "evidence": [],
+      "remediation": "Document code ownership, operational owner and escalation contact.",
+      "blocker": false
+    },
+    {
+      "check_id": "legal.license",
+      "category": "Governance",
+      "title": "License is explicit",
+      "status": "pass",
+      "severity": "info",
+      "weight": 3,
+      "summary": "Found LICENSE.",
+      "evidence": [
+        "LICENSE"
+      ],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "repo.large_files",
+      "category": "Maintainability",
+      "title": "No oversized repository artifacts",
+      "status": "pass",
+      "severity": "info",
+      "weight": 3,
+      "summary": "No files over 20 MiB were detected.",
+      "evidence": [],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "repo.todo",
+      "category": "Maintainability",
+      "title": "Unresolved work is visible",
+      "status": "pass",
+      "severity": "info",
+      "weight": 2,
+      "summary": "No TODO/FIXME/HACK markers were detected.",
+      "evidence": [],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "ops.health",
+      "category": "Operations",
+      "title": "Health/readiness signal exists",
+      "status": "warn",
+      "severity": "medium",
+      "weight": 5,
+      "summary": "No health/readiness implementation was detected.",
+      "evidence": [],
+      "remediation": "Expose health and readiness checks suitable for deployment automation.",
+      "blocker": false
+    },
+    {
+      "check_id": "ops.logging",
+      "category": "Operations",
+      "title": "Structured logging evidence",
+      "status": "warn",
+      "severity": "medium",
+      "weight": 4,
+      "summary": "Structured logging or request correlation was not detected.",
+      "evidence": [],
+      "remediation": "Add structured logs and request/job correlation identifiers.",
+      "blocker": false
+    },
+    {
+      "check_id": "ops.runbook",
+      "category": "Operations",
+      "title": "Runbook and rollback guidance",
+      "status": "fail",
+      "severity": "high",
+      "weight": 7,
+      "summary": "No runbook, rollback or incident-response guidance was detected.",
+      "evidence": [],
+      "remediation": "Document startup, shutdown, rollback, incident and escalation steps.",
+      "blocker": true
+    },
+    {
+      "check_id": "reliability.resilience",
+      "category": "Reliability",
+      "title": "Timeout/retry/idempotency evidence",
+      "status": "warn",
+      "severity": "high",
+      "weight": 7,
+      "summary": "Resilience controls are missing or weakly documented.",
+      "evidence": [
+        "src/price_monitor_pipeline/monitor.py"
+      ],
+      "remediation": "Define timeouts, bounded retries and idempotency for side-effecting operations.",
+      "blocker": false
+    },
+    {
+      "check_id": "security.secrets",
+      "category": "Security",
+      "title": "No obvious committed secrets",
+      "status": "pass",
+      "severity": "info",
+      "weight": 10,
+      "summary": "No obvious high-confidence secrets were detected.",
+      "evidence": [],
+      "remediation": null,
+      "blocker": false
+    },
+    {
+      "check_id": "tests.present",
+      "category": "Testing",
+      "title": "Automated tests exist",
+      "status": "pass",
+      "severity": "info",
+      "weight": 8,
+      "summary": "Automated test sources were detected.",
+      "evidence": [
+        "tests"
+      ],
+      "remediation": null,
+      "blocker": false
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "warnings": 5,
+    "failed": 5,
+    "skipped": 0,
+    "blockers": 2,
+    "critical": 0,
+    "total": 18
+  },
+  "evidence_digest": "b937fd9cadbae7b32da71b6361fc68314a066eae64fc65797c87c14aaaf98462",
+  "decision_proof": {
+    "engine": "calybris-core",
+    "verified": true,
+    "policy_digest": "a022ff000a2af53b13b1851a322adfac9c65f735f627e2157db24e126cad1167",
+    "input_digest": "b295410b97d5319f193a62c17256c4621a20ec04d2841238a12a7b893d9c4b4e",
+    "decision_digest": "88f95b4bd56e7e90ba611bd5fbc6e1c41eeb5715d8d2e997bf45962e4590ea3c",
+    "replay_valid": true,
+    "selected_candidate_id": 2,
+    "note": "Calybris selected candidate 2 (action=substitute, reason=alternative_maximizes_utility). Candidate 1=ACCEPT, 2=CONDITIONAL_ACCEPTANCE, 3=REJECT. Audited policy=python-saas-v1@1, effective_risk_bps=5080."
+  },
+  "report_digest": "367774a31778e46f92a83e0e48affa00d67e67ffe4178d5e5422683a62566ece"
+}
