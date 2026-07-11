@@ -168,6 +168,7 @@
     .rv{ opacity:0; transform:translateY(24px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
     .rv.in{ opacity:1; transform:none; }
     @media(prefers-reduced-motion:reduce){ .rv{ opacity:1; transform:none; } #net{ display:none; } }
+    @media(hover:none){ #net{ display:none; } }
   </style>
 </head>
 <body>
@@ -446,7 +447,7 @@
 
   /* hero 3D node network */
   (function(){
-    var cvs=document.getElementById('net'); if(!cvs||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var cvs=document.getElementById('net'); if(!cvs||matchMedia('(prefers-reduced-motion:reduce)').matches||matchMedia('(hover:none)').matches) return;
     var ctx=cvs.getContext('2d'), DPR=1, W,H, N=innerWidth<760?46:88, P=[];
     function rs(){ DPR=Math.min(2,devicePixelRatio||1); W=cvs.width=cvs.clientWidth*DPR; H=cvs.height=cvs.clientHeight*DPR; }
     for(var i=0;i<N;i++) P.push({x:Math.random()*2-1,y:Math.random()*2-1,z:Math.random()*2-1,vx:(Math.random()*2-1)*6e-4,vy:(Math.random()*2-1)*6e-4,vz:(Math.random()*2-1)*6e-4});
