@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="'Segoe UI',system-ui,Arial,sans-serif">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#818cf8"/>
+    </linearGradient>
+    <radialGradient id="bg" cx="74%" cy="24%" r="85%">
+      <stop offset="0" stop-color="#101528"/><stop offset="55%" stop-color="#0a0c16"/><stop offset="1" stop-color="#070810"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0 H0 V48" fill="none" stroke="#1d2236" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)" opacity="0.35"/>
+  <rect x="0" y="0" width="1200" height="6" fill="url(#g)"/>
+
+  <!-- mark -->
+  <g transform="translate(96,96)">
+    <rect width="76" height="76" rx="18" fill="#070810" stroke="url(#g)" stroke-width="2.5" opacity="0.85"/>
+    <path d="M25 20 h30 v10 h-19 v8 h16 v10 h-16 v8 h19 v10 h-30 z" fill="url(#g)"/>
+  </g>
+  <text x="190" y="150" fill="#9aa0be" font-size="26" font-weight="600" letter-spacing="8">EMİR H. İNCİ</text>
+
+  <!-- headline -->
+  <text x="96" y="320" fill="#f6f7fc" font-size="82" font-weight="800" letter-spacing="-2">High-Stakes Systems,</text>
+  <text x="96" y="410" font-size="82" font-weight="800" letter-spacing="-2" fill="url(#g)">Delivered with Proof.</text>
+
+  <!-- subline -->
+  <text x="98" y="470" fill="#9aa0be" font-size="30" font-weight="500">Auditable, high-performance AI · fintech · data systems</text>
+
+  <!-- chips -->
+  <g font-size="24" font-weight="600" font-family="'JetBrains Mono',monospace">
+    <g transform="translate(96,520)">
+      <rect width="150" height="52" rx="26" fill="none" stroke="#2a3150"/>
+      <text x="75" y="34" fill="#c8ccdd" text-anchor="middle">Calybris</text>
+    </g>
+    <g transform="translate(262,520)">
+      <rect width="150" height="52" rx="26" fill="none" stroke="#2a3150"/>
+      <text x="75" y="34" fill="#c8ccdd" text-anchor="middle">Goveris</text>
+    </g>
+    <g transform="translate(428,520)">
+      <rect width="180" height="52" rx="26" fill="none" stroke="#2a3150"/>
+      <text x="90" y="34" fill="#c8ccdd" text-anchor="middle">LuceThemis</text>
+    </g>
+    <g transform="translate(624,520)">
+      <rect width="130" height="52" rx="26" fill="none" stroke="#2a3150"/>
+      <text x="65" y="34" fill="#c8ccdd" text-anchor="middle">Aegis</text>
+    </g>
+  </g>
+
+  <text x="1104" y="574" fill="#5b6084" font-size="24" font-weight="600" font-family="'JetBrains Mono',monospace" text-anchor="end">emirhuseyin.tech</text>
+</svg>
