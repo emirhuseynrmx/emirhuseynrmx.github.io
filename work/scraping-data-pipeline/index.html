@@ -177,7 +177,7 @@
 
   /* ---- shared node-field hero animation ---- */
   (function(){
-    var cv=document.getElementById('scene'); if(!cv) return; var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var cv=document.getElementById('scene'); if(!cv) return; var RM=false;
     var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
     var CY='34,211,238', IN='129,140,248';
     function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
