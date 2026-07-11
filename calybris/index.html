@@ -202,6 +202,27 @@
     </div>
   </section>
 
+  <section class="sec" id="install">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">04 — INSTALL &amp; VERIFY</div>
+        <h2 class="sec-title">Add it, run it, verify it.</h2>
+        <p class="sec-lead">Calybris Core is published on crates.io under Apache-2.0 — Rust, no unsafe. Add it to any service and reproduce any decision from its digest and write-ahead log.</p>
+      </div>
+      <div style="margin-top:1.6rem;border:1px solid var(--line);border-radius:12px;background:#05060c;padding:1.05rem 1.25rem;font-family:var(--mono);font-size:.9rem;color:var(--proof);overflow-x:auto"><span style="color:var(--dim)">$</span> cargo add calybris-core</div>
+      <div class="steps">
+        <div class="step rv"><div class="n">CRATES.IO</div><h3>Add the crate</h3><p>One line pulls the deterministic decision kernel into any Rust service — no unsafe, Apache-2.0 licensed.</p></div>
+        <div class="step rv"><div class="n">DOCS.RS</div><h3>Read the API</h3><p>Full API documentation is generated automatically on docs.rs for every published version.</p></div>
+        <div class="step rv"><div class="n">VERIFY</div><h3>Replay a decision</h3><p>Feed the same candidate and policy; the decision, its digest, and the WAL entry reproduce byte-for-byte on any machine.</p></div>
+      </div>
+      <div class="cta-row" style="margin-top:1.6rem">
+        <a class="btn btn-primary" href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">crates.io ↗</a>
+        <a class="btn btn-ghost" href="https://docs.rs/calybris-core" target="_blank" rel="noopener">docs.rs ↗</a>
+        <a class="btn btn-ghost" href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+
   <footer>© <span id="yr"></span> Emir Hüseyin İnci · Calybris Core · <a href="../">emirhuseyin.tech</a></footer>
 
   <script>
