@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Aegis — Prescriptive Churn Analytics with Causal ML</title>
+  <meta name="description" content="Çoğu araç sana kimin gideceğini söyler. Aegis neden gittiğini söyler — ve sonucu değiştirecek tam olarak hangi adımın, ne kadar geliri kurtaracağını."/>
+  <meta name="theme-color" content="#070810"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="mask-icon" href="/favicon.svg" color="#22d3ee"/>
+  <link rel="apple-touch-icon" href="/favicon.svg"/>
+  <link rel="manifest" href="/site.webmanifest"/>
+  <link rel="canonical" href="https://emirhuseyin.tech/tr/aegis/"/>
+  <link rel="alternate" hreflang="en" href="https://emirhuseyin.tech/aegis/"/>
+  <link rel="alternate" hreflang="tr" href="https://emirhuseyin.tech/tr/aegis/"/>
+  <link rel="alternate" hreflang="x-default" href="https://emirhuseyin.tech/aegis/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Emir H. İnci"/>
+  <meta property="og:title" content="Aegis — Prescriptive Churn Analytics with Causal ML"/>
+  <meta property="og:description" content="Aegis turns churn prediction into prescriptive retention: counterfactual explanations, causal treatment recommendations, and expected revenue saved. Decisions, not dashboards."/>
+  <meta property="og:url" content="https://emirhuseyin.tech/tr/aegis/"/>
+  <meta property="og:image" content="https://emirhuseyin.tech/assets/og.svg"/>
+  <meta property="og:image:type" content="image/svg+xml"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:locale" content="tr_TR"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Aegis — Prescriptive Churn Analytics with Causal ML"/>
+  <meta name="twitter:description" content="Aegis turns churn prediction into prescriptive retention: counterfactual explanations, causal treatment recommendations, and expected revenue saved. Decisions, not dashboards."/>
+  <meta name="twitter:image" content="https://emirhuseyin.tech/assets/og.svg"/>
+  <meta name="author" content="Emir Hüseyin İnci"/>
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:auto; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ display:none; position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:100svh; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:2rem; overflow:hidden; position:relative; }
+    .hero-copy{ position:relative; z-index:3; padding:7rem 0 3rem; }
+    .hero-vis{ position:relative; min-height:60vh; height:100%; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(50% 60% at 80% 45%, rgba(129,140,248,.10), transparent 65%); }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cyan); }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.4rem,5vw,4rem); line-height:1.03; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.1rem; max-width:44ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+    .vis-legend{ position:absolute; z-index:2; bottom:1.2rem; left:1.2rem; display:flex; gap:1rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; }
+    .vis-legend span{ display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); }
+    .vis-legend i{ width:8px; height:8px; border-radius:50%; }
+    @media(max-width:900px){ .hero{ grid-template-columns:1fr; } .hero-vis{ min-height:44vh; order:2; } .hero-copy{ padding-top:6rem; } }
+
+    .sec{ padding:clamp(4rem,8vw,7rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.5rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .sec-lead{ color:var(--muted); max-width:60ch; margin-top:1rem; font-size:1.02rem; }
+
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .out{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .out .o{ border:1px solid var(--line); border-radius:14px; padding:1.4rem; background:var(--bg-2); }
+    .out .o .big{ font-family:var(--disp); font-weight:700; font-size:1.5rem; color:var(--head); }
+    .out .o .big .u{ color:var(--cyan); }
+    .out .o p{ color:var(--muted); font-size:.86rem; margin-top:.5rem; }
+    @media(max-width:760px){ .out{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:3rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.4rem,2.4vw,2rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; margin-top:4rem; }
+    footer a{ color:var(--indigo); }
+
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Aegis","applicationCategory":"BusinessApplication","operatingSystem":"Web, Cross-platform","url":"https://emirhuseyin.tech/aegis/","description":"Aegis is a prescriptive analytics engine for telecom churn: not just prediction, but counterfactual explanations, financial impact, and causal retention actions.","author":{"@id":"https://emirhuseyin.tech/#emir"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://emirhuseyin.tech/"},{"@type":"ListItem","position":2,"name":"Systems","item":"https://emirhuseyin.tech/#systems"},{"@type":"ListItem","position":3,"name":"Aegis","item":"https://emirhuseyin.tech/aegis/"}]},{"@type":"WebPage","@id":"https://emirhuseyin.tech/aegis/","url":"https://emirhuseyin.tech/aegis/","name":"Aegis — Churn, solved with causal proof","isPartOf":{"@id":"https://emirhuseyin.tech/#website"},"about":{"@id":"https://emirhuseyin.tech/#emir"},"inLanguage":"tr"}]}
+  </script>
+</head>
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+
+  <nav class="nav" id="nav">
+    <a class="back" href="../"><span>←</span> Tüm sistemler</a>
+    <span class="brand">Aegis</span>
+    <div class="nav-end">
+      <a class="lang-tog" href="/aegis/" hreflang="en" aria-label="Language">EN</a>
+      <a class="nav-cta" href="../#contact">Birlikte çalış</a>
+    </div>
+  </nav>
+
+  <header class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">Telecom · Prescriptive ML</span>
+      <h1>Churn'ü <span class="grad">nedensel kanıtla</span> çöz.</h1>
+      <p class="lead">Çoğu araç sana <b>kimin</b> gideceğini söyler. Aegis <b>neden</b> gittiğini söyler — ve sonucu değiştirecek tam olarak hangi adımın, ne kadar geliri kurtaracağını.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#how">Nasıl çalışır ↓</a>
+        <a class="btn btn-ghost" href="../#contact">İletişime geç</a>
+      </div>
+    </div>
+    <div class="hero-vis">
+      <canvas id="scene"></canvas>
+      <div class="vis-legend">
+        <span><i style="background:var(--proof)"></i>tutuldu</span>
+        <span><i style="background:var(--red)"></i>ayrıldı</span>
+        <span><i style="background:var(--cyan)"></i>müdahale</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="sec" id="problem">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — PROBLEM</div>
+        <h2 class="sec-title">Bir kayıp skoru, bir karar değildir.</h2>
+        <p class="sec-lead">Operatörler, riskli müşterileri işaretleyen ekranlara boğulmuş durumda; ama bir yüzde, ne yapılması gerektiğini, hangi müşteriyi tutmanın değdiğini ya da bir tutma teklifinin gerçekte ne kadar ettiğini söylemez. Nedenini bilmeyen bir tahmin, kimsenin harekete geçemediği bir alarmdan ibarettir.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">02 — NASIL ÇALIŞIR</div>
+        <h2 class="sec-title">Tahmin et → açıkla → reçete et.</h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01 · TAHMİN</div><h3>Riski ölç</h3><p>Ayarları oturmuş bir model her müşteriyi kayıp olasılığına göre sıralar — cevabın kendisi değil, başlangıç noktası.</p></div>
+        <div class="step rv"><div class="n">02 · AÇIKLA</div><h3>Nedenini bul</h3><p>Riskli her müşteri için Aegis şunu hesaplar: o müşteriyi tutmaya yetecek en küçük değişiklik neydi.</p></div>
+        <div class="step rv"><div class="n">03 · YÖNLENDİR</div><h3>Adım + gelir</h3><p>Kurtaracağı tahmini gelire göre sıralanmış, nedene dayalı bir adım önerisi — bir ekran değil, bir karar.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="impact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">03 — NE ELDE EDERSİN</div>
+        <h2 class="sec-title">Tahminden, atılacak adıma.</h2>
+      </div>
+      <div class="out">
+        <div class="o rv"><div class="big">Sıralı <span class="u">adımlar</span></div><p>Her müşteri için, kurtaracağı tahmini gelire göre sıralanmış tutma hamleleri.</p></div>
+        <div class="o rv"><div class="big">Gerçek <span class="u">neden</span></div><p>Her önerinin arkasında, nedene dayalı bir açıklama.</p></div>
+        <div class="o rv"><div class="big">Yönetim <span class="u">PDF'i</span></div><p>Yönetimin harekete geçip arkasında durabileceği, paylaşılabilir bir rapor.</p></div>
+      </div>
+
+      <div class="cta-band rv">
+        <div>
+          <h3>Çözmeye değer bir müşteri kaybı sorunun mu var?</h3>
+          <p>Kayıp skorlarını, kanıtıyla birlikte kararlara çevirelim.</p>
+        </div>
+        <a class="btn btn-primary" href="../#contact">Projeye başla →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · Aegis · <a href="../">emirhuseyin.tech</a></footer>
+
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* ---- Aegis causal-engine hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return; var RM=false;
+    var ctx=cv.getContext('2d'), W=0,H=0,D=1;
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth, h=cv.clientHeight; if(w<2||h<2)return false;
+      if(w===W&&h===H&&cv.width>0)return true; D=d;W=w;H=h; cv.width=w*d; cv.height=h*d; ctx.setTransform(d,0,0,d,0,0); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
+    function lerp(a,b,t){return a+(b-a)*t;}
+    var parts=[];
+    function spawn(){ parts.push({ph:0,t:Math.random()*.2,sp:.004+Math.random()*.004,sy:Math.random(),target:null,interv:false,flash:0}); }
+    for(var i=0;i<18;i++) spawn();
+    function node(x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl; ctx.fillStyle='rgba('+rgb+','+a+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
+    function hexagon(x,y,r){ ctx.beginPath(); for(var i=0;i<6;i++){ var a=Math.PI/6+i*Math.PI/3, px=x+r*Math.cos(a), py=y+r*Math.sin(a); i?ctx.lineTo(px,py):ctx.moveTo(px,py); } ctx.closePath(); }
+    var T=0;
+    function frame(){
+      T++;
+      if(size()){
+        ctx.clearRect(0,0,W,H);
+        var ex=W*.44, ey=H*.5, er=Math.min(W,H)*.085;
+        var srcX=W*.1, retX=W*.9, retY=H*.26, chuX=W*.9, chuY=H*.74;
+        // faint links source->engine->targets
+        ctx.strokeStyle='rgba('+IN+',.12)'; ctx.lineWidth=1;
+        for(var k=0;k<4;k++){ var sy=H*(.28+k*.15); ctx.beginPath(); ctx.moveTo(srcX,sy); ctx.quadraticCurveTo(W*.28,sy,ex,ey); ctx.stroke(); }
+        ctx.strokeStyle='rgba('+GR+',.16)'; ctx.beginPath(); ctx.moveTo(ex,ey); ctx.quadraticCurveTo(W*.7,ey,retX,retY); ctx.stroke();
+        ctx.strokeStyle='rgba('+RD+',.12)'; ctx.beginPath(); ctx.moveTo(ex,ey); ctx.quadraticCurveTo(W*.7,ey,chuX,chuY); ctx.stroke();
+        // particles
+        for(var i=0;i<parts.length;i++){ var p=parts[i]; p.t+=p.sp;
+          var x,y,rgb;
+          if(p.ph===0){ // source -> engine
+            var sy=H*(.28+Math.floor(p.sy*4)*.15); var t=Math.min(1,p.t);
+            x=lerp(srcX,ex, t); y=lerp(sy, ey, t) + Math.sin(t*Math.PI)*(-8);
+            x=(1-t)*(1-t)*srcX + 2*(1-t)*t*(W*.28) + t*t*ex; y=(1-t)*(1-t)*sy + 2*(1-t)*t*sy + t*t*ey;
+            rgb=IN;
+            if(p.t>=1){ p.ph=1; p.t=0; p.target=Math.random()<.45?'ret':'chu'; p.interv=(p.target==='chu'&&Math.random()<.45); }
+          } else { // engine -> target
+            var t2=Math.min(1,p.t), tx,ty;
+            if(p.target==='ret'){ tx=retX;ty=retY; rgb=GR; }
+            else if(p.interv){ // starts toward churn, flips up to retain
+              if(t2<.42){ tx=chuX;ty=chuY; rgb=RD; }
+              else { if(p.flash<1){ p.flash=1; } tx=retX;ty=retY; rgb= t2<.55?CY:GR; }
+            } else { tx=chuX;ty=chuY; rgb=RD; }
+            x=(1-t2)*(1-t2)*ex + 2*(1-t2)*t2*(W*.7) + t2*t2*tx;
+            y=(1-t2)*(1-t2)*ey + 2*(1-t2)*t2*ey + t2*t2*ty;
+            if(p.t>=1){ p.ph=0; p.t=0; p.sy=Math.random(); p.interv=false; p.flash=0; }
+          }
+          node(x,y,2.4,rgb,.95,7);
+        }
+        // engine
+        ctx.strokeStyle='rgba('+CY+','+(.6+.2*Math.sin(T*.05))+')'; ctx.lineWidth=1.6; hexagon(ex,ey,er); ctx.stroke();
+        ctx.fillStyle='rgba('+CY+',.06)'; hexagon(ex,ey,er); ctx.fill();
+        node(ex,ey,3,CY,1,16);
+        ctx.fillStyle='rgba('+CY+',.85)'; ctx.font='700 9px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('AEGIS',ex,ey+er+16);
+        // targets
+        node(retX,retY,6,GR,1,14); node(chuX,chuY,5,RD,.9,12);
+        // source dots
+        for(var s=0;s<4;s++) node(srcX,H*(.28+s*.15),3,IN,.7,6);
+      }
+      if(!RM)requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="lang-en">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -11,6 +11,9 @@
   <link rel="apple-touch-icon" href="/favicon.svg"/>
   <link rel="manifest" href="/site.webmanifest"/>
   <link rel="canonical" href="https://emirhuseyin.tech/aera/"/>
+  <link rel="alternate" hreflang="en" href="https://emirhuseyin.tech/aera/"/>
+  <link rel="alternate" hreflang="tr" href="https://emirhuseyin.tech/tr/aera/"/>
+  <link rel="alternate" hreflang="x-default" href="https://emirhuseyin.tech/aera/"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Emir H. İnci"/>
   <meta property="og:title" content="AeraCFO — Autonomous AI CFO for SMEs: Forecasts and Board PDF"/>
@@ -125,30 +128,30 @@
   <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="back" href="../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <a class="back" href="../"><span>←</span> All systems</a>
     <span class="brand">AeraCFO</span>
     <div class="nav-end">
-      <button class="lang-tog" id="lang" type="button">TR</button>
-      <a class="nav-cta" href="../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
+      <a class="lang-tog" href="/tr/aera/" hreflang="tr" aria-label="Language">TR</a>
+      <a class="nav-cta" href="../#contact">Work with me</a>
     </div>
   </nav>
 
   <header class="hero wrap" id="top">
     <div class="hero-copy">
       <span class="eyebrow">AI Agents · Finance · PDF</span>
-      <h1><span class="en">An autonomous<br><span class="grad">CFO for SMEs.</span></span><span class="tr">KOBİ'ler için<br><span class="grad">otonom CFO.</span></span></h1>
-      <p class="lead"><span class="en">Upload a CSV. Three agents — <b>Planner, Executor, Critic</b> — forecast your numbers, flag anomalies, and hand back a board-ready PDF. The finance function of a much bigger company, without the headcount.</span><span class="tr">Bir CSV yükle. Üç yapay zeka ajanı — <b>Planlayıcı, Uygulayıcı, Denetleyici</b> — rakamlarını öngörür, sıra dışı olanları yakalar ve yönetime sunulmaya hazır bir PDF çıkarır. Çok daha büyük bir şirketin finans ekibi, o kadroyu tutmadan.</span></p>
+      <h1>An autonomous<br><span class="grad">CFO for SMEs.</span></h1>
+      <p class="lead">Upload a CSV. Three agents — <b>Planner, Executor, Critic</b> — forecast your numbers, flag anomalies, and hand back a board-ready PDF. The finance function of a much bigger company, without the headcount.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
-        <a class="btn btn-ghost" href="../#contact"><span class="en">Talk to me</span><span class="tr">İletişime geç</span></a>
+        <a class="btn btn-primary" href="#how">How it works ↓</a>
+        <a class="btn btn-ghost" href="../#contact">Talk to me</a>
       </div>
     </div>
     <div class="hero-vis">
       <canvas id="scene"></canvas>
       <div class="vis-legend">
-        <span><i style="background:var(--indigo)"></i><span class="en">agents</span><span class="tr">ajanlar</span></span>
-        <span><i style="background:var(--cyan)"></i><span class="en">report</span><span class="tr">rapor</span></span>
-        <span><i style="background:var(--proof)"></i><span class="en">active</span><span class="tr">aktif</span></span>
+        <span><i style="background:var(--indigo)"></i>agents</span>
+        <span><i style="background:var(--cyan)"></i>report</span>
+        <span><i style="background:var(--proof)"></i>active</span>
       </div>
     </div>
   </header>
@@ -156,9 +159,9 @@
   <section class="sec" id="problem">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
-        <h2 class="sec-title"><span class="en">SMEs fly blind on their own numbers.</span><span class="tr">Küçük işletmeler kendi rakamlarına kör.</span></h2>
-        <p class="sec-lead"><span class="en">A growing business generates plenty of financial data but can't afford a CFO to make sense of it. Spreadsheets don't forecast cash, don't catch the anomaly buried in row 4,000, and don't produce something leadership can take to a board. So decisions get made on gut feel — and the warning signs show up only after the money is gone.</span><span class="tr">Büyüyen bir işletme bir sürü finansal veri üretir ama bunu anlamlandıracak bir finans müdürünü karşılayamaz. Tablolar nakit akışını öngörmez, dört bininci satıra gömülü sıra dışı hareketi yakalamaz ve yönetime sunabileceğin bir şey üretmez. Böylece kararlar sezgiyle verilir — uyarı işaretleri ise ancak para gittikten sonra ortaya çıkar.</span></p>
+        <div class="sec-num">01 — THE PROBLEM</div>
+        <h2 class="sec-title">SMEs fly blind on their own numbers.</h2>
+        <p class="sec-lead">A growing business generates plenty of financial data but can't afford a CFO to make sense of it. Spreadsheets don't forecast cash, don't catch the anomaly buried in row 4,000, and don't produce something leadership can take to a board. So decisions get made on gut feel — and the warning signs show up only after the money is gone.</p>
       </div>
     </div>
   </section>
@@ -166,13 +169,13 @@
   <section class="sec" id="how">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
-        <h2 class="sec-title"><span class="en">Planner → Executor → Critic.</span><span class="tr">Planner → Executor → Critic.</span></h2>
+        <div class="sec-num">02 — HOW IT WORKS</div>
+        <h2 class="sec-title">Planner → Executor → Critic.</h2>
       </div>
       <div class="steps">
-        <div class="step rv"><div class="n">01 · PLANLA</div><h3><span class="en">Frame the analysis</span><span class="tr">Analizi kurgula</span></h3><p><span class="en">The Planner reads your CSV and decides which forecasts, ratios, and checks the business actually needs.</span><span class="tr">Planlayıcı verini okur ve işletmenin asıl hangi öngörülere, oranlara ve kontrollere ihtiyacı olduğuna karar verir.</span></p></div>
-        <div class="step rv"><div class="n">02 · UYGULA</div><h3><span class="en">Run the numbers</span><span class="tr">Rakamları işle</span></h3><p><span class="en">The Executor computes forecasts and scans for anomalies — the actual financial analysis, done.</span><span class="tr">Uygulayıcı öngörüleri hesaplar ve sıra dışı hareketleri tarar — asıl finansal analizin kendisi.</span></p></div>
-        <div class="step rv"><div class="n">03 · DENETLE</div><h3><span class="en">Check &amp; report</span><span class="tr">Denetle ve raporla</span></h3><p><span class="en">The Critic reviews the work for errors, then assembles a clean, board-ready PDF.</span><span class="tr">Denetleyici işi hatalara karşı gözden geçirir, sonra derli toplu, yönetime hazır bir PDF hazırlar.</span></p></div>
+        <div class="step rv"><div class="n">01 · PLANLA</div><h3>Frame the analysis</h3><p>The Planner reads your CSV and decides which forecasts, ratios, and checks the business actually needs.</p></div>
+        <div class="step rv"><div class="n">02 · UYGULA</div><h3>Run the numbers</h3><p>The Executor computes forecasts and scans for anomalies — the actual financial analysis, done.</p></div>
+        <div class="step rv"><div class="n">03 · DENETLE</div><h3>Check &amp; report</h3><p>The Critic reviews the work for errors, then assembles a clean, board-ready PDF.</p></div>
       </div>
     </div>
   </section>
@@ -180,21 +183,21 @@
   <section class="sec" id="impact">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">03 — <span class="en">WHAT YOU GET</span><span class="tr">NE ELDE EDERSİN</span></div>
-        <h2 class="sec-title"><span class="en">CSV in, board-ready PDF out.</span><span class="tr">CSV girer, yönetime hazır PDF çıkar.</span></h2>
+        <div class="sec-num">03 — WHAT YOU GET</div>
+        <h2 class="sec-title">CSV in, board-ready PDF out.</h2>
       </div>
       <div class="out">
-        <div class="o rv"><div class="big"><span class="en">Cash <span class="u">forecasts</span></span><span class="tr">Nakit <span class="u">öngörüsü</span></span></div><p><span class="en">Forward-looking projections built from your own history.</span><span class="tr">Kendi geçmiş verinden kurulan, ileriye dönük tahminler.</span></p></div>
-        <div class="o rv"><div class="big"><span class="en">Anomaly <span class="u">flags</span></span><span class="tr">Sıra dışı <span class="u">uyarılar</span></span></div><p><span class="en">The outliers and warning signs a spreadsheet would never surface.</span><span class="tr">Bir tablonun asla gösteremeyeceği aykırı değerler ve uyarı işaretleri.</span></p></div>
-        <div class="o rv"><div class="big"><span class="en">Board <span class="u">PDF</span></span><span class="tr">Yönetim <span class="u">PDF'i</span></span></div><p><span class="en">A clean, shareable report leadership can act on.</span><span class="tr">Yönetimin görüp harekete geçebileceği, derli toplu bir rapor.</span></p></div>
+        <div class="o rv"><div class="big">Cash <span class="u">forecasts</span></div><p>Forward-looking projections built from your own history.</p></div>
+        <div class="o rv"><div class="big">Anomaly <span class="u">flags</span></div><p>The outliers and warning signs a spreadsheet would never surface.</p></div>
+        <div class="o rv"><div class="big">Board <span class="u">PDF</span></div><p>A clean, shareable report leadership can act on.</p></div>
       </div>
 
       <div class="cta-band rv">
         <div>
-          <h3><span class="en">Want a CFO without the headcount?</span><span class="tr">Kadro tutmadan bir finans müdürü ister misin?</span></h3>
-          <p><span class="en">Let's turn your spreadsheets into decisions leadership can trust.</span><span class="tr">Tablolarını, yönetimin güvenebileceği kararlara çevirelim.</span></p>
+          <h3>Want a CFO without the headcount?</h3>
+          <p>Let's turn your spreadsheets into decisions leadership can trust.</p>
         </div>
-        <a class="btn btn-primary" href="../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
+        <a class="btn btn-primary" href="../#contact">Start a project →</a>
       </div>
     </div>
   </section>
@@ -203,9 +206,7 @@
 
   <script>
   document.getElementById('yr').textContent=new Date().getFullYear();
-  (function(){ var h=document.documentElement,b=document.getElementById('lang');
-    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
-    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+
   (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); return;
     var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
     addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });

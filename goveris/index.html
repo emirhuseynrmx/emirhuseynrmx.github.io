@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="lang-en">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -11,6 +11,9 @@
   <link rel="apple-touch-icon" href="/favicon.svg"/>
   <link rel="manifest" href="/site.webmanifest"/>
   <link rel="canonical" href="https://emirhuseyin.tech/goveris/"/>
+  <link rel="alternate" hreflang="en" href="https://emirhuseyin.tech/goveris/"/>
+  <link rel="alternate" hreflang="tr" href="https://emirhuseyin.tech/tr/goveris/"/>
+  <link rel="alternate" hreflang="x-default" href="https://emirhuseyin.tech/goveris/"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Emir H. İnci"/>
   <meta property="og:title" content="Goveris — LLM Cost Governance & AI Spend Audit Infrastructure"/>
@@ -125,30 +128,30 @@
   <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="back" href="../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <a class="back" href="../"><span>←</span> All systems</a>
     <span class="brand">Goveris</span>
     <div class="nav-end">
-      <button class="lang-tog" id="lang" type="button">TR</button>
-      <a class="nav-cta" href="../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
+      <a class="lang-tog" href="/tr/goveris/" hreflang="tr" aria-label="Language">TR</a>
+      <a class="nav-cta" href="../#contact">Work with me</a>
     </div>
   </nav>
 
   <header class="hero wrap" id="top">
     <div class="hero-copy">
       <span class="eyebrow">AI · LLM · Cost Governance</span>
-      <h1><span class="en">Stop LLM spend<br><span class="grad">from leaking.</span></span><span class="tr">LLM harcaması<br><span class="grad">sızmasın.</span></span></h1>
-      <p class="lead"><span class="en">Goveris is AI spend governance and audit infrastructure. It treats <b>every model call as an auditable economic decision</b> — logging the requested model, selected route, estimated cost, risk, confidence, budget state, and decision reason.</span><span class="tr">Goveris, yapay zeka harcamalarını yöneten ve denetleyen bir altyapı. <b>Her model çağrısını, denetlenebilir bir harcama kararı</b> gibi ele alır; istenen modeli, seçilen yolu, tahmini maliyeti, riski, güven düzeyini, bütçe durumunu ve kararın gerekçesini tek tek kaydeder.</span></p>
+      <h1>Stop LLM spend<br><span class="grad">from leaking.</span></h1>
+      <p class="lead">Goveris is AI spend governance and audit infrastructure. It treats <b>every model call as an auditable economic decision</b> — logging the requested model, selected route, estimated cost, risk, confidence, budget state, and decision reason.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
-        <a class="btn btn-ghost" href="../#contact"><span class="en">Talk to me</span><span class="tr">İletişime geç</span></a>
+        <a class="btn btn-primary" href="#how">How it works ↓</a>
+        <a class="btn btn-ghost" href="../#contact">Talk to me</a>
       </div>
     </div>
     <div class="hero-vis">
       <canvas id="scene"></canvas>
       <div class="vis-legend">
-        <span><i style="background:var(--cyan)"></i><span class="en">tokens</span><span class="tr">token'lar</span></span>
-        <span><i style="background:var(--indigo)"></i><span class="en">budgets</span><span class="tr">bütçeler</span></span>
-        <span><i style="background:var(--proof)"></i><span class="en">within cap</span><span class="tr">limit içinde</span></span>
+        <span><i style="background:var(--cyan)"></i>tokens</span>
+        <span><i style="background:var(--indigo)"></i>budgets</span>
+        <span><i style="background:var(--proof)"></i>within cap</span>
       </div>
     </div>
   </header>
@@ -156,9 +159,9 @@
   <section class="sec" id="problem">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
-        <h2 class="sec-title"><span class="en">AI spend is invisible until the invoice arrives.</span><span class="tr">Yapay zeka harcaması, fatura gelene kadar görünmez.</span></h2>
-        <p class="sec-lead"><span class="en">Teams wire LLM calls into every product, but no one can say which model, which team, or which feature is burning the budget — or whether an expensive model was even the right choice for a given request. When the bill triples, there's no audit trail to explain why, and no control layer to have prevented it. AI cost without governance is a leak you only notice after the money's gone.</span><span class="tr">Ekipler model çağrılarını her ürüne yerleştirir; ama hangi modelin, hangi ekibin ya da hangi özelliğin bütçeyi erittiğini kimse söyleyemez — hatta pahalı bir modelin o istek için doğru seçim olup olmadığını bile. Fatura üçe katlandığında nedenini açıklayacak bir kayıt da, en baştan önleyecek bir katman da yoktur. Denetimsiz yapay zeka maliyeti, ancak para gittikten sonra fark ettiğin bir sızıntıdır.</span></p>
+        <div class="sec-num">01 — THE PROBLEM</div>
+        <h2 class="sec-title">AI spend is invisible until the invoice arrives.</h2>
+        <p class="sec-lead">Teams wire LLM calls into every product, but no one can say which model, which team, or which feature is burning the budget — or whether an expensive model was even the right choice for a given request. When the bill triples, there's no audit trail to explain why, and no control layer to have prevented it. AI cost without governance is a leak you only notice after the money's gone.</p>
       </div>
     </div>
   </section>
@@ -166,13 +169,13 @@
   <section class="sec" id="how">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
-        <h2 class="sec-title"><span class="en">Every call, an economic decision.</span><span class="tr">Her çağrı, bir ekonomik karar.</span></h2>
+        <div class="sec-num">02 — HOW IT WORKS</div>
+        <h2 class="sec-title">Every call, an economic decision.</h2>
       </div>
       <div class="steps">
-        <div class="step rv"><div class="n">01 · YAKALA</div><h3><span class="en">Capture the call</span><span class="tr">Çağrıyı yakala</span></h3><p><span class="en">Every model request passes through Goveris with its model, cost estimate, risk, and budget context.</span><span class="tr">Her model isteği; modeli, tahmini maliyeti, riski ve bütçe durumuyla birlikte Goveris'ten geçer.</span></p></div>
-        <div class="step rv"><div class="n">02 · YÖNET</div><h3><span class="en">Route by budget</span><span class="tr">Bütçeye göre yönlendir</span></h3><p><span class="en">Backed by Calybris Core, it allows, downgrades, retries, or blocks based on budget and expected value.</span><span class="tr">Calybris Core'un desteğiyle; bütçeye ve beklenen faydaya göre izin verir, ucuz modele düşürür, yeniden dener ya da durdurur.</span></p></div>
-        <div class="step rv"><div class="n">03 · DENETLE</div><h3><span class="en">Log the reason</span><span class="tr">Gerekçeyi kaydet</span></h3><p><span class="en">Model, route, cost, and decision reason are written to an audit trail you can report on.</span><span class="tr">Model, yol, maliyet ve karar gerekçesi; sonradan raporlayabileceğin bir denetim kaydına işlenir.</span></p></div>
+        <div class="step rv"><div class="n">01 · YAKALA</div><h3>Capture the call</h3><p>Every model request passes through Goveris with its model, cost estimate, risk, and budget context.</p></div>
+        <div class="step rv"><div class="n">02 · YÖNET</div><h3>Route by budget</h3><p>Backed by Calybris Core, it allows, downgrades, retries, or blocks based on budget and expected value.</p></div>
+        <div class="step rv"><div class="n">03 · DENETLE</div><h3>Log the reason</h3><p>Model, route, cost, and decision reason are written to an audit trail you can report on.</p></div>
       </div>
     </div>
   </section>
@@ -180,21 +183,21 @@
   <section class="sec" id="impact">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">03 — <span class="en">WHAT YOU GET</span><span class="tr">NE ELDE EDERSİN</span></div>
-        <h2 class="sec-title"><span class="en">Spend you can see, cap, and defend.</span><span class="tr">Görebildiğin, sınırlayabildiğin, hesabını verebildiğin harcama.</span></h2>
+        <div class="sec-num">03 — WHAT YOU GET</div>
+        <h2 class="sec-title">Spend you can see, cap, and defend.</h2>
       </div>
       <div class="out">
-        <div class="o rv"><div class="big"><span class="en">Full <span class="u">record</span></span><span class="tr">Eksiksiz <span class="u">kayıt</span></span></div><p><span class="en">Every call logged with model, route, cost, risk, and decision reason.</span><span class="tr">Her çağrı; modeli, yolu, maliyeti, riski ve gerekçesiyle kaydedilir.</span></p></div>
-        <div class="o rv"><div class="big"><span class="en">Budget <span class="u">control</span></span><span class="tr">Bütçe <span class="u">denetimi</span></span></div><p><span class="en">Per-tenant caps that downgrade or block before you overspend, not after.</span><span class="tr">Her müşteri için, bütçeyi aşmadan önce devreye giren sınırlar — sonrasında değil.</span></p></div>
-        <div class="o rv"><div class="big"><span class="en">Cost <span class="u">report</span></span><span class="tr">Maliyet <span class="u">raporu</span></span></div><p><span class="en">Who spent what, on which model — a report finance can actually use.</span><span class="tr">Kim, hangi modelde ne harcadı — finans ekibinin gerçekten kullanabileceği bir rapor.</span></p></div>
+        <div class="o rv"><div class="big">Full <span class="u">record</span></div><p>Every call logged with model, route, cost, risk, and decision reason.</p></div>
+        <div class="o rv"><div class="big">Budget <span class="u">control</span></div><p>Per-tenant caps that downgrade or block before you overspend, not after.</p></div>
+        <div class="o rv"><div class="big">Cost <span class="u">report</span></div><p>Who spent what, on which model — a report finance can actually use.</p></div>
       </div>
 
       <div class="cta-band rv">
         <div>
-          <h3><span class="en">Losing track of your AI bill?</span><span class="tr">Yapay zeka faturanı takip edemiyor musun?</span></h3>
-          <p><span class="en">Let's put a governance and audit layer between your product and its model spend.</span><span class="tr">Ürününle model harcaması arasına, bir yönetim ve denetim katmanı koyalım.</span></p>
+          <h3>Losing track of your AI bill?</h3>
+          <p>Let's put a governance and audit layer between your product and its model spend.</p>
         </div>
-        <a class="btn btn-primary" href="../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
+        <a class="btn btn-primary" href="../#contact">Start a project →</a>
       </div>
     </div>
   </section>
@@ -203,9 +206,7 @@
 
   <script>
   document.getElementById('yr').textContent=new Date().getFullYear();
-  (function(){ var h=document.documentElement,b=document.getElementById('lang');
-    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
-    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+
   (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); return;
     var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
     addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });

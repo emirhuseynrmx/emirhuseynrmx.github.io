@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="lang-en">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -11,6 +11,9 @@
   <link rel="apple-touch-icon" href="/favicon.svg"/>
   <link rel="manifest" href="/site.webmanifest"/>
   <link rel="canonical" href="https://emirhuseyin.tech/work/calybris-plasmaguard/"/>
+  <link rel="alternate" hreflang="en" href="https://emirhuseyin.tech/work/calybris-plasmaguard/"/>
+  <link rel="alternate" hreflang="tr" href="https://emirhuseyin.tech/tr/work/calybris-plasmaguard/"/>
+  <link rel="alternate" hreflang="x-default" href="https://emirhuseyin.tech/work/calybris-plasmaguard/"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Emir H. İnci"/>
   <meta property="og:title" content="Calybris PlasmaGuard — Tokamak Disruption Guard"/>
@@ -126,30 +129,30 @@
   <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="back" href="../../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
-    <span class="brand">PlasmaGuard<span class="badge"><span class="en">UPCOMING</span><span class="tr">YAKINDA</span></span></span>
+    <a class="back" href="../../"><span>←</span> All systems</a>
+    <span class="brand">PlasmaGuard<span class="badge">UPCOMING</span></span>
     <div class="nav-end">
-      <button class="lang-tog" id="lang" type="button">TR</button>
-      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
+      <a class="lang-tog" href="/tr/work/calybris-plasmaguard/" hreflang="tr" aria-label="Language">TR</a>
+      <a class="nav-cta" href="../../#contact">Work with me</a>
     </div>
   </nav>
 
   <header class="hero wrap" id="top">
     <div class="hero-copy">
       <span class="eyebrow">Calybris PlasmaGuard · Fusion Safety</span>
-      <h1><span class="en">Disruption risk,<br><span class="grad">decided safely.</span></span><span class="tr">Disruption riski,<br><span class="grad">güvenle kararı.</span></span></h1>
-      <p class="lead"><span class="en">PlasmaGuard learns disruption risk from <b>real FAIR-MAST tokamak shots</b>, quantizes it in a Rust replay engine, and turns it into auditable <b>CONTINUE / MITIGATE / ABORT</b> decisions — uncertainty-aware and fail-closed.</span><span class="tr">PlasmaGuard, plazma çökmesi riskini <b>gerçek FAIR-MAST tokamak deneylerinden</b> öğrenir; Rust tabanlı bir motorda sabit değere çevirip denetlenebilir <b>DEVAM / ÖNLEM AL / DURDUR</b> kararlarına dönüştürür — belirsizliği hesaba katar ve şüphede güvenli tarafta kalır.</span></p>
+      <h1>Disruption risk,<br><span class="grad">decided safely.</span></h1>
+      <p class="lead">PlasmaGuard learns disruption risk from <b>real FAIR-MAST tokamak shots</b>, quantizes it in a Rust replay engine, and turns it into auditable <b>CONTINUE / MITIGATE / ABORT</b> decisions — uncertainty-aware and fail-closed.</p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
-        <a class="btn btn-ghost" href="../../#contact"><span class="en">Talk to me</span><span class="tr">İletişime geç</span></a>
+        <a class="btn btn-primary" href="#how">How it works ↓</a>
+        <a class="btn btn-ghost" href="../../#contact">Talk to me</a>
       </div>
     </div>
     <div class="hero-vis">
       <canvas id="scene"></canvas>
       <div class="vis-legend">
-        <span><i style="background:var(--proof)"></i><span class="en">continue</span><span class="tr">devam</span></span>
-        <span><i style="background:var(--warn)"></i><span class="en">mitigate</span><span class="tr">azalt</span></span>
-        <span><i style="background:var(--red)"></i><span class="en">abort</span><span class="tr">durdur</span></span>
+        <span><i style="background:var(--proof)"></i>continue</span>
+        <span><i style="background:var(--warn)"></i>mitigate</span>
+        <span><i style="background:var(--red)"></i>abort</span>
       </div>
     </div>
   </header>
@@ -157,9 +160,9 @@
   <section class="sec" id="problem">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
-        <h2 class="sec-title"><span class="en">In fusion, an unsafe call is a wrecked machine.</span><span class="tr">Füzyonda hatalı bir karar, hurdaya çıkan bir makine demektir.</span></h2>
-        <p class="sec-lead"><span class="en">A tokamak disruption can damage a device that costs a fortune and months to rebuild. An ML model can estimate disruption risk, but a floating-point probability is not a safety decision — and a model that's confidently wrong under uncertainty is worse than none. What's missing is a control layer that is deterministic, replayable, and biased toward safety.</span><span class="tr">Bir tokamakta plazmanın çökmesi, servet değerindeki ve yeniden yapımı aylar süren bir cihaza zarar verebilir. Bir yapay zeka modeli bu riski tahmin edebilir; ama ondalık bir olasılık, bir güvenlik kararı değildir — belirsizlik altında kendinden emin biçimde yanılan bir model ise, hiç olmamasından kötüdür. Eksik olan şey; kararı belirli, yeniden oynatılabilen ve her zaman güvenlikten yana ağırlığını koyan bir kontrol katmanıdır.</span></p>
+        <div class="sec-num">01 — THE PROBLEM</div>
+        <h2 class="sec-title">In fusion, an unsafe call is a wrecked machine.</h2>
+        <p class="sec-lead">A tokamak disruption can damage a device that costs a fortune and months to rebuild. An ML model can estimate disruption risk, but a floating-point probability is not a safety decision — and a model that's confidently wrong under uncertainty is worse than none. What's missing is a control layer that is deterministic, replayable, and biased toward safety.</p>
       </div>
     </div>
   </section>
@@ -167,13 +170,13 @@
   <section class="sec" id="how">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
-        <h2 class="sec-title"><span class="en">Estimate → quantize → decide.</span><span class="tr">Tahmin et → kuantize et → karar ver.</span></h2>
+        <div class="sec-num">02 — HOW IT WORKS</div>
+        <h2 class="sec-title">Estimate → quantize → decide.</h2>
       </div>
       <div class="steps">
-        <div class="step rv"><div class="n">01 · TAHMİN ET</div><h3><span class="en">Conformal ML</span><span class="tr">Güven aralıklı model</span></h3><p><span class="en">A model estimates disruption risk with a conformal upper bound — uncertainty made explicit.</span><span class="tr">Model, çökme riskini bir güven üst sınırıyla birlikte tahmin eder — belirsizlik açıkça ortaya konur.</span></p></div>
-        <div class="step rv"><div class="n">02 · SABİTLE</div><h3><span class="en">Rust replay engine</span><span class="tr">Rust motoru</span></h3><p><span class="en">Risk is quantized from float to fixed-point bps, so the same shot always replays into the same chain.</span><span class="tr">Risk, ondalıktan sabit bir değere çevrilir; böylece aynı deney her zaman aynı karar zincirini üretir.</span></p></div>
-        <div class="step rv"><div class="n">03 · KARAR VER</div><h3><span class="en">Fail-closed verdict</span><span class="tr">Güvenli tarafta kal</span></h3><p><span class="en">If the conformal bound crosses the threshold, it moves toward MITIGATE or ABORT — never relaxes.</span><span class="tr">Güven sınırı eşiği aşarsa sistem ÖNLEM AL ya da DURDUR'a yönelir — asla gevşemez.</span></p></div>
+        <div class="step rv"><div class="n">01 · TAHMİN ET</div><h3>Conformal ML</h3><p>A model estimates disruption risk with a conformal upper bound — uncertainty made explicit.</p></div>
+        <div class="step rv"><div class="n">02 · SABİTLE</div><h3>Rust replay engine</h3><p>Risk is quantized from float to fixed-point bps, so the same shot always replays into the same chain.</p></div>
+        <div class="step rv"><div class="n">03 · KARAR VER</div><h3>Fail-closed verdict</h3><p>If the conformal bound crosses the threshold, it moves toward MITIGATE or ABORT — never relaxes.</p></div>
       </div>
     </div>
   </section>
@@ -181,21 +184,21 @@
   <section class="sec" id="impact">
     <div class="wrap">
       <div class="rv">
-        <div class="sec-num">03 — <span class="en">WHAT IT SHOWS</span><span class="tr">NE GÖSTERİR</span></div>
-        <h2 class="sec-title"><span class="en">Calybris, in a domain outside finance.</span><span class="tr">Calybris, finans dışında bir alanda.</span></h2>
+        <div class="sec-num">03 — WHAT IT SHOWS</div>
+        <h2 class="sec-title">Calybris, in a domain outside finance.</h2>
       </div>
       <div class="out">
-        <div class="o rv"><div class="big"><span class="en">Real <span class="u">shots</span></span><span class="tr">Gerçek <span class="u">deneyler</span></span></div><p><span class="en">Built on public FAIR-MAST MAST tokamak data — not synthetic telemetry.</span><span class="tr">Halka açık FAIR-MAST tokamak verisiyle kuruldu — uydurma veriyle değil.</span></p></div>
-        <div class="o rv"><div class="big"><span class="en">Fail <span class="u">closed</span></span><span class="tr">Şüphede <span class="u">durdurur</span></span></div><p><span class="en">Under uncertainty the system tightens toward MITIGATE, never toward risk.</span><span class="tr">Belirsizlik arttıkça sistem önlem almaya yönelir, asla riske değil.</span></p></div>
-        <div class="o rv"><div class="big"><span class="en">Replayable <span class="u">chain</span></span><span class="tr">Oynatılabilir <span class="u">zincir</span></span></div><p><span class="en">Every shot reproduces the exact same auditable decision chain.</span><span class="tr">Her deney, aynı denetlenebilir karar zincirini birebir yeniden üretir.</span></p></div>
+        <div class="o rv"><div class="big">Real <span class="u">shots</span></div><p>Built on public FAIR-MAST MAST tokamak data — not synthetic telemetry.</p></div>
+        <div class="o rv"><div class="big">Fail <span class="u">closed</span></div><p>Under uncertainty the system tightens toward MITIGATE, never toward risk.</p></div>
+        <div class="o rv"><div class="big">Replayable <span class="u">chain</span></div><p>Every shot reproduces the exact same auditable decision chain.</p></div>
       </div>
 
       <div class="cta-band rv">
         <div>
-          <h3><span class="en">A safety-critical decision problem?</span><span class="tr">Güvenliğin kritik olduğu bir karar problemi mi?</span></h3>
-          <p><span class="en">Let's talk about deterministic, replayable, fail-closed decisioning.</span><span class="tr">Kararı belirli, oynatılabilir ve güvenli tarafta kalan bir sistem konuşalım.</span></p>
+          <h3>A safety-critical decision problem?</h3>
+          <p>Let's talk about deterministic, replayable, fail-closed decisioning.</p>
         </div>
-        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a conversation →</span><span class="tr">Konuşmaya başla →</span></a>
+        <a class="btn btn-primary" href="../../#contact">Start a conversation →</a>
       </div>
     </div>
   </section>
@@ -204,9 +207,7 @@
 
   <script>
   document.getElementById('yr').textContent=new Date().getFullYear();
-  (function(){ var h=document.documentElement,b=document.getElementById('lang');
-    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
-    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+
   (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); return;
     var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
     addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });

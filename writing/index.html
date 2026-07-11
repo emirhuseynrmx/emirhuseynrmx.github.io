@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="lang-en">
+<html lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -13,6 +13,9 @@
   <link rel="apple-touch-icon" href="/favicon.svg"/>
   <link rel="manifest" href="/site.webmanifest"/>
   <link rel="canonical" href="https://emirhuseyin.tech/writing/"/>
+  <link rel="alternate" hreflang="en" href="https://emirhuseyin.tech/writing/"/>
+  <link rel="alternate" hreflang="tr" href="https://emirhuseyin.tech/tr/writing/"/>
+  <link rel="alternate" hreflang="x-default" href="https://emirhuseyin.tech/writing/"/>
   <meta property="og:type" content="website"/>
   <meta property="og:site_name" content="Emir H. İnci"/>
   <meta property="og:title" content="Writing — Causal ML, Thompson Sampling and Decision Systems | Emir H. İnci"/>
@@ -96,10 +99,10 @@
 </head>
 <body>
   <nav class="nav" id="nav">
-    <a class="back" href="../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <a class="back" href="../"><span>←</span> All systems</a>
     <span class="brand">Writing</span>
     <div class="nav-end">
-      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="lang-tog" href="/tr/writing/" hreflang="tr" aria-label="Language">TR</a>
       <a class="nav-cta" href="https://medium.com/@emirhuseyininci" target="_blank" rel="noopener me">Medium ↗</a>
     </div>
   </nav>
@@ -107,42 +110,42 @@
   <header class="hd" id="top">
     <canvas id="scene"></canvas>
     <div class="wrap">
-    <span class="eyebrow"><span class="en">Writing · Medium</span><span class="tr">Yazılar · Medium</span></span>
-    <h1><span class="en">Notes on <span class="grad">causal ML &amp; decisions.</span></span><span class="tr">Nedensel ML ve <span class="grad">karar sistemleri</span> üzerine.</span></h1>
-    <p class="lead"><span class="en">Essays on the ideas behind my systems — causal machine learning, bandits, and the shift from predicting to deciding. Published on <a href="https://medium.com/@emirhuseyininci" target="_blank" rel="noopener me">Medium</a>.</span><span class="tr">Sistemlerimin arkasındaki fikirler üzerine yazılar — nedensel makine öğrenmesi, bandit'ler ve "tahmin etmekten karar vermeye" geçiş. <a href="https://medium.com/@emirhuseyininci" target="_blank" rel="noopener me">Medium</a>'da yayınlanıyor.</span></p>
+    <span class="eyebrow">Writing · Medium</span>
+    <h1>Notes on <span class="grad">causal ML &amp; decisions.</span></h1>
+    <p class="lead">Essays on the ideas behind my systems — causal machine learning, bandits, and the shift from predicting to deciding. Published on <a href="https://medium.com/@emirhuseyininci" target="_blank" rel="noopener me">Medium</a>.</p>
     </div>
   </header>
 
   <main class="wrap">
     <div class="arts">
       <a class="art rv" href="https://medium.com/@emirhuseyininci/the-moment-ai-stops-predicting-and-starts-choosing-d4e2c492f057" target="_blank" rel="noopener">
-        <div class="k"><b>Prescriptive AI</b><span>·</span><span><span class="en">Decision systems</span><span class="tr">Karar sistemleri</span></span></div>
+        <div class="k"><b>Prescriptive AI</b><span>·</span><span>Decision systems</span></div>
         <h2>The Moment AI Stops Predicting and Starts Choosing</h2>
-        <p><span class="en">Where the real value of AI begins: when a model stops handing you a probability and starts making a decision you can actually act on — and defend.</span><span class="tr">Yapay zekanın asıl değerinin başladığı yer: model sana bir olasılık vermeyi bırakıp, gerçekten aksiyon alıp arkasında durabileceğin bir karar vermeye başladığında.</span></p>
-        <span class="go"><span class="en">Read on Medium →</span><span class="tr">Medium'da oku →</span></span>
+        <p>Where the real value of AI begins: when a model stops handing you a probability and starts making a decision you can actually act on — and defend.</p>
+        <span class="go">Read on Medium →</span>
       </a>
 
       <a class="art rv" href="https://medium.com/@emirhuseyininci/thompson-sampling-how-recommender-systems-learn-to-bet-on-what-youll-like-27999be20e4e" target="_blank" rel="noopener">
-        <div class="k"><b>Bandits</b><span>·</span><span><span class="en">Reinforcement learning</span><span class="tr">Pekiştirmeli öğrenme</span></span></div>
+        <div class="k"><b>Bandits</b><span>·</span><span>Reinforcement learning</span></div>
         <h2>Thompson Sampling: How Recommender Systems Learn to Bet on What You'll Like</h2>
-        <p><span class="en">A hands-on look at Thompson Sampling — how recommenders balance exploring new options against exploiting what already works, and learn from every outcome.</span><span class="tr">Thompson Sampling'e pratik bir bakış — öneri sistemleri yeni seçenekleri denemekle işe yarayanı kullanmak arasındaki dengeyi nasıl kuruyor ve her sonuçtan nasıl öğreniyor.</span></p>
-        <span class="go"><span class="en">Read on Medium →</span><span class="tr">Medium'da oku →</span></span>
+        <p>A hands-on look at Thompson Sampling — how recommenders balance exploring new options against exploiting what already works, and learn from every outcome.</p>
+        <span class="go">Read on Medium →</span>
       </a>
 
       <a class="art rv" href="https://medium.com/@emirhuseyininci/using-market-stress-as-a-treatment-ranking-s-p-500-stocks-with-causal-ml-eb315409fa95" target="_blank" rel="noopener">
-        <div class="k"><b>Causal ML</b><span>·</span><span><span class="en">Quant finance</span><span class="tr">Kantitatif finans</span></span></div>
+        <div class="k"><b>Causal ML</b><span>·</span><span>Quant finance</span></div>
         <h2>Using Market Stress as a Treatment: Ranking S&amp;P 500 Stocks with Causal ML</h2>
-        <p><span class="en">Treating observable market stress as the treatment and forward market-adjusted alpha as the outcome — a leakage-aware causal-ML approach to ranking S&amp;P 500 stocks.</span><span class="tr">Gözlemlenebilir piyasa stresini "tedavi", ileriye dönük piyasa-ayarlı getiriyi "sonuç" olarak ele almak — S&amp;P 500 hisselerini sızıntıya dikkat eden nedensel bir ML yaklaşımıyla sıralamak.</span></p>
-        <span class="go"><span class="en">Read on Medium →</span><span class="tr">Medium'da oku →</span></span>
+        <p>Treating observable market stress as the treatment and forward market-adjusted alpha as the outcome — a leakage-aware causal-ML approach to ranking S&amp;P 500 stocks.</p>
+        <span class="go">Read on Medium →</span>
       </a>
     </div>
 
     <div class="cta-band rv">
       <div>
-        <h3><span class="en">More on Medium</span><span class="tr">Medium'da devamı</span></h3>
-        <p><span class="en">Follow along as I write up the ideas behind each system.</span><span class="tr">Her sistemin arkasındaki fikirleri yazdıkça takipte kal.</span></p>
+        <h3>More on Medium</h3>
+        <p>Follow along as I write up the ideas behind each system.</p>
       </div>
-      <a class="btn btn-primary" href="https://medium.com/@emirhuseyininci" target="_blank" rel="noopener me"><span class="en">Follow on Medium ↗</span><span class="tr">Medium'da takip et ↗</span></a>
+      <a class="btn btn-primary" href="https://medium.com/@emirhuseyininci" target="_blank" rel="noopener me">Follow on Medium ↗</a>
     </div>
   </main>
 
@@ -153,9 +156,7 @@
   </script>
   <script>
   document.getElementById('yr').textContent=new Date().getFullYear();
-  (function(){ var h=document.documentElement,b=document.getElementById('lang');
-    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
-    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+
   var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
   var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
   document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });

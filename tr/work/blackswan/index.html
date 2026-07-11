@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>BlackSwan — Federated Credit Risk Cockpit</title>
+  <meta name="description" content="Banka pilotları için ortak öğrenen bir kredi-risk paneli. Her banka gerçek Lending Club verisinin yalnızca kendi payında eğitim yapar; merkez ise sadece skorları, güven…"/>
+  <meta name="theme-color" content="#070810"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="mask-icon" href="/favicon.svg" color="#22d3ee"/>
+  <link rel="apple-touch-icon" href="/favicon.svg"/>
+  <link rel="manifest" href="/site.webmanifest"/>
+  <link rel="canonical" href="https://emirhuseyin.tech/tr/work/blackswan/"/>
+  <link rel="alternate" hreflang="en" href="https://emirhuseyin.tech/work/blackswan/"/>
+  <link rel="alternate" hreflang="tr" href="https://emirhuseyin.tech/tr/work/blackswan/"/>
+  <link rel="alternate" hreflang="x-default" href="https://emirhuseyin.tech/work/blackswan/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:site_name" content="Emir H. İnci"/>
+  <meta property="og:title" content="BlackSwan — Federated Credit Risk Cockpit"/>
+  <meta property="og:description" content="BlackSwan is a federated credit-risk system for banking pilots: each bank trains on its own shard, the center sees only risk evidence, and Calybris turns it into APPROVE / REVIEW / DECLINE with an audit trail."/>
+  <meta property="og:url" content="https://emirhuseyin.tech/tr/work/blackswan/"/>
+  <meta property="og:image" content="https://emirhuseyin.tech/assets/og.svg"/>
+  <meta property="og:image:type" content="image/svg+xml"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:locale" content="tr_TR"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="BlackSwan — Federated Credit Risk Cockpit"/>
+  <meta name="twitter:description" content="BlackSwan is a federated credit-risk system for banking pilots: each bank trains on its own shard, the center sees only risk evidence, and Calybris turns it into APPROVE / REVIEW / DECLINE with an audit trail."/>
+  <meta name="twitter:image" content="https://emirhuseyin.tech/assets/og.svg"/>
+  <meta name="author" content="Emir Hüseyin İnci"/>
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --warn:#fbbf24; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:auto; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ display:none; position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .badge{ font-family:var(--mono); font-size:.6rem; color:var(--warn); border:1px solid rgba(251,191,36,.4); background:rgba(251,191,36,.1); border-radius:99px; padding:.2rem .5rem; margin-left:.5rem; letter-spacing:.08em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:100svh; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:2rem; overflow:hidden; position:relative; }
+    .hero-copy{ position:relative; z-index:3; padding:7rem 0 3rem; }
+    .hero-vis{ position:relative; min-height:60vh; height:100%; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(50% 60% at 80% 45%, rgba(129,140,248,.10), transparent 65%); }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cyan); }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.4rem,5vw,4rem); line-height:1.03; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.1rem; max-width:44ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+    .vis-legend{ position:absolute; z-index:2; bottom:1.2rem; left:1.2rem; display:flex; gap:1rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; }
+    .vis-legend span{ display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); }
+    .vis-legend i{ width:8px; height:8px; border-radius:50%; }
+    @media(max-width:900px){ .hero{ grid-template-columns:1fr; } .hero-vis{ min-height:44vh; order:2; } .hero-copy{ padding-top:6rem; } }
+
+    .sec{ padding:clamp(4rem,8vw,7rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.5rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .sec-lead{ color:var(--muted); max-width:60ch; margin-top:1rem; font-size:1.02rem; }
+
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .out{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .out .o{ border:1px solid var(--line); border-radius:14px; padding:1.4rem; background:var(--bg-2); }
+    .out .o .big{ font-family:var(--disp); font-weight:700; font-size:1.5rem; color:var(--head); }
+    .out .o .big .u{ color:var(--cyan); }
+    .out .o p{ color:var(--muted); font-size:.86rem; margin-top:.5rem; }
+    @media(max-width:760px){ .out{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:3rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.4rem,2.4vw,2rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; margin-top:4rem; }
+    footer a{ color:var(--indigo); }
+
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"SoftwareSourceCode","name":"BlackSwan — Federated Credit Risk Cockpit","url":"https://emirhuseyin.tech/work/blackswan/","description":"BlackSwan is a federated credit-risk system for banking pilots: each bank trains on its own shard, the center sees only risk evidence, and Calybris turns it into APPROVE / REVIEW / DECLINE with an audit trail.","programmingLanguage":"Python","author":{"@id":"https://emirhuseyin.tech/#emir"},"creator":{"@id":"https://emirhuseyin.tech/#emir"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://emirhuseyin.tech/"},{"@type":"ListItem","position":2,"name":"Innovation Lab","item":"https://emirhuseyin.tech/#lab"},{"@type":"ListItem","position":3,"name":"BlackSwan — Federated Credit Risk Cockpit","item":"https://emirhuseyin.tech/work/blackswan/"}]},{"@type":"WebPage","@id":"https://emirhuseyin.tech/work/blackswan/","url":"https://emirhuseyin.tech/work/blackswan/","name":"BlackSwan — Federated Credit Risk Cockpit","isPartOf":{"@id":"https://emirhuseyin.tech/#website"},"about":{"@id":"https://emirhuseyin.tech/#emir"},"inLanguage":"tr"}]}
+  </script>
+</head>
+<body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
+
+  <nav class="nav" id="nav">
+    <a class="back" href="../../"><span>←</span> Tüm sistemler</a>
+    <span class="brand">BlackSwan<span class="badge">YAKINDA</span></span>
+    <div class="nav-end">
+      <a class="lang-tog" href="/work/blackswan/" hreflang="en" aria-label="Language">EN</a>
+      <a class="nav-cta" href="../../#contact">Birlikte çalış</a>
+    </div>
+  </nav>
+
+  <header class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">BlackSwan · Banking ML</span>
+      <h1>Paylaşmadan<br><span class="grad">öğrenen bankalar.</span></h1>
+      <p class="lead">Banka pilotları için ortak öğrenen bir kredi-risk paneli. Her banka gerçek Lending Club verisinin <b>yalnızca kendi payında</b> eğitim yapar; merkez ise sadece skorları, güven düzeyini ve açıklamaları görür — <b>Calybris</b> bunları ONAY, İNCELE ya da RET kararına dönüştürür.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#how">Nasıl çalışır ↓</a>
+        <a class="btn btn-ghost" href="../../#contact">İletişime geç</a>
+      </div>
+    </div>
+    <div class="hero-vis">
+      <canvas id="scene"></canvas>
+      <div class="vis-legend">
+        <span><i style="background:var(--indigo)"></i>banka shard'ları</span>
+        <span><i style="background:var(--cyan)"></i>risk kanıtı</span>
+        <span><i style="background:var(--proof)"></i>karar</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="sec" id="problem">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — PROBLEM</div>
+        <h2 class="sec-title">Bankalar verisini birleştiremez — ama yine de ortak bir sinyale ihtiyaçları var.</h2>
+        <p class="sec-lead">Tek bir bankanın geçmiş temerrüt verisi hem az hem de kendi müşteri kitlesine göre yanlı. Bankaların ham müşteri kayıtlarını bir araya getirmesi çok daha iyi bir risk modeli çıkarırdı — ama mevzuat, gizlilik ve rekabet buna izin vermez. Böylece her banka kredi riskini, gerçeğin yalnızca dar bir diliminde, tek başına öğrenmek zorunda kalır.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">02 — NASIL ÇALIŞIR</div>
+        <h2 class="sec-title">Yerelde eğit, kanıtı paylaş, merkezde karar ver.</h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01 · YEREL</div><h3>Herkes kendi verisinde</h3><p>Gelir grubuna göre ayrılmış bankalar kendi verisinde model eğitir — ham kayıtlar bankadan hiç çıkmaz.</p></div>
+        <div class="step rv"><div class="n">02 · KANIT</div><h3>Yalnızca sinyal gider</h3><p>Merkeze yalnızca skorlar, güven düzeyi, sapma ve açıklama özetleri gider — asla müşteri kayıtları değil.</p></div>
+        <div class="step rv"><div class="n">03 · KARAR</div><h3>Kararı Calybris verir</h3><p>Temerrüt olasılığını, stres senaryosunu, güveni ve eşikleri kesin bir ONAY / İNCELE / RET kararına çevirir.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="impact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">03 — NE GÖSTERİR</div>
+        <h2 class="sec-title">Gerçek veride, denetçiye açıklanabilir.</h2>
+      </div>
+      <div class="out">
+        <div class="o rv"><div class="big">Gerçek <span class="u">veri</span></div><p>Uydurma veri değil, gerçek Lending Club verisi üstünde kuruldu.</p></div>
+        <div class="o rv"><div class="big">Baştan <span class="u">gizlilik</span></div><p>Ham müşteri kayıtları banka sınırını hiç geçmez — yalnızca kanıt geçer.</p></div>
+        <div class="o rv"><div class="big">Denetim <span class="u">kaydı</span></div><p>Her karar bir Calybris denetim sınırına bağlı ve arıza enjeksiyonuyla stres testinden geçmiş.</p></div>
+      </div>
+
+      <div class="cta-band rv">
+        <div>
+          <h3>Bir bankada bir şey mi kuruyorsun?</h3>
+          <p>Ortak öğrenen, açıklanabilir ve denetime bağlı yapay zeka konuşalım.</p>
+        </div>
+        <a class="btn btn-primary" href="../../#contact">Konuşmaya başla →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · BlackSwan · <a href="../../">emirhuseyin.tech</a></footer>
+
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+
+  /* ---- BlackSwan federated-learning hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return; var RM=false;
+    var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', AM='251,191,36', RD='251,113,133';
+    function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
+    function initState(){ s.st.ev=[]; s.st.out=[]; }
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===s.w&&h===s.h&&cv.width>0)return true; s.D=d;s.w=w;s.h=h;cv.width=w*d;cv.height=h*d;s.ctx.setTransform(d,0,0,d,0,0); initState(); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function black(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, bx=w*.16, cx=w*.56, cy=h*.5, ver=[GR,AM,RD], vlab=['APPROVE','REVIEW','DECLINE'];
+      var banks=[h*.2,h*.38,h*.56,h*.74];
+      // links bank -> center
+      banks.forEach(function(by){ ctx.strokeStyle='rgba('+IN+',.14)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(bx,by); ctx.quadraticCurveTo(w*.36,by,cx,cy); ctx.stroke(); });
+      // spawn evidence particles
+      if(t%16===0){ var bi=Math.floor(Math.random()*4); st.ev.push({by:banks[bi],p:0,sp:.02+Math.random()*.01}); }
+      st.ev=st.ev.filter(function(e){ e.p+=e.sp; var x=(1-e.p)*(1-e.p)*bx+2*(1-e.p)*e.p*(w*.36)+e.p*e.p*cx, y=(1-e.p)*(1-e.p)*e.by+2*(1-e.p)*e.p*e.by+e.p*e.p*cy;
+        nd(ctx,x,y,2,CY,.9,6);
+        if(e.p>=1){ var vi=Math.random(); st.out.push({p:0,sp:.02+Math.random()*.008,c:vi<.6?0:vi<.85?1:2,ang:(Math.random()-.5)*.5}); return false; } return true; });
+      // banks
+      banks.forEach(function(by,i){ var pulse=.6+.4*Math.sin(t*.06+i*1.7); nd(ctx,bx,by,5.5,IN,pulse,10);
+        ctx.strokeStyle='rgba('+IN+',.25)'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(bx,by,9+3*Math.sin(t*.06+i*1.7),0,6.28); ctx.stroke();
+        ctx.fillStyle='rgba('+IN+',.7)'; ctx.font='7px JetBrains Mono,monospace'; ctx.textAlign='right'; ctx.fillText('BANK '+(i+1),bx-14,by+3); });
+      // center calybris
+      ctx.strokeStyle='rgba('+CY+','+(.6+.2*Math.sin(t*.05))+')'; ctx.lineWidth=1.6;
+      ctx.beginPath(); for(var k=0;k<6;k++){ var a=Math.PI/6+k*Math.PI/3, px=cx+16*Math.cos(a), py=cy+16*Math.sin(a); k?ctx.lineTo(px,py):ctx.moveTo(px,py);} ctx.closePath(); ctx.stroke();
+      nd(ctx,cx,cy,3.5,CY,1,16);
+      ctx.fillStyle='rgba('+CY+',.85)'; ctx.font='700 8px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('CALYBRIS',cx,cy+30);
+      // outgoing verdicts
+      st.out=st.out.filter(function(o){ o.p+=o.sp; var ex=w*.92, ey=cy+o.ang*h*.5*o.p; var x=cx+(ex-cx)*o.p, y=cy+(ey-cy)*o.p;
+        nd(ctx,x,y,2.2,ver[o.c],.9,6); if(o.p>=1){ return false; } return true; });
+      // verdict labels
+      vlab.forEach(function(l,i){ ctx.fillStyle='rgba('+ver[i]+',.5)'; ctx.font='700 8px JetBrains Mono,monospace'; ctx.textAlign='left'; ctx.fillText(l, w*.82, h*(.32+i*.18)); }); }
+    var T=0;
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); black(s,T);}catch(e){} } if(!RM)requestAnimationFrame(loop); }
+    loop();
+  })();
+  </script>
+</body>
+</html>
