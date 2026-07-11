@@ -217,7 +217,7 @@
 
   /* ---- Calybris scanning-verifier hero animation ---- */
   (function(){
-    var cv=document.getElementById('scene'); if(!cv||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var cv=document.getElementById('scene'); if(!cv) return; var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
     var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
     var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
     function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
@@ -237,7 +237,7 @@
       nd(ctx,hx,h*.16,2.6,CY,1,12); nd(ctx,hx,h*.82,2.6,CY,1,12);
       ctx.fillStyle='rgba('+CY+',.85)'; ctx.font='700 9px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('CALYBRIS',w/2,h*.92); }
     var T=0;
-    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); calybris(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); calybris(s,T);}catch(e){} } if(!RM)requestAnimationFrame(loop); }
     loop();
   })();
   </script>

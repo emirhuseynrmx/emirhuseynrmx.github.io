@@ -177,7 +177,7 @@
 
   /* ---- shared node-field hero animation ---- */
   (function(){
-    var cv=document.getElementById('scene'); if(!cv||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var cv=document.getElementById('scene'); if(!cv) return; var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
     var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
     var CY='34,211,238', IN='129,140,248';
     function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
@@ -187,7 +187,7 @@
       for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
         for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
       for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
-      requestAnimationFrame(frame); }
+      if(!RM)requestAnimationFrame(frame); }
     frame();
   })();
   </script>

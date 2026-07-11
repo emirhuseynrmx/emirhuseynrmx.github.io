@@ -217,7 +217,7 @@
 
   /* ---- Goveris budget-routing hero animation ---- */
   (function(){
-    var cv=document.getElementById('scene'); if(!cv||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var cv=document.getElementById('scene'); if(!cv) return; var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
     var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
     var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
     function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
@@ -236,7 +236,7 @@
       ctx.strokeStyle='rgba('+IN+',.35)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(m,base); ctx.lineTo(w-m,base); ctx.stroke();
       st.tok=st.tok.filter(function(k){ var bx=m+k.tb*(bw+gap)+bw/2; k.y+=k.v*1.7; k.x+=(bx-k.x)*.05; nd(ctx,k.x,k.y,1.9,cols[k.tb],.9,5); return k.y<base-4; }); }
     var T=0;
-    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); goveris(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); goveris(s,T);}catch(e){} } if(!RM)requestAnimationFrame(loop); }
     loop();
   })();
   </script>

@@ -217,7 +217,7 @@
 
   /* ---- LuceThemis pre-trade gate hero animation ---- */
   (function(){
-    var cv=document.getElementById('scene'); if(!cv||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var cv=document.getElementById('scene'); if(!cv) return; var RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
     var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
     var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
     function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
@@ -233,7 +233,7 @@
         ctx.strokeStyle='rgba('+rgb+','+(a*.5)+')'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(p.x-p.sp*3,p.y); ctx.lineTo(p.x,p.y); ctx.stroke();
         nd(ctx,p.x,p.y,1.6,rgb,a,5); }); }
     var T=0;
-    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); luce(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); luce(s,T);}catch(e){} } if(!RM)requestAnimationFrame(loop); }
     loop();
   })();
   </script>
