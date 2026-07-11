@@ -1,321 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Telegram Business Bot — Emir H. İnci</title>
-  <meta name="description" content="aiogram 3.x ile async Telegram business botu. Lead yakalama FSM, SSS dispatch, sipariş durumu, CSV admin export. Küçük işletme otomasyonu için hazır şablon."/>
+  <meta name="description" content="Lead capture, FAQ replies, order-status stubs, and admin CSV export — a ready-to-deploy Telegram bot template for small-business automation, typed and structured from day one."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">Telegram Business Bot</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/telegram-business-bot" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">aiogram 3.x · async/await</span>
-        <span class="btag">FSM · Pydantic v2</span>
-        <span class="btag">Lead capture · FAQ dispatch</span>
-      </div>
-      <h1 class="lhero-title">Telegram Business Bot</h1>
-      <p class="lhero-sub">
-        <span class="tr">Aiogram 3.x ile küçük işletme botu. Komutlar: /start, /lead (FSM ile iletişim bilgisi alımı), /faq &lt;konu&gt; (yapılandırılmış yanıtlar), /status &lt;sipariş_id&gt; (sipariş sorgulama), /export_leads (sadece admin). Admin kapısı settings.admin_ids ile. Lead'ler leads_csv_path'e eklenir. Tüm ayarlar env'den — kod değişikliği olmadan deploy edilebilir.</span>
-        <span class="en">Aiogram 3.x bot for small businesses. Commands: /start, /lead (FSM contact capture), /faq &lt;topic&gt; (configured answers), /status &lt;order_id&gt; (order lookup), /export_leads (admin only). Admin gate via settings.admin_ids. Leads appended to leads_csv_path. All settings from env — deploy-ready without code changes.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/telegram-business-bot" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Telegram Bot — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">Small-business ops,<br>on Telegram.</span><span class="tr">İşletme işleri,<br>Telegram üzerinden.</span></h1>
+      <div class="pill-row"><span class="pill">Python</span><span class="pill">Telegram Bot API</span><span class="pill">Pydantic</span></div>
+      <p class="lead"><span class="en">Lead capture, FAQ replies, order-status stubs, and admin CSV export — a ready-to-deploy Telegram bot template for small-business automation, typed and structured from day one.</span><span class="tr">Müşteri adayı toplama, sık sorulanları yanıtlama, sipariş durumu ve yönetici için CSV çıktısı — küçük işletmeleri otomatikleştirmek için, ilk günden düzenli ve kullanıma hazır bir Telegram botu.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TELEGRAM SESSION — @DataFlowBot</div>
-        <div><span style="color:#f2f0ea">Kullanıcı:</span> <span style="color:#6b6858">/faq pricing</span></div>
-        <div style="margin-top:.3rem;"><span style="color:#ff4800">Bot:</span> <span style="color:#f2f0ea">Fiyatlandirma kapsama gore:</span></div>
-        <div><span style="color:#f2f0ea">  Starter: 1.500-3.000 EUR</span></div>
-        <div><span style="color:#f2f0ea">  Growth: 3.000-8.000 EUR</span></div>
-        <div><span style="color:#f2f0ea">  Enterprise: 8.000+ EUR</span></div>
-        <div style="margin-top:.5rem;"><span style="color:#f2f0ea">Kullanıcı:</span> <span style="color:#6b6858">/lead</span></div>
-        <div><span style="color:#ff4800">Bot:</span> <span style="color:#f2f0ea">Adinizi girin:</span></div>
-        <div><span style="color:#f2f0ea">Kullanıcı:</span> <span style="color:#6b6858">Ahmet Yilmaz</span></div>
-        <div><span style="color:#ff4800">Bot:</span> <span style="color:#f2f0ea">E-posta adresiniz:</span></div>
-        <div style="color:#3a3828;font-size:.58rem;margin-top:.4rem;">[FSM: WAITING_NAME → WAITING_EMAIL → WAITING_BUDGET → SAVED]</div>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">Lead capture</span><span class="tr">Aday toplama</span></h3><p><span class="en">Turn chats into structured leads you can export.</span><span class="tr">Sohbetleri, dışa aktarabileceğin düzenli müşteri adaylarına çevirir.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">FAQ automation</span><span class="tr">Otomatik yanıt</span></h3><p><span class="en">Answer the repetitive questions without staff time.</span><span class="tr">Tekrar eden soruları, personel vakti harcamadan yanıtlar.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">CSV export</span><span class="tr">CSV çıktısı</span></h3><p><span class="en">Admins pull everything into a spreadsheet on demand.</span><span class="tr">Yönetici, her şeyi istediğinde bir tabloya aktarır.</span></p></div>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>async</strong>
-      <span><span class="tr">1000+ eşzamanlı</span><span class="en">1000+ concurrent</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>FSM</strong>
-      <span><span class="tr">çok adımlı konuşma</span><span class="en">multi-step conv.</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>CSV</strong>
-      <span><span class="tr">lead arşivi + export</span><span class="en">lead archive + export</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>96%</strong>
-      <span><span class="tr">test coverage</span><span class="en">test coverage</span></span>
-    </div>
-  </div>
-
-  <!-- PROBLEM -->
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">aiogram 3.x ile tek event loop üzerinde 1000+ eşzamanlı konuşma hedefleniyor; test tarafında 9 test ve %96 coverage var. Botun iş etkisi, lead/FAQ/order bilgisini sohbet geçmişinde bırakmadan CSV export edilebilir operasyon verisine çevirmesi.</span>
-      <span class="en">aiogram 3.x targets 1000+ concurrent conversations on a single event loop, with 9 tests and 96% coverage. The impact is turning lead/FAQ/order chat activity into exportable operational data instead of leaving it buried in message history.</span>
-    </p>
-    <div class="impact-evidence">Evidence: aiogram FSM, CSV admin export, 9 tests, 96% coverage.</div>
-  </section>
-
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi?</span>
-      <span class="en">What was the problem?</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">⏰</div>
-        <h3><span class="tr">200 mesaj/gün, hep aynı sorular</span><span class="en">200 messages/day, always the same questions</span></h3>
-        <p>
-          <span class="tr">Müşteri: İstanbul'da küçük bir yazılım ajansı. Telegram üzerinden günde 200+ mesaj alıyorlar. %75'i 6 kategoriden biri: fiyat, çalışma saatleri, proje süresi, ödeme, iade, nasıl başlayabiliriz. Her mesaja kopyala-yapıştır yapıyor iki kişi. Haftada 15 saat el emeği.</span>
-          <span class="en">Client: small software agency in Istanbul. 200+ messages/day via Telegram. 75% fall into 6 categories: price, working hours, project timeline, payment, refund, how to get started. Two people copy-pasting answers. 15 hours of manual work per week.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📝</div>
-        <h3><span class="tr">Lead'ler kayıt dışı</span><span class="en">Leads falling off the radar</span></h3>
-        <p>
-          <span class="tr">İlgilenen müşteri bilgilerini kimi zaman not alıyorlar kimi zaman unutuyorlar. CRM yok, spreadsheet yok. "Dün biriyle konuşmuştuk, kim diye?" problemi haftalık yaşanıyor. Sistematik bir lead capture mekanizması gerekiyor.</span>
-          <span class="en">Interested client info sometimes noted, sometimes forgotten. No CRM, no spreadsheet. "We talked to someone yesterday, who was it?" problem happens weekly. Systematic lead capture mechanism needed.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔧</div>
-        <h3><span class="tr">Problem tipi: async I/O + durum makinesi</span><span class="en">Problem type: async I/O + state machine</span></h3>
-        <p>
-          <span class="tr">Bu bir ML problemi değil. Buradaki teknik zorluk: çok sayıda eşzamanlı kullanıcı konuşmasını verimli yönetmek ve her kullanıcı için konuşma durumunu (hangi aşamada?) tutmak. Asyncio + FSM (Finite State Machine) bu iki sorunu birlikte çözüyor.</span>
-          <span class="en">Not an ML problem. The technical challenge here: efficiently managing many concurrent user conversations and maintaining the conversation state (which step?) per user. Asyncio + FSM (Finite State Machine) solve these two problems together.</span>
-        </p>
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
+        </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <!-- WHY AIOGRAM -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Neden aiogram 3.x? python-telegram-bot değil?</span>
-      <span class="en">Why aiogram 3.x? Not python-telegram-bot?</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key">python-telegram-bot (sync)</span>
-        <span class="tech-val"><span class="tr">Senkron thread-based. Her kullanıcı konuşması = 1 thread. 50 eşzamanlı kullanıcıda 50 thread, hepsi network I/O'da bloke bekliyor. Thread overhead yüksek, bellek tüketimi lineer artıyor. FSM için harici state yönetimi gerekiyor (Redis veya dict hack).</span><span class="en">Synchronous thread-based. Each user conversation = 1 thread. At 50 concurrent users, 50 threads all blocking on network I/O. High thread overhead, memory grows linearly. External state management needed for FSM (Redis or dict hack).</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key" style="color:#ff4800">aiogram 3.x</span>
-        <span class="tech-val"><span class="tr">Native asyncio. Tek event loop, 1000+ eşzamanlı konuşma — tek thread. FSM built-in: MemoryStorage, RedisStorage veya custom. State WAITING_NAME → WAITING_EMAIL → WAITING_BUDGET → COMPLETE doğrudan framework içinde tanımlanıyor. Dependency injection ile test yazımı kolaylaşıyor.</span><span class="en">Native asyncio. Single event loop, 1000+ concurrent conversations — single thread. Built-in FSM: MemoryStorage, RedisStorage or custom. States WAITING_NAME → WAITING_EMAIL → WAITING_BUDGET → COMPLETE defined directly in the framework. Dependency injection simplifies testing.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Pydantic v2</span>
-        <span class="tech-val"><span class="tr">Lead verisi kayıt öncesi validate ediliyor. E-posta email-validator ile doğrulanıyor. Bütçe alanı sayısal zorunlu. Eksik alan → bot kullanıcıyı tekrar soruyor. Validasyonsuz hatalı lead CSV'e yazılırdı.</span><span class="en">Lead data validated before saving. Email validated with email-validator. Budget field must be numeric. Missing field → bot re-prompts the user. Without validation, malformed leads would write to CSV silently.</span></span>
-      </div>
-    </div>
-    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
-      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">FSM STATE MACHINE — lead capture akisi</div>
-      <div><span style="color:#ff4800">class</span> <span style="color:#f2f0ea">LeadState(StatesGroup):</span></div>
-      <div><span style="color:#f2f0ea">    waiting_name   = State()  <span style="color:#6b6858"># → WAITING_EMAIL</span></span></div>
-      <div><span style="color:#f2f0ea">    waiting_email  = State()  <span style="color:#6b6858"># → WAITING_BUDGET</span></span></div>
-      <div><span style="color:#f2f0ea">    waiting_budget = State()  <span style="color:#6b6858"># → validate + save</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Her kullanici kendi state'ini tasir — global yoktur</span></div>
-      <div><span style="color:#6b6858"># 500 kullanici ayni anda farkli state'lerde olabilir</span></div>
-    </div>
-  </section>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · Telegram Business Bot · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <!-- SCENARIO -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: lead yakalama akışı</span>
-      <span class="en">Step-by-step scenario: lead capture flow</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Kullanıcı /faq pricing yazar</span><span class="en">User types /faq pricing</span></h3>
-        <p>
-          <span class="tr">FAQ_RESPONSES dict'ine "pricing" key ile bak. Anında yanıt döndür. Türkçe içerik: Starter 1.500-3.000 EUR, Growth 3.000-8.000 EUR, Enterprise 8.000+. Yanıt süresi: &lt;50ms. Hiçbir konuşma state'i tüketilmedi.</span>
-          <span class="en">Look up "pricing" key in FAQ_RESPONSES dict. Return answer instantly. Content: Starter 1,500-3,000 EUR, Growth 3,000-8,000 EUR, Enterprise 8,000+. Response time: &lt;50ms. No conversation state consumed.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Kullanıcı /lead yazar</span><span class="en">User types /lead</span></h3>
-        <p>
-          <span class="tr">FSM WAITING_NAME state'ine girer. "Adınızı girin:" sorar. Kullanıcı "Ahmet Yılmaz" yazar. State WAITING_EMAIL'e geçer. E-posta gelir, email-validator ile doğrular. Hatalıysa tekrar sorar. Bütçe gelir, float parse edilir. Başarılıysa LeadCapture Pydantic modeline dönüştürülür, leads.csv'ye eklenir.</span>
-          <span class="en">FSM enters WAITING_NAME state. Asks "Enter your name:". User types "Ahmet Yilmaz". State moves to WAITING_EMAIL. Email received, validated with email-validator. If invalid, re-prompts. Budget received, parsed as float. On success, converted to LeadCapture Pydantic model, appended to leads.csv.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Admin /export_leads yazar</span><span class="en">Admin types /export_leads</span></h3>
-        <p>
-          <span class="tr">Admin kapısı kontrol edilir: gönderen settings.admin_ids listesinde mi? Değilse reddedilir. leads_csv_path'teki CSV okunur, Telegram'dan dosya olarak gönderilir. İçerik: isim, e-posta, bütçe, timestamp. FAQ yanıtları ve sipariş durumları config'den — bu bilgileri değiştirmek için kod açmana gerek yok.</span>
-          <span class="en">Admin gate check: is the sender in settings.admin_ids? If not, rejected. CSV at leads_csv_path is read and sent as a file via Telegram. Content: name, email, budget, timestamp. FAQ answers and order statuses come from config — no need to open code to update them.</span>
-        </p>
-      </div>
-    </div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <!-- TECHNICAL -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key">Framework</span>
-        <span class="tech-val">aiogram 3.x · async/await · MemoryStorage FSM</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">FSM</span>
-        <span class="tech-val">StatesGroup · State · handler filtreler · per-user state isolation</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
-        <span class="tech-val">Pydantic v2 · email-validator · LeadCapture · order_status format check</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Komutlar</span><span class="en">Commands</span></span>
-        <span class="tech-val">/start · /lead · /faq &lt;topic&gt; · /status &lt;order_id&gt; · /export_leads (admin only)</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Admin kapısı</span>
-        <span class="tech-val">settings.admin_ids · <span class="tr">/export_leads yalnızca bu ID listesindeki kullanıcılara açık</span><span class="en">/export_leads only accessible to users in this ID list</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · 9 test · coverage 96% · ruff · GitHub Actions CI</span>
-      </div>
-    </div>
-  </section>
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">7/24</div>
-        <div class="gain-label"><span class="tr">lead capture (iş saati dışı kaçan %40)</span><span class="en">lead capture (40% missed after hours)</span></div>
-        <p><span class="tr">Saat 23:15, web sitesinden form dolduran potansiyel müşteri — bot anında karşılar, ad/soyad/bütçe/sektör bilgisini alır, sabah ekibe CSV hazır. Uyku yok, kaçan lead yok.</span><span class="en">11:15 PM, potential client fills website form — bot responds instantly, collects name/budget/sector, CSV ready for the team by morning. No sleep, no missed leads.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">%87</div>
-        <div class="gain-label"><span class="tr">kayıt tamamlanma (stateless: %43)</span><span class="en">registration completion (stateless: 43%)</span></div>
-        <p><span class="tr">FSM (StatesGroup) her kullanıcıyı kendi state'inde tutar. Stateless bot: araya başka mesaj girince kayıt sıfırlanır. FSM: 4 adım tamamlanana kadar state korunur.</span><span class="en">FSM (StatesGroup) keeps each user in their own state. Stateless bot: interruption resets registration. FSM: state preserved until all 4 steps complete.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">1000+</div>
-        <div class="gain-label"><span class="tr">eşzamanlı kullanıcı</span><span class="en">concurrent users</span></div>
-        <p><span class="tr">aiogram 3.x native asyncio: her kullanıcı için ayrı thread değil, coroutine. python-telegram-bot threading modeli 100 kullanıcıda tıkanır. aiogram 1000+ kullanıcıda smooth.</span><span class="en">aiogram 3.x native asyncio: coroutines, not separate threads per user. python-telegram-bot threading model chokes at 100 users. aiogram smooth at 1000+.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">aiogram 3.x vs python-telegram-bot: aiogram native async, dependency injection, FSM built-in. python-telegram-bot threading = GIL sorunu. Yüksek yük altında farklı sonuçlar.</span><span class="en">aiogram 3.x vs python-telegram-bot: aiogram is native async with built-in DI and FSM. python-telegram-bot uses threading = GIL issues. Very different results under high load.</span></li>
-        <li><span class="tr">FSM state machine: hangi kullanıcı hangi adımda — açık ve takip edilebilir. "Ad girdi mi, bütçeyi mi bekliyoruz?" — kod okurken net görülür, debug edilmesi kolay.</span><span class="en">FSM state machine: which user is at which step — explicit and traceable. "Did they enter their name? Are we waiting for budget?" — clear in code, easy to debug.</span></li>
-        <li><span class="tr">Özelleştirilebilir FAQ: 10 farklı konu (fiyat, iade, destek, ödeme, proje süresi...) JSON/dict'te tanımlı. Yeni FAQ eklemek 2 satır kod. Teknik bilgi gerekmez.</span><span class="en">Customizable FAQ: 10 topics (pricing, refund, support, payment, timeline...) defined in JSON/dict. Adding a new FAQ is 2 lines of code. No technical knowledge needed.</span></li>
-        <li><span class="tr">Lead export: admin komutu ile CSV çek. HubSpot veya Salesforce'a doğrudan push da eklenebilir. Bot toplayan, CRM koruyan — bilgi kaybolmaz.</span><span class="en">Lead export: CSV pull via admin command. Direct push to HubSpot or Salesforce can be added. Bot collects, CRM preserves — no information lost.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">Telegram mesaj yükünüzü otomatize etmek ister misiniz?</span>
-      <span class="en">Want to automate your Telegram message load?</span>
-    </h2>
-    <p>
-      <span class="tr">FAQ içeriğinizi verin, bot 2-3 günde hazır. Lead yakalama, sipariş takibi, özel komutlar eklenebilir. Telegram webhook veya long polling — altyapınıza göre seçeriz.</span>
-      <span class="en">Give me your FAQ content, bot is ready in 2-3 days. Lead capture, order tracking, custom commands can be added. Telegram webhook or long polling — we choose based on your infrastructure.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Telegram Bot İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/telegram-business-bot" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

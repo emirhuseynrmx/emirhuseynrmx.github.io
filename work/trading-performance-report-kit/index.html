@@ -1,335 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Trading Performance Report Kit — Emir H. İnci</title>
-  <meta name="description" content="Borsa işlem geçmişini PDF rapora dönüştüren Python kiti. PnL analizi, sharpe ratio, drawdown, matplotlib charts."/>
+  <meta name="description" content="Turn a trade-log CSV into a complete performance report: P&L, equity curve, drawdown, and the key risk metrics — rendered as a clean, shareable PDF."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">Trading Performance Report Kit</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">Pandas · matplotlib · reportlab</span>
-        <span class="btag">Pydantic v2</span>
-        <span class="btag">PDF</span>
-      </div>
-      <h1 class="lhero-title">Trading Performance Report Kit</h1>
-      <p class="lhero-sub">
-        <span class="tr">Kaggle algoritmik alım-satım verisi (serkanp) — AAPL.csv OHLCV. 8/21 MA crossover simüle eder → 180'e kadar kapalı işlem (AAPL-0025 - AAPL-0875). Her giriş için pozisyon boyutu: 1.000 $/giriş_fiyatı hisse. Komisyon: maks(0,50 $, nosyonelin %0,05'i). Çıktı: 5 CSV + equity_curve.png / drawdown.png / dashboard.png + 2 grafik daha + performance_report.pdf. manifest.json her çıktı dosyasını yeniden üretilebilirlik denetimi için eşler.</span>
-        <span class="en">Kaggle algorithmic trading dataset (serkanp) — AAPL.csv OHLCV. Simulates 8/21 MA crossover → up to 180 closed trades (IDs AAPL-0025 through AAPL-0875). Position size: $1,000/entry_price shares per entry. Fee: max($0.50, 0.05% of notional). Output: 5 CSVs + equity_curve.png / drawdown.png / dashboard.png + 2 more charts + performance_report.pdf. manifest.json maps every output file for reproducibility audit.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Trading Report Kit — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">Trade log in,<br>full report out.</span><span class="tr">İşlem kaydı girer,<br>eksiksiz rapor çıkar.</span></h1>
+      <div class="pill-row"><span class="pill">Quant</span><span class="pill">matplotlib</span><span class="pill">PDF</span></div>
+      <p class="lead"><span class="en">Turn a trade-log CSV into a complete performance report: P&L, equity curve, drawdown, and the key risk metrics — rendered as a clean, shareable PDF.</span><span class="tr">Bir işlem kaydını eksiksiz bir performans raporuna çevirir: kâr-zarar, sermaye eğrisi, en büyük düşüş ve temel risk ölçüleri — hepsi derli toplu, paylaşılabilir bir PDF olarak.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TRADING REPORT — AAPL MA CROSSOVER</div>
-        <div style="color:#6b6858;">dataset: <span style="color:#f2f0ea">Kaggle AAPL.csv OHLCV (serkanp)</span></div>
-        <div>strategy &nbsp;&nbsp;&nbsp;<span style="color:#f2f0ea">8/21 MA crossover</span></div>
-        <div>total_trades &nbsp;<span style="color:#ff4800;font-weight:700">≤180</span> <span style="color:#6b6858">(AAPL-0025 → AAPL-0875)</span></div>
-        <div>sharpe &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#10b981;font-weight:700">annualized, 252-day</span></div>
-        <div>fee &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#f2f0ea">max($0.50, 0.05% notional)</span></div>
-        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
-          outputs=<span style="color:#ff4800">5 CSV + 5 charts + PDF</span> &nbsp;·&nbsp; manifest.json <span style="color:#6b6858">maps every file</span>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">Equity & drawdown</span><span class="tr">Sermaye ve düşüş</span></h3><p><span class="en">The curves that actually show how a strategy behaves.</span><span class="tr">Bir stratejinin gerçekte nasıl davrandığını gösteren eğriler.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">Risk metrics</span><span class="tr">Risk ölçüleri</span></h3><p><span class="en">Sharpe, max drawdown, win rate — computed, not eyeballed.</span><span class="tr">Sharpe, en büyük düşüş, kazanma oranı — göz kararı değil, hesaplı.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">Shareable PDF</span><span class="tr">Paylaşılır PDF</span></h3><p><span class="en">A report you can hand to an investor or a partner.</span><span class="tr">Bir yatırımcıya ya da iş ortağına verebileceğin bir rapor.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
         </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>180</strong>
-      <span><span class="tr">kapalı işlem (AAPL MA)</span><span class="en">closed trades (AAPL MA)</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>5 CSV</strong>
-      <span><span class="tr">+ 5 grafik + PDF</span><span class="en">+ 5 charts + PDF</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>manifest</strong>
-      <span><span class="tr">.json her çıktıyı eşler</span><span class="en">.json maps every output</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>Sharpe</strong>
-      <span><span class="tr">252 gün yıllık</span><span class="en">252-day annualized</span></span>
-    </div>
-  </div>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · Trading Performance Report Kit · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">Kaggle AAPL OHLCV verisinden 8/21 MA crossover ile 180'e kadar kapalı işlem simüle edilip 5 CSV, 5 grafik ve performance_report.pdf üretiliyor. Strateji incelemesi Excel'de dağınık metrik toplamaktan, manifestli ve tekrar üretilebilir rapor paketine dönüyor.</span>
-      <span class="en">From Kaggle AAPL OHLCV data, the 8/21 MA crossover simulation produces up to 180 closed trades plus 5 CSVs, 5 charts, and performance_report.pdf. Strategy review moves from scattered Excel metrics to a reproducible report package with a manifest.</span>
-    </p>
-    <div class="impact-evidence">Evidence: simulated AAPL trades, 5 CSV outputs, 5 chart files, PDF report, manifest.json.</div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Ne yapar?</span>
-      <span class="en">What it does</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon">📈</div>
-        <h3><span class="tr">MA crossover simülasyonu → trade_ledger.csv</span><span class="en">MA crossover simulation → trade_ledger.csv</span></h3>
-        <p>
-          <span class="tr">AAPL OHLCV üzerinde 8/21 MA crossover simüle eder. Her giriş için 1.000 $/giriş_fiyatı hisse pozisyon boyutu. Komisyon: maks(0,50 $, nosyonelin %0,05'i). Kapalı işlemler AAPL-0025 - AAPL-0875 ID'leriyle trade_ledger.csv'ye yazılır.</span>
-          <span class="en">Simulates 8/21 MA crossover on AAPL OHLCV. Position size $1,000/entry_price shares per entry. Fee: max($0.50, 0.05% of notional). Closed trades written to trade_ledger.csv with IDs AAPL-0025 through AAPL-0875.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📐</div>
-        <h3><span class="tr">Metrikler: performance_metrics.csv</span><span class="en">Metrics: performance_metrics.csv</span></h3>
-        <p>
-          <span class="tr">total_trades, net_pnl, return_pct, win_rate, profit_factor, expectancy, avg_win, avg_loss, payoff_ratio, max_drawdown, max_drawdown_pct, Sharpe (yıllık, varsayılan 252 gün). Tüm metrikler performance_metrics.csv'ye yazılır.</span>
-          <span class="en">total_trades, net_pnl, return_pct, win_rate, profit_factor, expectancy, avg_win, avg_loss, payoff_ratio, max_drawdown, max_drawdown_pct, Sharpe (annualized, default 252 days). All metrics written to performance_metrics.csv.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📉</div>
-        <h3><span class="tr">5 grafik: equity_curve / drawdown / dashboard</span><span class="en">5 charts: equity_curve / drawdown / dashboard</span></h3>
-        <p>
-          <span class="tr">equity_curve.png, drawdown.png, dashboard.png + 2 ek grafik. Hepsi yüksek çözünürlüklü PNG olarak kaydedilir. manifest.json hangi dosyanın ne çıktı olduğunu eşler — reproducibility denetimi için.</span>
-          <span class="en">equity_curve.png, drawdown.png, dashboard.png + 2 additional charts. All saved as high-res PNG. manifest.json maps which file is which output — for reproducibility audit.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📄</div>
-        <h3><span class="tr">performance_report.pdf</span><span class="en">performance_report.pdf</span></h3>
-        <p>
-          <span class="tr">reportlab ile profesyonel layout. Kapak, metrikler tablosu (performance_metrics.csv'den), grafik sayfaları, işlem detayları. Yatırımcıya sunulabilir format. manifest.json dahil tüm çıktılar izlenebilir.</span>
-          <span class="en">Professional layout via reportlab. Cover, metrics table (from performance_metrics.csv), chart pages, trade details. Investor-presentable format. All outputs including manifest.json are traceable.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📊</div>
-        <h3><span class="tr">daily_equity.csv + monthly_returns.csv</span><span class="en">daily_equity.csv + monthly_returns.csv</span></h3>
-        <p>
-          <span class="tr">Günlük öz sermaye eğrisi ve aylık getiri dağılımı ayrı CSV'lere yazılır. symbol_breakdown.csv de dahil — AAPL çıktıları sembol bazında ayrılmış.</span>
-          <span class="en">Daily equity curve and monthly return distribution written to separate CSVs. symbol_breakdown.csv also included — AAPL outputs broken out by symbol.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🗂️</div>
-        <h3>manifest.json</h3>
-        <p>
-          <span class="tr">Her çıktı dosyasını (5 CSV + 5 grafik + PDF) açıklama, oluşturulma zamanı ve bağımlılıkla eşler. Hangi grafik hangi veriden üretildi — elle takip gerekmez.</span>
-          <span class="en">Maps every output file (5 CSVs + 5 charts + PDF) to description, creation time, and dependency. Which chart was produced from which data — no manual tracking needed.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROBLEM + WHY + SCENARIO -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi? Neden matplotlib ve reportlab?</span>
-      <span class="en">What was the problem? Why matplotlib and reportlab?</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Gerçek veri kaynağı</span><span class="en">Real dataset</span></span>
-        <span class="tech-val"><span class="tr">Kaggle algoritmik alım-satım (serkanp) — AAPL.csv OHLCV. 8/21 MA crossover simülasyonu → 180'e kadar kapalı işlem. Pozisyon boyutu: 1.000 $/giriş_fiyatı hisse. Komisyon: maks(0,50 $, nosyonelin %0,05'i).</span><span class="en">Kaggle algorithmic trading dataset (serkanp) — AAPL.csv OHLCV. 8/21 MA crossover simulation → up to 180 closed trades. Position size: $1,000/entry_price shares. Fee: max($0.50, 0.05% of notional).</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">matplotlib ← Plotly</span>
-        <span class="tech-val"><span class="tr">Plotly interactive, tarayıcıda güzel. Ama amaç PDF raporu — PDF'e interaktif grafik gömülemez. matplotlib statik PNG üretir, reportlab bu PNG'yi yüksek çözünürlükte PDF'e yerleştirir. Plotly için kWeasyPrint veya Kaleido ek bağımlılık gerekir, risk artar. matplotlib tek bir pip install.</span><span class="en">Plotly is interactive, looks great in browser. But the goal is PDF reports — you can't embed interactive charts in PDF. matplotlib produces static PNG, reportlab places this PNG into PDF at high resolution. Plotly needs WeasyPrint or Kaleido as extra dependencies, increasing risk. matplotlib is a single pip install.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">veri hazırlama</span>
-        <span class="tech-val"><span class="tr">Ham trade log'u birçok sorun içeriyor: tarih sütunu string ("2024-01-15 09:32" format), fiyat sütunları bazen None, aynı trade_id'ye çift kayıt (partial fills). pd.to_datetime() + ffill + groupby trade_id aggregate. df.diff() ile günlük PnL farkı hesaplanıyor.</span><span class="en">Raw trade log has many issues: date column as string ("2024-01-15 09:32" format), price columns sometimes None, duplicate trade_id (partial fills). pd.to_datetime() + ffill + groupby trade_id aggregate. Daily PnL delta calculated with df.diff().</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Sharpe hesabı</span>
-        <span class="tech-val"><span class="tr">Sharpe = (mean_daily_return − rf_rate) / std_daily_return × √252. Yıllık olarak normalize etmek için √252 çarpımı (252 işlem günü). rf_rate müşteri parametreden giriyor (varsayılan: 0.04 / 252 günlük). Sortino sadece negatif günlerin std'sini kullanır.</span><span class="en">Sharpe = (mean_daily_return − rf_rate) / std_daily_return × √252. Multiplied by √252 to annualize (252 trading days). rf_rate comes from client parameter (default: 0.04 / 252 daily). Sortino uses only std of negative days.</span></span>
-      </div>
-    </div>
-  </section>
-
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: AAPL OHLCV → 180 işlem → PDF</span>
-      <span class="en">Step-by-step scenario: AAPL OHLCV → 180 trades → PDF</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">AAPL.csv → MA crossover simülasyonu</span><span class="en">AAPL.csv → MA crossover simulation</span></h3>
-        <p>
-          <span class="tr">Kaggle algoritmik alım-satım (serkanp) AAPL.csv OHLCV yüklendi. 8/21 günlük MA crossover sinyal üretir. Her giriş için pozisyon boyutu: 1.000 $/giriş_fiyatı hisse. Komisyon: maks(0,50 $, nosyonelin %0,05'i). Sonuç: 180'e kadar kapalı işlem, ID'ler AAPL-0025'ten AAPL-0875'e.</span>
-          <span class="en">Kaggle algorithmic trading (serkanp) AAPL.csv OHLCV loaded. 8/21 daily MA crossover generates signals. Position size: $1,000/entry_price shares per entry. Fee: max($0.50, 0.05% of notional). Result: up to 180 closed trades with IDs AAPL-0025 through AAPL-0875.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">5 CSV + 5 grafik üretimi</span><span class="en">5 CSVs + 5 charts generated</span></h3>
-        <p>
-          <span class="tr">performance_metrics.csv (Sharpe yıllık 252 gün, max_drawdown, win_rate, profit_factor, expectancy, payoff_ratio), trade_ledger.csv, daily_equity.csv, monthly_returns.csv, symbol_breakdown.csv. Grafikler: equity_curve.png, drawdown.png, dashboard.png + 2 ek. manifest.json her dosyayı bağımlılıkla eşler.</span>
-          <span class="en">performance_metrics.csv (Sharpe annualized 252 days, max_drawdown, win_rate, profit_factor, expectancy, payoff_ratio), trade_ledger.csv, daily_equity.csv, monthly_returns.csv, symbol_breakdown.csv. Charts: equity_curve.png, drawdown.png, dashboard.png + 2 more. manifest.json maps every file with dependencies.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">performance_report.pdf + manifest.json</span><span class="en">performance_report.pdf + manifest.json</span></h3>
-        <p>
-          <span class="tr">reportlab ile PDF: kapak, metrikler tablosu, 5 grafik sayfası, trade detayları. Hangi CSV hangi grafiği besledi, hangi metrik hangi formülle hesaplandı — manifest.json'da kayıtlı. Önceki el yapımı raporun yerine saniyeler içinde. Cron job'a ekle, sabah PDF hazır.</span>
-          <span class="en">reportlab PDF: cover, metrics table, 5 chart pages, trade details. Which CSV fed which chart, which metric was calculated with which formula — recorded in manifest.json. Replaces the previous hand-made report in seconds. Add to cron job, PDF ready in the morning.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Veri kaynağı</span><span class="en">Dataset</span></span>
-        <span class="tech-val">Kaggle AAPL.csv OHLCV (serkanp) · 8/21 MA crossover · AAPL-0025 → AAPL-0875 ID'leri</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Çıktılar</span><span class="en">Outputs</span></span>
-        <span class="tech-val">5 CSV (performance_metrics, trade_ledger, daily_equity, monthly_returns, symbol_breakdown) · 5 grafik · performance_report.pdf · manifest.json</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Metrikler</span><span class="en">Metrics</span></span>
-        <span class="tech-val">net_pnl · return_pct · win_rate · profit_factor · expectancy · avg_win · avg_loss · payoff_ratio · max_drawdown · Sharpe (252 gün yıllık)</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Grafikler</span><span class="en">Charts</span></span>
-        <span class="tech-val">matplotlib · equity_curve.png · drawdown.png · dashboard.png + 2 ek grafik</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">PDF</span>
-        <span class="tech-val">reportlab · Platypus layout engine · performance_report.pdf</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · parametrize · coverage &gt;85% · ruff · GitHub Actions CI</span>
-      </div>
-    </div>
-  </section>
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">0 saat</div>
-        <div class="gain-label"><span class="tr">manuel rapor hazırlama</span><span class="en">manual report preparation</span></div>
-        <p><span class="tr">Broker export CSV'si veriliyor, 8 sayfalık PDF raporu 15 saniyede üretiliyor. PnL grafiği, equity eğrisi, drawdown analizi, işlem dağılımı — hepsi otomatik.</span><span class="en">Broker export CSV goes in, 8-page PDF report comes out in 15 seconds. PnL chart, equity curve, drawdown analysis, trade distribution — all automatic.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">Sharpe 1.83</div>
-        <div class="gain-label"><span class="tr">yıllık risk-düzeltilmiş getiri</span><span class="en">annualized risk-adjusted return</span></div>
-        <p><span class="tr">Yıllık volatilite ile normalize edilmiş Sharpe hesabı, max drawdown, Calmar ve Sortino dahil. Açık varsayımlarla hesaplanıyor — siyah kutu değil.</span><span class="en">Sharpe calculated with annualized volatility, including max drawdown, Calmar, and Sortino. Computed with explicit assumptions — not a black box.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">8 sayfa</div>
-        <div class="gain-label"><span class="tr">investor-ready PDF rapor</span><span class="en">investor-ready PDF report</span></div>
-        <p><span class="tr">Yatırımcıya sunulabilir format: kapak, özet, grafik sayfaları, detay tabloları. Reddedilen satırlar ayrı — "missing trade" problemi görünür hale geliyor.</span><span class="en">Investor-presentable format: cover, summary, chart pages, detail tables. Rejected rows separate — "missing trade" problems become visible.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">Rakamlar incelenebilir olmalı: hesaplama adımları şeffaf, kullanılan formüller raporda belirtiliyor. "Bu Sharpe'ı nasıl hesapladın?" sorusu cevaplanabilir.</span><span class="en">Numbers must be inspectable: calculation steps are transparent, formulas used are stated in the report. "How did you calculate this Sharpe?" is answerable.</span></li>
-        <li><span class="tr">Reddedilen satırlar gizlenmiyor: geçersiz işlemler ayrı CSV'ye yazılıyor. Kayıp işlem problemi fark edilmeden broker analizi yapılmaz.</span><span class="en">Rejected rows not hidden: invalid trades written to a separate CSV. Missing trade problem is discovered before doing broker analysis blind.</span></li>
-        <li><span class="tr">Çoklu broker formatı: Interactive Brokers, Binance, MT4 ve özel CSV formatları config ile tanımlanabiliyor. Parser değiştirilmeden yeni format eklenir.</span><span class="en">Multiple broker formats: Interactive Brokers, Binance, MT4, and custom CSV formats configurable. New format added without changing the parser.</span></li>
-        <li><span class="tr">PDF + Excel çıktısı: yatırımcı sunumu için PDF, daha fazla analiz için Excel. İkisi aynı anda üretiliyor — seçim yapmak zorunda kalınmaz.</span><span class="en">PDF + Excel output: PDF for investor presentation, Excel for further analysis. Both produced at the same time — no need to choose.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">İşlem geçmişin rapor formatı istiyor mu?</span>
-      <span class="en">Does your trade history need a report format?</span>
-    </h2>
-    <p>
-      <span class="tr">Hangi broker, hangi format, hangi metrikler — söyle, özelleştiririm. Haftalık otomatik rapor da kurulabilir.</span>
-      <span class="en">Which broker, which format, which metrics — tell me, I'll customize. Weekly automated reports can also be set up.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Trading Report İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/trading-performance-report-kit" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

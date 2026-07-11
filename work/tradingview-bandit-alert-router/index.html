@@ -1,320 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TradingView Alert Bandit Router — Emir H. İnci</title>
-  <meta name="description" content="TradingView webhook'larını doğrula, risk guard'dan geçir, Thompson Sampling ile en iyi performans gösteren stratejiye rota seç. Kapalı döngü ödül feedback."/>
+  <title>TV Alert Bandit Router — Emir H. İnci</title>
+  <meta name="description" content="Validate TradingView webhooks, apply risk guards, and route with Thompson Sampling — a closed-loop system where reward feedback teaches the router which alerts to trust."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">TV Alert Bandit Router</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/tradingview-bandit-alert-router" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">Thompson Sampling · Beta posteriors</span>
-        <span class="btag">TradingView webhooks · Litestar</span>
-        <span class="btag">Closed-loop reward feedback</span>
-      </div>
-      <h1 class="lhero-title">TradingView Alert Bandit Router</h1>
-      <p class="lhero-sub">
-        <span class="tr">TradingView webhook'u alınır → sembol allowlist + güven eşiği (0.55) + risk bütçesi ($2.500) olmak üzere 3 bağımsız güvenlik kapısından geçirilir → alert_id üzerinde tekilleştirilir → Thompson Sampling en iyi performans gösteren kanala rota seçer → posteriorlar ödülden güncellenir. 20 gerçek alert kaydı, 4 strateji, 4 sembol.</span>
-        <span class="en">TradingView webhook arrives → passes 3 independent safety gates: symbol allowlist + confidence floor (0.55) + risk budget ($2,500) → deduplicated on alert_id → Thompson Sampling routes to best-performing channel → posteriors updated from reward. 20 real alert records, 4 strategies, 4 symbols.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/tradingview-bandit-alert-router" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Alert Router — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">TradingView alerts,<br>routed smartly.</span><span class="tr">TradingView uyarıları,<br>akıllıca yönlendirilir.</span></h1>
+      <div class="pill-row"><span class="pill">Python</span><span class="pill">TradingView</span><span class="pill">Thompson Sampling</span></div>
+      <p class="lead"><span class="en">Validate TradingView webhooks, apply risk guards, and route with Thompson Sampling — a closed-loop system where reward feedback teaches the router which alerts to trust.</span><span class="tr">TradingView uyarılarını doğrular, risk kontrollerinden geçirir ve akıllı bir yöntemle yönlendirir — sistem, sonuçlardan öğrenerek hangi uyarıya güveneceğini zamanla kendi öğrenir.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">ROUTING TABLE — 80 completed trades</div>
-        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.4rem;">Strategy           alpha   beta    win%   routed%</div>
-        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.8rem;">──────────────────────────────────────────────</div>
-        <div><span style="color:#10b981">RSI_breakout</span>      <span style="color:#ff4800">22</span>      <span style="color:#6b6858">8</span>       <span style="color:#10b981">73%</span>    <span style="color:#10b981">68%</span>  ← dominant</div>
-        <div><span style="color:#f2f0ea">Volume_spike</span>      <span style="color:#f2f0ea">9</span>       <span style="color:#6b6858">11</span>      <span style="color:#f59e0b">45%</span>    <span style="color:#f2f0ea">18%</span></div>
-        <div><span style="color:#f2f0ea">EMA_cross</span>         <span style="color:#f2f0ea">11</span>      <span style="color:#6b6858">19</span>      <span style="color:#ef4444">37%</span>    <span style="color:#f2f0ea">10%</span></div>
-        <div><span style="color:#6b6858">VWAP_reversion</span>    <span style="color:#6b6858">6</span>       <span style="color:#6b6858">14</span>      <span style="color:#ef4444">30%</span>    <span style="color:#6b6858">4%</span></div>
-        <div style="margin-top:.6rem;padding-top:.5rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
-          total_alerts=<span style="color:#ff4800">80</span> &nbsp;·&nbsp; risk_blocked=<span style="color:#ef4444">12</span> &nbsp;·&nbsp; executed=<span style="color:#10b981">68</span>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">Validated webhooks</span><span class="tr">Doğrulanmış uyarı</span></h3><p><span class="en">Malformed or spoofed alerts rejected at the door.</span><span class="tr">Bozuk ya da sahte uyarılar daha kapıda reddedilir.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">Risk guards</span><span class="tr">Risk kontrolü</span></h3><p><span class="en">Every routed alert passes your safety checks first.</span><span class="tr">Yönlendirilen her uyarı önce senin güvenlik kontrollerinden geçer.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">Closed-loop learning</span><span class="tr">Sonuçtan öğrenir</span></h3><p><span class="en">Reward feedback improves routing over time.</span><span class="tr">Aldığı geri bildirimle yönlendirmesini zamanla iyileştirir.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
         </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>4</strong>
-      <span><span class="tr">strateji (breakout/reversion/momentum/scalp)</span><span class="en">strategies (breakout/reversion/momentum/scalp)</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>0.55</strong>
-      <span><span class="tr">güven eşiği (altı bloke)</span><span class="en">confidence floor (below=blocked)</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>$2,500</strong>
-      <span><span class="tr">maks. toplam risk</span><span class="en">max total risk</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>20</strong>
-      <span><span class="tr">örnek alert kaydı</span><span class="en">sample alert records</span></span>
-    </div>
-  </div>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · TV Alert Bandit Router · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <!-- PROBLEM -->
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">Örnek run 80 alert'i işlerken 12'sini risk kapılarında bloke edip 68'ini yürütülebilir akışa alıyor. Bu, TradingView webhooklarını doğrudan emir/kanal akışına sokmak yerine allowlist, confidence floor, risk budget ve dedupe katmanından geçirir.</span>
-      <span class="en">The sample run processes 80 alerts, blocks 12 at risk gates, and leaves 68 executable. That puts TradingView webhooks behind allowlist, confidence floor, risk budget, and dedupe layers instead of routing them directly.</span>
-    </p>
-    <div class="impact-evidence">Evidence: total_alerts=80, risk_blocked=12, executed=68, 20 sample alert records.</div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi?</span>
-      <span class="en">What was the problem?</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📡</div>
-        <h3><span class="tr">Çakışan sinyal, kör allocation</span><span class="en">Overlapping signals, blind allocation</span></h3>
-        <p>
-          <span class="tr">4 strateji: breakout_v1, mean_reversion_v2, momentum_v3, scalp_v4. 4 sembol: BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT. Zaman dilimleri: 5m / 15m / 1h / 4h. Güven skoru 0.41–0.92, risk_usd $85–$600. Aynı anda sinyal gelince hangisini execute edeceğini nasıl seçiyorsun?</span>
-          <span class="en">4 strategies: breakout_v1, mean_reversion_v2, momentum_v3, scalp_v4. 4 symbols: BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT. Timeframes: 5m / 15m / 1h / 4h. Confidence 0.41–0.92, risk_usd $85–$600. When signals fire simultaneously, how do you choose which to execute?</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📈</div>
-        <h3><span class="tr">Piyasa koşulları değişiyor</span><span class="en">Market conditions change</span></h3>
-        <p>
-          <span class="tr">Trend dönemlerinde RSI breakout çalışıyor, ranging market'ta VWAP reversion kazanıyor. Sabit %25 allocation bu değişimi görmüyor. Strateji performansına göre dinamik allocation lazım — ama periyodik retraining de istemiyorlar.</span>
-          <span class="en">RSI breakout works in trending markets, VWAP reversion wins in ranging markets. Fixed 25% allocation can't see this. Dynamic allocation based on strategy performance is needed — but they don't want periodic retraining either.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔄</div>
-        <h3><span class="tr">Problem tipi: online learning + routing</span><span class="en">Problem type: online learning + routing</span></h3>
-        <p>
-          <span class="tr">Bu sınıflandırma değil, regresyon da değil. Bu bir çok kollu bandit problemi — ama "kollar" artık fiyat noktaları değil, ticaret stratejileri. Her tamamlanan işlemin sonucu (win/loss) ilgili strateji kolunun posterior'ını günceller. Modeli yeniden eğitmene gerek yok.</span>
-          <span class="en">Not classification, not regression. This is a multi-armed bandit problem — but now "arms" are trading strategies, not price points. Each completed trade's outcome (win/loss) updates the relevant strategy arm's posterior. No model retraining needed.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Nasıl çalışır? Neden Thompson Sampling?</span>
-      <span class="en">How does it work? Why Thompson Sampling?</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">3 güvenlik kapısı</span><span class="en">3 safety gates</span></span>
-        <span class="tech-val"><span class="tr">Herhangi bir canlı kanala ulaşmadan önce: (1) sembol allowlist kontrolü, (2) güven eşiği: confidence &lt; 0.55 → bloke, (3) risk bütçesi: max_total_risk_usd=$2.500 aşıldı mı? Üç kapı da bağımsız — biri geçilmezse alert sonlanır.</span><span class="en">Before any live channel receives the alert: (1) symbol allowlist check, (2) confidence floor: confidence &lt; 0.55 → blocked, (3) risk budget: max_total_risk_usd=$2,500 exceeded? All three gates are independent — fail one and the alert is dropped.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">alert_id tekilleştirme</span>
-        <span class="tech-val"><span class="tr">TradingView aynı alert'i iki kez gönderebilir (retry). alert_id üzerinde deduplicate: aynı id ikinci kez gelirse kanal seçimi yapılmaz. Mükerrer emir yok.</span><span class="en">TradingView may send the same alert twice (retry). Deduplicate on alert_id: if the same id arrives again, no channel selection happens. No duplicate orders.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key" style="color:#ff4800">Thompson Sampling</span>
-        <span class="tech-val"><span class="tr">Her strateji kolu (breakout_v1 / mean_reversion_v2 / momentum_v3 / scalp_v4) için Beta posterior. Ödül: confidence ≥ 0.70 → reward=1.0, değilse reward=0.3. exploration_seed=7. Her alertte posteriorlardan örnekle, en yüksek sample kazanır.</span><span class="en">Beta posterior per strategy arm (breakout_v1 / mean_reversion_v2 / momentum_v3 / scalp_v4). Reward: confidence ≥ 0.70 → reward=1.0, else reward=0.3. exploration_seed=7. Sample from all posteriors per alert, highest sample wins.</span></span>
-      </div>
-    </div>
-    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
-      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">WEBHOOK AKISI — adım adım</div>
-      <div><span style="color:#6b6858">1.</span> <span style="color:#f2f0ea">TradingView alert → webhook endpoint'e POST</span></div>
-      <div><span style="color:#6b6858">2.</span> <span style="color:#f2f0ea">HMAC-SHA256 imza doğrulama (sahte alert engeli)</span></div>
-      <div><span style="color:#6b6858">3.</span> <span style="color:#f2f0ea">Risk guard: max drawdown aşıldı mı? Position limit?</span></div>
-      <div><span style="color:#6b6858">4.</span> <span style="color:#f2f0ea">Thompson sample → hangi strateji kolu seçildi?</span></div>
-      <div><span style="color:#6b6858">5.</span> <span style="color:#f2f0ea">Execute (paper/live) → trade_id kaydet</span></div>
-      <div><span style="color:#6b6858">6.</span> <span style="color:#f2f0ea">Trade kapanınca: /reward endpoint → alpha/beta güncelle</span></div>
-    </div>
-  </section>
-
-  <!-- SCENARIO -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">sample_alerts.jsonl — 20 kayıt, 4 strateji</span>
-      <span class="en">sample_alerts.jsonl — 20 records, 4 strategies</span>
-    </h2>
-    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">examples/sample_alerts.jsonl: 20 gerçek alert kaydı. 4 strateji × 4 sembol × farklı zaman dilimi.</span>
-      <span class="en">examples/sample_alerts.jsonl: 20 real alert records. 4 strategies × 4 symbols × varying timeframes.</span>
-    </p>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">3 güvenlik kapısından geçiş</span><span class="en">Passing 3 safety gates</span></h3>
-        <p>
-          <span class="tr">Örnek alert: breakout_v1, BTCUSDT, 1h, confidence=0.41, risk_usd=$85. Güven eşiği: 0.41 &lt; 0.55 → bloke edildi. Başka bir alert: momentum_v3, ETHUSDT, 15m, confidence=0.78, risk_usd=$320. Üç kapıyı da geçti → Thompson Sampling'e gönderildi.</span>
-          <span class="en">Example alert: breakout_v1, BTCUSDT, 1h, confidence=0.41, risk_usd=$85. Confidence gate: 0.41 &lt; 0.55 → blocked. Another alert: momentum_v3, ETHUSDT, 15m, confidence=0.78, risk_usd=$320. Passed all 3 gates → sent to Thompson Sampling.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Thompson Sampling kanal seçimi</span><span class="en">Thompson Sampling channel routing</span></h3>
-        <p>
-          <span class="tr">momentum_v3 için Beta posterior örneklendi. confidence=0.78 ≥ 0.70 → reward=1.0 olarak atandı. Routing sonrası posterior güncellendi: momentum_v3'ün alpha'sı artar. alert_id üzerinde tekilleştirme — aynı alert ikinci kez gelirse kanal seçimi atlanır.</span>
-          <span class="en">Beta posterior sampled for momentum_v3. confidence=0.78 ≥ 0.70 → reward=1.0 assigned. Posterior updated after routing: momentum_v3's alpha increases. Deduplicated on alert_id — if same alert arrives again, channel selection is skipped.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Posterior durumu güncellendi</span><span class="en">Posterior state updated</span></h3>
-        <p>
-          <span class="tr">20 alert işlendikten sonra posteriorlar ayrışmış olur. Yüksek confidence alertleri (≥0.70) alan stratejiler daha hızlı alpha biriktirir. exploration_seed=7 ile her çalıştırmada tutarlı keşif. Piyasa koşulları değiştikçe posteriorlar otomatik uyarlanır — yeniden eğitim gerekmez.</span>
-          <span class="en">After 20 alerts, posteriors have diverged. Strategies receiving high-confidence alerts (≥0.70) accumulate alpha faster. exploration_seed=7 ensures consistent exploration across runs. As market conditions shift, posteriors auto-adapt — no retraining needed.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- TECHNICAL -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Algoritma</span><span class="en">Algorithm</span></span>
-        <span class="tech-val">Thompson Sampling · Beta(alpha, beta) · win/loss posterior update</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Webhook</span>
-        <span class="tech-val">HMAC-SHA256 imza doğrulama · TradingView alert JSON schema · Pydantic v2</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Risk</span>
-        <span class="tech-val"><span class="tr">max drawdown guard · position limit · risk per trade threshold</span><span class="en">max drawdown guard · position limit · risk per trade threshold</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">API</span>
-        <span class="tech-val">Litestar · async · /alert (POST) · /reward (POST) · /status (GET)</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · examples/sample_alerts.jsonl (20 kayıt, breakout_v1/mean_reversion_v2/momentum_v3/scalp_v4 × BTCUSDT/ETHUSDT/SOLUSDT/BNBUSDT) · CI</span>
-      </div>
-    </div>
-  </section>
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">%68</div>
-        <div class="gain-label"><span class="tr">80 trade sonrası EMA çekme ağırlığı</span><span class="en">EMA pull weight after 80 trades</span></div>
-        <p><span class="tr">4 strateji (RSI/EMA/Volume/VWAP) aynı sermayeyi paylaşıyor. 80 trade sonra Beta posterior: EMA Alpha=55, Beta=26. Otomatik ağırlık kayması.</span><span class="en">4 strategies (RSI/EMA/Volume/VWAP) share the same capital. After 80 trades Beta posterior: EMA Alpha=55, Beta=26. Automatic weight shift.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">adaptif</div>
-        <div class="gain-label"><span class="tr">piyasa rejimi değişince</span><span class="en">when market regime shifts</span></div>
-        <p><span class="tr">Trend piyasasında EMA baskın. Chop'ta volume strategy öne geçer. Manuel strateji değişikliği gerekmez — bandit kendi öğrenir ve kaydırır.</span><span class="en">EMA dominates in trending markets. Volume strategy takes over in choppy conditions. No manual strategy switching needed — bandit learns and shifts.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">audit log</div>
-        <div class="gain-label"><span class="tr">her karar kayıt altında</span><span class="en">every decision on record</span></div>
-        <p><span class="tr">Hangi alert, hangi strateji, hangi posterior state, hangi reward — log'da. Geriye dönük analiz yapılabilir. "Neden şu an EMA seçildi?" sorusu cevaplanır.</span><span class="en">Which alert, which strategy, which posterior state, which reward — all logged. Retrospective analysis possible. "Why was EMA chosen then?" has an answer.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">Sabit strateji = piyasa değişince kayıp. Beta posterior sürekli güncellenir. Rejim değişikliği algılanmadan önce kayıp minimize edilir — gecikmeli değil anlık.</span><span class="en">Fixed strategy = losses when market changes. Beta posterior updates continuously. Losses minimized before regime shift is even detected — instant, not lagging.</span></li>
-        <li><span class="tr">Thompson Sampling reward: position P&L + (1 - drawdown%) bileşik skor. Sadece kazanan/kaybeden değil — kazanırken ne kadar risk alındı da hesaba katılır.</span><span class="en">Thompson Sampling reward: position P&L + (1 - drawdown%) composite score. Not just win/loss — how much risk was taken while winning also counts.</span></li>
-        <li><span class="tr">TradingView entegrasyonu: alert formatı değişmez. Webhook URL değişir. Mevcut Pine Script strategy'lerini sıfırdan yazmadan bu router'a bağlanır.</span><span class="en">TradingView integration: alert format unchanged. Webhook URL changes. Existing Pine Script strategies connect to this router without rewriting.</span></li>
-        <li><span class="tr">Guardrail: position_size, symbol ve action alanları webhook'ta validate edilir. Geçersiz alert reddedilir. Strateji hatasından kaynaklanan kazara emir gitmez.</span><span class="en">Guardrail: position_size, symbol, and action fields validated on webhook. Invalid alerts rejected. No accidental orders from strategy bugs.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">TradingView stratejilerinizi dinamik allocation ile yönetmek ister misiniz?</span>
-      <span class="en">Want to manage your TradingView strategies with dynamic allocation?</span>
-    </h2>
-    <p>
-      <span class="tr">Mevcut TradingView alert'lerinizi bu router'a bağlarım. Hangi strateji ne zaman kazanıyor, otomatik öğrenir ve dağıtır.</span>
-      <span class="en">I'll wire your existing TradingView alerts into this router. It learns which strategy wins when and distributes traffic automatically.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Alert Router İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/tradingview-bandit-alert-router" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

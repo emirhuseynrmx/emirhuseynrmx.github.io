@@ -1,259 +1,233 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>BlackSwan — Upcoming Project</title>
-  <meta name="description" content="BlackSwan: Kaggle Lending Club verisi, federated bank simulation, Rust + Python engine, Next.js cockpit ve Calybris audit boundary ile upcoming kredi riski vitrini."/>
+  <title>BlackSwan — Federated Credit Risk Cockpit</title>
+  <meta name="description" content="BlackSwan is a federated credit-risk system for banking pilots: each bank trains on its own shard, the center sees only risk evidence, and Calybris turns it into APPROVE / REVIEW / DECLINE with an audit trail."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --warn:#fbbf24; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .badge{ font-family:var(--mono); font-size:.6rem; color:var(--warn); border:1px solid rgba(251,191,36,.4); background:rgba(251,191,36,.1); border-radius:99px; padding:.2rem .5rem; margin-left:.5rem; letter-spacing:.08em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:100svh; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:2rem; overflow:hidden; position:relative; }
+    .hero-copy{ position:relative; z-index:3; padding:7rem 0 3rem; }
+    .hero-vis{ position:relative; min-height:60vh; height:100%; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(50% 60% at 80% 45%, rgba(129,140,248,.10), transparent 65%); }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cyan); }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.4rem,5vw,4rem); line-height:1.03; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.1rem; max-width:44ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+    .vis-legend{ position:absolute; z-index:2; bottom:1.2rem; left:1.2rem; display:flex; gap:1rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; }
+    .vis-legend span{ display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); }
+    .vis-legend i{ width:8px; height:8px; border-radius:50%; }
+    @media(max-width:900px){ .hero{ grid-template-columns:1fr; } .hero-vis{ min-height:44vh; order:2; } .hero-copy{ padding-top:6rem; } }
+
+    .sec{ padding:clamp(4rem,8vw,7rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.5rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .sec-lead{ color:var(--muted); max-width:60ch; margin-top:1rem; font-size:1.02rem; }
+
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .out{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .out .o{ border:1px solid var(--line); border-radius:14px; padding:1.4rem; background:var(--bg-2); }
+    .out .o .big{ font-family:var(--disp); font-weight:700; font-size:1.5rem; color:var(--head); }
+    .out .o .big .u{ color:var(--cyan); }
+    .out .o p{ color:var(--muted); font-size:.86rem; margin-top:.5rem; }
+    @media(max-width:760px){ .out{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:3rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.4rem,2.4vw,2rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; margin-top:4rem; }
+    footer a{ color:var(--indigo); }
+
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/"><- EHI</a>
-    <div class="nav-links">
-      <a href="/#upcoming"><span class="tr">upcoming</span><span class="en">upcoming</span></a>
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <span class="brand">BlackSwan<span class="badge"><span class="en">UPCOMING</span><span class="tr">YAKINDA</span></span></span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/blackswan" target="_blank" rel="noopener">GitHub</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">Rust decision engine</span>
-        <span class="btag">Federated ML</span>
-        <span class="btag">Next.js 16 cockpit</span>
-      </div>
-      <h1 class="lhero-title">BlackSwan</h1>
-      <p class="lhero-sub">
-        <span class="tr">Bankalara anlatılabilir bir federatif kredi riski vitrini: her banka kendi verisinde model eğitir, merkezi sistem sadece karar kanıtı, risk katkısı ve Calybris audit izini görür.</span>
-        <span class="en">A banking-facing federated credit risk showcase: each bank trains on its own shard, while the central layer only sees risk evidence, contribution summaries, and a Calybris audit trail.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="#architecture">
-          <span class="tr">Mimariye bak</span>
-          <span class="en">View architecture</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=BlackSwan pilot">
-          <span class="tr">Pilot konuşalım</span>
-          <span class="en">Discuss pilot</span>
-        </a>
+  <header class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">BlackSwan · Banking ML</span>
+      <h1><span class="en">Banks that learn<br><span class="grad">without sharing.</span></span><span class="tr">Paylaşmadan<br><span class="grad">öğrenen bankalar.</span></span></h1>
+      <p class="lead"><span class="en">A federated credit-risk cockpit for banking pilots. Each bank trains on <b>its own shard</b> of real Lending Club data; the center only ever sees scores, confidence, and explanations — and <b>Calybris</b> turns them into APPROVE, REVIEW, or DECLINE.</span><span class="tr">Banka pilotları için ortak öğrenen bir kredi-risk paneli. Her banka gerçek Lending Club verisinin <b>yalnızca kendi payında</b> eğitim yapar; merkez ise sadece skorları, güven düzeyini ve açıklamaları görür — <b>Calybris</b> bunları ONAY, İNCELE ya da RET kararına dönüştürür.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
+        <a class="btn btn-ghost" href="../../#contact"><span class="en">Talk to me</span><span class="tr">İletişime geç</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div class="project-console">
-        <div class="console-label">federated decision replay</div>
-        <div class="console-row"><span class="console-key">dataset</span><span class="console-val">Kaggle Lending Club accepted loans -> bank-local shards</span></div>
-        <div class="console-row"><span class="console-key">bank_a</span><span class="console-val">pd=734 bps · confidence=0.81 · top_driver=dti</span></div>
-        <div class="console-row"><span class="console-key">bank_b</span><span class="console-val">pd=681 bps · confidence=0.77 · top_driver=revol_util</span></div>
-        <div class="console-row"><span class="console-key">calybris</span><span class="console-val hot">policy=credit_v3 -> REVIEW, stress_pd=1090 bps</span></div>
-        <div class="console-row"><span class="console-key">wal</span><span class="console-val ok">hash chain verified · deterministic replay ready</span></div>
+    <div class="hero-vis">
+      <canvas id="scene"></canvas>
+      <div class="vis-legend">
+        <span><i style="background:var(--indigo)"></i><span class="en">bank shards</span><span class="tr">banka shard'ları</span></span>
+        <span><i style="background:var(--cyan)"></i><span class="en">risk evidence</span><span class="tr">risk kanıtı</span></span>
+        <span><i style="background:var(--proof)"></i><span class="en">decision</span><span class="tr">karar</span></span>
+      </div>
+    </div>
+  </header>
+
+  <section class="sec" id="problem">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
+        <h2 class="sec-title"><span class="en">Banks can't pool their data — but they still need shared signal.</span><span class="tr">Bankalar verisini birleştiremez — ama yine de ortak bir sinyale ihtiyaçları var.</span></h2>
+        <p class="sec-lead"><span class="en">A single bank's default history is thin and biased toward its own customer base. Pooling raw borrower rows across banks would give a far better risk model — but regulation, privacy, and competition make that impossible. So each institution is stuck learning credit risk alone, on a narrow slice of reality.</span><span class="tr">Tek bir bankanın geçmiş temerrüt verisi hem az hem de kendi müşteri kitlesine göre yanlı. Bankaların ham müşteri kayıtlarını bir araya getirmesi çok daha iyi bir risk modeli çıkarırdı — ama mevzuat, gizlilik ve rekabet buna izin vermez. Böylece her banka kredi riskini, gerçeğin yalnızca dar bir diliminde, tek başına öğrenmek zorunda kalır.</span></p>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>4</strong>
-      <span><span class="tr">bank-local model</span><span class="en">bank-local models</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>LC</strong>
-      <span><span class="tr">gerçek kredi verisi</span><span class="en">real credit data</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>0</strong>
-      <span><span class="tr">paylaşılan ham satır</span><span class="en">shared raw rows</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>WAL</strong>
-      <span><span class="tr">audit + replay</span><span class="en">audit + replay</span></span>
-    </div>
-  </div>
-
-  <section class="business-impact">
-    <div class="impact-label">Upcoming Build</div>
-    <p>
-      <span class="tr">BlackSwan tek bir soruyu ele alıyor: birden fazla banka, ham müşteri satırını birbirine göndermeden ortak kredi riski davranışını öğrenebilir mi? Sistem gerçek Lending Club verisiyle çalışıyor; her banka kendi shard'ında model eğitiyor, merkez yalnızca skor, güven ve açıklama özetini görüyor.</span>
-      <span class="en">BlackSwan works on one question: can several banks learn shared credit-risk behavior without sending raw customer rows to each other? It runs on real Lending Club data. Each bank trains on its own shard, and the center only ever sees scores, confidence, and explanation summaries.</span>
-    </p>
-    <div class="impact-evidence">Evidence target: Kaggle Lending Club bootstrap, bank-local model cards, Calybris policy decisions, tamper-aware WAL, failure-first test suite.</div>
-  </section>
-
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Neyi kanıtlıyor?</span>
-      <span class="en">What does it prove?</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="flow-num">01</div>
-        <h3><span class="tr">Ham veri yerinde kalıyor</span><span class="en">Raw data stays put</span></h3>
-        <p><span class="tr">Gelir segmentlerine ayrılmış bankalar kendi local modellerini eğitir. Merkezi katman ham satır değil, skor, confidence, drift ve açıklama özetleri tüketir.</span><span class="en">Income-segmented banks train local models. The central layer consumes scores, confidence, drift, and explanation summaries instead of raw borrower rows.</span></p>
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
+        <h2 class="sec-title"><span class="en">Train local, share evidence, decide central.</span><span class="tr">Yerelde eğit, kanıtı paylaş, merkezde karar ver.</span></h2>
       </div>
-      <div class="feature">
-        <div class="flow-num">02</div>
-        <h3><span class="tr">Kararı Calybris veriyor</span><span class="en">Calybris makes the call</span></h3>
-        <p><span class="tr">Calybris boundary PD, stress PD, model güveni ve politika eşiğini deterministik karara çevirir: APPROVE, REVIEW veya DECLINE.</span><span class="en">The Calybris boundary turns PD, stress PD, model confidence, and policy thresholds into deterministic APPROVE, REVIEW, or DECLINE decisions.</span></p>
-      </div>
-      <div class="feature">
-        <div class="flow-num">03</div>
-        <h3><span class="tr">Testler kırılmayı deniyor</span><span class="en">Tests try to break it</span></h3>
-        <p><span class="tr">Eksik bureau alanı, bozuk banka update'i, politika imza uyuşmazlığı, WAL kurcalama ve model drift senaryoları ürün kanıtının ana parçası olur.</span><span class="en">Missing bureau fields, corrupted bank updates, policy signature mismatch, WAL tampering, and model drift become the core proof surface.</span></p>
+      <div class="steps">
+        <div class="step rv"><div class="n">01 · YEREL</div><h3><span class="en">Shards train alone</span><span class="tr">Herkes kendi verisinde</span></h3><p><span class="en">Income-segmented banks train local models on their own data — raw rows never leave the bank.</span><span class="tr">Gelir grubuna göre ayrılmış bankalar kendi verisinde model eğitir — ham kayıtlar bankadan hiç çıkmaz.</span></p></div>
+        <div class="step rv"><div class="n">02 · KANIT</div><h3><span class="en">Only signal moves</span><span class="tr">Yalnızca sinyal gider</span></h3><p><span class="en">The center consumes scores, confidence, drift, and explanation summaries — never borrower rows.</span><span class="tr">Merkeze yalnızca skorlar, güven düzeyi, sapma ve açıklama özetleri gider — asla müşteri kayıtları değil.</span></p></div>
+        <div class="step rv"><div class="n">03 · KARAR</div><h3><span class="en">Calybris makes the call</span><span class="tr">Kararı Calybris verir</span></h3><p><span class="en">The boundary turns PD, stress PD, confidence, and thresholds into deterministic APPROVE / REVIEW / DECLINE.</span><span class="tr">Temerrüt olasılığını, stres senaryosunu, güveni ve eşikleri kesin bir ONAY / İNCELE / RET kararına çevirir.</span></p></div>
       </div>
     </div>
   </section>
 
-  <section class="lsection lsection-dark" id="architecture">
-    <h2 class="lsection-title">
-      <span class="tr">Mimari</span>
-      <span class="en">Architecture</span>
-    </h2>
-    <div class="project-flow">
-      <div class="flow-step">
-        <span class="flow-num">DATA</span>
-        <h3>Lending Club</h3>
-        <p><span class="tr">Kaggle bootstrap, veri kartı, deterministic sampling, leakage kontrolü.</span><span class="en">Kaggle bootstrap, data card, deterministic sampling, leakage checks.</span></p>
+  <section class="sec" id="impact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">03 — <span class="en">WHAT IT SHOWS</span><span class="tr">NE GÖSTERİR</span></div>
+        <h2 class="sec-title"><span class="en">Regulator-explainable, on real data.</span><span class="tr">Gerçek veride, denetçiye açıklanabilir.</span></h2>
       </div>
-      <div class="flow-step">
-        <span class="flow-num">BANKS</span>
-        <h3>Local Clients</h3>
-        <p><span class="tr">Her banka kendi shard'ında eğitir; ham satır merkezi katmana çıkmaz.</span><span class="en">Each bank trains on its own shard; raw rows never leave the local client.</span></p>
+      <div class="out">
+        <div class="o rv"><div class="big"><span class="en">Real <span class="u">data</span></span><span class="tr">Gerçek <span class="u">veri</span></span></div><p><span class="en">Built on real Lending Club data, not synthetic telemetry.</span><span class="tr">Uydurma veri değil, gerçek Lending Club verisi üstünde kuruldu.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Privacy <span class="u">by design</span></span><span class="tr">Baştan <span class="u">gizlilik</span></span></div><p><span class="en">Raw borrower rows never cross a bank boundary — only evidence does.</span><span class="tr">Ham müşteri kayıtları banka sınırını hiç geçmez — yalnızca kanıt geçer.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Audit <span class="u">trail</span></span><span class="tr">Denetim <span class="u">kaydı</span></span></div><p><span class="en">Every decision bound to a Calybris audit boundary and stress-tested with fault injection.</span><span class="tr">Her karar bir Calybris denetim sınırına bağlı ve arıza enjeksiyonuyla stres testinden geçmiş.</span></p></div>
       </div>
-      <div class="flow-step">
-        <span class="flow-num">ENGINE</span>
-        <h3>Calybris Inject</h3>
-        <p><span class="tr">Rust karar sınırı ML skorunu policy + audit + replay formatına sabitler.</span><span class="en">A Rust decision boundary fixes ML scores into policy, audit, and replay format.</span></p>
-      </div>
-      <div class="flow-step">
-        <span class="flow-num">UI</span>
-        <h3>Next.js Cockpit</h3>
-        <p><span class="tr">Risk açıklaması, banka katkıları, policy diff ve WAL doğrulama görünümü.</span><span class="en">Risk explanation, bank contributions, policy diff, and WAL verification view.</span></p>
-      </div>
-    </div>
-    <div class="tech-table" style="margin-top:2rem">
-      <div class="tech-row">
-        <span class="tech-key">Python</span>
-        <span class="tech-val">ruff + mypy + pytest · feature pipeline · calibration · bank-local model cards</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Rust</span>
-        <span class="tech-val">fixed-point risk bps · Calybris policy injection · tamper-aware WAL · deterministic replay</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Next.js 16</span>
-        <span class="tech-val">credit cockpit · applicant drilldown · federation health · audit timeline</span>
+
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Building something at a bank?</span><span class="tr">Bir bankada bir şey mi kuruyorsun?</span></h3>
+          <p><span class="en">Let's talk about federated, explainable, audit-bound ML.</span><span class="tr">Ortak öğrenen, açıklanabilir ve denetime bağlı yapay zeka konuşalım.</span></p>
+        </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a conversation →</span><span class="tr">Konuşmaya başla →</span></a>
       </div>
     </div>
   </section>
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Faul-injection testleri</span>
-      <span class="en">Fault-injection tests</span>
-    </h2>
-    <div class="proof-grid">
-      <div class="proof-card">
-        <span>privacy</span>
-        <h3><span class="tr">Ham veri sızıntısı</span><span class="en">Raw data leak attempt</span></h3>
-        <p><span class="tr">Federated payload içinde müşteri satırı, ad-hoc ID veya yüksek kardinaliteli sızıntı taşıyan alan yakalanır ve build kırılır.</span><span class="en">Federated payloads carrying customer rows, ad-hoc IDs, or high-cardinality leakage fields are rejected.</span></p>
-      </div>
-      <div class="proof-card">
-        <span>policy</span>
-        <h3><span class="tr">İmzasız politika</span><span class="en">Unsigned policy</span></h3>
-        <p><span class="tr">Threshold değişikliği imzasızsa motor karar üretmez; REVIEW fallback ve audit event üretir.</span><span class="en">Unsigned threshold changes stop the engine from issuing normal decisions; REVIEW fallback and audit events are emitted.</span></p>
-      </div>
-      <div class="proof-card">
-        <span>model</span>
-        <h3><span class="tr">Drift ve güven düşüşü</span><span class="en">Drift and low confidence</span></h3>
-        <p><span class="tr">Bankalardan biri dağılım dışına çıkarsa merkezi karar skoru değil, güvenli inceleme akışı öne alınır.</span><span class="en">When a bank moves out-of-distribution, safe review is prioritized over confident scoring.</span></p>
-      </div>
-      <div class="proof-card">
-        <span>audit</span>
-        <h3><span class="tr">WAL kurcalama</span><span class="en">WAL tampering</span></h3>
-        <p><span class="tr">Tek karar satırı değişirse hash zinciri kırılır; cockpit bunu açık kırmızı audit durumu olarak gösterir.</span><span class="en">Changing one decision row breaks the hash chain; the cockpit shows it as a hard audit failure.</span></p>
-      </div>
-    </div>
-  </section>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · BlackSwan · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <section class="lsection lsection-dark" id="roadmap">
-    <h2 class="lsection-title">
-      <span class="tr">Roadmap</span>
-      <span class="en">Roadmap</span>
-    </h2>
-    <div class="roadmap-list">
-      <div class="roadmap-item"><b>Phase 1</b><span><span class="tr">Kaggle veri bootstrap, data card, leakage kontrolleri.</span><span class="en">Kaggle bootstrap, data card, leakage checks.</span></span></div>
-      <div class="roadmap-item"><b>Phase 2</b><span><span class="tr">Bank-local eğitim, model card, calibration, drift raporu.</span><span class="en">Bank-local training, model cards, calibration, drift report.</span></span></div>
-      <div class="roadmap-item"><b>Phase 3</b><span><span class="tr">Rust karar motoru, Calybris policy gate, golden replay.</span><span class="en">Rust decision engine, Calybris policy gate, golden replay.</span></span></div>
-      <div class="roadmap-item"><b>Phase 4</b><span><span class="tr">Next.js 16 cockpit, applicant timeline, audit explorer.</span><span class="en">Next.js 16 cockpit, applicant timeline, audit explorer.</span></span></div>
-      <div class="roadmap-item"><b>Phase 5</b><span><span class="tr">Pilot pack: README, demo dataset, failure report, sales deck.</span><span class="en">Pilot pack: README, demo dataset, failure report, sales deck.</span></span></div>
-    </div>
-    <div class="honest-note">
-      <span class="tr">Kapsam: bu sayfa BlackSwan'ı canlı bankalar arası üretim ağı olarak değil, bir bankaya pilot olarak götürülebilecek federatif öğrenme ve denetlenebilir karar mimarisi olarak gösteriyor.</span>
-      <span class="en">Scope: this page presents BlackSwan as a federated-learning and auditable-decision architecture you could take into a bank as a pilot, not a live interbank production network.</span>
-    </div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <section class="lcta">
-    <h2>
-      <span class="tr">Bir bankaya pilot olarak götürülebilecek kredi riski sistemi.</span>
-      <span class="en">A credit-risk system built to run as a bank pilot.</span>
-    </h2>
-    <p>
-      <span class="tr">Gerçek veriyle başlıyor, ham satırı yerinde tutuyor ve her kararı tekrar oynatılabilir bir kanıta bağlıyor.</span>
-      <span class="en">It starts from real data, keeps raw rows in place, and ties every decision to a replayable proof.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="https://github.com/emirhuseynrmx/blackswan" target="_blank" rel="noopener">GitHub</a>
-      <a class="btn-ghost" href="/#upcoming"><span class="tr">Upcoming'e dön</span><span class="en">Back to upcoming</span></a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/"><- <span class="tr">Ana sayfa</span><span class="en">Home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Huseyin Inci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- BlackSwan federated-learning hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', AM='251,191,36', RD='251,113,133';
+    function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
+    function initState(){ s.st.ev=[]; s.st.out=[]; }
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===s.w&&h===s.h&&cv.width>0)return true; s.D=d;s.w=w;s.h=h;cv.width=w*d;cv.height=h*d;s.ctx.setTransform(d,0,0,d,0,0); initState(); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function black(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, bx=w*.16, cx=w*.56, cy=h*.5, ver=[GR,AM,RD], vlab=['APPROVE','REVIEW','DECLINE'];
+      var banks=[h*.2,h*.38,h*.56,h*.74];
+      // links bank -> center
+      banks.forEach(function(by){ ctx.strokeStyle='rgba('+IN+',.14)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(bx,by); ctx.quadraticCurveTo(w*.36,by,cx,cy); ctx.stroke(); });
+      // spawn evidence particles
+      if(t%16===0){ var bi=Math.floor(Math.random()*4); st.ev.push({by:banks[bi],p:0,sp:.02+Math.random()*.01}); }
+      st.ev=st.ev.filter(function(e){ e.p+=e.sp; var x=(1-e.p)*(1-e.p)*bx+2*(1-e.p)*e.p*(w*.36)+e.p*e.p*cx, y=(1-e.p)*(1-e.p)*e.by+2*(1-e.p)*e.p*e.by+e.p*e.p*cy;
+        nd(ctx,x,y,2,CY,.9,6);
+        if(e.p>=1){ var vi=Math.random(); st.out.push({p:0,sp:.02+Math.random()*.008,c:vi<.6?0:vi<.85?1:2,ang:(Math.random()-.5)*.5}); return false; } return true; });
+      // banks
+      banks.forEach(function(by,i){ var pulse=.6+.4*Math.sin(t*.06+i*1.7); nd(ctx,bx,by,5.5,IN,pulse,10);
+        ctx.strokeStyle='rgba('+IN+',.25)'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(bx,by,9+3*Math.sin(t*.06+i*1.7),0,6.28); ctx.stroke();
+        ctx.fillStyle='rgba('+IN+',.7)'; ctx.font='7px JetBrains Mono,monospace'; ctx.textAlign='right'; ctx.fillText('BANK '+(i+1),bx-14,by+3); });
+      // center calybris
+      ctx.strokeStyle='rgba('+CY+','+(.6+.2*Math.sin(t*.05))+')'; ctx.lineWidth=1.6;
+      ctx.beginPath(); for(var k=0;k<6;k++){ var a=Math.PI/6+k*Math.PI/3, px=cx+16*Math.cos(a), py=cy+16*Math.sin(a); k?ctx.lineTo(px,py):ctx.moveTo(px,py);} ctx.closePath(); ctx.stroke();
+      nd(ctx,cx,cy,3.5,CY,1,16);
+      ctx.fillStyle='rgba('+CY+',.85)'; ctx.font='700 8px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('CALYBRIS',cx,cy+30);
+      // outgoing verdicts
+      st.out=st.out.filter(function(o){ o.p+=o.sp; var ex=w*.92, ey=cy+o.ang*h*.5*o.p; var x=cx+(ex-cx)*o.p, y=cy+(ey-cy)*o.p;
+        nd(ctx,x,y,2.2,ver[o.c],.9,6); if(o.p>=1){ return false; } return true; });
+      // verdict labels
+      vlab.forEach(function(l,i){ ctx.fillStyle='rgba('+ver[i]+',.5)'; ctx.font='700 8px JetBrains Mono,monospace'; ctx.textAlign='left'; ctx.fillText(l, w*.82, h*(.32+i*.18)); }); }
+    var T=0;
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); black(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    loop();
+  })();
+  </script>
 </body>
 </html>

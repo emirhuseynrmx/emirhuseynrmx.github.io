@@ -1,756 +1,221 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Calybris Core - 0.5.0 Notes</title>
-  <meta name="description" content="Calybris Core 0.5.0 hazırlığı: CALY-PROOF v1, calybris-verify, state proofs, signed provenance, certificates, golden vectors, and Python conformance."/>
-  <meta name="robots" content="index, follow"/>
-  <meta name="author" content="Emir Hüseyin İnci"/>
-  <link rel="canonical" href="https://emirhuseyin.tech/calybris/"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:title" content="Calybris Core - 0.5.0 Notes"/>
-  <meta property="og:description" content="0.5.0 hazırlığı: CALY-PROOF v1, verifier CLI, state proofs, signed provenance, and conformance fixtures."/>
-  <meta property="og:url" content="https://emirhuseyin.tech/calybris/"/>
-  <meta name="twitter:card" content="summary"/>
-  <meta name="theme-color" content="#060504"/>
+  <title>Calybris Core — Decisions you can replay</title>
+  <meta name="description" content="Calybris Core is a deterministic, proof-carrying decision kernel — the engine behind Goveris. It decides whether a request is allowed, downgraded, retried, or blocked, and ships a replayable, tamper-evident audit trail."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing:border-box; }
-    :root {
-      --bg:#060504;
-      --surface:#0d0b09;
-      --surface-2:#14110e;
-      --line:#242019;
-      --line-strong:#3a3127;
-      --text:#f2f0ea;
-      --muted:#9a9588;
-      --dim:#686254;
-      --accent:#ff4800;
-      --teal:#7dd3c7;
-      --gold:#d4aa4d;
-      --mono:'JetBrains Mono', monospace;
-      --sans:'Inter', sans-serif;
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
     }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
 
-    body {
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:var(--sans);
-    }
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
 
-    a { color:inherit; }
-    code { font-family:var(--mono); overflow-wrap:anywhere; }
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
 
-    .release-bar {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:.85rem;
-      border-bottom:1px solid var(--line);
-      background:#0b0907;
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:.72rem;
-      padding:.7rem 1.25rem;
-      text-align:center;
-    }
-    .release-bar strong { color:var(--accent); font-weight:800; }
-    .release-bar a { color:var(--teal); text-decoration:none; }
-    .release-bar a:hover { text-decoration:underline; }
-    .lang-toggle {
-      border:1px solid var(--line-strong);
-      border-radius:999px;
-      background:transparent;
-      color:var(--text);
-      cursor:pointer;
-      font-family:var(--mono);
-      font-size:.68rem;
-      font-weight:800;
-      padding:.34rem .62rem;
-      line-height:1;
-    }
-    .lang-toggle:hover { border-color:var(--teal); color:var(--teal); }
+    .hero{ min-height:100svh; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:2rem; overflow:hidden; position:relative; }
+    .hero-copy{ position:relative; z-index:3; padding:7rem 0 3rem; }
+    .hero-vis{ position:relative; min-height:60vh; height:100%; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(50% 60% at 80% 45%, rgba(129,140,248,.10), transparent 65%); }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cyan); }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.4rem,5vw,4rem); line-height:1.03; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.1rem; max-width:44ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+    .vis-legend{ position:absolute; z-index:2; bottom:1.2rem; left:1.2rem; display:flex; gap:1rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; }
+    .vis-legend span{ display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); }
+    .vis-legend i{ width:8px; height:8px; border-radius:50%; }
+    @media(max-width:900px){ .hero{ grid-template-columns:1fr; } .hero-vis{ min-height:44vh; order:2; } .hero-copy{ padding-top:6rem; } }
 
-    .calybris-wrap {
-      width:min(100%, 76rem);
-      margin:0 auto;
-      padding:3.5rem 2rem 4rem;
-    }
+    .sec{ padding:clamp(4rem,8vw,7rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.5rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .sec-lead{ color:var(--muted); max-width:60ch; margin-top:1rem; font-size:1.02rem; }
 
-    .hero {
-      display:grid;
-      grid-template-columns:minmax(0, 1.08fr) minmax(20rem, .92fr);
-      gap:2.5rem;
-      align-items:center;
-      min-height:30rem;
-      padding:0;
-    }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
 
-    .brand-line {
-      display:flex;
-      align-items:center;
-      gap:.85rem;
-      margin-bottom:1.4rem;
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:.78rem;
-      font-weight:700;
-    }
-    .brand-line img {
-      width:2.4rem;
-      height:2.4rem;
-      border-radius:8px;
-      background:#111;
-      border:1px solid var(--line);
-      padding:.28rem;
-    }
+    .out{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .out .o{ border:1px solid var(--line); border-radius:14px; padding:1.4rem; background:var(--bg-2); }
+    .out .o .big{ font-family:var(--disp); font-weight:700; font-size:1.5rem; color:var(--head); }
+    .out .o .big .u{ color:var(--cyan); }
+    .out .o p{ color:var(--muted); font-size:.86rem; margin-top:.5rem; }
+    @media(max-width:760px){ .out{ grid-template-columns:1fr; } }
 
-    .status-pill {
-      display:inline-flex;
-      align-items:center;
-      gap:.45rem;
-      border:1px solid rgba(125, 211, 199, .32);
-      background:rgba(125, 211, 199, .07);
-      color:var(--teal);
-      border-radius:999px;
-      padding:.42rem .7rem;
-      font-family:var(--mono);
-      font-size:.72rem;
-      font-weight:700;
-      margin-bottom:1.1rem;
-    }
-    .status-dot {
-      width:.5rem;
-      height:.5rem;
-      border-radius:999px;
-      background:var(--teal);
-    }
+    .cta-band{ margin-top:3rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.4rem,2.4vw,2rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
 
-    .calybris-title {
-      margin:0;
-      color:var(--text);
-      font-size:4.4rem;
-      line-height:.98;
-      font-weight:900;
-      letter-spacing:0;
-    }
-    .calybris-title span { color:var(--accent); }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; margin-top:4rem; }
+    footer a{ color:var(--indigo); }
 
-    .calybris-kicker {
-      margin:1.15rem 0 0;
-      color:var(--gold);
-      font-family:var(--mono);
-      font-size:.9rem;
-      font-weight:700;
-    }
-
-    .calybris-desc {
-      margin:1.35rem 0 0;
-      max-width:46rem;
-      color:var(--muted);
-      font-size:1.06rem;
-      line-height:1.75;
-    }
-    .calybris-desc strong { color:var(--text); font-weight:700; }
-    .calybris-desc code { color:var(--teal); font-size:.92em; }
-
-    .hero-actions {
-      display:flex;
-      flex-wrap:wrap;
-      gap:.8rem;
-      margin-top:1.75rem;
-    }
-    .button {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:2.8rem;
-      padding:.78rem 1rem;
-      border-radius:8px;
-      font-family:var(--mono);
-      font-size:.78rem;
-      font-weight:800;
-      text-decoration:none;
-      border:1px solid var(--accent);
-      background:var(--accent);
-      color:#160804;
-    }
-    .button.secondary {
-      border-color:var(--line-strong);
-      background:transparent;
-      color:var(--text);
-    }
-
-    .proof-panel {
-      border:1px solid var(--line);
-      border-radius:8px;
-      background:#0a0807;
-      overflow:hidden;
-      box-shadow:0 24px 80px rgba(0,0,0,.32);
-    }
-    .proof-panel-top {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:1rem;
-      padding:.85rem 1rem;
-      border-bottom:1px solid var(--line);
-      background:var(--surface);
-      font-family:var(--mono);
-      font-size:.72rem;
-      color:var(--dim);
-    }
-    .proof-panel-top strong { color:var(--text); }
-    .proof-window {
-      padding:1.35rem;
-      display:grid;
-      gap:1rem;
-    }
-    .proof-logo {
-      display:flex;
-      align-items:center;
-      gap:.8rem;
-      padding-bottom:.9rem;
-      border-bottom:1px solid var(--line);
-    }
-    .proof-logo img {
-      width:3.4rem;
-      height:3.4rem;
-      border-radius:8px;
-      background:#111;
-      border:1px solid var(--line);
-      padding:.36rem;
-    }
-    .proof-logo strong {
-      display:block;
-      font-size:1rem;
-    }
-    .proof-logo span {
-      display:block;
-      color:var(--dim);
-      font-family:var(--mono);
-      font-size:.72rem;
-      margin-top:.2rem;
-    }
-    .proof-line {
-      display:grid;
-      grid-template-columns:8rem minmax(0, 1fr);
-      gap:.75rem;
-      align-items:start;
-      font-family:var(--mono);
-      font-size:.76rem;
-      line-height:1.65;
-    }
-    .proof-line span:first-child { color:var(--dim); }
-    .proof-line span:last-child { color:var(--muted); overflow-wrap:anywhere; }
-    .proof-line strong { color:var(--teal); }
-    .proof-line .hot { color:var(--accent); }
-
-    .stat-strip {
-      display:grid;
-      grid-template-columns:repeat(4, minmax(0, 1fr));
-      gap:1px;
-      margin-top:2.4rem;
-      border:1px solid var(--line);
-      border-radius:8px;
-      overflow:hidden;
-      background:var(--line);
-    }
-    .stat {
-      background:var(--surface);
-      padding:1rem;
-      min-width:0;
-    }
-    .stat strong {
-      display:block;
-      color:var(--text);
-      font-family:var(--mono);
-      font-size:1.05rem;
-      margin-bottom:.35rem;
-    }
-    .stat span {
-      color:var(--dim);
-      font-size:.82rem;
-      line-height:1.55;
-    }
-
-    .section {
-      padding-top:4rem;
-    }
-    .section-head {
-      display:grid;
-      grid-template-columns:minmax(0, .85fr) minmax(0, 1.15fr);
-      gap:2rem;
-      align-items:end;
-      margin-bottom:1.2rem;
-    }
-    .section-label {
-      color:var(--accent);
-      font-family:var(--mono);
-      font-size:.75rem;
-      font-weight:800;
-      margin-bottom:.55rem;
-    }
-    .section h2 {
-      margin:0;
-      font-size:2rem;
-      line-height:1.14;
-      letter-spacing:0;
-    }
-    .section-head p {
-      margin:0;
-      color:var(--muted);
-      line-height:1.75;
-      font-size:.98rem;
-    }
-
-    .version-grid {
-      display:grid;
-      grid-template-columns:1.2fr .9fr .9fr;
-      gap:1rem;
-    }
-    .version-card {
-      border:1px solid var(--line);
-      border-radius:8px;
-      background:var(--surface);
-      padding:1.2rem;
-      min-width:0;
-    }
-    .version-card.featured {
-      border-color:rgba(255,72,0,.52);
-      background:#120d0a;
-    }
-    .version-meta {
-      color:var(--dim);
-      font-family:var(--mono);
-      font-size:.72rem;
-      font-weight:700;
-      margin-bottom:.75rem;
-    }
-    .version-card h3 {
-      margin:0 0 .75rem;
-      font-size:1.25rem;
-      line-height:1.2;
-      color:var(--text);
-    }
-    .version-card p {
-      margin:0 0 1rem;
-      color:var(--muted);
-      line-height:1.7;
-      font-size:.93rem;
-    }
-    .chip-list {
-      display:flex;
-      flex-wrap:wrap;
-      gap:.45rem;
-    }
-    .chip {
-      border:1px solid var(--line-strong);
-      border-radius:999px;
-      padding:.35rem .58rem;
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:.68rem;
-      line-height:1.25;
-      overflow-wrap:anywhere;
-    }
-    .version-card.featured .chip {
-      border-color:rgba(255,72,0,.35);
-      color:#f0c1ad;
-    }
-
-    .proof-grid {
-      display:grid;
-      grid-template-columns:repeat(4, minmax(0, 1fr));
-      gap:1rem;
-    }
-    .proof-card {
-      border:1px solid var(--line);
-      border-radius:8px;
-      background:var(--surface);
-      padding:1rem;
-      min-width:0;
-    }
-    .proof-card > span {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width:2rem;
-      height:2rem;
-      border-radius:8px;
-      background:#18120d;
-      border:1px solid var(--line-strong);
-      color:var(--accent);
-      font-family:var(--mono);
-      font-weight:800;
-      margin-bottom:.85rem;
-    }
-    .proof-card h3 {
-      margin:0 0 .6rem;
-      color:var(--text);
-      font-size:1rem;
-      line-height:1.25;
-    }
-    .proof-card p {
-      margin:0;
-      color:var(--muted);
-      line-height:1.7;
-      font-size:.9rem;
-    }
-
-    .calybris-back {
-      display:inline-flex;
-      align-items:center;
-      gap:.55rem;
-      margin-top:3rem;
-      font-family:var(--mono);
-      font-size:.78rem;
-      font-weight:800;
-      color:var(--accent);
-      text-decoration:none;
-    }
-    .calybris-back:hover { text-decoration:underline; }
-
-    @media (max-width:900px) {
-      .calybris-wrap { padding:3rem 1.25rem 3.5rem; }
-      .hero { grid-template-columns:1fr; min-height:auto; }
-      .calybris-title { font-size:3.35rem; }
-      .stat-strip { grid-template-columns:repeat(2, minmax(0, 1fr)); }
-      .section-head { grid-template-columns:1fr; gap:.8rem; }
-      .version-grid { grid-template-columns:1fr; }
-      .proof-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
-    }
-
-    @media (max-width:560px) {
-      .release-bar { justify-content:space-between; text-align:left; }
-      .calybris-title { font-size:2.55rem; }
-      .calybris-desc { font-size:.98rem; }
-      .hero-actions { flex-direction:column; }
-      .button { width:100%; }
-      .proof-panel { display:none; }
-      .proof-line { grid-template-columns:1fr; gap:.15rem; }
-      .stat-strip, .proof-grid { grid-template-columns:1fr; }
-      .section h2 { font-size:1.55rem; }
-    }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
   </style>
 </head>
 <body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <nav class="nav" id="nav">
+    <a class="back" href="../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <span class="brand">Calybris Core</span>
+    <div class="nav-end">
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
+    </div>
+  </nav>
 
-  <div class="release-bar">
-    <span class="tr"><strong>0.5.0 hazırlığı</strong> · 0.4.0 son ana hat · 0.4.5 Python/adapters · <a href="/">Ana sayfa</a></span>
-    <span class="en"><strong>0.5.0 prep</strong> · 0.4.0 last main line · 0.4.5 Python/adapters · <a href="/">Home</a></span>
-    <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">EN</button>
-  </div>
-
-  <main class="calybris-wrap">
-    <section class="hero" aria-labelledby="calybris-title">
-      <div>
-        <div class="brand-line">
-          <img src="assets/calybris-mark.svg" alt="Calybris mark"/>
-          <span>Calybris Core</span>
-        </div>
-
-        <div class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span class="tr">0.5.0 hazırlıkta</span>
-          <span class="en">0.5.0 in prep</span>
-        </div>
-
-        <h1 class="calybris-title" id="calybris-title">Calybris<span> Core</span></h1>
-
-        <p class="calybris-kicker">
-          <span class="tr">Rust karar çekirdeği · audit-first</span>
-          <span class="en">Rust decision kernel · audit-first</span>
-        </p>
-
-        <p class="calybris-desc tr">
-          Calybris, <code>input + policy</code> alıp <code>execute / substitute / reject</code> kararı üretir. <strong>0.4.0</strong> production kullanımını toparladı. <strong>0.4.5</strong> Python binding ve adapterleri ekledi. <strong>0.5.0</strong> odağı daha dar: karar izini Calybris çalıştırmadan doğrulatmak.
-        </p>
-        <p class="calybris-desc en">
-          Calybris takes <code>input + policy</code> and returns an <code>execute / substitute / reject</code> decision. <strong>0.4.0</strong> cleaned up production use. <strong>0.4.5</strong> added Python bindings and adapters. <strong>0.5.0</strong> is narrower: verify the decision trail without running Calybris.
-        </p>
-
-        <div class="hero-actions">
-          <a class="button" href="#release-notes">
-            <span class="tr">0.5.0 notları</span>
-            <span class="en">0.5.0 notes</span>
-          </a>
-          <a class="button secondary" href="#proof-stack">
-            <span class="tr">Doğrulama</span>
-            <span class="en">Verification</span>
-          </a>
-        </div>
-      </div>
-
-      <aside class="proof-panel" aria-label="Calybris proof preview">
-        <div class="proof-panel-top">
-          <strong>CALY-PROOF v1</strong>
-          <span class="tr">hazırlık/0.5.0</span>
-          <span class="en">prep/0.5.0</span>
-        </div>
-        <div class="proof-window">
-          <div class="proof-logo">
-            <img src="assets/calybris-app-dark.svg" alt="Calybris application icon"/>
-            <div>
-              <strong>
-                <span class="tr">Karar sertifikası</span>
-                <span class="en">Decision certificate</span>
-              </strong>
-              <span class="tr">aday + policy + state -> sertifika</span>
-              <span class="en">candidate + policy + state -> certificate</span>
-            </div>
-          </div>
-          <div class="proof-line">
-            <span><span class="tr">digest</span><span class="en">digests</span></span>
-            <span><strong>policy</strong> / input / decision / ledger / state</span>
-          </div>
-          <div class="proof-line">
-            <span>verifier</span>
-            <span><strong>calybris-verify</strong> chain · audit · policy · --json</span>
-          </div>
-          <div class="proof-line">
-            <span><span class="tr">state</span><span class="en">trajectory</span></span>
-            <span>state_digest_before -> <strong>state_digest_after</strong></span>
-          </div>
-          <div class="proof-line">
-            <span><span class="tr">imza</span><span class="en">signature</span></span>
-            <span><strong>Ed25519</strong> provenance · signer · timestamp</span>
-          </div>
-          <div class="proof-line">
-            <span><span class="tr">sonuç</span><span class="en">result</span></span>
-            <span>
-              <span class="tr"><span class="hot">tamper / truncate / wrong policy</span> fail-closed ret</span>
-              <span class="en"><span class="hot">tamper / truncate / wrong policy</span> reject fail-closed</span>
-            </span>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-    <div class="stat-strip" aria-label="Calybris release status">
-      <div class="stat">
-        <strong>0.4.0</strong>
-        <span class="tr">son ana sürüm çizgisi</span>
-        <span class="en">last main line</span>
-      </div>
-      <div class="stat">
-        <strong>0.4.5</strong>
-        <span class="tr">Python + adapter köprüsü</span>
-        <span class="en">Python + adapter bridge</span>
-      </div>
-      <div class="stat">
-        <strong>0.5.0</strong>
-        <span class="tr">kanıt odaklı hazırlık</span>
-        <span class="en">proof-focused prep</span>
-      </div>
-      <div class="stat">
-        <strong>CALY-PROOF</strong>
-        <span class="tr">byte-exact audit contract</span>
-        <span class="en">byte-exact audit contract</span>
+  <header class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">Rust · Decision Kernel · v0.5.0</span>
+      <h1><span class="en">Decisions you<br><span class="grad">can replay.</span></span><span class="tr">Tekrar <span class="grad">oynatılabilir</span> kararlar.</span></h1>
+      <p class="lead"><span class="en">Calybris Core is the deterministic decision engine behind <b>Goveris</b>. Give it a candidate and a policy; it decides <b>allow, downgrade, retry, or block</b> — and hands back a digest and a tamper-evident WAL anyone can replay.</span><span class="tr"><b>Goveris</b>'in arkasındaki deterministik karar motoru. Bir istek ve bir kural verirsin; <b>izin ver, düşür, yeniden dene ya da durdur</b> arasından kararı üretir — ve bu kararı, kimsenin sonradan değiştiremeyeceği, herkesin baştan doğrulayabileceği bir kayıt olarak geri döner.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
+        <a class="btn btn-ghost" href="https://crates.io/crates/calybris-core" target="_blank" rel="noopener">crates.io ↗</a>
       </div>
     </div>
+    <div class="hero-vis">
+      <canvas id="scene"></canvas>
+      <div class="vis-legend">
+        <span><i style="background:var(--cyan)"></i><span class="en">scanning</span><span class="tr">tarıyor</span></span>
+        <span><i style="background:var(--proof)"></i><span class="en">verified</span><span class="tr">doğrulandı</span></span>
+        <span><i style="background:var(--indigo)"></i><span class="en">ledger</span><span class="tr">defter</span></span>
+      </div>
+    </div>
+  </header>
 
-    <section class="section" id="release-notes">
-      <div class="section-head">
+  <section class="sec" id="problem">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
+        <h2 class="sec-title"><span class="en">A decision no one can replay is just a guess.</span><span class="tr">Geri gösteremediğin bir karar, aslında bir tahmindir.</span></h2>
+        <p class="sec-lead"><span class="en">Routing, pricing, and risk systems make thousands of automated calls a second — but when a regulator, a customer, or your own team asks <em>why</em> a request was blocked or a model was downgraded, most stacks have no answer. Logs get rotated, code changes, and the decision can never be reproduced. Without a deterministic, auditable kernel, every automated decision is unaccountable.</span><span class="tr">Yönlendirme, fiyatlandırma ve risk sistemleri saniyede binlerce kararı otomatik veriyor. Ama bir denetçi, bir müşteri ya da kendi ekibin <em>neden</em> bu isteğin durdurulduğunu veya bu modelin düşürüldüğünü sorduğunda çoğu sistemin verecek cevabı yok. Kayıtlar siliniyor, kod değişiyor ve o karar bir daha üretilemiyor. Kararı belirli ve denetlenebilir bir çekirdek olmadan, verdiğin her otomatik kararın hesabını veremezsin.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
+        <h2 class="sec-title"><span class="en">Candidate + policy → decision + proof.</span><span class="tr">Aday + politika → karar + kanıt.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01 · DEĞERLENDİR</div><h3><span class="en">Score the request</span><span class="tr">İsteği tart</span></h3><p><span class="en">Cost, risk, quality floor, expected value, and tenant budget are combined into one deterministic verdict.</span><span class="tr">Maliyet, risk, en düşük kabul edilebilir kalite, beklenen fayda ve müşteri bütçesi tek bir kesin hükümde birleşir.</span></p></div>
+        <div class="step rv"><div class="n">02 · KARAR VER</div><h3><span class="en">Allow · downgrade · block</span><span class="tr">İzin ver · düşür · durdur</span></h3><p><span class="en">The kernel returns allow, downgrade, retry, or block — the same input always yields the same decision.</span><span class="tr">Çekirdek dört yanıttan birini döner: izin ver, düşür, yeniden dene ya da durdur — ve aynı girdi her zaman aynı kararı verir.</span></p></div>
+        <div class="step rv"><div class="n">03 · KANITLA</div><h3><span class="en">Digest + WAL</span><span class="tr">Kayıt + imza</span></h3><p><span class="en">Every decision is written to an HMAC-SHA256 hash-chained log — replayable and tamper-evident by anyone.</span><span class="tr">Her karar, HMAC-SHA256 ile birbirine zincirlenmiş bir kayda işlenir — sonradan değiştirilemez, herkes baştan doğrulayabilir.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="impact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">03 — <span class="en">WHAT YOU GET</span><span class="tr">NE ELDE EDERSİN</span></div>
+        <h2 class="sec-title"><span class="en">A kernel you can trust in production.</span><span class="tr">Sahada güvenebileceğin bir çekirdek.</span></h2>
+      </div>
+      <div class="out">
+        <div class="o rv"><div class="big"><span class="u">%100</span> <span class="en">deterministic</span><span class="tr">kesin</span></div><p><span class="en">Same candidate and policy, same decision — every time, on every machine.</span><span class="tr">Aynı istek ve aynı kural, her seferinde ve her makinede aynı kararı verir.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Provable <span class="u">record</span></span><span class="tr">Kanıtlanır <span class="u">kayıt</span></span></div><p><span class="en">An HMAC-SHA256 hash-chained audit trail that proves what was decided and why.</span><span class="tr">Neyin neden karara bağlandığını kanıtlayan, birbirine zincirli bir denetim kaydı.</span></p></div>
+        <div class="o rv"><div class="big"><span class="u">v0.5.0</span> <span class="en">on crates.io</span><span class="tr">crates.io'da</span></div><p><span class="en">Rust, no unsafe, Apache-2.0 — powering Goveris, LLM routing, and pre-trade guards.</span><span class="tr">Rust ile yazıldı, Apache-2.0 lisanslı; Goveris'in ve model yönlendirmesinin altında çalışıyor.</span></p></div>
+      </div>
+
+      <div class="cta-band rv">
         <div>
-          <div class="section-label">
-            <span class="tr">changelog özeti</span>
-            <span class="en">changelog summary</span>
-          </div>
-          <h2>
-            <span class="tr">0.5.0'ın derdi: kayıt aynı mı?</span>
-            <span class="en">0.5.0 asks: is the record unchanged?</span>
-          </h2>
+          <h3><span class="en">Need decisions you can defend?</span><span class="tr">Arkasında durabileceğin kararlar mı lazım?</span></h3>
+          <p><span class="en">Let's put a proof-carrying kernel at the center of your stack.</span><span class="tr">Sisteminin merkezine, her kararını kanıtlayan bir çekirdek koyalım.</span></p>
         </div>
-        <p class="tr">
-          0.5.0 çoğunlukla format işi. Digest formatı, WAL zinciri, state geçişi ve imza aynı kontrata bağlı. Fixture değişirse format değişmiştir; sessizce yeniden pinleme yok.
-        </p>
-        <p class="en">
-          0.5.0 is mostly format work. Digest format, WAL chain, state transition, and signatures follow the same contract. If fixtures change, the format changed; no silent re-pinning.
-        </p>
+        <a class="btn btn-primary" href="../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
+    </div>
+  </section>
 
-      <div class="version-grid">
-        <article class="version-card featured">
-          <div class="version-meta">
-            <span class="tr">hazırlıkta · 2026-07-04</span>
-            <span class="en">in prep · 2026-07-04</span>
-          </div>
-          <h3>0.5.0 · CALY-PROOF v1</h3>
-          <p class="tr">
-            Karar izi artık ayrı ayrı kontrol ediliyor: policy, input, decision, ledger, state, WAL sırası ve varsa imza.
-          </p>
-          <p class="en">
-            The decision trail is checked piece by piece: policy, input, decision, ledger, state, WAL order, and signature when present.
-          </p>
-          <div class="chip-list">
-            <span class="chip">CALY_PROOF.md</span>
-            <span class="chip">golden vectors</span>
-            <span class="chip">conformance suite</span>
-            <span class="chip">calybris-verify --json</span>
-            <span class="chip">stateful proofs</span>
-            <span class="chip">Ed25519 provenance</span>
-            <span class="chip">decision certificates</span>
-            <span class="chip">WASM verification path</span>
-            <span class="chip">threat model</span>
-          </div>
-        </article>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · Calybris Core · <a href="../">emirhuseyin.tech</a></footer>
 
-        <article class="version-card">
-          <div class="version-meta">
-            <span class="tr">köprü sürüm · 2026-07-01</span>
-            <span class="en">bridge release · 2026-07-01</span>
-          </div>
-          <h3>0.4.5 · Python + adapters</h3>
-          <p class="tr">
-            PyO3 binding, maturin packaging ve <code>calybris_commerce</code> geldi. Çekirdek Rust dışında da test edilebilir hale geldi.
-          </p>
-          <p class="en">
-            PyO3 bindings, maturin packaging, and <code>calybris_commerce</code> landed. The Rust core became testable outside Rust.
-          </p>
-          <div class="chip-list">
-            <span class="chip">Python binding</span>
-            <span class="chip">KernelModel API</span>
-            <span class="chip">EcomEngine.route_batch</span>
-            <span class="chip">trace_mode summary</span>
-            <span class="chip">docs/PYTHON.md</span>
-          </div>
-        </article>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-        <article class="version-card">
-          <div class="version-meta">
-            <span class="tr">son ana çizgi · 2026-06-29</span>
-            <span class="en">last major line · 2026-06-29</span>
-          </div>
-          <h3>0.4.0 · production core</h3>
-          <p class="tr">
-            Builder API, async WAL, snapshot/load, observability ve production_gateway örneği eklendi. Çekirdek daha rahat çalıştırılır hale geldi.
-          </p>
-          <p class="en">
-            Builder API, async WAL, snapshot/load, observability, and the production_gateway example landed. The core became easier to run.
-          </p>
-          <div class="chip-list">
-            <span class="chip">EngineConfig</span>
-            <span class="chip">InputBuilder</span>
-            <span class="chip">async WAL</span>
-            <span class="chip">crash recovery</span>
-            <span class="chip">EngineMetrics</span>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="proof-stack">
-      <div class="section-head">
-        <div>
-          <div class="section-label">
-            <span class="tr">doğrulama yüzeyi</span>
-            <span class="en">verification surface</span>
-          </div>
-          <h2>
-            <span class="tr">Audit tarafında çalışması gereken parçalar.</span>
-            <span class="en">Parts that must work on the audit side.</span>
-          </h2>
-        </div>
-        <p class="tr">
-          0.5.0 için hedef net: karar kaydı taşınabilir olsun, verifier tek başına hata yakalasın, Rust ve Python aynı fixture üzerinden aynı sonucu versin.
-        </p>
-        <p class="en">
-          The 0.5.0 target is concrete: make the decision record portable, let the verifier catch errors alone, and keep Rust and Python on the same fixtures.
-        </p>
-      </div>
-
-      <div class="proof-grid">
-        <article class="proof-card">
-          <span>01</span>
-          <h3>
-            <span class="tr">Byte-exact digest</span>
-            <span class="en">Byte-exact digest</span>
-          </h3>
-          <p class="tr">Policy, input, decision, ledger ve state digest'leri versiyonlu tag'lerle bağlanıyor.</p>
-          <p class="en">Policy, input, decision, ledger, and state digests use versioned tags.</p>
-        </article>
-
-        <article class="proof-card">
-          <span>02</span>
-          <h3>
-            <span class="tr">Auditor CLI</span>
-            <span class="en">Auditor CLI</span>
-          </h3>
-          <p class="tr"><code>calybris-verify</code> chain, audit ve policy kontrolleri için 0/1/2 exit code döndürüyor.</p>
-          <p class="en"><code>calybris-verify</code> returns 0/1/2 exit codes for chain, audit, and policy checks.</p>
-        </article>
-
-        <article class="proof-card">
-          <span>03</span>
-          <h3>
-            <span class="tr">Decision certificates</span>
-            <span class="en">Decision certificates</span>
-          </h3>
-          <p class="tr">Audit bundle, WAL pozisyonu, state trajectory ve optional signer tek sertifikada tutuluyor.</p>
-          <p class="en">Audit bundle, WAL position, state trajectory, and optional signer live in one certificate.</p>
-        </article>
-
-        <article class="proof-card">
-          <span>04</span>
-          <h3>
-            <span class="tr">Cross-language contract</span>
-            <span class="en">Cross-language contract</span>
-          </h3>
-          <p class="tr">Rust ve Python testleri aynı fixture dosyasından aynı digest'i üretmek zorunda.</p>
-          <p class="en">Rust and Python tests must produce the same digest from the same fixture file.</p>
-        </article>
-      </div>
-
-    </section>
-
-    <a href="/" class="calybris-back">
-      <span aria-hidden="true">←</span>
-      <span class="tr">ana sayfa</span>
-      <span class="en">home</span>
-    </a>
-  </main>
-
-<script>
-(function(){
-  var html=document.documentElement;
-  var button=document.getElementById('langToggle');
-  var saved=localStorage.getItem('ehi-lang')||'tr';
-
-  function setLang(lang){
-    var next=lang==='en'?'en':'tr';
-    html.classList.remove('lang-tr','lang-en');
-    html.classList.add('lang-'+next);
-    html.lang=next;
-    localStorage.setItem('ehi-lang',next);
-    if(button) button.textContent=next==='tr'?'EN':'TR';
-  }
-
-  setLang(saved);
-  if(button){
-    button.addEventListener('click',function(){
-      setLang(html.classList.contains('lang-en')?'tr':'en');
-    });
-  }
-})();
-
-(function(){
-  var dot=document.getElementById('c-dot');
-  var ring=document.getElementById('c-ring');
-  if(!dot||!ring)return;
-  var mx=window.innerWidth/2,my=window.innerHeight/2;
-  var rx=mx,ry=my;
-  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;dot.style.transform='translate3d('+(mx-4)+'px,'+(my-4)+'px,0)';});
-  (function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.transform='translate3d('+(rx-16)+'px,'+(ry-16)+'px,0)';requestAnimationFrame(loop);})();
-})();
-</script>
+  /* ---- Calybris scanning-verifier hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
+    function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+    function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
+    function initState(){ s.st.sw=0; }
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===s.w&&h===s.h&&cv.width>0)return true; s.D=d;s.w=w;s.h=h;cv.width=w*d;cv.height=h*d;s.ctx.setTransform(d,0,0,d,0,0); initState(); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function calybris(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, n=6, m=w*.12, gap=10, bw=(w-m*2-gap*(n-1))/n, bh=Math.min(60,h*.16), rows=3;
+      st.sw+=.004; if(st.sw>1.15)st.sw=-.15; var head=st.sw*w;
+      for(var row=0; row<rows; row++){ var y=h*(.26+row*.2);
+        ctx.strokeStyle='rgba('+IN+',.3)'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(m,y+bh/2); ctx.lineTo(w-m,y+bh/2); ctx.stroke();
+        for(var i=0;i<n;i++){ var bx=m+i*(bw+gap), cxb=bx+bw/2, near=Math.abs(cxb-head)<bw*1.1, col=near?GR:IN;
+          ctx.strokeStyle='rgba('+col+','+(near?.9:.4)+')'; ctx.lineWidth=1.3; roundRect(ctx,bx,y,bw,bh,5); ctx.stroke();
+          if(near){ ctx.fillStyle='rgba('+GR+',.12)'; roundRect(ctx,bx,y,bw,bh,5); ctx.fill(); ctx.fillStyle='rgba('+GR+',1)'; ctx.font='700 12px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('✓',cxb,y+bh/2+4); }
+          else { ctx.fillStyle='rgba('+IN+',.5)'; ctx.font='7px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText(('a3f'+(i+row)+'9c').slice(0,5),cxb,y+bh/2+3); } } }
+      var hx=Math.max(m,Math.min(w-m,head)); ctx.strokeStyle='rgba('+CY+',.85)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(hx,h*.16); ctx.lineTo(hx,h*.82); ctx.stroke();
+      nd(ctx,hx,h*.16,2.6,CY,1,12); nd(ctx,hx,h*.82,2.6,CY,1,12);
+      ctx.fillStyle='rgba('+CY+',.85)'; ctx.font='700 9px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('CALYBRIS',w/2,h*.92); }
+    var T=0;
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); calybris(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    loop();
+  })();
+  </script>
 </body>
 </html>

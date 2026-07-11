@@ -1,868 +1,543 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Emir H. İnci — Python · Makine Öğrenmesi · Veri Mühendisliği</title>
-  <meta name="description" content="Emir Hüseyin İnci — Python developer. Veri pipeline, makine öğrenmesi, web scraping, PDF raporlama. Upwork'te freelance."/>
-  <meta name="author" content="Emir Hüseyin İnci"/>
-  <meta name="robots" content="index, follow"/>
-  <meta name="theme-color" content="#06040f"/>
-  <link rel="canonical" href="https://emirhuseyin.tech/"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:title" content="Emir H. İnci — Python Developer"/>
-  <meta property="og:description" content="Veriyle çalışıyorum. Pipeline kurar, model eğitir, rapor teslim ederim."/>
-  <meta property="og:url" content="https://emirhuseyin.tech/"/>
+  <title>Emir H. İnci — High-Stakes Systems, Delivered with Proof</title>
+  <meta name="description" content="I help companies de-risk their AI, fintech, and data infrastructure with auditable, high-performance systems — every delivery ships with proof."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    /* Flagship feature — Calybris Handover 3D card */
-    .flagship-feature{ perspective:1600px; margin-top:1.5rem; }
-    .ucard--feature{ min-height:18rem; grid-template-columns:1.05fr .95fr; grid-template-rows:1fr; gap:1.8rem; align-items:center; }
-    .ucard--feature .ff-copy{ display:flex; flex-direction:column; justify-content:center; transform:translateZ(26px); transform-style:preserve-3d; }
-    .ucard--feature .ff-copy .ucard-arrow{ margin-top:1.1rem; }
-    .ucard-visual-handover{ min-height:14.5rem; background:#050403;
-      background-image:linear-gradient(90deg,rgba(255,72,0,.05) 1px,transparent 1px),linear-gradient(180deg,rgba(255,72,0,.05) 1px,transparent 1px);
-      background-size:26px 26px; }
-    .hv-chip{ position:absolute; top:1.1rem; right:1.1rem; transform:translateZ(62px);
-      font-family:'JetBrains Mono',monospace; font-size:.6rem; font-weight:800; letter-spacing:.08em;
-      color:#10b981; background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.4); padding:.26rem .6rem; border-radius:6px; }
-    .hv-score{ position:absolute; top:.95rem; left:1.35rem; transform:translateZ(52px); color:#f0ede8; font-weight:900; line-height:1; }
-    .hv-score b{ font-size:2.7rem; }
-    .hv-score small{ font-size:.9rem; color:#6b6858; font-weight:700; }
-    .hv-band{ position:absolute; left:1.35rem; right:1.35rem; top:4.7rem; height:9px; border-radius:99px; transform:translateZ(34px); overflow:visible;
-      background:linear-gradient(90deg,rgba(16,185,129,.65) 0 30%,rgba(245,158,11,.6) 30% 80%,rgba(239,68,68,.6) 80% 100%); }
-    .hv-mark{ position:absolute; left:17%; top:-4px; width:2.5px; height:17px; background:#f0ede8; border-radius:2px; box-shadow:0 0 8px rgba(240,237,232,.5); }
-    .hv-rows{ position:absolute; left:1.35rem; right:1.35rem; bottom:1.1rem; transform:translateZ(44px); display:flex; flex-direction:column; gap:.45rem; font-family:'JetBrains Mono',monospace; font-size:.6rem; }
-    .hv-rows div{ display:flex; justify-content:space-between; align-items:center; border-top:1px solid #17140f; padding-top:.45rem; }
-    .hv-rows i{ color:#6b6858; font-style:normal; }
-    .hv-rows b{ color:#10b981; }
-    .hv-rows em{ color:#8a857a; font-style:normal; }
-    @media (max-width:760px){ .ucard--feature{ grid-template-columns:1fr; } .ucard-visual-handover{ min-height:12rem; } }
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --warn:#fbbf24; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    img{ display:block; max-width:100%; }
+    section{ position:relative; }
+    .wrap{ max-width:1200px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s,background .18s; }
+    .cur-r.big{ width:64px; height:64px; border-color:rgba(34,211,238,.7); background:rgba(34,211,238,.06); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:border-color .3s,background .3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.82); }
+    .brand{ font-family:var(--disp); font-weight:700; letter-spacing:.02em; font-size:1.05rem; display:flex; align-items:center; gap:.55rem; }
+    .brand .mk{ width:26px; height:26px; border-radius:7px; background:linear-gradient(135deg,var(--cyan),var(--indigo)); display:grid; place-items:center; color:#04121a; font-weight:800; font-size:.72rem; box-shadow:var(--glow); }
+    .nav-links{ display:flex; gap:1.6rem; font-family:var(--mono); font-size:.76rem; letter-spacing:.03em; color:var(--muted); }
+    .nav-links a{ position:relative; transition:color .2s; }
+    .nav-links a::after{ content:''; position:absolute; left:0; bottom:-5px; height:1px; width:0; background:var(--cyan); transition:width .25s; }
+    .nav-links a:hover{ color:var(--text); } .nav-links a:hover::after{ width:100%; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.74rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em;
+      padding:.5rem .95rem; border-radius:8px; border:1px solid var(--line-2); color:var(--text); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+    @media(max-width:820px){ .nav-links{ display:none; } }
+
+    .hero{ min-height:100svh; display:flex; align-items:center; overflow:hidden; }
+    #net{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.95; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:radial-gradient(120% 80% at 72% 26%, transparent 42%, var(--bg) 80%),
+                 radial-gradient(55% 45% at 15% 92%, rgba(129,140,248,.10), transparent 60%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.26em; text-transform:uppercase; color:var(--cyan); display:inline-flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .eyebrow::before{ content:''; width:26px; height:1px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .avail{ display:inline-flex; align-items:center; gap:.5rem; margin-left:.5rem; font-family:var(--mono); font-size:.68rem; color:var(--proof); text-transform:none; letter-spacing:.02em; }
+    .avail .d{ width:7px; height:7px; border-radius:50%; background:var(--proof); box-shadow:0 0 0 4px rgba(52,211,153,.16); animation:pulse 2s infinite; }
+    @keyframes pulse{ 50%{ box-shadow:0 0 0 7px rgba(52,211,153,0); } }
+    h1.title{ font-family:var(--disp); font-weight:700; font-size:clamp(2.6rem,6.4vw,5.4rem); line-height:1.02; letter-spacing:-.03em; color:var(--head); margin:1.5rem 0 0; max-width:17ch; }
+    h1.title .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.4rem; font-size:clamp(1.02rem,1.6vw,1.28rem); color:var(--muted); max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.9rem; margin-top:2.2rem; flex-wrap:wrap; }
+    .hero-sys{ display:flex; flex-wrap:wrap; align-items:center; gap:.55rem; margin-top:2.6rem; max-width:60ch; }
+    .hero-sys .hl{ font-family:var(--mono); font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-right:.35rem; }
+    .hero-sys a{ font-family:var(--mono); font-size:.74rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.4rem .9rem; transition:transform .2s,border-color .2s,color .2s,box-shadow .2s; }
+    .hero-sys a:hover{ color:var(--text); border-color:var(--cyan); box-shadow:var(--glow); transform:translateY(-2px); }
+    .btn{ font-family:var(--mono); font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.9rem 1.5rem; border-radius:10px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); box-shadow:var(--glow); }
+    .scroll-hint{ position:absolute; left:50%; bottom:1.6rem; transform:translateX(-50%); z-index:2; font-family:var(--mono); font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); display:flex; flex-direction:column; align-items:center; gap:.5rem; }
+    .scroll-hint .bar{ width:1px; height:34px; background:linear-gradient(var(--cyan),transparent); animation:drop 1.8s infinite; }
+    @keyframes drop{ 0%{ opacity:0; transform:scaleY(.3); transform-origin:top; } 50%{ opacity:1; } 100%{ opacity:0; transform:scaleY(1); } }
+
+    .sec{ padding:clamp(4.5rem,9vw,8rem) 0; }
+    .sec-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; margin-bottom:3rem; flex-wrap:wrap; }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.9rem,3.6vw,2.9rem); letter-spacing:-.02em; color:var(--head); margin-top:.5rem; line-height:1.08; }
+    .sec-sub{ color:var(--muted); max-width:48ch; font-size:.98rem; }
+
+    .stats{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:linear-gradient(180deg,var(--bg-2),var(--bg)); }
+    .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); }
+    .stat{ padding:clamp(2rem,4vw,3rem) 1.4rem; border-left:1px solid var(--line); }
+    .stat:first-child{ border-left:none; }
+    .stat .n{ font-family:var(--disp); font-weight:700; font-size:clamp(1.9rem,3.4vw,2.7rem); color:var(--head); letter-spacing:-.02em; line-height:1; }
+    .stat .n .u{ color:var(--cyan); }
+    .stat .l{ margin-top:.6rem; font-family:var(--mono); font-size:.72rem; color:var(--muted); letter-spacing:.02em; text-transform:uppercase; }
+    @media(max-width:760px){ .stats-grid{ grid-template-columns:1fr 1fr; } .stat:nth-child(3){ border-left:none; } }
+
+    .cases{ display:flex; flex-direction:column; gap:1.4rem; }
+    .case{ position:relative; display:grid; grid-template-columns:1.15fr .85fr; gap:2rem; align-items:center;
+      background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:20px;
+      padding:clamp(1.6rem,3vw,2.6rem); overflow:hidden; transform-style:preserve-3d;
+      transform:perspective(1200px) rotateX(var(--rx,0)) rotateY(var(--ry,0)); transition:border-color .3s,box-shadow .3s; }
+    .case::before{ content:''; position:absolute; inset:0; z-index:0; opacity:0; transition:opacity .3s; pointer-events:none;
+      background:radial-gradient(500px circle at var(--mx,50%) var(--my,0%), rgba(34,211,238,.10), transparent 60%); }
+    .case:hover{ border-color:var(--line-2); box-shadow:0 40px 90px rgba(0,0,0,.5); }
+    .case:hover::before{ opacity:1; }
+    .case > *{ position:relative; z-index:1; }
+    .case-tag{ font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--indigo); }
+    .case h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.5rem,2.6vw,2.1rem); color:var(--head); margin:.5rem 0 .9rem; letter-spacing:-.02em; }
+    .pss{ display:flex; flex-direction:column; gap:.65rem; }
+    .pss div{ display:grid; grid-template-columns:78px 1fr; gap:.7rem; font-size:.92rem; align-items:start; }
+    .pss .k{ font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); padding-top:.28rem; }
+    .pss .v{ color:var(--muted); } .pss .v b{ color:var(--text); font-weight:600; }
+    .pss .impact .v{ color:var(--text); }
+    .case-cta{ display:inline-flex; align-items:center; gap:.45rem; margin-top:1.3rem; font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--cyan); transition:gap .2s; }
+    .case:hover .case-cta{ gap:.85rem; }
+    .case-vis{ position:relative; min-height:230px; height:100%; border:1px solid var(--line); border-radius:14px; background:var(--bg); overflow:hidden; transform:translateZ(30px); }
+    .cvis{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+    .vis-cap{ position:absolute; left:.9rem; bottom:.8rem; z-index:2; font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+    @media(max-width:820px){ .case{ grid-template-columns:1fr; } .case-vis{ min-height:170px; } }
+
+    .proofband{ margin-top:1.4rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(80% 140% at 100% 0%, rgba(52,211,153,.10), transparent 60%), var(--panel); padding:clamp(1.6rem,3vw,2.4rem); display:grid; grid-template-columns:1fr auto; gap:1.4rem; align-items:center; }
+    .proofband h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.7rem); color:var(--head); }
+    .proofband p{ color:var(--muted); margin-top:.5rem; max-width:62ch; font-size:.95rem; }
+    .chip{ font-family:var(--mono); font-weight:700; font-size:.64rem; letter-spacing:.06em; padding:.28rem .6rem; border-radius:6px; }
+    .chip.g{ color:var(--proof); background:rgba(52,211,153,.12); border:1px solid rgba(52,211,153,.35); }
+    @media(max-width:820px){ .proofband{ grid-template-columns:1fr; } }
+
+    .grid2{ display:grid; grid-template-columns:repeat(2,1fr); gap:1.1rem; }
+    .card{ position:relative; background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.5rem; overflow:hidden; transform-style:preserve-3d; transform:perspective(900px) rotateX(var(--rx,0)) rotateY(var(--ry,0)); transition:border-color .3s,box-shadow .3s; display:block; }
+    .card::before{ content:''; position:absolute; left:1.5rem; right:1.5rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); opacity:.8; }
+    .card:hover{ border-color:var(--line-2); box-shadow:0 30px 70px rgba(0,0,0,.5); }
+    .card .kick{ font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--indigo); }
+    .card h4{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.5rem 0 .5rem; letter-spacing:-.01em; }
+    .card p{ color:var(--muted); font-size:.88rem; }
+    .card .go{ margin-top:1rem; font-family:var(--mono); font-size:.72rem; color:var(--cyan); display:inline-flex; gap:.4rem; transition:gap .2s; }
+    .card:hover .go{ gap:.75rem; }
+    .card .meta{ display:flex; gap:.4rem; flex-wrap:wrap; margin-top:1rem; }
+    .card .meta span{ font-family:var(--mono); font-size:.56rem; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); border:1px solid var(--line); border-radius:4px; padding:.2rem .45rem; }
+    @media(max-width:640px){ .grid2{ grid-template-columns:1fr; } }
+
+    .tools{ display:grid; grid-template-columns:1fr 1fr; gap:.7rem 2rem; }
+    .tool{ display:grid; grid-template-columns:auto 1fr; gap:.9rem; padding:1rem .3rem; border-bottom:1px solid var(--line); align-items:baseline; transition:padding-left .2s; }
+    .tool:hover{ padding-left:.6rem; } .tool:hover .tool-n{ color:var(--cyan); }
+    .tool-n{ font-family:var(--disp); font-weight:600; font-size:1rem; color:var(--head); transition:color .2s; white-space:nowrap; }
+    .tool-d{ color:var(--muted); font-size:.86rem; }
+    @media(max-width:760px){ .tools{ grid-template-columns:1fr; } }
+
+    .xp{ display:flex; flex-direction:column; gap:.2rem; }
+    .xp a{ display:grid; grid-template-columns:auto 1fr auto; gap:1rem; align-items:center; padding:1.15rem .4rem; border-top:1px solid var(--line); transition:background .2s,padding-left .2s; }
+    .xp a:last-child{ border-bottom:1px solid var(--line); }
+    .xp a:hover{ padding-left:.7rem; }
+    .xp .src{ font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--indigo); width:70px; }
+    .xp .t{ color:var(--text); font-size:1rem; font-family:var(--disp); font-weight:500; }
+    .xp .ar{ font-family:var(--mono); color:var(--dim); transition:color .2s,transform .2s; }
+    .xp a:hover .ar{ color:var(--cyan); transform:translateX(4px); }
+
+    .cta-sec{ border-top:1px solid var(--line); background:radial-gradient(70% 120% at 50% 0%, rgba(34,211,238,.08), transparent 60%); text-align:center; }
+    .cta-sec h2{ font-family:var(--disp); font-weight:700; font-size:clamp(2rem,4.6vw,3.6rem); letter-spacing:-.03em; color:var(--head); line-height:1.05; }
+    .cta-sec h2 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .cta-sec p{ color:var(--muted); max-width:54ch; margin:1.2rem auto 0; font-size:1.05rem; }
+    .cta-sec .cta-row{ justify-content:center; }
+    .cta-links{ display:flex; gap:1.6rem; justify-content:center; margin-top:2.2rem; font-family:var(--mono); font-size:.78rem; color:var(--muted); flex-wrap:wrap; }
+    .cta-links a{ transition:color .2s; } .cta-links a:hover{ color:var(--cyan); }
+
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+
+    .rv{ opacity:0; transform:translateY(24px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+    @media(prefers-reduced-motion:reduce){ .rv{ opacity:1; transform:none; } #net{ display:none; } }
   </style>
 </head>
 <body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
-
-  <!-- ── NAV ── -->
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">EHİ</a>
+    <a class="brand" href="#top"><span class="mk">EHİ</span> Emir H. İnci</a>
     <div class="nav-links">
-      <a href="#work"><span class="tr">işler</span><span class="en">work</span></a>
-      <a href="#upcoming"><span class="tr">yakında</span><span class="en">upcoming</span></a>
-      <a href="#tools"><span class="tr">araçlar</span><span class="en">tools</span></a>
-      <a href="#research"><span class="tr">araştırma</span><span class="en">research</span></a>
-      <a href="#stack">stack</a>
-      <a href="#contact"><span class="tr">iletişim</span><span class="en">contact</span></a>
+      <a href="#systems"><span class="en">Systems</span><span class="tr">Sistemler</span></a>
+      <a href="#proof"><span class="en">Proof</span><span class="tr">Kanıt</span></a>
+      <a href="#rnd">R&amp;D</a>
+      <a href="#toolbox"><span class="en">Toolbox</span><span class="tr">Araçlar</span></a>
+      <a href="#expertise"><span class="en">Expertise</span><span class="tr">Uzmanlık</span></a>
     </div>
     <div class="nav-end">
-      <span class="nav-avail">
-        <span class="avail-dot"></span>
-        <span class="tr">Açığım</span><span class="en">Available</span>
-      </span>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button" aria-label="Switch language">TR</button>
+      <a class="nav-cta mag" href="#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <!-- ── HERO ── -->
-  <section class="hero" id="hero">
-    <div class="hero-tag">
-      <span class="tr">Python · Makine Öğrenmesi · Veri Mühendisliği</span>
-      <span class="en">Python · Machine Learning · Data Engineering</span>
-    </div>
-
-    <h1 class="hero-name">Emir Hüseyin</h1>
-
-    <div class="hero-meta">
-      <span>Bursa, Turkey</span>
-      <span class="hero-sep">·</span>
-      <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-    </div>
-
-    <div class="hero-actions">
-      <a class="btn-primary" href="#work">
-        <span class="tr">İşlerimi gör</span>
-        <span class="en">See my work</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub ↗</a>
-      <a class="btn-ghost" href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener">LinkedIn ↗</a>
-    </div>
-
-    <div class="hero-scroll" aria-hidden="true">
-      <span class="tr">aşağı kaydır</span>
-      <span class="en">scroll down</span>
-      <span class="scroll-arrow">↓</span>
-    </div>
-  </section>
-
-  <!-- ── TICKER ── -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span>PYTHON</span><b>·</b>
-      <span>PANDAS</span><b>·</b>
-      <span>SCIKIT-LEARN</span><b>·</b>
-      <span>FASTAPI</span><b>·</b>
-      <span>PYDANTIC</span><b>·</b>
-      <span>PANDERA</span><b>·</b>
-      <span>MACHINE LEARNING</span><b>·</b>
-      <span>DATA PIPELINE</span><b>·</b>
-      <span>WEB SCRAPING</span><b>·</b>
-      <span>PDF REPORTS</span><b>·</b>
-      <span>PYTEST</span><b>·</b>
-      <span>GITHUB ACTIONS</span><b>·</b>
-      <span>PYTHON</span><b>·</b>
-      <span>PANDAS</span><b>·</b>
-      <span>SCIKIT-LEARN</span><b>·</b>
-      <span>FASTAPI</span><b>·</b>
-      <span>MACHINE LEARNING</span><b>·</b>
-      <span>DATA PIPELINE</span><b>·</b>
-      <span>WEB SCRAPING</span><b>·</b>
-      <span>PDF REPORTS</span><b>·</b>
-    </div>
-  </div>
-
-  <!-- ── WORK / İŞLER ── -->
-  <section class="section" id="work">
-    <header class="section-head">
-      <span class="section-num">01</span>
-      <h2 class="section-title">
-        <span class="tr">Flagship Sistemler</span>
-        <span class="en">Flagship Systems</span>
-      </h2>
-      <p class="section-sub">
-        <span class="tr">Öne çıkan sistemler: Aegis, Calybris, LuceThemis, Aera ve Goveris — ve yeni teslim aracı Calybris Handover. Daha küçük teslim paketleri aşağıda ayrı duruyor.</span>
-        <span class="en">Flagship systems: Aegis, Calybris, LuceThemis, Aera, and Goveris — plus the new delivery tool Calybris Handover. Smaller delivery packages are separated below.</span>
-      </p>
-    </header>
-
-    <div class="deck-scene">
-      <div class="deck-wrap" id="deck-wrap">
-
-        <div class="dcard">
-          <div class="dcard-body">
-            <span class="dcard-num">001</span>
-            <div class="btags">
-              <span class="btag">AI · LLM · Cost Governance</span>
-            </div>
-            <h3>Goveris</h3>
-            <p>
-              <span class="tr">LLM harcamalarını izleyen AI maliyet yönetim gateway'i. Token, model ve departman bazında harcama denetimi ve audit trail.</span>
-              <span class="en">AI cost governance gateway for LLM spend. Token, model, and department-level spend audit with full audit trail.</span>
-            </p>
-            <div class="dcard-cta">
-              <a class="dcard-link" href="./goveris/">
-                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
-              </a>
-              <span class="dcard-out">cost report · audit trail</span>
-            </div>
-          </div>
-          <div class="dcard-panel">
-            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">cost governance gateway</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">input</span><span class="dcard-pval">LLM API calls</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">tracks</span><span class="dcard-pval hi">tokens · cost · dept</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">output</span><span class="dcard-pval">audit trail · CSV report</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">status</span><span class="dcard-pval">active build</span></div>
-          </div>
-        </div>
-
-        <div class="dcard">
-          <div class="dcard-body">
-            <span class="dcard-num">002</span>
-            <div class="btags">
-              <span class="btag">ML · Telecom · Prescriptive</span>
-            </div>
-            <h3>Aegis</h3>
-            <p>
-              <span class="tr">Telecom churn için prescriptive analytics engine. Sadece tahmin değil — counterfactual açıklama, finansal etki, causal treatment önerisi.</span>
-              <span class="en">Prescriptive analytics engine for telecom churn. Not just prediction — counterfactual explanation, financial impact, causal treatment recommendation.</span>
-            </p>
-            <div class="dcard-cta">
-              <a class="dcard-link" href="./aegis/">
-                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
-              </a>
-              <span class="dcard-out">prescriptions · financial impact</span>
-            </div>
-          </div>
-          <div class="dcard-panel">
-            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">prescriptive analytics</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">domain</span><span class="dcard-pval">telecom churn</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">ml</span><span class="dcard-pval hi">causal inference</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">output</span><span class="dcard-pval">prescriptions · PDF</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">beyond</span><span class="dcard-pval">prediction → action</span></div>
-          </div>
-        </div>
-
-        <div class="dcard">
-          <div class="dcard-body">
-            <span class="dcard-num">003</span>
-            <div class="btags">
-              <span class="btag">AI Agents · Finance · PDF</span>
-            </div>
-            <h3>AeraCFO</h3>
-            <p>
-              <span class="tr">KOBİ'ler için otonom AI CFO platformu. CSV yükle, 3 ajan (Planner, Executor, Critic) analiz eder, board-ready PDF çıkar.</span>
-              <span class="en">Autonomous AI CFO platform for SMEs. Upload CSV, 3-agent pipeline analyzes, outputs board-ready PDF.</span>
-            </p>
-            <div class="dcard-cta">
-              <a class="dcard-link" href="./aera/">
-                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
-              </a>
-              <span class="dcard-out">forecasts · anomalies · PDF</span>
-            </div>
-          </div>
-          <div class="dcard-panel">
-            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">autonomous AI CFO</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">agents</span><span class="dcard-pval hi">planner · executor · critic</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">input</span><span class="dcard-pval">CSV / XLSX</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">output</span><span class="dcard-pval">board-ready PDF</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">target</span><span class="dcard-pval">SMEs</span></div>
-          </div>
-        </div>
-
-        <div class="dcard">
-          <div class="dcard-body">
-            <span class="dcard-num">004</span>
-            <div class="btags">
-              <span class="btag">HFT · Quant · Risk Engine</span>
-            </div>
-            <h3>LuceThemis</h3>
-            <p>
-              <span class="tr">HFT sınıfı sinyal denetim ve pre-trade risk motoru. 4.6M kontrol/sn. Kurumsal quant masaları için denetlenebilir karar kaydı.</span>
-              <span class="en">HFT-grade signal audit and pre-trade risk engine. 4.6M checks/sec. Auditable decision trail for institutional quant desks.</span>
-            </p>
-            <div class="dcard-cta">
-              <a class="dcard-link" href="./lucethemis/">
-                <span class="tr">Ürüne bak</span><span class="en">View product</span> →
-              </a>
-              <span class="dcard-out">audit trail · risk decisions</span>
-            </div>
-          </div>
-          <div class="dcard-panel">
-            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">pre-trade risk engine</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">speed</span><span class="dcard-pval hi">4.6M checks / sec</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">audit</span><span class="dcard-pval">hash-chained WAL</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">domain</span><span class="dcard-pval">institutional quant</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">latency</span><span class="dcard-pval">sub-millisecond</span></div>
-          </div>
-        </div>
-
-        <div class="dcard">
-          <div class="dcard-body">
-            <span class="dcard-num">005</span>
-            <div class="btags">
-              <span class="btag">Rust · Decision Kernel · Audit</span>
-            </div>
-            <h3>Calybris Core</h3>
-            <p>
-              <span class="tr">Deterministik proof-carrying karar çekirdeği. Aday + kısıt → karar + digest + WAL. LLM routing ve pre-trade guard referans kullanımları. v0.5.0 crates.io'da yayında.</span>
-              <span class="en">Deterministic proof-carrying decision kernel. Candidate + policy → decision + digests + WAL. LLM routing and pre-trade guard as reference use cases. v0.5.0 published on crates.io.</span>
-            </p>
-            <div class="dcard-cta">
-              <a class="dcard-link" href="./calybris/">
-                <span class="tr">Core'a bak</span><span class="en">View core</span> →
-              </a>
-              <span class="dcard-out">v0.5.0 · apache-2.0</span>
-            </div>
-          </div>
-          <div class="dcard-panel">
-            <div class="dcard-prow"><span class="dcard-pkey">type</span><span class="dcard-pval">decision kernel</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">lang</span><span class="dcard-pval">Rust (no unsafe)</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">audit</span><span class="dcard-pval">HMAC-SHA256 WAL</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">status</span><span class="dcard-pval hi">v0.5.0 · active</span></div>
-            <div class="dcard-prow"><span class="dcard-pkey">ci</span><span class="dcard-pval">Loom · Miri · proptest</span></div>
-          </div>
-        </div>
-
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <canvas id="net"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Proof-carrying systems · AI · Fintech · Data</span><span class="tr">Kanıt taşıyan sistemler · AI · Fintech · Veri</span>
+        <span class="avail"><span class="d"></span><span class="en">Available for high-impact projects</span><span class="tr">Yüksek etkili projeler için müsaitim</span></span>
+      </span>
+      <h1 class="title"><span class="en">High-Stakes Systems,<br><span class="grad">Delivered with Proof.</span></span><span class="tr">Kritik Sistemler,<br><span class="grad">Kanıtıyla Teslim.</span></span></h1>
+      <p class="lead"><span class="en">I build <b>auditable, high-performance systems</b> for AI, fintech, and data — the kind that prove their own decisions. Everything I ship comes with a verifiable acceptance report.</span><span class="tr">Yapay zeka, fintech ve veri için <b>denetlenebilir, yüksek performanslı sistemler</b> kuruyorum — kararını kanıtlayabilen türden. Teslim ettiğim her işin arkasında, doğrulanabilir bir kabul raporu bırakırım.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary mag" href="#contact"><span class="en">Let's build →</span><span class="tr">Hadi kuralım →</span></a>
+        <a class="btn btn-ghost mag" href="#systems"><span class="en">See the proof</span><span class="tr">Kanıtı gör</span></a>
       </div>
-      <div class="deck-nav">
-        <button class="deck-btn" id="deck-prev">← <span class="tr">önceki</span><span class="en">prev</span></button>
-        <span class="deck-counter" id="deck-counter">01 / 05</span>
-        <button class="deck-btn" id="deck-next"><span class="tr">sonraki</span><span class="en">next</span> →</button>
+      <div class="hero-sys">
+        <span class="hl"><span class="en">Systems</span><span class="tr">Sistemler</span></span>
+        <a href="aegis/">Aegis</a>
+        <a href="calybris/">Calybris Core</a>
+        <a href="lucethemis/">LuceThemis</a>
+        <a href="aera/">AeraCFO</a>
+        <a href="goveris/">Goveris</a>
       </div>
-      <p class="deck-hint">← → <span class="tr">ok tuşları da çalışıyor</span><span class="en">keyboard arrows also work</span></p>
     </div>
+    <div class="scroll-hint"><span>scroll</span><span class="bar"></span></div>
+  </header>
 
-    <div class="flagship-feature">
-      <a class="ucard ucard--feature" href="./handover/">
-        <div class="ff-copy">
-          <span class="ucard-kicker">Calybris Handover · Delivery Acceptance</span>
-          <h3>Calybris Handover</h3>
-          <p>
-            <span class="tr">Bir repoyu denetler, teslim riskini ölçer ve Calybris Core'a <em>ACCEPT / CONDITIONAL / REJECT</em> kararı verdirir. Sonuç: replay-doğrulanmış kanıt paketiyle premium Typst PDF teslim raporu.</span>
-            <span class="en">Audits a repo, quantifies delivery risk, and lets Calybris Core decide <em>ACCEPT / CONDITIONAL / REJECT</em> — shipped as a premium Typst PDF report with a replay-verified proof bundle.</span>
-          </p>
-          <div class="ucard-meta">
-            <span>Python CLI</span><span>Calybris Core 0.5.0</span><span>Typst PDF</span><span>replay-verified</span>
-          </div>
-          <span class="ucard-arrow"><span class="tr">ürüne bak →</span><span class="en">view product →</span></span>
-        </div>
-        <div class="ucard-visual ucard-visual-handover" aria-hidden="true">
-          <div class="hv-chip">ACCEPT</div>
-          <div class="hv-score"><b>83</b><small>/100</small></div>
-          <div class="hv-band"><span class="hv-mark"></span></div>
-          <div class="hv-rows">
-            <div><i>replay_valid</i><b>true</b></div>
-            <div><i>candidate</i><em>1 · ACCEPT</em></div>
-            <div><i>decision_digest</i><em>659886c7…</em></div>
-          </div>
-        </div>
-      </a>
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat"><div class="n"><span data-count="20">0</span><span class="u">+</span></div><div class="l"><span class="en">Systems &amp; tools built</span><span class="tr">Kurduğum sistem ve araç</span></div></div>
+      <div class="stat"><div class="n"><span data-count="4.6" data-dec="1">0</span><span class="u">M</span></div><div class="l"><span class="en">Checks / second · LuceThemis</span><span class="tr">Kontrol / saniye · LuceThemis</span></div></div>
+      <div class="stat"><div class="n">v0.5.0<span class="u"> ↗</span></div><div class="l"><span class="en">Calybris Core on crates.io</span><span class="tr">Calybris Core · crates.io</span></div></div>
+      <div class="stat"><div class="n">100<span class="u">%</span></div><div class="l"><span class="en">Reproducible &amp; auditable</span><span class="tr">Tekrar üretilebilir, denetlenebilir</span></div></div>
     </div>
   </section>
 
-  <!-- ── UPCOMING PROJECTS ── -->
-  <section class="section" id="upcoming">
-    <header class="section-head">
-      <span class="section-num">01B</span>
-      <h2 class="section-title">
-        <span class="tr">Upcoming Projects</span>
-        <span class="en">Upcoming Projects</span>
-      </h2>
-      <p class="section-sub">
-        <span class="tr">Şu an geliştirdiğim iki sistem: bankalar için federatif kredi riski, füzyon araştırması için Calybris tabanlı disruption güvenlik motoru. İkisi de gerçek veriyle, kırılmayı hedefleyen testlerle ve tekrar oynatılabilir karar iziyle çalışıyor.</span>
-        <span class="en">Two systems I'm building now: federated credit risk for banks, and a Calybris-based disruption guard for fusion research. Both run on real data, tests written to break them, and a replayable decision trail.</span>
-      </p>
-    </header>
-
-    <div class="upcoming-grid">
-      <a class="ucard" href="./work/blackswan/">
-        <div class="ucard-copy">
-          <span class="ucard-kicker">BlackSwan · Banking ML</span>
-          <h3>Federated Credit Risk Cockpit</h3>
-          <p>
-            <span class="tr">Kaggle Lending Club verisiyle bankalara anlatılabilir, Calybris audit sınırına bağlanan federatif kredi karar sistemi.</span>
-            <span class="en">A federated credit decision system built for banking pilots, using Kaggle Lending Club data and a Calybris audit boundary.</span>
-          </p>
-          <div class="ucard-meta">
-            <span>Rust + Python</span>
-            <span>Next.js cockpit</span>
-            <span>fault injection</span>
-          </div>
-        </div>
-        <div class="ucard-visual ucard-visual-bank" aria-hidden="true">
-          <div class="fed-scene">
-            <div class="fed-link fed-link-a"></div>
-            <div class="fed-link fed-link-b"></div>
-            <div class="fed-link fed-link-c"></div>
-            <div class="fed-core">PD</div>
-            <div class="fed-node fed-node-a">A</div>
-            <div class="fed-node fed-node-b">B</div>
-            <div class="fed-node fed-node-c">C</div>
-          </div>
-        </div>
-        <span class="ucard-arrow">case page -></span>
-      </a>
-
-      <a class="ucard" href="./work/calybris-plasmaguard/">
-        <div class="ucard-copy">
-          <span class="ucard-kicker">Calybris PlasmaGuard · Fusion Safety</span>
-          <h3>Tokamak Disruption Guard</h3>
-          <p>
-            <span class="tr">FAIR-MAST gerçek tokamak shot'ları, conformal ML ve Rust replay motoruyla CONTINUE / MITIGATE / ABORT karar zinciri.</span>
-            <span class="en">FAIR-MAST tokamak shots, conformal ML, and a Rust replay engine that turns risk into CONTINUE / MITIGATE / ABORT decisions.</span>
-          </p>
-          <div class="ucard-meta">
-            <span>FAIR-MAST</span>
-            <span>Calybris Core</span>
-            <span>verified WAL</span>
-          </div>
-        </div>
-        <div class="ucard-visual ucard-visual-plasma" aria-hidden="true">
-          <div class="torus">
-            <div class="torus-ring"></div>
-            <div class="torus-ring"></div>
-            <div class="torus-ring"></div>
-            <div class="torus-ring"></div>
-            <div class="torus-core"></div>
-          </div>
-          <div class="plasma-gate">ABORT</div>
-        </div>
-        <span class="ucard-arrow">case page -></span>
-      </a>
-    </div>
-  </section>
-
-  <!-- ── SCRIPTS / DELIVERY PACKAGES ── -->
-  <section class="section" id="tools">
-    <header class="section-head">
-      <span class="section-num">02</span>
-      <h2 class="section-title">
-        <span class="tr">Scripts</span>
-        <span class="en">Scripts</span>
-      </h2>
-      <p class="section-sub">
-        <span class="tr">Geliştirilmiş otomasyon ve analiz paketleri — testli, CI'lı, teslim edilebilir.</span>
-        <span class="en">Developed automation and analytics packages — tested, CI-ready, deliverable.</span>
-      </p>
-    </header>
-
-    <div class="mini-grid">
-
-      <a class="mcard" href="./work/scraping-data-pipeline/">
-        <span class="mcard-tag">Python · async · Pydantic</span>
-        <h3>Scraping Data Pipeline</h3>
-        <p>
-          <span class="tr">Config'den async web scraping. Selector değiştirmek için kod açmana gerek yok.</span>
-          <span class="en">Config-driven async web scraper. No code changes to swap selectors.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/price-monitor-pipeline/">
-        <span class="mcard-tag">FastAPI · Thompson Sampling</span>
-        <h3>Price Monitor Pipeline</h3>
-        <p>
-          <span class="tr">Rakip fiyatlarını async çeker, ML ile anomali işaretler, idempotent API'dan servis eder.</span>
-          <span class="en">Pulls competitor prices async, ML anomaly flagging, served via idempotent API.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/data-quality-cleaning-api/">
-        <span class="mcard-tag">FastAPI · Pandas · Pandera</span>
-        <h3>Data Quality Cleaning API</h3>
-        <p>
-          <span class="tr">Ham veriyi endpoint'e gönder, temiz veri al. Tip çıkarımı, imputation, duplicate tespiti.</span>
-          <span class="en">Send raw data, get clean data back. Type inference, imputation, duplicate detection.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/csv-excel-cleaning-toolkit/">
-        <span class="mcard-tag">Pandas 3.x · openpyxl · chardet</span>
-        <h3>CSV / Excel Cleaning Toolkit</h3>
-        <p>
-          <span class="tr">Bozuk CSV'yi alır, temizler, istediğin formata çevirir. Encoding + tip sorunları otomatik.</span>
-          <span class="en">Takes broken CSVs, cleans them, converts to your format. Encoding + type issues handled automatically.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/trading-performance-report-kit/">
-        <span class="mcard-tag">Quant · matplotlib · PDF</span>
-        <h3>Trading Performance Report Kit</h3>
-        <p>
-          <span class="tr">Trade log CSV → tam performans raporu: P&amp;L, equity curve, drawdown, PDF.</span>
-          <span class="en">Trade log CSV → full performance report: P&amp;L, equity curve, drawdown, PDF.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/churn-prediction-retention-report/">
-        <span class="mcard-tag">ML · sklearn · PDF</span>
-        <h3>Churn Prediction Report</h3>
-        <p>
-          <span class="tr">GradientBoosting ile churn skoru, risk segmentasyonu ve PDF rapor. Otomatik feature engineering.</span>
-          <span class="en">GradientBoosting churn scoring, risk segmentation, PDF report. Automatic feature engineering.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/rl-pricing-bandit-simulator/">
-        <span class="mcard-tag">Python · Thompson Sampling · Litestar</span>
-        <h3>RL Pricing Bandit</h3>
-        <p>
-          <span class="tr">Thompson Sampling ile fiyatlandırma ve teklif deneyleri. Reward feedback, posterior güncelleme, offline replay raporu.</span>
-          <span class="en">Pricing and offer experiments with Thompson Sampling. Reward feedback, posterior updates, offline policy replay report.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/counterfactual-lead-scoring-lab/">
-        <span class="mcard-tag">Python · SHAP · DiCE · Litestar</span>
-        <h3>Counterfactual Lead Scoring</h3>
-        <p>
-          <span class="tr">Lead skorlama + SHAP sürücü analizi + DiCE counterfactual aksiyon planlaması. Satışa yönlendirmeden önce incelenebilir kararlar.</span>
-          <span class="en">Lead scoring + SHAP driver review + DiCE counterfactual action planning. Reviewable decisions before routing leads to sales.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/rag-chatbot-template/">
-        <span class="mcard-tag">Python · RAG · FastAPI · TF-IDF</span>
-        <h3>RAG Chatbot</h3>
-        <p>
-          <span class="tr">Doküman tabanlı local RAG chatbot. TF-IDF vektör deposu, kaynak gösterimi, chunk metadata. Harici API çağrısı yok.</span>
-          <span class="en">Local RAG chatbot for documents. TF-IDF vector store, source-aware retrieval, chunk metadata. No external API calls required.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/telegram-business-bot-template/">
-        <span class="mcard-tag">Python · Telegram Bot API · Pydantic</span>
-        <h3>Telegram Business Bot</h3>
-        <p>
-          <span class="tr">Lead toplama, SSS yanıtlama, sipariş durumu ve CSV dışa aktarma. Küçük işletme otomasyonu için hazır şablon.</span>
-          <span class="en">Lead capture, FAQ replies, order status stubs, and admin CSV export. Ready-to-deploy template for small-business automation.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/n8n-business-automation-workflows/">
-        <span class="mcard-tag">n8n · Python · Google Sheets</span>
-        <h3>n8n Business Workflows</h3>
-        <p>
-          <span class="tr">Form→Sheets lead yakalama, e-posta AI özeti, Telegram alert yönlendirme, günlük satış digest. Test edilmiş, özelleştirilebilir şablonlar.</span>
-          <span class="en">Lead form to Sheets, email AI summary, Telegram alert routing, daily sales digest. Tested, customizable workflow templates.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/tradingview-bandit-alert-router/">
-        <span class="mcard-tag">Python · TradingView · Thompson Sampling</span>
-        <h3>TV Alert Bandit Router</h3>
-        <p>
-          <span class="tr">TradingView webhook'larını doğrula, risk guard'dan geçir, Thompson Sampling ile rota seç. Kapalı döngü reward feedback.</span>
-          <span class="en">Validate TradingView webhooks, apply risk guards, route via Thompson Sampling. Closed-loop reward feedback for arm learning.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/tradingview-strategy-risk-lab/">
-        <span class="mcard-tag">Python · sklearn · SHAP · DiCE</span>
-        <h3>TV Strategy Risk Lab</h3>
-        <p>
-          <span class="tr">TradingView Strategy Tester export'unu kötü işlem risk modeline dönüştür. SHAP global sürücüler, DiCE counterfactual trade koşulları.</span>
-          <span class="en">Convert TradingView Strategy Tester exports into a bad-trade risk model. SHAP global drivers, DiCE counterfactual trade conditions.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-      <a class="mcard" href="./work/criteo-uplift-modeling-benchmark/">
-        <span class="mcard-tag">Python · Uplift · Causal Forest · 7M rows</span>
-        <h3>Criteo Uplift Benchmark</h3>
-        <p>
-          <span class="tr">7M satır Criteo v2.1 üzerinde S/T/X/DR-Learner ve Causal Forest karşılaştırması. AUUC, Qini, top-decile kaldıraç metrikleri.</span>
-          <span class="en">S/T/X/DR-Learner and Causal Forest benchmark on 7M-row Criteo v2.1. AUUC, Qini curve, top-decile incremental uplift metrics.</span>
-        </p>
-        <span class="mcard-arrow">→</span>
-      </a>
-
-    </div>
-  </section>
-
-  <!-- ── RESEARCH ── -->
-  <section class="section" id="research">
-    <header class="section-head">
-      <span class="section-num">03</span>
-      <h2 class="section-title">
-        <span class="tr">Araştırma</span>
-        <span class="en">Research</span>
-      </h2>
-    </header>
-    <div class="research-row">
-      <article class="rcard rcard-feat">
-        <div class="rcard-tags">
-          <span class="btag btag-py">Python</span>
-          <span class="btag btag-ml">Benchmark</span>
-        </div>
-        <h3><a href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark" target="_blank" rel="noopener">Criteo Uplift Modeling Benchmark</a></h3>
-        <p>
-          <span class="tr">7 milyon satırlık benchmark. S-Learner, T-Learner, X-Learner, DR-Learner ve Causal Forest karşılaştırması.</span>
-          <span class="en">7M-row benchmark: S-Learner, T-Learner, X-Learner, DR-Learner, Causal Forest comparison.</span>
-        </p>
-        <div class="rcard-stats">
-          <div><span>AUUC</span><strong>3,405.48</strong></div>
-          <div><span>top-decile</span><strong>6.23×</strong></div>
-          <div><span>incremental</span><strong>~6,865</strong></div>
-        </div>
-      </article>
-      <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener" class="rcard rcard-kaggle">
-        <div class="kaggle-icon">
-          <svg viewBox="0 0 24 24" width="24" height="24"><path d="M18.825 23.859c-.022.092-.117.141-.281.141h-3.139c-.187 0-.351-.082-.492-.248l-5.178-6.589-1.448 1.374v5.111c0 .235-.117.352-.351.352H5.505c-.236 0-.354-.117-.354-.352V.353c0-.233.118-.353.354-.353h2.431c.234 0 .351.12.351.353v14.343l6.203-6.272c.165-.165.33-.246.495-.246h3.239c.144 0 .236.06.281.18.046.141.021.246-.07.316L12.076 15l6.819 8.563c.068.09.09.186.068.296z" fill="#20BEFF"/></svg>
-        </div>
+  <!-- CASE STUDIES -->
+  <section class="sec" id="systems">
+    <div class="wrap">
+      <div class="sec-head rv">
         <div>
-          <h4>Kaggle Notebooks</h4>
-          <ul class="knotebooks">
-            <li>S&amp;P 500 Stress-Aware Stock Ranking with Causal ML <b>6</b></li>
-            <li>A Deep Dive into Uplift Modeling (7M Scale) <b>3</b></li>
-            <li>FinLLM QLoRA Fine-Tuning on Kaggle T4 <b>1</b></li>
-          </ul>
+          <div class="sec-num"><span class="en">01 — SOLUTIONS</span><span class="tr">01 — ÇÖZÜMLER</span></div>
+          <h2 class="sec-title"><span class="en">Case studies, not a project list.</span><span class="tr">Proje listesi değil, vaka çalışmaları.</span></h2>
         </div>
-      </a>
+        <p class="sec-sub"><span class="en">Each system starts from a business problem and ends with measurable, verifiable impact. Every one is auditable end to end.</span><span class="tr">Her sistem bir iş probleminden başlar, ölçülebilir ve doğrulanabilir bir etkiyle biter. Hepsi baştan sona denetlenebilir.</span></p>
+      </div>
+
+      <div class="cases">
+        <article class="case tilt rv">
+          <div>
+            <div class="case-tag">Telecom · Prescriptive ML</div>
+            <h3><span class="en">Aegis — Churn, solved with causal proof</span><span class="tr">Aegis — Churn'ü nedensel kanıtla çöz</span></h3>
+            <div class="pss">
+              <div><span class="k">Problem</span><span class="v"><span class="en">Telecoms see churn coming but can't tell <b>why</b> a customer leaves — or what action actually changes the outcome.</span><span class="tr">Telekomlar churn'ü öngörür ama bir müşterinin <b>neden</b> ayrıldığını — ya da hangi aksiyonun sonucu değiştirdiğini — söyleyemez.</span></span></div>
+              <div><span class="k"><span class="en">Solution</span><span class="tr">Çözüm</span></span><span class="v"><span class="en">A prescriptive engine that goes beyond prediction: <b>counterfactual explanations</b>, financial-impact scoring, and causal treatment recommendations.</span><span class="tr">Tahminin ötesine geçen bir motor: <b>"ne değişseydi kalırdı" açıklamaları</b>, kararın finansal etkisi ve nedene dayalı aksiyon önerileri.</span></span></div>
+              <div class="impact"><span class="k">Impact</span><span class="v"><span class="en">Turns a churn score into a ranked list of <b>retention actions with expected revenue saved</b> — decisions, not dashboards.</span><span class="tr">Churn skorunu, <b>beklenen kurtarılan gelirle sıralı bir retention aksiyon listesine</b> çevirir — dashboard değil, karar.</span></span></div>
+            </div>
+            <a class="case-cta" href="aegis/"><span class="en">See the impact →</span><span class="tr">Etkiyi gör →</span></a>
+          </div>
+          <div class="case-vis"><canvas class="cvis" data-anim="aegis"></canvas><span class="vis-cap">prediction → action</span></div>
+        </article>
+
+        <article class="case tilt rv">
+          <div>
+            <div class="case-tag">Rust · Decision Kernel · Audit</div>
+            <h3><span class="en">Calybris Core — Decisions you can replay</span><span class="tr">Calybris Core — Geri gösterebildiğin kararlar</span></h3>
+            <div class="pss">
+              <div><span class="k">Problem</span><span class="v"><span class="en">Automated decisions (LLM routing, pre-trade guards) are trusted blindly — with <b>no way to prove</b> why a given call was made.</span><span class="tr">Model yönlendirme ya da işlem öncesi kontrol gibi otomatik kararlara körü körüne güveniliyor — neden verildiğini <b>kanıtlamanın bir yolu yok</b>.</span></span></div>
+              <div><span class="k"><span class="en">Solution</span><span class="tr">Çözüm</span></span><span class="v"><span class="en">A deterministic, proof-carrying kernel: candidate + policy → decision + <b>cryptographic digests + tamper-evident WAL</b>.</span><span class="tr">Kararı belirli, kanıtını yanında taşıyan bir çekirdek: istek + kural → karar + <b>değiştirilemez bir kayıt ve imza</b>.</span></span></div>
+              <div class="impact"><span class="k">Impact</span><span class="v"><span class="en">Any decision can be <b>replayed and independently verified</b>. Published v0.5.0 on crates.io.</span><span class="tr">Her karar <b>baştan çalıştırılıp bağımsızca doğrulanabilir</b>. v0.5.0 crates.io'da yayında.</span></span></div>
+            </div>
+            <a class="case-cta" href="calybris/"><span class="en">See the impact →</span><span class="tr">Etkiyi gör →</span></a>
+          </div>
+          <div class="case-vis"><canvas class="cvis" data-anim="calybris"></canvas><span class="vis-cap">replay · verified</span></div>
+        </article>
+
+        <article class="case tilt rv">
+          <div>
+            <div class="case-tag">HFT-Grade · Systems Engineering</div>
+            <h3><span class="en">LuceThemis — Rules at market speed</span><span class="tr">LuceThemis — Piyasa hızında kurallar</span></h3>
+            <div class="pss">
+              <div><span class="k">Problem</span><span class="v"><span class="en">Compliance and risk rules must fire in the hot path <b>without slowing the trade</b> — millions of decisions per second.</span><span class="tr">Uyum ve risk kuralları, <b>işlemi yavaşlatmadan</b> sıcak yolda çalışmalı — saniyede milyonlarca karar.</span></span></div>
+              <div><span class="k"><span class="en">Solution</span><span class="tr">Çözüm</span></span><span class="v"><span class="en">A latency-obsessed rule engine engineered for the microsecond budget of high-frequency systems.</span><span class="tr">Yüksek frekanslı sistemlerin mikrosaniyelik bütçesine göre, gecikmeyi en aza indirmek için tasarlanmış bir kural motoru.</span></span></div>
+              <div class="impact"><span class="k">Impact</span><span class="v"><span class="en">Sustains <b>4.6M checks/second</b> with a technical-depth-first architecture.</span><span class="tr">Sağlam bir mimariyle saniyede <b>4,6 milyon kontrolü</b> kesintisiz sürdürür.</span></span></div>
+            </div>
+            <a class="case-cta" href="lucethemis/"><span class="en">See the impact →</span><span class="tr">Etkiyi gör →</span></a>
+          </div>
+          <div class="case-vis"><canvas class="cvis" data-anim="luce"></canvas><span class="vis-cap">≈ 4.6M checks / s</span></div>
+        </article>
+
+        <article class="case tilt rv">
+          <div>
+            <div class="case-tag">AI Agents · Finance · PDF</div>
+            <h3><span class="en">AeraCFO — An autonomous CFO for SMEs</span><span class="tr">AeraCFO — KOBİ'ler için otonom CFO</span></h3>
+            <div class="pss">
+              <div><span class="k">Problem</span><span class="v"><span class="en">Small businesses can't afford a finance team, and raw CSVs don't turn into <b>decisions</b>.</span><span class="tr">Küçük işletmeler finans ekibi tutamaz; ham tablolar da kendiliğinden <b>karara</b> dönüşmez.</span></span></div>
+              <div><span class="k"><span class="en">Solution</span><span class="tr">Çözüm</span></span><span class="v"><span class="en">A 3-agent pipeline (Planner · Executor · Critic) that reads a CSV and reasons over cash flow, runway, and risk.</span><span class="tr">Bir CSV'yi okuyup nakit akışı, elde kalan süre ve risk üzerine akıl yürüten üç yapay zeka ajanı (Planlayıcı · Uygulayıcı · Denetleyici).</span></span></div>
+              <div class="impact"><span class="k">Impact</span><span class="v"><span class="en">Outputs a <b>board-ready PDF</b> — analysis a founder can act on, in minutes.</span><span class="tr"><b>Yönetime hazır bir PDF</b> üretir — kurucunun dakikalar içinde harekete geçebileceği bir analiz.</span></span></div>
+            </div>
+            <a class="case-cta" href="aera/"><span class="en">See the impact →</span><span class="tr">Etkiyi gör →</span></a>
+          </div>
+          <div class="case-vis"><canvas class="cvis" data-anim="aera"></canvas><span class="vis-cap">CSV → board-ready PDF</span></div>
+        </article>
+
+        <article class="case tilt rv">
+          <div>
+            <div class="case-tag">AI · LLM · Cost Governance</div>
+            <h3><span class="en">Goveris — Stop LLM spend from leaking</span><span class="tr">Goveris — LLM harcaması sızmasın</span></h3>
+            <div class="pss">
+              <div><span class="k">Problem</span><span class="v"><span class="en">LLM bills explode with <b>no visibility</b> into which team, model, or token spent what.</span><span class="tr">Yapay zeka faturaları katlanıyor; hangi ekibin, hangi modelin ne harcadığı <b>görünmüyor</b>.</span></span></div>
+              <div><span class="k"><span class="en">Solution</span><span class="tr">Çözüm</span></span><span class="v"><span class="en">A cost-governance gateway that meters spend by token, model, and department with a full audit trail.</span><span class="tr">Harcamayı model, ekip ve departman bazında, eksiksiz bir kayıtla ölçen bir maliyet yönetim katmanı.</span></span></div>
+              <div class="impact"><span class="k">Impact</span><span class="v"><span class="en">Turns an opaque invoice into an <b>auditable cost report</b> leadership can defend.</span><span class="tr">Anlaşılmaz bir faturayı, yönetimin arkasında durabileceği <b>denetlenebilir bir maliyet raporuna</b> çevirir.</span></span></div>
+            </div>
+            <a class="case-cta" href="goveris/"><span class="en">See the impact →</span><span class="tr">Etkiyi gör →</span></a>
+          </div>
+          <div class="case-vis"><canvas class="cvis" data-anim="goveris"></canvas><span class="vis-cap">spend → audit</span></div>
+        </article>
+      </div>
+
+      <div class="proofband rv" id="proof">
+        <div>
+          <span class="chip g"><span class="en">EVERY DELIVERY</span><span class="tr">HER TESLİMAT</span></span>
+          <h3 style="margin-top:.7rem"><span class="en">Calybris Handover — proof shipped with the work</span><span class="tr">Calybris Handover — işle birlikte gelen kanıt</span></h3>
+          <p><span class="en">Calybris Handover turns a delivery into an independent, tamper-evident acceptance report: it confirms the code builds, tests pass, it's documented, and another team can run it — verified by Calybris Core and reproducible by anyone.</span><span class="tr">Calybris Handover, bir teslimi bağımsız ve sonradan değiştirilemez bir kabul raporuna dönüştürür: kodun derlendiğini, testlerin geçtiğini, dokümanının olduğunu ve başka bir ekibin çalıştırabildiğini doğrular — Calybris Core ile onaylanmış, herkesçe yeniden üretilebilir.</span></p>
+        </div>
+        <a class="btn btn-ghost mag" href="handover/"><span class="en">See a sample report →</span><span class="tr">Örnek rapora bak →</span></a>
+      </div>
     </div>
   </section>
 
-  <!-- ── STACK ── -->
-  <section class="section" id="stack">
-    <header class="section-head">
-      <span class="section-num">04</span>
-      <h2 class="section-title">Stack</h2>
-    </header>
-    <div class="stack-rows">
-      <div class="stack-row">
-        <span class="stack-label">Core</span>
-        <div class="stack-pills">
-          <span class="pill pill-hot">Python 3.12</span>
-          <span class="pill pill-hot">Pandas</span>
-          <span class="pill pill-hot">scikit-learn</span>
-          <span class="pill">Rust</span>
-          <span class="pill">R</span>
-          <span class="pill">FastAPI</span>
-          <span class="pill">Pydantic v2</span>
-          <span class="pill">Pandera</span>
-          <span class="pill">httpx</span>
-        </div>
+  <!-- R&D -->
+  <section class="sec" id="rnd">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="sec-num"><span class="en">02 — INNOVATION LAB</span><span class="tr">02 — AR-GE LAB</span></div><h2 class="sec-title"><span class="en">What's next.</span><span class="tr">Sırada ne var.</span></h2></div>
+        <p class="sec-sub"><span class="en">Where I invest ahead of the market — proof-carrying systems for problems most teams aren't tooled for yet.</span><span class="tr">Piyasanın önünde çalıştığım alan — çoğu ekibin henüz elini atmadığı problemler için, kararını kanıtlayan sistemler.</span></p>
       </div>
-      <div class="stack-row">
-        <span class="stack-label">ML</span>
-        <div class="stack-pills">
-          <span class="pill">XGBoost</span>
-          <span class="pill">LightGBM</span>
-          <span class="pill">Random Forest</span>
-          <span class="pill">LSTM</span>
-          <span class="pill">TFT</span>
-          <span class="pill">DoubleML</span>
-          <span class="pill">Causal ML</span>
-          <span class="pill">Thompson Sampling</span>
-          <span class="pill">SHAP</span>
-          <span class="pill">Uplift Modeling</span>
-        </div>
+      <div class="grid2">
+        <a class="card tilt rv" href="work/blackswan/">
+          <div class="kick">BlackSwan · Banking ML</div>
+          <h4>Federated Credit Risk Cockpit</h4>
+          <p><span class="en">A federated credit-decision system for banking pilots — explainable to regulators, bound to a Calybris audit boundary, and stress-tested with fault injection.</span><span class="tr">Banka pilotları için ortak öğrenen bir kredi-karar sistemi — denetçilere açıklanabilir, bir Calybris denetim sınırına bağlı ve arıza enjeksiyonuyla stres testinden geçmiş.</span></p>
+          <div class="meta"><span>Rust + Python</span><span>Next.js cockpit</span><span>federated</span></div>
+          <span class="go"><span class="en">explore →</span><span class="tr">keşfet →</span></span>
+        </a>
+        <a class="card tilt rv" href="work/calybris-plasmaguard/">
+          <div class="kick">Calybris PlasmaGuard · Fusion Safety</div>
+          <h4>Tokamak Disruption Guard</h4>
+          <p><span class="en">Real FAIR-MAST tokamak shots + conformal ML + a Rust replay engine that turns disruption risk into CONTINUE / MITIGATE / ABORT — with a verified decision trail.</span><span class="tr">Gerçek FAIR-MAST tokamak deneyleri, güven aralıklı bir model ve plazma çökme riskini DEVAM / ÖNLEM AL / DURDUR kararına çeviren bir Rust motoru — doğrulanmış bir karar kaydıyla.</span></p>
+          <div class="meta"><span>FAIR-MAST</span><span>conformal ML</span><span>verified WAL</span></div>
+          <span class="go"><span class="en">explore →</span><span class="tr">keşfet →</span></span>
+        </a>
       </div>
-      <div class="stack-row">
-        <span class="stack-label"><span class="tr">Veri</span><span class="en">Data</span></span>
-        <div class="stack-pills">
-          <span class="pill">SQL</span>
-          <span class="pill">Apache Arrow</span>
-          <span class="pill">CSV / Excel</span>
-          <span class="pill">Parquet</span>
-          <span class="pill">SQLite</span>
-          <span class="pill">PostgreSQL</span>
-        </div>
+    </div>
+  </section>
+
+  <!-- TOOLBOX -->
+  <section class="sec" id="toolbox">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="sec-num"><span class="en">03 — MICRO-SOLUTIONS</span><span class="tr">03 — MİKRO-ÇÖZÜMLER</span></div><h2 class="sec-title"><span class="en">Ready-to-use automation tools.</span><span class="tr">Kullanıma hazır otomasyon araçları.</span></h2></div>
+        <p class="sec-sub"><span class="en">Small, tested, CI-ready packages that solve one painful problem well — deployable the day they land.</span><span class="tr">Tek bir baş ağrısını iyi çözen; test edilmiş, kuruluma hazır küçük paketler — teslim edildiği gün çalışır.</span></p>
       </div>
-      <div class="stack-row">
-        <span class="stack-label">Infra</span>
-        <div class="stack-pills">
-          <span class="pill">Docker</span>
-          <span class="pill">GitHub Actions</span>
-          <span class="pill">pytest</span>
-          <span class="pill">ruff</span>
-          <span class="pill">Codecov</span>
-          <span class="pill">Typst PDF</span>
+      <div class="tools rv">
+        <a class="tool" href="work/trading-performance-report-kit/"><span class="tool-n">Trading Report Kit</span><span class="tool-d"><span class="en">Messy trade logs → a full P&amp;L, equity-curve and drawdown PDF in minutes.</span><span class="tr">Dağınık işlem kayıtları → dakikalar içinde eksiksiz bir kâr-zarar, sermaye eğrisi ve düşüş raporu.</span></span></a>
+        <a class="tool" href="work/scraping-data-pipeline/"><span class="tool-n">Scraping Pipeline</span><span class="tool-d"><span class="en">Config-driven async scraper — swap targets without touching code.</span><span class="tr">Ayardan çalışan hızlı bir veri çekme aracı — koda dokunmadan hedef değiştir.</span></span></a>
+        <a class="tool" href="work/price-monitor-pipeline/"><span class="tool-n">Price Monitor</span><span class="tool-d"><span class="en">Async competitor-price pulls with ML anomaly flags, served via an idempotent API.</span><span class="tr">Rakip fiyatlarını çeker, sıra dışı hareketleri işaretler ve güvenle sorgulanan bir servisten sunar.</span></span></a>
+        <a class="tool" href="work/data-quality-cleaning-api/"><span class="tool-n">Data Quality API</span><span class="tool-d"><span class="en">Validate and clean dirty datasets against a schema — as a service.</span><span class="tr">Bozuk veri setlerini, belirlediğin biçime göre doğrula ve temizle — servis olarak.</span></span></a>
+        <a class="tool" href="work/csv-excel-cleaning-toolkit/"><span class="tool-n">CSV / Excel Toolkit</span><span class="tool-d"><span class="en">Turns broken spreadsheets into clean, typed, analysis-ready tables.</span><span class="tr">Bozuk tabloları; temiz, düzgün ve analize hazır tablolara çevirir.</span></span></a>
+        <a class="tool" href="work/churn-prediction-retention-report/"><span class="tool-n">Churn Report</span><span class="tool-d"><span class="en">Customer data → a churn-risk model and a retention-action PDF.</span><span class="tr">Müşteri verisi → kayıp riski modeli ve tutma adımlarını içeren bir rapor.</span></span></a>
+        <a class="tool" href="work/counterfactual-lead-scoring-lab/"><span class="tool-n">Lead Scoring Lab</span><span class="tool-d"><span class="en">Scores leads and shows the counterfactual that would convert each one.</span><span class="tr">Müşteri adaylarını puanlar ve her birini kazanmak için neyin değişmesi gerektiğini gösterir.</span></span></a>
+        <a class="tool" href="work/rl-pricing-bandit-simulator/"><span class="tool-n">Pricing Bandit</span><span class="tool-d"><span class="en">Thompson-sampling price optimization you can simulate before you ship.</span><span class="tr">Yayına almadan deneyebileceğin, kendi kendine öğrenen bir fiyat eniyileme aracı.</span></span></a>
+        <a class="tool" href="work/rag-chatbot-template/"><span class="tool-n">RAG Chatbot</span><span class="tool-d"><span class="en">Grounded question-answering over your own docs — no hallucinated answers.</span><span class="tr">Yalnızca kendi belgelerine dayanan soru-cevap — uydurma cevap yok.</span></span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERTISE -->
+  <section class="sec" id="expertise">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="sec-num"><span class="en">04 — PROVEN EXPERTISE</span><span class="tr">04 — KANITLI UZMANLIK</span></div><h2 class="sec-title"><span class="en">Depth, on the record.</span><span class="tr">Kanıtlı derinlik.</span></h2></div>
+        <p class="sec-sub"><span class="en">Public research and benchmarks — the hard problems I've already gone deep on.</span><span class="tr">Açık araştırmalar ve kıyaslamalar — çoktan derinine indiğim zor problemler.</span></p>
+      </div>
+      <div class="xp rv">
+        <a href="https://github.com/emirhuseynrmx/criteo-uplift-modeling-benchmark"><span class="src">GitHub</span><span class="t">Criteo Uplift Modeling Benchmark</span><span class="ar">→</span></a>
+        <a href="https://kaggle.com/emirhseyinnci"><span class="src">Kaggle</span><span class="t">S&amp;P 500 Stress-Aware Stock Ranking with Causal ML</span><span class="ar">→</span></a>
+        <a href="https://kaggle.com/emirhseyinnci"><span class="src">Kaggle</span><span class="t"><span class="en">A Deep Dive into Uplift Modeling — at 7M scale</span><span class="tr">Uplift Modeling'e Derin Bakış — 7M ölçekte</span></span><span class="ar">→</span></a>
+        <a href="https://kaggle.com/emirhseyinnci"><span class="src">Kaggle</span><span class="t"><span class="en">FinLLM QLoRA Fine-Tuning on a single T4</span><span class="tr">Tek T4'te FinLLM QLoRA Fine-Tuning</span></span><span class="ar">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK WITH ME -->
+  <section class="sec cta-sec" id="contact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num" style="text-align:center"><span class="en">05 — WORK WITH ME</span><span class="tr">05 — BİRLİKTE ÇALIŞALIM</span></div>
+        <h2><span class="en">Let's build something <span class="grad">bulletproof.</span></span><span class="tr">Sağlam bir şey <span class="grad">kuralım.</span></span></h2>
+        <p><span class="en">I'm available for high-stakes consulting, system-architecture reviews, and building proof-carrying AI, fintech, and data systems. Tell me what you need to de-risk.</span><span class="tr">Kritik projelerde danışmanlık, sistem mimarisi incelemesi ve kararını kanıtlayan yapay zeka, fintech ve veri sistemleri kurma işleri için müsaitim. Neyin riskini azaltmak istediğini anlat, konuşalım.</span></p>
+        <div class="cta-row">
+          <a class="btn btn-primary mag" href="mailto:emirhuseyininci@gmail.com"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
+          <a class="btn btn-ghost mag" href="https://www.upwork.com/" target="_blank" rel="noopener"><span class="en">Hire on Upwork</span><span class="tr">Upwork'te çalış</span></a>
+        </div>
+        <div class="cta-links">
+          <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
+          <a href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener">Kaggle</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── CERTS ── -->
-  <section class="section" id="certs">
-    <header class="section-head">
-      <span class="section-num">05</span>
-      <h2 class="section-title">
-        <span class="tr">Sertifikalar</span>
-        <span class="en">Credentials</span>
-      </h2>
-    </header>
-    <div class="cert-grid">
-      <div class="cert-item"><span class="cert-org">Google</span><span class="cert-name">The Power of Statistics</span><span class="cert-date">Jun 2026</span></div>
-      <div class="cert-item"><span class="cert-org">TestDome</span><span class="cert-name">Python Data Science</span><span class="cert-date">Jun 2026</span></div>
-      <div class="cert-item"><span class="cert-org">HackerRank</span><span class="cert-name">Problem Solving (Intermediate)</span><span class="cert-date">May 2026</span></div>
-      <div class="cert-item"><span class="cert-org">UPenn</span><span class="cert-name">Computational Thinking</span><span class="cert-date">Nov 2025</span></div>
-      <div class="cert-item"><span class="cert-org">IBM</span><span class="cert-name">Python Project for Data Engineering</span><span class="cert-date">Oct 2025</span></div>
-      <div class="cert-item"><span class="cert-org">Coursera</span><span class="cert-name">Python for Data Science and AI</span><span class="cert-date">Oct 2025</span></div>
-      <div class="cert-item"><span class="cert-org">J.P. Morgan</span><span class="cert-name">Quantitative Research Simulation</span><span class="cert-date">Oct 2025</span></div>
-      <div class="cert-item"><span class="cert-org">Google</span><span class="cert-name">Data Analytics Professional Certificate</span><span class="cert-date">Oct 2025</span></div>
-    </div>
-  </section>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · <span class="en">High-stakes systems, delivered with proof</span><span class="tr">Kritik sistemler, kanıtıyla teslim</span> · emirhuseyin.tech</footer>
 
-  <!-- ── CONTACT ── -->
-  <section class="section" id="contact">
-    <header class="section-head">
-      <span class="section-num">06</span>
-      <h2 class="section-title">
-        <span class="tr">İletişim</span>
-        <span class="en">Contact</span>
-      </h2>
-      <p class="section-sub">
-        <span class="tr">Upwork'te iş konuşmak ya da doğrudan bir proje teklifi için — yazın.</span>
-        <span class="en">For freelance work on Upwork or a direct project proposal — reach out.</span>
-      </p>
-    </header>
-    <div class="contact-links">
-      <a href="mailto:emirhuseyininci@gmail.com" class="clink">
-        <span class="clink-label">email</span>
-        <span class="clink-val">emirhuseyininci@gmail.com</span>
-        <span class="clink-arr">→</span>
-      </a>
-      <a href="https://linkedin.com/in/emirhuseyininci" target="_blank" rel="noopener" class="clink">
-        <span class="clink-label">linkedin</span>
-        <span class="clink-val">/in/emirhuseyininci</span>
-        <span class="clink-arr">→</span>
-      </a>
-      <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener" class="clink">
-        <span class="clink-label">github</span>
-        <span class="clink-val">emirhuseynrmx</span>
-        <span class="clink-arr">→</span>
-      </a>
-      <a href="https://kaggle.com/emirhseyinnci" target="_blank" rel="noopener" class="clink">
-        <span class="clink-label">kaggle</span>
-        <span class="clink-val">emirhseyinnci</span>
-        <span class="clink-arr">→</span>
-      </a>
-    </div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
 
-  <footer class="site-footer">
-    <span>© 2026 Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <span>Bursa, Turkey</span>
-    <span class="footer-dot">·</span>
-    <span>Python Developer</span>
-  </footer>
+  /* language */
+  (function(){
+    var h=document.documentElement, b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en');
+    b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); };
+  })();
 
-<script>
-(function(){
-'use strict';
+  /* cursor */
+  (function(){
+    var d=document.getElementById('cur'), r=document.getElementById('curR');
+    if(!matchMedia('(hover:hover)').matches) return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function loop(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(loop); })();
+    document.querySelectorAll('a,button,.mag,.tilt').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); });
+  })();
 
-/* LANG */
-var H=document.documentElement;
-var lang=localStorage.getItem('ehi-lang')||'tr';
-H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-document.getElementById('lang-btn').addEventListener('click',function(){
-  var en=H.classList.contains('lang-en');
-  H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-  localStorage.setItem('ehi-lang',en?'tr':'en');
-});
+  /* nav + reveal + counters + tilt */
+  var nav=document.getElementById('nav');
+  addEventListener('scroll',function(){ nav.classList.toggle('scrolled', scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+  var cio=new IntersectionObserver(function(es){ es.forEach(function(e){ if(!e.isIntersecting)return; cio.unobserve(e.target);
+    var el=e.target, end=parseFloat(el.dataset.count), dec=parseInt(el.dataset.dec||'0'), t0=null;
+    function step(ts){ if(!t0)t0=ts; var p=Math.min(1,(ts-t0)/1300); el.textContent=(end*(1-Math.pow(1-p,3))).toFixed(dec); if(p<1)requestAnimationFrame(step); else el.textContent=end.toFixed(dec); }
+    requestAnimationFrame(step); }); },{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(function(el){ cio.observe(el); });
+  (function(){ if(!matchMedia('(pointer:fine)').matches) return;
+    document.querySelectorAll('.tilt').forEach(function(c){ var raf=null;
+      c.addEventListener('mousemove',function(e){ if(raf)return; raf=requestAnimationFrame(function(){ raf=null;
+        var b=c.getBoundingClientRect(), px=(e.clientX-b.left)/b.width, py=(e.clientY-b.top)/b.height;
+        c.style.setProperty('--ry',(px-.5)*6+'deg'); c.style.setProperty('--rx',(.5-py)*5+'deg');
+        c.style.setProperty('--mx',px*100+'%'); c.style.setProperty('--my',py*100+'%'); }); });
+      c.addEventListener('mouseleave',function(){ c.style.setProperty('--ry','0deg'); c.style.setProperty('--rx','0deg'); }); });
+  })();
 
-/* CURSOR */
-var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-var mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',function(e){
-  mx=e.clientX;my=e.clientY;
-  dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-});
-!function raf(){
-  rx+=(mx-rx)*.13;ry+=(my-ry)*.13;
-  ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';
-  requestAnimationFrame(raf);
-}();
-document.querySelectorAll('a,button').forEach(function(el){
-  el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-  el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-});
+  /* hero 3D node network */
+  (function(){
+    var cvs=document.getElementById('net'); if(!cvs||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    var ctx=cvs.getContext('2d'), DPR=1, W,H, N=innerWidth<760?46:88, P=[];
+    function rs(){ DPR=Math.min(2,devicePixelRatio||1); W=cvs.width=cvs.clientWidth*DPR; H=cvs.height=cvs.clientHeight*DPR; }
+    for(var i=0;i<N;i++) P.push({x:Math.random()*2-1,y:Math.random()*2-1,z:Math.random()*2-1,vx:(Math.random()*2-1)*6e-4,vy:(Math.random()*2-1)*6e-4,vz:(Math.random()*2-1)*6e-4});
+    var rX=0,rY=0,tX=0,tY=0;
+    addEventListener('mousemove',function(e){ tY=(e.clientX/innerWidth-.5)*.8; tX=(e.clientY/innerHeight-.5)*-.5; });
+    rs(); addEventListener('resize',rs);
+    (function frame(){ rX+=(tX-rX)*.04; rY+=(tY-rY)*.04; rY+=.0011; ctx.clearRect(0,0,W,H);
+      var cx=W/2,cy=H/2,sc=Math.min(W,H)*.42,sx=Math.sin(rX),cxr=Math.cos(rX),sy=Math.sin(rY),cyr=Math.cos(rY),pr=[];
+      for(var i=0;i<N;i++){ var p=P[i]; p.x+=p.vx;p.y+=p.vy;p.z+=p.vz;
+        if(p.x>1||p.x<-1)p.vx*=-1; if(p.y>1||p.y<-1)p.vy*=-1; if(p.z>1||p.z<-1)p.vz*=-1;
+        var y1=p.y*cxr-p.z*sx, z1=p.y*sx+p.z*cxr, x2=p.x*cyr+z1*sy, z2=-p.x*sy+z1*cyr, per=1/(2.2-z2);
+        pr.push({X:cx+x2*sc*per,Y:cy+y1*sc*per,per:per}); }
+      var lim=150*DPR;
+      for(var a=0;a<N;a++)for(var b=a+1;b<N;b++){ var dx=pr[a].X-pr[b].X,dy=pr[a].Y-pr[b].Y,d=Math.sqrt(dx*dx+dy*dy);
+        if(d<lim){ ctx.strokeStyle='rgba(90,150,240,'+(1-d/lim)*.28+')'; ctx.lineWidth=DPR; ctx.beginPath(); ctx.moveTo(pr[a].X,pr[a].Y); ctx.lineTo(pr[b].X,pr[b].Y); ctx.stroke(); } }
+      for(var i2=0;i2<N;i2++){ var s=pr[i2]; ctx.beginPath(); ctx.arc(s.X,s.Y,(1.6+s.per*1.4)*DPR,0,6.28); ctx.fillStyle=i2%5===0?'rgba(34,211,238,.9)':'rgba(150,170,240,.75)'; ctx.fill(); }
+      requestAnimationFrame(frame); })();
+  })();
 
-/* NAV */
-var nav=document.getElementById('nav'),lastY=0;
-window.addEventListener('scroll',function(){
-  var y=window.scrollY;
-  nav.classList.toggle('nav-scrolled',y>40);
-  nav.classList.toggle('nav-hidden',y>120&&y>lastY);
-  lastY=y;
-},{passive:true});
-
-/* SCROLL REVEAL */
-var revealCls='.rcard,.cert-item,.stack-row,.clink,.mcard,.ucard';
-if('IntersectionObserver' in window){
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target);}
+  /* ---- flagship case-study bespoke animations ---- */
+  (function(){
+    var reduce=false;
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
+    function bz(a,b,c,d,t){var u=1-t;return u*u*u*a+3*u*u*t*b+3*u*t*t*c+t*t*t*d;}
+    var scenes=[];
+    function initState(s){ var w=s.w,h=s.h,k=s.k; s.st={};
+      if(k==='aegis'){ s.st.p=[]; for(var i=0;i<16;i++) s.st.p.push({path:Math.random()<.62?0:1,t:Math.random(),sp:.003+Math.random()*.004}); }
+      else if(k==='calybris'){ s.st.sw=0; }
+      else if(k==='luce'){ s.st.p=[]; for(var i=0;i<64;i++) s.st.p.push({x:Math.random()*w,y:24+Math.random()*(h-48),sp:2.2+Math.random()*3.4,fl:Math.random()<.1,pa:0}); }
+      else if(k==='aera'){ s.st.p=[]; s.st.fill=0; }
+      else if(k==='goveris'){ s.st.bar=[.2,.45,.3]; s.st.tok=[]; } }
+    function size(s){ var d=Math.min(2,devicePixelRatio||1), w=s.cv.clientWidth, h=s.cv.clientHeight;
+      if(w<2||h<2) return false; if(w===s.w&&h===s.h&&s.cv.width>0) return true;
+      s.D=d; s.w=w; s.h=h; s.cv.width=w*d; s.cv.height=h*d; s.ctx.setTransform(d,0,0,d,0,0); initState(s); return true; }
+    document.querySelectorAll('canvas.cvis').forEach(function(cv){
+      var s={cv:cv,ctx:cv.getContext('2d'),k:cv.dataset.anim,on:!reduce,w:0,h:0,D:1,st:{}};
+      new IntersectionObserver(function(es){ s.on=es[0].isIntersecting&&!reduce; },{threshold:.04}).observe(cv);
+      if('ResizeObserver' in window){ new ResizeObserver(function(){ size(s); }).observe(cv); }
+      scenes.push(s);
     });
-  },{threshold:0.07,rootMargin:'0px 0px -4% 0px'});
-  document.querySelectorAll(revealCls).forEach(function(el,i){
-    el.style.setProperty('--ri',String(i%6));
-    obs.observe(el);
-  });
-}else{
-  document.querySelectorAll(revealCls).forEach(function(el){el.classList.add('revealed');});
-}
+    function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
 
-/* 3D TILT — upcoming cards follow the cursor */
-(function(){
-  var fine=window.matchMedia('(pointer:fine)').matches;
-  var calm=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  if(!fine||calm)return;
-  document.querySelectorAll('.ucard').forEach(function(card){
-    var raf=null;
-    card.addEventListener('mousemove',function(e){
-      if(raf)return;
-      raf=requestAnimationFrame(function(){
-        raf=null;
-        var r=card.getBoundingClientRect();
-        var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
-        card.style.setProperty('--ry',(px-0.5)*10+'deg');
-        card.style.setProperty('--rx',(0.5-py)*8+'deg');
-        card.style.setProperty('--gx',px*100+'%');
-        card.style.setProperty('--gy',py*100+'%');
-      });
-    });
-    card.addEventListener('mouseleave',function(){
-      card.style.setProperty('--ry','0deg');
-      card.style.setProperty('--rx','0deg');
-    });
-  });
-})();
+    function aegis(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, sx=w*.15,sy=h/2,ex=w*.85,ty=h*.28,by=h*.72;
+      function cv(ey,rgb,a,lw){ ctx.strokeStyle='rgba('+rgb+','+a+')'; ctx.lineWidth=lw; ctx.beginPath(); ctx.moveTo(sx,sy); ctx.bezierCurveTo(w*.44,sy,w*.56,ey,ex,ey); ctx.stroke(); }
+      cv(ty,GR,.45,1.6); cv(by,RD,.22,1.2);
+      st.p.forEach(function(p){ p.t+=p.sp; if(p.t>1){p.t=0;p.path=Math.random()<.64?0:1;} var ey=p.path?by:ty,rgb=p.path?RD:GR,
+        x=bz(sx,w*.44,w*.56,ex,p.t),y=bz(sy,sy,ey,ey,p.t); nd(ctx,x,y,2.3,rgb,.95,7); });
+      nd(ctx,sx,sy,5.5,CY,1,14); nd(ctx,ex,ty,4,GR,1,10); nd(ctx,ex,by,3,RD,.8,8); }
 
-/* 3D DECK */
-(function(){
-  var wrap=document.getElementById('deck-wrap');
-  if(!wrap)return;
-  var cards=Array.from(wrap.querySelectorAll('.dcard'));
-  var n=cards.length;
-  var front=0;
+    function calybris(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, n=5, m=w*.1, bw=(w-m*2)/n-8, y=h*.42, bh=Math.min(46,h*.26);
+      st.sw+=.006; if(st.sw>1.15)st.sw=-.15; var head=st.sw*w;
+      ctx.strokeStyle='rgba('+IN+',.4)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(m,y+bh/2); ctx.lineTo(w-m,y+bh/2); ctx.stroke();
+      for(var i=0;i<n;i++){ var bx=m+i*(bw+8), cxb=bx+bw/2, near=Math.abs(cxb-head)<bw*.9, col=near?GR:IN;
+        ctx.strokeStyle='rgba('+col+','+(near?.9:.45)+')'; ctx.lineWidth=1.4; roundRect(ctx,bx,y,bw,bh,5); ctx.stroke();
+        if(near){ ctx.fillStyle='rgba('+GR+',.12)'; roundRect(ctx,bx,y,bw,bh,5); ctx.fill(); ctx.fillStyle='rgba('+GR+',1)'; ctx.font='700 12px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('✓',cxb,y-8); }
+        ctx.fillStyle='rgba('+IN+',.55)'; ctx.font='8px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText(('a3f'+i+'9c').slice(0,5),cxb,y+bh/2+3); }
+      var hx=Math.max(m,Math.min(w-m,head)); ctx.strokeStyle='rgba('+CY+',.85)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(hx,y-16); ctx.lineTo(hx,y+bh+16); ctx.stroke(); nd(ctx,hx,y-16,2.5,CY,1,10); }
 
-  function setPos(){
-    cards.forEach(function(c,i){
-      c.setAttribute('data-pos',((i-front)%n+n)%n);
-    });
-    var ctr=document.getElementById('deck-counter');
-    if(ctr)ctr.textContent=String(front+1).padStart(2,'0')+' / '+String(n).padStart(2,'0');
-  }
+    function luce(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, gx=w*.6;
+      ctx.strokeStyle='rgba('+CY+',.5)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(gx,h*.14); ctx.lineTo(gx,h*.86); ctx.stroke();
+      st.p.forEach(function(p){ var pre=p.x<gx; p.x+=p.sp*(pre?1:1.5); if(p.x>w+6){ p.x=-6; p.y=24+Math.random()*(h-48); p.fl=Math.random()<.1; p.pa=0; }
+        if(pre&&p.x>=gx) p.pa=1; var rgb= !pre ? (p.fl?RD:GR) : IN, a=pre?.5:.95;
+        ctx.strokeStyle='rgba('+rgb+','+(a*.5)+')'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(p.x-p.sp*3,p.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+        nd(ctx,p.x,p.y,1.5,rgb,a,5); }); }
 
-  function goNext(){
-    var fc=cards[front];
-    /* fly out */
-    fc.style.transition='transform .38s cubic-bezier(.55,0,1,.45),opacity .3s';
-    fc.style.transform='translateX(-130%) rotate(-22deg)';
-    fc.style.opacity='0';
-    fc.style.pointerEvents='none';
-    setTimeout(function(){
-      front=(front+1)%n;
-      /* snap card to its new back-stack position without transition */
-      fc.style.transition='none';
-      fc.style.transform='';
-      fc.style.opacity='';
-      fc.style.pointerEvents='';
-      fc.offsetHeight; /* force reflow */
-      fc.style.transition='';
-      setPos();
-    },360);
-  }
+    function aera(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, ax=w*.2, dy=h*.5, dx=w*.7, ags=[h*.28,h*.5,h*.72], lab=['P','E','C'];
+      var dw=w*.2, dh=h*.5, drx=dx-dw*.1, dry=dy-dh/2;
+      ctx.strokeStyle='rgba('+IN+',.5)'; ctx.lineWidth=1.3; roundRect(ctx,drx,dry,dw,dh,6); ctx.stroke();
+      st.fill=(st.fill+.004)%1.3; var lines=Math.floor(Math.min(1,st.fill)*5);
+      for(var i=0;i<lines;i++){ ctx.strokeStyle='rgba('+CY+',.5)'; ctx.lineWidth=1.2; var ly=dry+10+i*(dh-20)/5; ctx.beginPath(); ctx.moveTo(drx+8,ly); ctx.lineTo(drx+dw-8-(i===lines-1?dw*.4:0),ly); ctx.stroke(); }
+      ags.forEach(function(ay,i){ var act=(Math.floor(t/40)%3)===i; nd(ctx,ax,ay,act?6:4,act?GR:IN,act?1:.6,act?12:6);
+        ctx.fillStyle='rgba('+(act?GR:IN)+',.9)'; ctx.font='700 9px JetBrains Mono'; ctx.textAlign='center'; ctx.fillText(lab[i],ax,ay+3);
+        var pt=(t*.02+i*.33)%1; if((Math.floor(t/40)%3)===i){ var px=ax+(drx-ax)*pt, py=ay+(dy-ay)*pt; nd(ctx,px,py,2,CY,.9,6);} }); }
 
-  function goPrev(){
-    front=(front-1+n)%n;
-    setPos();
-  }
+    function goveris(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, n=3, m=w*.16, bw=(w-m*2)/n-14, base=h*.8, cols=[CY,IN,GR];
+      if(t%14===0&&st.tok.length<26) st.tok.push({x:m+Math.random()*(w-m*2),y:h*.12,tb:Math.floor(Math.random()*n),v:1+Math.random()});
+      for(var i=0;i<n;i++){ var bx=m+i*(bw+14), tb=st.bar[i], bh=tb*(base-h*.2), by=base-bh;
+        ctx.fillStyle='rgba('+cols[i]+',.18)'; roundRect(ctx,bx,by,bw,bh,4); ctx.fill();
+        ctx.strokeStyle='rgba('+cols[i]+',.7)'; ctx.lineWidth=1.2; roundRect(ctx,bx,by,bw,bh,4); ctx.stroke();
+        st.bar[i]+=.0016; if(st.bar[i]>.95) st.bar[i]=.12; }
+      ctx.strokeStyle='rgba('+IN+',.35)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(m,base); ctx.lineTo(w-m,base); ctx.stroke();
+      st.tok=st.tok.filter(function(k){ var bx=m+k.tb*(bw+14)+bw/2; k.y+=k.v*1.6; k.x+=(bx-k.x)*.04; nd(ctx,k.x,k.y,1.8,cols[k.tb],.9,5); return k.y<base-4; }); }
 
-  setPos();
-  document.getElementById('deck-next').addEventListener('click',goNext);
-  document.getElementById('deck-prev').addEventListener('click',goPrev);
+    function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 
-  /* keyboard */
-  document.addEventListener('keydown',function(e){
-    if(e.key==='ArrowRight')goNext();
-    if(e.key==='ArrowLeft')goPrev();
-  });
-})();
-
-/* ACTIVE NAV */
-var navAs=[].slice.call(document.querySelectorAll('.nav-links a'));
-var sections=navAs.map(function(a){return document.querySelector(a.getAttribute('href'));}).filter(Boolean);
-if('IntersectionObserver' in window){
-  var sObs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        navAs.forEach(function(a){a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id);});
-      }
-    });
-  },{threshold:0.2,rootMargin:'-15% 0px -60% 0px'});
-  sections.forEach(function(s){sObs.observe(s);});
-}
-
-})();
-</script>
+    var fns={aegis:aegis,calybris:calybris,luce:luce,aera:aera,goveris:goveris};
+    var T=0;
+    function loop(){ T++; for(var i=0;i<scenes.length;i++){ var s=scenes[i]; if(size(s)){ try{ s.ctx.clearRect(0,0,s.w,s.h); fns[s.k](s,T); }catch(e){} } } requestAnimationFrame(loop); }
+    addEventListener('load',function(){ scenes.forEach(size); });
+    if(reduce){ addEventListener('load',function(){ setTimeout(function(){ scenes.forEach(function(s){ if(size(s)){ s.ctx.clearRect(0,0,s.w,s.h); fns[s.k](s,1); } }); },80); }); } else loop();
+  })();
+  </script>
 </body>
 </html>

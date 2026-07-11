@@ -1,398 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>TradingView Strategy Risk Lab — Emir H. İnci</title>
-  <meta name="description" content="TradingView Strategy Tester export'unu kötü işlem risk modeline dönüştür. XGBoost sınıflandırma, SHAP global sürücüler, DiCE counterfactual trade koşulları."/>
+  <title>TV Strategy Risk Lab — Emir H. İnci</title>
+  <meta name="description" content="Convert a TradingView Strategy Tester export into a bad-trade risk model: SHAP surfaces the global drivers of losing trades, and DiCE shows the counterfactual conditions that would have avoided them."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">TV Strategy Risk Lab</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">RandomForest · ikili sınıflandırma</span>
-        <span class="btag">SHAP TreeExplainer</span>
-        <span class="btag">R-multiple · ATR% · volume_z · trend_score</span>
-      </div>
-      <h1 class="lhero-title">TradingView Strategy Risk Lab</h1>
-      <p class="lhero-sub">
-        <span class="tr">Kaggle AAPL OHLCV verisiyle 240 işleme kadar R-multiple bazlı trade geçmişi üretir. RandomForest kötü işlemleri sınıflandırır (bad_trade_threshold_r=0.0), SHAP hangi ATR/hacim koşullarının kayıpla bittiğini gösterir, counterfactual filtre önerileri çıkarır.</span>
-        <span class="en">Builds up to 240 trades with R-multiple from Kaggle AAPL OHLCV. RandomForest classifies bad trades (bad_trade_threshold_r=0.0), SHAP shows which ATR/volume conditions predict losses, counterfactual filter suggestions surface specific feature ranges where failure spikes.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Strategy Risk Lab — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">Find the trades<br>that hurt.</span><span class="tr">Zarar ettiren<br>işlemleri bul.</span></h1>
+      <div class="pill-row"><span class="pill">Python</span><span class="pill">sklearn</span><span class="pill">SHAP</span><span class="pill">DiCE</span></div>
+      <p class="lead"><span class="en">Convert a TradingView Strategy Tester export into a bad-trade risk model: SHAP surfaces the global drivers of losing trades, and DiCE shows the counterfactual conditions that would have avoided them.</span><span class="tr">TradingView Strateji Test çıktısını, kötü işlemleri öngören bir risk modeline çevirir: kaybettiren işlemlerin ortak sebeplerini ortaya koyar ve o zararlardan hangi koşulların kaçınmayı sağlayacağını gösterir.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">TRADE RISK REPORT — AAPL 2024-11-14</div>
-        <div><span style="color:#6b6858">risk_score:</span> <span style="color:#ef4444">0.82</span> <span style="color:#6b6858">→ HIGH RISK</span></div>
-        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── SHAP drivers ──────────────────────</div>
-        <div><span style="color:#ef4444">atr_pct</span>          <span style="color:#6b6858">1.42%</span>   <span style="color:#ef4444">+0.31</span> <span style="color:#6b6858">(high volatility)</span></div>
-        <div><span style="color:#ef4444">volume_zscore</span>    <span style="color:#6b6858">2.81</span>    <span style="color:#ef4444">+0.24</span> <span style="color:#6b6858">(unusual volume)</span></div>
-        <div><span style="color:#f59e0b">ema_trend</span>        <span style="color:#6b6858">-0.23</span>   <span style="color:#ef4444">+0.18</span> <span style="color:#6b6858">(counter-trend)</span></div>
-        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── counterfactual ────────────────────</div>
-        <div><span style="color:#10b981">if</span> atr_pct <span style="color:#10b981">&lt;</span> 0.80 <span style="color:#ff4800">&amp;&amp;</span> ema_trend <span style="color:#10b981">&gt;</span> +0.30</div>
-        <div><span style="color:#6b6858">→</span> risk_score: <span style="color:#10b981">0.19</span> <span style="color:#6b6858">(safe to enter)</span></div>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">Global drivers</span><span class="tr">Ortak sebepler</span></h3><p><span class="en">SHAP reveals what your losing trades have in common.</span><span class="tr">Kaybettiren işlemlerinin ortak yönünü ortaya çıkarır.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">Counterfactuals</span><span class="tr">Farklı senaryo</span></h3><p><span class="en">The conditions that would have turned a loss around.</span><span class="tr">Bir zararı tersine çevirebilecek koşulların neler olduğunu gösterir.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">From your export</span><span class="tr">Kendi çıktından</span></h3><p><span class="en">Works directly off Strategy Tester output.</span><span class="tr">Doğrudan Strateji Test çıktısıyla çalışır.</span></p></div>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>240</strong>
-      <span><span class="tr">işleme kadar R-multiple</span><span class="en">trades, R-multiple</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>SHAP</strong>
-      <span><span class="tr">neden kötü işlem?</span><span class="en">why bad trade?</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>ROC-AUC</strong>
-      <span><span class="tr">holdout seti</span><span class="en">holdout set</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>AAPL</strong>
-      <span><span class="tr">Kaggle OHLCV verisi</span><span class="en">Kaggle OHLCV dataset</span></span>
-    </div>
-  </div>
-
-  <!-- PROBLEM -->
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">240 işlemli küçük strateji setinde holdout ROC-AUC, F1 0.74 ve örnek risk skoru 0.97 ile kötü işlem koşulları raporlanıyor. İş etkisi, backtest export'unu 'hangi koşullar filtrelenmeli?' sorusuna cevap veren risk raporuna çevirmek.</span>
-      <span class="en">On a 240-trade strategy set, the report surfaces holdout ROC-AUC, F1 0.74, and an example bad-trade risk score of 0.97. The impact is converting a backtest export into a risk report that answers which conditions should be filtered.</span>
-    </p>
-    <div class="impact-evidence">Evidence: 240 trades, RandomForest risk model, F1 0.74, SHAP/DiCE report fields.</div>
-  </section>
-
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi?</span>
-      <span class="en">What was the problem?</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📉</div>
-        <h3><span class="tr">Backtest kazanıyor, canlı kaybediyor</span><span class="en">Backtest wins, live trading loses</span></h3>
-        <p>
-          <span class="tr">Klasik overfitting sorunu değil bu. Strateji gerçekten çalışıyor — ama belirli piyasa koşullarında başarısız oluyor. Yüksek volatilite dönemlerinde, counter-trend girimlerde, anormal hacim sırasında. Strategy Tester bu koşulları ortalamayla yutuyor.</span>
-          <span class="en">Not classic overfitting. The strategy genuinely works — but fails under specific market conditions. During high volatility, counter-trend entries, abnormal volume. Strategy Tester averages over these conditions and hides them.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔍</div>
-        <h3><span class="tr">Problem tipi: ikili sınıflandırma</span><span class="en">Problem type: binary classification</span></h3>
-        <p>
-          <span class="tr">Hedef değişken: bad_trade = 1 eğer pnl_r ≤ bad_trade_threshold_r (0.0), aksi halde 0. pnl_r = ((çıkış−giriş)/giriş × yön) / max(atr_pct, 0.003). Girdi feature'lar: atr_pct (volatilite), volume_z (20-bar rolling z-score), trend_score (±5 ile kısıtlı).</span>
-          <span class="en">Target variable: bad_trade = 1 if pnl_r ≤ bad_trade_threshold_r (0.0), else 0. pnl_r = ((exit−entry)/entry × direction) / max(atr_pct, 0.003). Input features: atr_pct (volatility), volume_z (20-bar rolling z-score), trend_score (clamped ±5).</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🧠</div>
-        <h3><span class="tr">Sadece skor yetmez: aksiyon kuralı lazım</span><span class="en">Score alone isn't enough: need an entry rule</span></h3>
-        <p>
-          <span class="tr">"Bu işlem yüksek riskli" demek tek başına yetersiz. Trader'ın ihtiyacı: "Bu koşullar olsaydı girilebilirdi." DiCE ile minimum-değişiklikli counterfactual: hangi feature değeri değişse risk eşiğinin altına iner? Bu bir filtre kuralına dönüşür.</span>
-          <span class="en">"This trade is high risk" alone is insufficient. Trader needs: "These conditions would have made it safe." DiCE minimum-change counterfactual: which feature value change would push risk below threshold? This becomes a filter rule.</span>
-        </p>
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
+        </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Optuna HPO — neden gerekli?</span>
-      <span class="en">Optuna HPO — why it's needed</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Problem</span><span class="en">Problem</span></span>
-        <span class="tech-val"><span class="tr">XGBoost'un n_estimators, max_depth, learning_rate, subsample, colsample_bytree, reg_alpha, reg_lambda ve min_child_weight değerleri hem veri boyutuna hem birbirine bağlıdır. 240 trade gibi küçük datasetlerde özellikle max_depth ve min_child_weight yanlış seçilirse model ezberleme veya underfitting gözlenir. Manuel deneme-yanılma güvenilmez.</span><span class="en">XGBoost's n_estimators, max_depth, learning_rate, subsample, colsample_bytree, reg_alpha, reg_lambda and min_child_weight all depend on dataset size and each other. On small datasets like 240 trades, wrong max_depth or min_child_weight leads to overfitting or underfitting. Manual trial-and-error is unreliable.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Çözüm: TPE</span><span class="en">Solution: TPE</span></span>
-        <span class="tech-val"><span class="tr">Optuna TPE 40 trial ile olası parametre uzayını geçmiş sonuçlara dayanarak örnekler. MedianPruner kötü giden denemeleri erken keser. scale_pos_weight sınıf dengesizliğini otomatik ele alır. Holdout hiçbir trial boyunca görülmez.</span><span class="en">Optuna TPE samples the parameter space in 40 trials, guided by past results. MedianPruner stops poor trials early. scale_pos_weight handles class imbalance automatically. Holdout is never seen during any trial.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Sonuç</span><span class="en">Result</span></span>
-        <span class="tech-val"><span class="tr">5-katlı StratifiedKFold CV yalnızca eğitim setinde çalışır. En iyi CV-AUC bulunduktan sonra tam eğitim setinde final model fit edilir. HPO özeti counterfactual_suggestions[0]'a yazılır: trial sayısı, CV-AUC ve holdout AUC yan yana görülür.</span><span class="en">5-fold StratifiedKFold CV runs on training set only. After best CV-AUC is found, final model is fit on full training set. HPO summary written to counterfactual_suggestions[0]: trial count, CV-AUC and holdout AUC shown side by side.</span></span>
-      </div>
-    </div>
-  </section>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · TV Strategy Risk Lab · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <!-- WHY XGBOOST -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Neden RandomForest? Veri seti ve metrikler</span>
-      <span class="en">Why RandomForest? Dataset and metrics</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Veri seti</span><span class="en">Dataset</span></span>
-        <span class="tech-val"><span class="tr">Kaggle algorithmic-trading (serkanp) — AAPL.csv OHLCV. 240 işleme kadar trade geçmişi üretildi: her trade için pnl_r = ((çıkış−giriş)/giriş × yön) / max(atr_pct, 0.003) hesaplandı. bad_trade_threshold_r=0.0: pnl_r ≤ 0 → bad_trade=1.</span><span class="en">Kaggle algorithmic-trading (serkanp) — AAPL.csv OHLCV. Built up to 240 trades: per-trade pnl_r = ((exit−entry)/entry × direction) / max(atr_pct, 0.003). bad_trade_threshold_r=0.0: pnl_r ≤ 0 → bad_trade=1.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">RandomForest</span>
-        <span class="tech-val"><span class="tr">240 işlem küçük bir dataset. RandomForest'ın bagging yaklaşımı bu boyutta overfitting'e karşı dayanıklı. SHAP TreeExplainer RF ile uyumlu. Çıktı metrikleri: win_rate, bad_trade_rate, profit_factor, average_r, max_drawdown_r, ROC-AUC (holdout seti). bad_trade_rate &gt; baseline olduğunda fragile kurulum koşulları raporlanır.</span><span class="en">240 trades is a small dataset. RandomForest's bagging approach is robust against overfitting at this size. SHAP TreeExplainer is compatible with RF. Output metrics: win_rate, bad_trade_rate, profit_factor, average_r, max_drawdown_r, ROC-AUC (holdout). When bad_trade_rate &gt; baseline, fragile setup conditions are reported.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key" style="color:#ff4800">SHAP analizi</span>
-        <span class="tech-val"><span class="tr">SHAP TreeExplainer hangi atr_pct / volume_z / trend_score kombinasyonlarının kayıpla bittiğini gösterir. Başarısızlık oranının yükseldiği spesifik feature değer aralıkları yüzeye çıkar. Counterfactual filtre önerileri: "atr_pct &gt; X veya volume_z &gt; Y olduğunda giriş yapma" gibi Pine Script filtresine dönüşür.</span><span class="en">SHAP TreeExplainer shows which atr_pct / volume_z / trend_score combinations predict losses. Surfaces specific feature value ranges where failure rate spikes. Counterfactual filter suggestions: e.g. "don't enter when atr_pct &gt; X or volume_z &gt; Y" — translates to Pine Script entry filter.</span></span>
-      </div>
-    </div>
-    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
-      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">FEATURE PIPELINE — Kaggle AAPL.csv</div>
-      <div><span style="color:#6b6858"># ATR%: volatilite, payda olarak min 0.003 ile kırpılmış</span></div>
-      <div><span style="color:#f2f0ea">atr_pct = atr14 / close  <span style="color:#6b6858"># (R-multiple paydasında da kullanılır)</span></span></div>
-      <div style="margin-top:.3rem;"><span style="color:#6b6858"># volume_z: 20-bar rolling z-score</span></div>
-      <div><span style="color:#f2f0ea">vol_mean = volume.rolling(<span style="color:#ff4800">20</span>).mean()</span></div>
-      <div><span style="color:#f2f0ea">vol_std  = volume.rolling(<span style="color:#ff4800">20</span>).std()</span></div>
-      <div><span style="color:#f2f0ea">volume_z = (volume - vol_mean) / vol_std</span></div>
-      <div style="margin-top:.3rem;"><span style="color:#6b6858"># trend_score: ham trend sinyali ±5 ile kısıtlandı</span></div>
-      <div><span style="color:#f2f0ea">trend_score = trend_raw.clip(<span style="color:#ff4800">-5</span>, <span style="color:#ff4800">5</span>)</span></div>
-      <div style="margin-top:.3rem;"><span style="color:#6b6858"># R-multiple: kaybı ATR ile normalize eder, karşılaştırılabilir</span></div>
-      <div><span style="color:#f2f0ea">pnl_r = ((exit - entry) / entry * direction) / max(atr_pct, <span style="color:#ff4800">0.003</span>)</span></div>
-    </div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <!-- SCENARIO -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: AAPL 14 Kasım 2024</span>
-      <span class="en">Step-by-step scenario: AAPL November 14, 2024</span>
-    </h2>
-    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">Breakout stratejisi AAPL üzerinde long sinyali verdi. Hacim normalin üzerinde, piyasa hareketli. Sinyali almalı mısın?</span>
-      <span class="en">Breakout strategy fired a long signal on AAPL. Volume above normal, market volatile. Should you take the signal?</span>
-    </p>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Feature değerleri</span><span class="en">Feature values</span></h3>
-        <p>
-          <span class="tr">atr_pct = 1.42% (son 3 ay ortalama 0.74%, bu günün volatilitesi iki kat yüksek). volume_zscore = 2.81 (yani hacim ortalamadan 2.81 standart sapma yukarıda — anormal). ema_trend = -0.23 (EMA20 &lt; EMA50, kısa vade trend negatif).</span>
-          <span class="en">atr_pct = 1.42% (3-month avg 0.74%, today's vol is 2x higher). volume_zscore = 2.81 (volume 2.81 standard deviations above mean — anomalous). ema_trend = -0.23 (EMA20 &lt; EMA50, short-term trend negative).</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Bad trade skoru: 0.82 (yüksek risk)</span><span class="en">Bad trade score: 0.82 (high risk)</span></h3>
-        <p>
-          <span class="tr">RandomForest bad_trade olasılığı: 0.82. SHAP açıklaması: atr_pct +0.31 (yüksek volatilite, R-multiple paydasını küçültüyor), volume_z +0.24 (anormal hacim, 20-bar z-score &gt; 2.5), trend_score +0.18 (±5 kısıtlamasına yakın negatif değer). Base değer: 0.09. Toplam: 0.82.</span>
-          <span class="en">RandomForest bad_trade probability: 0.82. SHAP breakdown: atr_pct +0.31 (high volatility shrinks R-multiple denominator), volume_z +0.24 (unusual volume, 20-bar z-score &gt; 2.5), trend_score +0.18 (near-boundary negative, close to ±5 clamp). Base value: 0.09. Total: 0.82.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Counterfactual: giriş koşulu</span><span class="en">Counterfactual: entry condition</span></h3>
-        <p>
-          <span class="tr">DiCE CF: eğer atr_pct &lt; 0.80 VE ema_trend &gt; +0.30 olsaydı → risk 0.19. Çıkarılan kural: "Bu breakout stratejisi yalnızca ATR% &lt; 0.8 ve uptrend koşullarında (EMA20 &gt; EMA50) çalıştırılsın." Strategy Tester'a bu filtre eklendi, win rate %41'den %67'ye çıktı.</span>
-          <span class="en">DiCE CF: if atr_pct &lt; 0.80 AND ema_trend &gt; +0.30 → risk 0.19. Extracted rule: "Run this breakout strategy only when ATR% &lt; 0.8 and uptrend conditions (EMA20 &gt; EMA50)." Filter added to Strategy Tester, win rate improved from 41% to 67%.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- DATA VALIDATION + FEATURE ENGINEERING -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Veri doğrulama ve feature engineering — ham CSV'den modele</span>
-      <span class="en">Data validation and feature engineering — from raw CSV to model</span>
-    </h2>
-    <p style="color:#6b6858;margin-bottom:1.5rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">Ham trades.csv'yi XGBoost'a doğrudan atmazsın. Önce verinin ne durumda olduğunu anlarsın, sonra eksikleri doldurursun, sonra ham fiyat/hacim verisini anlamlı sinyallere dönüştürürsün. Bu adımlar modelin sonucundan daha çok zaman alır.</span>
-      <span class="en">You don't feed raw trades.csv directly to XGBoost. First you understand what state the data is in, then fill gaps, then transform raw price/volume into meaningful signals. These steps take more time than the model itself.</span>
-    </p>
-    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:2rem;">
-      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 1 — VERİYİ TANI (keşifsel analiz)</div>
-      <div><span style="color:#6b6858"># Kaggle AAPL.csv — OHLCV verisi</span></div>
-      <div><span style="color:#f2f0ea">df = pd.read_csv(<span style="color:#ff4800">"AAPL.csv"</span>, parse_dates=[<span style="color:#ff4800">"Date"</span>])</span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Kaç satır var? Null oranı?</span></div>
-      <div><span style="color:#f2f0ea">print(df.shape)  <span style="color:#6b6858"># satır sayısı × OHLCV sütunları</span></span></div>
-      <div><span style="color:#f2f0ea">print(df.isnull().mean())  <span style="color:#6b6858"># Hangi sütunlarda null var?</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Tarih sırası doğru mu? Gap var mı?</span></div>
-      <div><span style="color:#f2f0ea">date_diff = df.index.to_series().diff()  <span style="color:#6b6858"># .diff() sıralı farklar</span></span></div>
-      <div><span style="color:#f2f0ea">gaps = date_diff[date_diff &gt; pd.Timedelta(<span style="color:#ff4800">"3d"</span>)]  <span style="color:#6b6858"># hafta sonu hariç boşluk</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Fiyat anomalisi: aşırı değer var mı?</span></div>
-      <div><span style="color:#f2f0ea">close_z = (df[<span style="color:#ff4800">"Close"</span>] - df[<span style="color:#ff4800">"Close"</span>].mean()) / df[<span style="color:#ff4800">"Close"</span>].std()</span></div>
-      <div><span style="color:#f2f0ea">outliers = close_z[close_z.abs() &gt; <span style="color:#ff4800">4</span>]  <span style="color:#6b6858"># 4 sigma dışındaki günler</span></span></div>
-    </div>
-    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:2rem;">
-      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 2 — NULL HANDLING (ne doldurulur, ne atılır?)</div>
-      <div><span style="color:#6b6858"># volume_zscore: ilk 20 günde moving avg yok → NaN</span></div>
-      <div><span style="color:#6b6858"># Strateji: bu satırları silme, XGBoost native NaN destekler</span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"volume_zscore"</span>] = df[<span style="color:#ff4800">"volume_zscore"</span>].fillna(<span style="color:#ff4800">0.0</span>)  <span style="color:#6b6858"># sadece raporlama için</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># atr_pct: split day'de volume=0 → ATR tanımsız → ffill</span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"atr_pct"</span>] = df[<span style="color:#ff4800">"atr_pct"</span>].ffill()  <span style="color:#6b6858"># önceki değeri taşı</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># trade_return: hedef değişken — NaN ise o satır dışarıda bırak</span></div>
-      <div><span style="color:#f2f0ea">df = df.dropna(subset=[<span style="color:#ff4800">"trade_return"</span>])  <span style="color:#6b6858"># target null olamaz</span></span></div>
-    </div>
-    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;">
-      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 3 — FEATURE ENGINEERING (ham fiyat → sinyal)</div>
-      <div><span style="color:#6b6858"># ATR%: volatilite normalize edilmiş — $5 hisse ile $500 hisse karşılaştırılabilir</span></div>
-      <div><span style="color:#f2f0ea">high_low = df[<span style="color:#ff4800">"High"</span>] - df[<span style="color:#ff4800">"Low"</span>]</span></div>
-      <div><span style="color:#f2f0ea">true_range = high_low.rolling(<span style="color:#ff4800">14</span>).mean()</span></div>
-      <div><span style="color:#f2f0ea">atr_pct = true_range / df[<span style="color:#ff4800">"Close"</span>] * <span style="color:#ff4800">100</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Volume z-score: bugünün hacmi normalden ne kadar farklı?</span></div>
-      <div><span style="color:#f2f0ea">vol_mean = df[<span style="color:#ff4800">"Volume"</span>].rolling(<span style="color:#ff4800">20</span>).mean()</span></div>
-      <div><span style="color:#f2f0ea">vol_std = df[<span style="color:#ff4800">"Volume"</span>].rolling(<span style="color:#ff4800">20</span>).std()</span></div>
-      <div><span style="color:#f2f0ea">volume_zscore = (df[<span style="color:#ff4800">"Volume"</span>] - vol_mean) / vol_std</span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># EMA trend: kısa/uzun vade trend yönü farkı</span></div>
-      <div><span style="color:#f2f0ea">ema20 = df[<span style="color:#ff4800">"Close"</span>].ewm(span=<span style="color:#ff4800">20</span>).mean()</span></div>
-      <div><span style="color:#f2f0ea">ema50 = df[<span style="color:#ff4800">"Close"</span>].ewm(span=<span style="color:#ff4800">50</span>).mean()</span></div>
-      <div><span style="color:#f2f0ea">ema_trend = (ema20 - ema50) / df[<span style="color:#ff4800">"Close"</span>]  <span style="color:#6b6858"># normalize</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Büyük veri notu: 7M+ satır için pandas yavaşlar</span></div>
-      <div><span style="color:#6b6858"># import polars as pl → pl.col("Close").ewm_mean(span=20)</span></div>
-      <div><span style="color:#6b6858"># Polars lazy evaluation: .lazy().collect() ile bellek tasarrufu</span></div>
-    </div>
-  </section>
-
-  <!-- TECHNICAL -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key">ML</span>
-        <span class="tech-val">RandomForest classifier · bad_trade_threshold_r=0.0 · win_rate / bad_trade_rate / profit_factor / average_r / max_drawdown_r / ROC-AUC</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Açıklanabilirlik</span><span class="en">Explainability</span></span>
-        <span class="tech-val">SHAP TreeExplainer · counterfactual filtre önerileri · başarısızlık oranının yükseldiği feature aralıkları</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Veri</span><span class="en">Data</span></span>
-        <span class="tech-val"><span class="tr">Kaggle algorithmic-trading (serkanp) · AAPL.csv OHLCV · 240 işleme kadar · pnl_r = R-multiple</span><span class="en">Kaggle algorithmic-trading (serkanp) · AAPL.csv OHLCV · up to 240 trades · pnl_r = R-multiple</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">API</span>
-        <span class="tech-val">Litestar · async · StrategyRiskReport Pydantic schema</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · coverage &gt;85% · ruff · GitHub Actions CI</span>
-      </div>
-    </div>
-  </section>
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">F1 0.74</div>
-        <div class="gain-label"><span class="tr">kötü trade tespiti (RF: 0.68)</span><span class="en">bad trade detection (RF: 0.68)</span></div>
-        <p><span class="tr">1.500 trade, aynı feature'lar: RF F1 0.68, XGBoost F1 0.74. Feature engineering eklenince (ATR%, vol z-score, EMA trend) ayrışıyor.</span><span class="en">1,500 trades, same features: RF F1 0.68, XGBoost F1 0.74. Feature engineering (ATR%, vol z-score, EMA trend) is what creates separation.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">önlendi</div>
-        <div class="gain-label"><span class="tr">AAPL 14-Kas-2024 kötü işlem</span><span class="en">AAPL Nov-14-2024 bad trade</span></div>
-        <p><span class="tr">ATR% 3.2, vol_zscore +2.8, ema_trend -0.0041. Model skoru 0.97 — bad_trade=1. Giriş engellendi. Klasik RSI/MACD sinyali geçerdi.</span><span class="en">ATR% 3.2, vol_zscore +2.8, ema_trend -0.0041. Model score 0.97 — bad_trade=1. Entry blocked. Classic RSI/MACD signal would have passed.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">SHAP</div>
-        <div class="gain-label"><span class="tr">hangi feature kötü trade sürücüsü</span><span class="en">which feature drives bad trades</span></div>
-        <p><span class="tr">Global SHAP: vol_zscore birinci, ATR% ikinci. "Yüksek hacimli volatil günlerde strateji çalışmıyor" → Pine Script giriş filtresi olarak uygula.</span><span class="en">Global SHAP: vol_zscore first, ATR% second. "Strategy fails on high-volume volatile days" → apply as Pine Script entry filter.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">Ham OHLCV yetmez: raw close/open farkı gürültü. ATR% volatiliteyi normalize eder, vol_zscore hacim anormalliğini ölçer. Bunlar olmadan model kör.</span><span class="en">Raw OHLCV isn't enough: raw close/open diff is noise. ATR% normalizes volatility, vol_zscore measures volume anomaly. Without these, the model is blind.</span></li>
-        <li><span class="tr">XGBoost vs sklearn GBM: histogram method bellek açısından verimli. 1.500 trade küçük veri ama gerçek projede 50K+: XGBoost ölçeklenir, sklearn GBM yavaşlar.</span><span class="en">XGBoost vs sklearn GBM: histogram method is memory efficient. 1,500 trades is small but at 50K+ real trades: XGBoost scales, sklearn GBM slows.</span></li>
-        <li><span class="tr">TradingView entegrasyonu: Strategy Tester CSV → pipeline → kötü trade pattern → Pine Script entry condition. Döngü kapanır. Backtest export'tan giriş filtresine.</span><span class="en">TradingView integration: Strategy Tester CSV → pipeline → bad trade pattern → Pine Script entry condition. Loop closes from backtest to live filter.</span></li>
-        <li><span class="tr">Polars not: 7M satır HFT verisi için pandas yerine Polars lazy evaluation. 1.500 trade'de fark yok ama gerçek yüksek frekanslı veride kritik.</span><span class="en">Polars note: for 7M row HFT data use Polars lazy evaluation over pandas. No difference at 1,500 trades but critical for real high-frequency data.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">Stratejinizin nerede başarısız olduğunu bulmak ister misiniz?</span>
-      <span class="en">Want to find exactly where your strategy fails?</span>
-    </h2>
-    <p>
-      <span class="tr">TradingView Strategy Tester export'unuzu verin. XGBoost ile kötü işlem modelini kurarım, SHAP ile sürücü analizi yaparım, DiCE ile giriş filtreleri çıkarırım.</span>
-      <span class="en">Give me your TradingView Strategy Tester export. I'll build the bad trade model with XGBoost, run SHAP driver analysis, and extract entry filters via DiCE.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Strategy Risk Lab İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/tradingview-strategy-risk-lab" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

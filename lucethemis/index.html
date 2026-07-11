@@ -1,1047 +1,217 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>LuceThemis — HFT-Grade Signal Audit & Pre-Trade Risk Engine</title>
-  <meta name="description" content="Sub-microsecond pre-trade risk decisions with proof-carrying audit trail. 4.6M checks/sec. Signal falsification engine for institutional quant desks."/>
-  <meta name="robots" content="index, follow"/>
-  <meta name="author" content="Emir H. Inci"/>
-  <link rel="canonical" href="https://emirhuseyin.tech/lucethemis/"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:title" content="LuceThemis — HFT-Grade Signal Audit & Pre-Trade Risk"/>
-  <meta property="og:description" content="Sub-microsecond pre-trade risk with proof-carrying decisions. Built for institutional quant desks."/>
-  <meta property="og:url" content="https://emirhuseyin.tech/lucethemis/"/>
-  <meta name="twitter:card" content="summary_large_image"/>
-  <meta name="twitter:title" content="LuceThemis — 900ns Pre-Trade Risk"/>
-  <meta name="theme-color" content="#050504"/>
+  <title>LuceThemis — Rules at market speed</title>
+  <meta name="description" content="LuceThemis is an HFT-grade signal audit and pre-trade risk engine: 4.6M checks/second, every order gated against your rules, every decision written to a hash-chained audit trail."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
 
-    :root {
-      --bg: #050504;
-      --bg-elevated: #0a0906;
-      --bg-card: #0d0c0a;
-      --border: #1a1812;
-      --border-accent: #2a1e0a;
-      --accent: #ff4800;
-      --accent-bright: #ff6b35;
-      --accent-dim: rgba(255,72,0,0.08);
-      --accent-glow: rgba(255,72,0,0.15);
-      --green: #10b981;
-      --green-dim: rgba(16,185,129,0.1);
-      --red: #ef4444;
-      --red-dim: rgba(239,68,68,0.1);
-      --amber: #f59e0b;
-      --cyan: #06b6d4;
-      --text: #f0eee8;
-      --text-secondary: #a0a090;
-      --text-dim: #605e50;
-      --mono: 'JetBrains Mono', monospace;
-      --sans: 'Inter', sans-serif;
-    }
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
 
-    html { scroll-behavior: smooth; }
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+    .hero{ min-height:100svh; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:2rem; overflow:hidden; position:relative; }
+    .hero-copy{ position:relative; z-index:3; padding:7rem 0 3rem; }
+    .hero-vis{ position:relative; min-height:60vh; height:100%; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(50% 60% at 80% 45%, rgba(129,140,248,.10), transparent 65%); }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cyan); }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.4rem,5vw,4rem); line-height:1.03; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.1rem; max-width:44ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+    .vis-legend{ position:absolute; z-index:2; bottom:1.2rem; left:1.2rem; display:flex; gap:1rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; }
+    .vis-legend span{ display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); }
+    .vis-legend i{ width:8px; height:8px; border-radius:50%; }
+    @media(max-width:900px){ .hero{ grid-template-columns:1fr; } .hero-vis{ min-height:44vh; order:2; } .hero-copy{ padding-top:6rem; } }
 
-    /* ── GRID BACKGROUND ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,72,0,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,72,0,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      pointer-events: none;
-      z-index: 0;
-    }
+    .sec{ padding:clamp(4rem,8vw,7rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.5rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .sec-lead{ color:var(--muted); max-width:60ch; margin-top:1rem; font-size:1.02rem; }
 
-    /* ── NAV ── */
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 52px;
-      background: rgba(5,5,8,0.9);
-      backdrop-filter: blur(20px) saturate(1.5);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-brand {
-      display: flex; align-items: center; gap: 0.6rem;
-      text-decoration: none;
-    }
-    .nav-brand svg { width: 24px; height: 24px; }
-    .nav-brand span {
-      font-family: var(--mono);
-      font-weight: 700; font-size: 0.9rem;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-    .nav-links { display: flex; gap: 1.25rem; align-items: center; }
-    .nav-links a {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      text-decoration: none;
-      transition: color 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .nav-links a:hover { color: var(--accent-bright); }
-    .nav-status {
-      display: flex; align-items: center; gap: 0.4rem;
-      font-family: var(--mono); font-size: 0.65rem;
-      color: var(--green);
-      padding: 0.2rem 0.6rem;
-      border: 1px solid rgba(16,185,129,0.2);
-      border-radius: 999px;
-      background: var(--green-dim);
-    }
-    .nav-status .dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--green);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.5; transform: scale(0.8); }
-      50% { opacity: 1; transform: scale(1.2); }
-    }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
 
-    /* ── CONTAINER ── */
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+    .out{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .out .o{ border:1px solid var(--line); border-radius:14px; padding:1.4rem; background:var(--bg-2); }
+    .out .o .big{ font-family:var(--disp); font-weight:700; font-size:1.5rem; color:var(--head); }
+    .out .o .big .u{ color:var(--cyan); }
+    .out .o p{ color:var(--muted); font-size:.86rem; margin-top:.5rem; }
+    @media(max-width:760px){ .out{ grid-template-columns:1fr; } }
 
-    /* ── HERO ── */
-    .hero {
-      padding: 8rem 0 5rem;
-      position: relative;
-    }
-    .hero-glow {
-      position: absolute;
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 800px; height: 600px;
-      background: radial-gradient(ellipse, rgba(255,72,0,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-content { position: relative; z-index: 1; }
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--accent-bright);
-      border: 1px solid var(--border-accent);
-      padding: 0.3rem 0.8rem;
-      border-radius: 999px;
-      margin-bottom: 2rem;
-      background: var(--accent-dim);
-    }
-    .hero h1 {
-      font-family: var(--mono);
-      font-size: clamp(3rem, 7vw, 5rem);
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      line-height: 1.05;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(135deg, var(--text) 0%, var(--accent-bright) 50%, var(--cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .hero-sub {
-      font-size: 1.15rem;
-      color: var(--text-secondary);
-      max-width: 640px;
-      line-height: 1.8;
-      margin-bottom: 2.5rem;
-    }
-    .hero-metrics {
-      display: flex; gap: 2.5rem; flex-wrap: wrap;
-      margin-bottom: 3rem;
-      padding: 1.5rem 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .hero-metric {
-      display: flex; flex-direction: column;
-    }
-    .hero-metric .value {
-      font-family: var(--mono);
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--accent-bright);
-      line-height: 1.2;
-      font-variant-numeric: tabular-nums;
-    }
-    .hero-metric .label {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-top: 0.25rem;
-    }
-    .hero-ctas {
-      display: flex; gap: 1rem; flex-wrap: wrap;
-    }
-    .btn {
-      font-family: var(--mono);
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 0.8rem 1.8rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 0 20px rgba(255,72,0,0.3);
-    }
-    .btn-primary:hover {
-      background: var(--accent-bright);
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(255,72,0,0.5);
-    }
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover {
-      border-color: var(--accent);
-      color: var(--accent-bright);
-      transform: translateY(-2px);
-    }
+    .cta-band{ margin-top:3rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.4rem,2.4vw,2rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
 
-    /* ── TERMINAL DEMO ── */
-    .terminal {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      margin: 3rem 0;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-    .terminal-header {
-      display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      background: var(--bg-elevated);
-      border-bottom: 1px solid var(--border);
-    }
-    .terminal-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-    }
-    .terminal-dot.r { background: #ff5f57; }
-    .terminal-dot.y { background: #ffbd2e; }
-    .terminal-dot.g { background: #28c840; }
-    .terminal-title {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      margin-left: auto;
-    }
-    .terminal-body {
-      padding: 1.5rem;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      line-height: 1.8;
-      overflow-x: auto;
-    }
-    .terminal-body .prompt { color: var(--accent-bright); }
-    .terminal-body .cmd { color: var(--text); }
-    .terminal-body .comment { color: var(--text-dim); }
-    .terminal-body .success { color: var(--green); }
-    .terminal-body .warn { color: var(--amber); }
-    .terminal-body .value { color: var(--cyan); }
-    .terminal-body .key { color: var(--text-secondary); }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; margin-top:4rem; }
+    footer a{ color:var(--indigo); }
 
-    /* ── SECTIONS ── */
-    .section { padding: 5rem 0; }
-    .section-header {
-      margin-bottom: 3rem;
-    }
-    .section-eyebrow {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.75rem;
-    }
-    .section-title {
-      font-family: var(--mono);
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 0.75rem;
-    }
-    .section-desc {
-      color: var(--text-secondary);
-      max-width: 550px;
-      font-size: 0.95rem;
-    }
-
-    /* ── ARCHITECTURE ── */
-    .arch-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .arch-cell {
-      background: var(--bg-card);
-      padding: 2rem;
-      transition: background 0.2s;
-    }
-    .arch-cell:hover {
-      background: var(--bg-elevated);
-    }
-    .arch-cell-icon {
-      width: 36px; height: 36px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 8px;
-      background: var(--accent-dim);
-      border: 1px solid var(--border-accent);
-      margin-bottom: 1rem;
-      font-size: 1rem;
-    }
-    .arch-cell h3 {
-      font-family: var(--mono);
-      font-size: 0.9rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--text);
-    }
-    .arch-cell p {
-      font-size: 0.82rem;
-      color: var(--text-dim);
-      line-height: 1.6;
-    }
-    .arch-cell .perf {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--green);
-      margin-top: 0.75rem;
-      padding: 0.25rem 0.5rem;
-      background: var(--green-dim);
-      border-radius: 4px;
-      display: inline-block;
-    }
-
-    /* ── PIPELINE ── */
-    .pipeline {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      overflow-x: auto;
-      padding: 2rem 0;
-    }
-    .pipeline-step {
-      flex: 0 0 auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem 1.5rem;
-      text-align: center;
-      min-width: 140px;
-    }
-    .pipeline-step .name {
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 0.25rem;
-    }
-    .pipeline-step .time {
-      font-family: var(--mono);
-      font-size: 0.65rem;
-      color: var(--green);
-    }
-    .pipeline-arrow {
-      font-family: var(--mono);
-      color: var(--text-dim);
-      font-size: 1.2rem;
-      padding: 0 0.5rem;
-    }
-
-    /* ── STATS GRID ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1rem;
-      margin: 2rem 0;
-    }
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.5rem;
-      text-align: center;
-      transition: all 0.2s;
-    }
-    .stat-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-    .stat-card .number {
-      font-family: var(--mono);
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent-bright);
-      font-variant-numeric: tabular-nums;
-    }
-    .stat-card .unit {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-top: 0.3rem;
-    }
-
-    /* ── CODE BLOCK ── */
-    .code-block {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.5rem 2rem;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      line-height: 1.8;
-      overflow-x: auto;
-      margin: 2rem 0;
-    }
-
-    /* ── PROOF SECTION ── */
-    .proof-visual {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2.5rem;
-      margin: 2rem 0;
-    }
-    .proof-chain {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      font-family: var(--mono);
-      font-size: 0.7rem;
-    }
-    .proof-block {
-      background: var(--accent-dim);
-      border: 1px solid var(--border-accent);
-      border-radius: 6px;
-      padding: 0.4rem 0.8rem;
-      color: var(--accent-bright);
-    }
-    .proof-hash {
-      color: var(--text-dim);
-      font-size: 0.6rem;
-    }
-    .proof-arrow { color: var(--text-dim); }
-
-    /* ── CTA SECTION ── */
-    .cta-section {
-      text-align: center;
-      padding: 6rem 0;
-      position: relative;
-    }
-    .cta-section h2 {
-      font-family: var(--mono);
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 700;
-      margin-bottom: 1rem;
-      letter-spacing: -0.03em;
-    }
-    .cta-section p {
-      color: var(--text-secondary);
-      margin-bottom: 2.5rem;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* ── FOOTER ── */
-    .footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-dim);
-    }
-    .footer a { color: var(--accent); text-decoration: none; }
-    .footer a:hover { color: var(--accent-bright); }
-
-    /* ── REVEAL ── */
-    .reveal {
-      opacity: 0; transform: translateY(20px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    /* ── CURSOR ── */
-    .c-dot {
-      position: fixed; top: 0; left: 0; z-index: 9999;
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #ff4800; pointer-events: none;
-    }
-    .c-ring {
-      position: fixed; top: 0; left: 0; z-index: 9998;
-      width: 32px; height: 32px; border-radius: 50%;
-      border: 1.5px solid rgba(255,72,0,.45); pointer-events: none;
-    }
-
-    /* ── LANG ── */
-    .en { display: none; }
-    .lang-en .tr { display: none; }
-    .lang-en .en { display: inline; }
-    .lang-btn {
-      background: none; border: 1px solid var(--border);
-      color: var(--text-dim); font-family: var(--mono);
-      font-size: .6rem; font-weight: 700; letter-spacing: .08em;
-      padding: .3rem .7rem; border-radius: 4px; cursor: pointer;
-      transition: border-color .2s, color .2s;
-    }
-    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .nav { padding: 0 1rem; }
-      .container { padding: 0 1rem; }
-      .hero { padding: 5rem 0 3rem; }
-      .hero-metrics { gap: 1.5rem; }
-      .section { padding: 3rem 0; }
-      .pipeline { flex-wrap: wrap; justify-content: center; }
-      .footer { flex-direction: column; gap: 0.5rem; text-align: center; }
-      .nav-status { display: none; }
-    }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
   </style>
 </head>
 <body>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
-
-  <!-- NAV -->
-  <nav class="nav">
-    <a href="/" class="nav-brand">
-      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="nav-grad" x1="0" y1="0" x2="32" y2="32">
-            <stop offset="0%" stop-color="#ff4800"/>
-            <stop offset="100%" stop-color="#06b6d4"/>
-          </linearGradient>
-        </defs>
-        <polygon points="16,2 29,9 29,23 16,30 3,23 3,9" stroke="url(#nav-grad)" stroke-width="1.5" fill="none"/>
-        <polygon points="16,6 25,11 25,21 16,26 7,21 7,11" stroke="url(#nav-grad)" stroke-width="1" fill="rgba(255,72,0,0.1)"/>
-        <line x1="16" y1="11" x2="16" y2="23" stroke="url(#nav-grad)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="11" y1="14" x2="21" y2="14" stroke="url(#nav-grad)" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M11 14 L9.5 17.5 L12.5 17.5 Z" fill="none" stroke="#ff4800" stroke-width="0.8"/>
-        <path d="M21 14 L19.5 17.5 L22.5 17.5 Z" fill="none" stroke="#06b6d4" stroke-width="0.8"/>
-      </svg>
-      <span>LuceThemis</span>
-    </a>
-    <div class="nav-links">
-      <a href="/">← <span class="tr">portfolyo</span><span class="en">portfolio</span></a>
-      <a href="#architecture"><span class="tr">Mimari</span><span class="en">Architecture</span></a>
-      <a href="#performance"><span class="tr">Performans</span><span class="en">Performance</span></a>
-      <a href="#audit"><span class="tr">Denetim</span><span class="en">Audit</span></a>
-      <a href="https://github.com/emirhuseynrmx" target="_blank" rel="noopener">GitHub</a>
-      <div class="nav-status"><span class="dot"></span> OPERATIONAL</div>
+  <nav class="nav" id="nav">
+    <a class="back" href="../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <span class="brand">LuceThemis</span>
+    <div class="nav-end">
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
-    <button class="lang-btn" id="lang-btn">TR / EN</button>
   </nav>
 
-  <div class="container">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-glow"></div>
-      <div class="hero-content">
-        <div class="hero-eyebrow">v0.1.0 &mdash; Pre-Trade Risk + Signal Audit</div>
-        <h1>LuceThemis</h1>
-        <p class="hero-sub">
-          <span class="tr">Kriptografik kanıt zincirleriyle sub-mikrosaniye pre-trade risk kararları. Sermaye dokunmadan aşırı uydurulan stratejileri durduran sinyal denetim motoru. Gecikmeyi nanosaniyeyle ölçen kurumsal masalar için.</span>
-          <span class="en">Sub-microsecond pre-trade risk decisions with cryptographic proof chains. Signal falsification engine that kills overfitted strategies before capital touches them. Built for desks that measure latency in nanoseconds.</span>
-        </p>
-        <div class="hero-metrics">
-          <div class="hero-metric">
-            <span class="value" data-count="900">0</span>
-            <span class="label"><span class="tr">ns / pre-trade kontrol</span><span class="en">ns / pre-trade check</span></span>
-          </div>
-          <div class="hero-metric">
-            <span class="value" data-count="4.65" data-decimals="2">0</span>
-            <span class="label"><span class="tr">M karar / sn</span><span class="en">M checks / sec</span></span>
-          </div>
-          <div class="hero-metric">
-            <span class="value" data-count="48">0</span>
-            <span class="label"><span class="tr">&mu;s / sinyal denetimi</span><span class="en">&mu;s / signal audit</span></span>
-          </div>
-          <div class="hero-metric">
-            <span class="value" data-count="14400" data-commas="true">0</span>
-            <span class="label"><span class="tr">test günü</span><span class="en">trading days tested</span></span>
-          </div>
-          <div class="hero-metric">
-            <span class="value">0</span>
-            <span class="label">unsafe blocks</span>
-          </div>
-        </div>
-        <div class="hero-ctas">
-          <a href="mailto:emirhuseyininci@gmail.com?subject=LuceThemis%20Access%20Request" class="btn btn-primary">
-            <span class="tr">Erişim İste</span><span class="en">Request Access</span>
-          </a>
-          <a href="https://github.com/emirhuseynrmx/calybrisengine" target="_blank" rel="noopener" class="btn btn-ghost">
-            <span class="tr">Motor Kaynağı</span><span class="en">View Engine Source</span>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- LIVE TERMINAL -->
-    <div class="terminal reveal">
-      <div class="terminal-header">
-        <span class="terminal-dot r"></span>
-        <span class="terminal-dot y"></span>
-        <span class="terminal-dot g"></span>
-        <span class="terminal-title">lucethemis &mdash; pre-trade gateway</span>
-      </div>
-      <div class="terminal-body">
-<span class="prompt">$</span> <span class="cmd">lucethemis --mode gateway --bind 0.0.0.0:9090</span>
-<br/><br/>
-<span class="comment">  // Pre-Trade Risk Gateway</span>
-<br/>
-<span class="success">  [ADMIT]</span> <span class="key">hft-desk-alpha</span> BTCUSDT <span class="value">LONG</span> notional=<span class="value">250M</span>&mu;&cent; latency=<span class="success">900ns</span>
-<br/>
-<span class="key">         proof:</span> <span class="value">2c0f4d0e85a920c3&hellip;</span>
-<br/>
-<span class="success">  [ADMIT]</span> <span class="key">hft-desk-alpha</span> ETHUSDT <span class="value">SHORT</span> notional=<span class="value">100M</span>&mu;&cent; latency=<span class="success">2.1&mu;s</span>
-<br/>
-<span class="key">         proof:</span> <span class="value">f2a5dba44a112c02&hellip;</span>
-<br/>
-<span class="success">  [ADMIT]</span> <span class="key">hft-desk-beta</span> ES_F <span class="value">LONG</span> notional=<span class="value">500M</span>&mu;&cent; latency=<span class="success">900ns</span>
-<br/><br/>
-<span class="comment">  // Signal Audit Engine</span>
-<br/>
-<span class="key">  Signal:</span> momentum-btc-20d <span class="comment">(BTCUSDT)</span>
-<br/>
-<span class="key">  Grade:</span> <span class="success">B</span> &nbsp; MDL Penalty: <span class="warn">800bps</span> &nbsp; Adj.Sharpe: <span class="value">1.82</span>
-<br/>
-<span class="key">  Tests:</span> WalkFwd=<span class="success">PASS</span> Cost=<span class="success">PASS</span> Leakage=<span class="success">PASS</span> Complexity=<span class="success">PASS</span>
-<br/><br/>
-<span class="comment">  // Throughput</span>
-<br/>
-<span class="key">  Benchmark:</span> <span class="value">4,651,162</span> checks/sec &nbsp; avg <span class="success">215ns</span>/check
-<br/>
-<span class="key">  Health:</span> breaker=<span class="success">Closed</span> conservation=<span class="success">true</span> tenants=<span class="value">3</span>
+  <header class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">HFT · Pre-Trade Risk Engine</span>
+      <h1><span class="en">Rules at<br><span class="grad">market speed.</span></span><span class="tr">Piyasa hızında<br><span class="grad">kurallar.</span></span></h1>
+      <p class="lead"><span class="en">LuceThemis gates every order against your risk rules at <b>4.6M checks per second</b> — sub-millisecond, and every allow-or-block written to a hash-chained audit trail your compliance team can trust.</span><span class="tr">LuceThemis her emri, risk kurallarından <b>saniyede 4,6 milyon kontrol</b> hızında geçirir; kararı milisaniyenin altında verir. İzin verdiği ya da durdurduğu her emir, uyum ekibinin güvenebileceği, sonradan değiştirilemez bir kayda işlenir.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
+        <a class="btn btn-ghost" href="../#contact"><span class="en">Talk to me</span><span class="tr">İletişime geç</span></a>
       </div>
     </div>
+    <div class="hero-vis">
+      <canvas id="scene"></canvas>
+      <div class="vis-legend">
+        <span><i style="background:var(--indigo)"></i><span class="en">order flow</span><span class="tr">emir akışı</span></span>
+        <span><i style="background:var(--proof)"></i><span class="en">passed</span><span class="tr">geçti</span></span>
+        <span><i style="background:var(--red)"></i><span class="en">blocked</span><span class="tr">bloklandı</span></span>
+      </div>
+    </div>
+  </header>
 
-    <!-- ARCHITECTURE -->
-    <section class="section reveal" id="architecture">
-      <div class="section-header">
-        <div class="section-eyebrow">01 &mdash; <span class="tr">Mimari</span><span class="en">Architecture</span></div>
-        <h2 class="section-title"><span class="tr">Hız İçin Katmanlı</span><span class="en">Layered for Speed</span></h2>
-        <p class="section-desc">
-          <span class="tr">Her katman hızla başarısız olur. En ucuz kontrol önce, en pahalısı sonda. Hot path'te sıfır allocation.</span>
-          <span class="en">Each layer fails fast. Cheapest check first, most expensive last. Zero allocations on the hot path.</span>
-        </p>
+  <section class="sec" id="problem">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
+        <h2 class="sec-title"><span class="en">At market speed, a late risk check is a loss.</span><span class="tr">Piyasa hızında geç kalan bir kontrol, doğrudan zarardır.</span></h2>
+        <p class="sec-lead"><span class="en">Quant desks fire thousands of orders a second, but the pre-trade risk layer that's supposed to stop a fat-finger, a breached limit, or a rogue signal often can't keep up — so checks get loosened or skipped. And when the regulator asks which rule stopped which order, a pile of rotating logs is not an answer. Speed without an auditable gate is just exposure.</span><span class="tr">Masalar saniyede binlerce emir gönderir; ama yanlış girilen bir emri, aşılan bir limiti ya da bozuk bir sinyali durduracak risk katmanı çoğu zaman bu hıza yetişemez — sonuçta kontroller ya gevşetilir ya atlanır. Denetçi hangi kuralın hangi emri durdurduğunu sorduğunda, üst üste yığılmış kayıtlar bir cevap değildir. Denetlenebilir bir kapısı olmayan hız, sadece açık risktir.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
+        <h2 class="sec-title"><span class="en">Ingest → gate → log.</span><span class="tr">Al → kapıdan geçir → logla.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01 · AL</div><h3><span class="en">Read the signal</span><span class="tr">Sinyali al</span></h3><p><span class="en">Order and signal flow stream in at full market rate — no sampling, no back-pressure.</span><span class="tr">Emir ve sinyal akışı tam piyasa hızında içeri girer — ne örnekleme yapılır ne akış yavaşlatılır.</span></p></div>
+        <div class="step rv"><div class="n">02 · GEÇİR</div><h3><span class="en">Apply the rules</span><span class="tr">Kuralları işlet</span></h3><p><span class="en">Every order is checked against your pre-trade limits and risk policy in sub-millisecond time.</span><span class="tr">Her emir, senin limitlerin ve risk kurallarınla milisaniyenin altında denetlenir.</span></p></div>
+        <div class="step rv"><div class="n">03 · KAYDET</div><h3><span class="en">Prove the decision</span><span class="tr">Kararı kanıtla</span></h3><p><span class="en">Allow or block, the verdict and its reason are written to a hash-chained WAL — tamper-evident.</span><span class="tr">İzin de verse, durdursa da; karar ve gerekçesi birbirine zincirli bir kayda işlenir, sonradan değiştirilemez.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="impact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">03 — <span class="en">WHAT YOU GET</span><span class="tr">NE ELDE EDERSİN</span></div>
+        <h2 class="sec-title"><span class="en">Speed and an audit trail — both.</span><span class="tr">Hem hız hem eksiksiz kayıt — ikisi birden.</span></h2>
+      </div>
+      <div class="out">
+        <div class="o rv"><div class="big"><span class="u">4,6M</span> <span class="en">checks/sec</span><span class="tr">kontrol/sn</span></div><p><span class="en">Full order flow gated in real time, with sub-millisecond latency.</span><span class="tr">Tüm emir akışı, milisaniyenin altında bir gecikmeyle, gerçek zamanlı denetlenir.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Tamper-proof <span class="u">record</span></span><span class="tr">Değiştirilemez <span class="u">kayıt</span></span></div><p><span class="en">Every allow-or-block decision is auditable and tamper-evident.</span><span class="tr">İzin verilen ya da durdurulan her karar denetlenebilir ve sonradan değiştirilemez.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Institutional <span class="u">grade</span></span><span class="tr">Kurumsal <span class="u">seviye</span></span></div><p><span class="en">Built for the demands of institutional quant desks and their auditors.</span><span class="tr">Kurumsal işlem masalarının ve onları denetleyenlerin ihtiyaçlarına göre kuruldu.</span></p></div>
       </div>
 
-      <div class="pipeline">
-        <div class="pipeline-step">
-          <div class="name">Circuit Breaker</div>
-          <div class="time">1 atomic load</div>
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need a gate that keeps up?</span><span class="tr">Hıza yetişen bir kontrol katmanı mı lazım?</span></h3>
+          <p><span class="en">Let's put an auditable pre-trade risk engine in front of your flow.</span><span class="tr">Emir akışının önüne, denetlenebilir bir risk kontrol motoru koyalım.</span></p>
         </div>
-        <div class="pipeline-arrow">&rarr;</div>
-        <div class="pipeline-step">
-          <div class="name">Rate Limiter</div>
-          <div class="time">1 CAS op</div>
-        </div>
-        <div class="pipeline-arrow">&rarr;</div>
-        <div class="pipeline-step">
-          <div class="name">Position Limits</div>
-          <div class="time">lock-free read</div>
-        </div>
-        <div class="pipeline-arrow">&rarr;</div>
-        <div class="pipeline-step">
-          <div class="name">Budget Reserve</div>
-          <div class="time">CAS debit</div>
-        </div>
-        <div class="pipeline-arrow">&rarr;</div>
-        <div class="pipeline-step">
-          <div class="name">Kernel Decision</div>
-          <div class="time">~115ns</div>
-        </div>
-        <div class="pipeline-arrow">&rarr;</div>
-        <div class="pipeline-step">
-          <div class="name">Verify + Proof</div>
-          <div class="time">SHA-256</div>
-        </div>
+        <a class="btn btn-primary" href="../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
+    </div>
+  </section>
 
-      <div class="arch-grid">
-        <div class="arch-cell">
-          <div class="arch-cell-icon">&#x26A1;</div>
-          <h3>Pre-Trade Risk <span class="tr">Geçidi</span><span class="en">Gateway</span></h3>
-          <p>
-            <span class="tr">Tam kabul/red pipeline: circuit breaker, rate limiter, pozisyon limitleri, bütçe, kernel kararı, kriptografik kanıt.</span>
-            <span class="en">Full admit/reject pipeline: circuit breaker, rate limiter, position limits, budget, kernel decision, cryptographic proof.</span>
-          </p>
-          <span class="perf">900ns p50 latency</span>
-        </div>
-        <div class="arch-cell">
-          <div class="arch-cell-icon">&#x1F50D;</div>
-          <h3><span class="tr">Sinyal Denetim Motoru</span><span class="en">Signal Audit Engine</span></h3>
-          <p>
-            <span class="tr">MDL karmaşıklık cezaları, walk-forward doğrulama, sızıntı tespiti, rejim sağlamlığı, istatistiksel anlamlılık.</span>
-            <span class="en">MDL complexity penalties, walk-forward validation, leakage detection, regime robustness, statistical significance.</span>
-          </p>
-          <span class="perf">48&mu;s per audit</span>
-        </div>
-        <div class="arch-cell">
-          <div class="arch-cell-icon">&#x1F512;</div>
-          <h3><span class="tr">Kanıt Taşıyan Kararlar</span><span class="en">Proof-Carrying Decisions</span></h3>
-          <p>
-            <span class="tr">Her karar SHA-256 digest zincirine bağlanır. HMAC ile kurcalamaya karşı dayanıklı WAL. Replay doğrulama.</span>
-            <span class="en">Every decision binds to a SHA-256 digest chain. Tamper-evident WAL with HMAC. Replay verification.</span>
-          </p>
-          <span class="perf">Deterministic replay</span>
-        </div>
-        <div class="arch-cell">
-          <div class="arch-cell-icon">&#x1F4B0;</div>
-          <h3><span class="tr">Koruma Kanıtları</span><span class="en">Conservation Proofs</span></h3>
-          <p>
-            <span class="tr">Sabit noktalı i64 mikrosent. CAS atomik bütçe. Matematiksel kanıt: kalan + rezerve + taahhüt = başlangıç.</span>
-            <span class="en">Fixed-point i64 microcents. CAS atomic budget. Mathematical proof that remaining + reserved + committed = initial.</span>
-          </p>
-          <span class="perf">Zero floating point</span>
-        </div>
-        <div class="arch-cell">
-          <div class="arch-cell-icon">&#x1F6E1;</div>
-          <h3><span class="tr">Acil Durdurma</span><span class="en">Kill Switch</span></h3>
-          <p>
-            <span class="tr">Sub-nanosaniye trip süresiyle atomik circuit breaker. Manuel kill switch. Probe doğrulamalı otomatik kurtarma.</span>
-            <span class="en">Atomic circuit breaker with sub-nanosecond trip time. Manual kill switch. Auto-recovery with probe validation.</span>
-          </p>
-          <span class="perf">1 atomic store to trip</span>
-        </div>
-        <div class="arch-cell">
-          <div class="arch-cell-icon">&#x1F4CA;</div>
-          <h3><span class="tr">Çok Kiracılı İzolasyon</span><span class="en">Multi-Tenant Isolation</span></h3>
-          <p>
-            <span class="tr">Masa başına rate limit, pozisyon limiti, bütçe izolasyonu. Cross-margin portföy risk takibi.</span>
-            <span class="en">Per-desk rate limits, position limits, budget isolation. Cross-margin portfolio exposure tracking.</span>
-          </p>
-          <span class="perf">Per-tenant CAS</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- PERFORMANCE -->
-    <section class="section reveal" id="performance">
-      <div class="section-header">
-        <div class="section-eyebrow">02 &mdash; <span class="tr">Performans</span><span class="en">Performance</span></div>
-        <h2 class="section-title"><span class="tr">Önemli Sayılar</span><span class="en">Numbers That Matter</span></h2>
-        <p class="section-desc">
-          <span class="tr">Standart donanımda ölçüldü. FPGA yok, kernel bypass yok. Saf Rust, tek çekirdek.</span>
-          <span class="en">Measured on commodity hardware. No FPGA, no kernel bypass. Pure Rust, single core.</span>
-        </p>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="number" data-count="900">0</div>
-          <div class="unit"><span class="tr">ns / pre-trade kontrol</span><span class="en">ns / pre-trade check</span></div>
-        </div>
-        <div class="stat-card">
-          <div class="number" data-count="115">0</div>
-          <div class="unit"><span class="tr">ns / kernel kararı</span><span class="en">ns / kernel decision</span></div>
-        </div>
-        <div class="stat-card">
-          <div class="number" data-count="4.65" data-decimals="2">0</div>
-          <div class="unit"><span class="tr">M karar / sn</span><span class="en">M decisions / sec</span></div>
-        </div>
-        <div class="stat-card">
-          <div class="number" data-count="0">0</div>
-          <div class="unit"><span class="tr">hot path allocation</span><span class="en">allocations hot path</span></div>
-        </div>
-        <div class="stat-card">
-          <div class="number" data-count="0">0</div>
-          <div class="unit">unsafe blocks</div>
-        </div>
-        <div class="stat-card">
-          <div class="number" data-count="48">0</div>
-          <div class="unit"><span class="tr">&mu;s / sinyal denetimi</span><span class="en">&mu;s / signal audit</span></div>
-        </div>
-      </div>
-
-      <div class="code-block">
-<span style="color:var(--text-dim)">// Actual benchmark output &mdash; release build, LTO, single codegen unit</span>
-<br/>
-<span style="color:var(--accent-bright)">prescribe/22_models</span>&nbsp;&nbsp;&nbsp;time: [<span style="color:var(--green)">114.89 ns</span> 115.42 ns 116.01 ns]
-<br/>
-<span style="color:var(--accent-bright)">pre_trade/full_pipeline</span>&nbsp;time: [<span style="color:var(--green)">892 ns</span> 907 ns 923 ns]
-<br/>
-<span style="color:var(--accent-bright)">audit/14400_samples</span>&nbsp;&nbsp;&nbsp;time: [<span style="color:var(--green)">47.3 &mu;s</span> 48.1 &mu;s 49.0 &mu;s]
-<br/>
-<span style="color:var(--accent-bright)">budget/cas_reserve</span>&nbsp;&nbsp;&nbsp;&nbsp;time: [<span style="color:var(--green)">18 ns</span> 19 ns 20 ns]
-      </div>
-    </section>
-
-    <!-- SIGNAL AUDIT -->
-    <section class="section reveal" id="audit">
-      <div class="section-header">
-        <div class="section-eyebrow">03 &mdash; <span class="tr">Sinyal Denetimi</span><span class="en">Signal Audit</span></div>
-        <h2 class="section-title"><span class="tr">Aşırı Uydurulmuş Stratejileri Durdur</span><span class="en">Kill Overfitted Strategies</span></h2>
-        <p class="section-desc">
-          <span class="tr">MDL ilhamıyla karmaşıklık cezaları. Daha karmaşık sinyaller üstel olarak daha güçlü kanıt gerektirir.</span>
-          <span class="en">MDL-inspired complexity penalties. More complex signals need exponentially stronger evidence.</span>
-        </p>
-      </div>
-
-      <div class="proof-visual">
-        <div style="font-family:var(--mono);font-size:0.75rem;color:var(--text-secondary);margin-bottom:1.5rem;">
-          <span class="tr">Sinyal Denetim Pipeline</span><span class="en">Signal Audit Pipeline</span>
-        </div>
-        <div class="proof-chain">
-          <span class="proof-block">Signal Ingest</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">MDL Complexity Score</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">Walk-Forward (5-fold)</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">Cost Deduction</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">Leakage Detection</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">Regime Robustness</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">Evidence Grade</span>
-        </div>
-        <div style="margin-top:1.5rem;font-family:var(--mono);font-size:0.65rem;color:var(--text-dim)">
-          Proof digest: <span style="color:var(--cyan)">2e4d65ed22008e05b3a1c4f7...89d2</span> (SHA-256, deterministic)
-        </div>
-      </div>
-
-      <div class="arch-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))">
-        <div class="arch-cell">
-          <h3 style="color:var(--amber)">MDL <span class="tr">Cezası</span><span class="en">Penalty</span></h3>
-          <p>log2(params) * 200 + sqrt(lookback) * 100 + indicators * 150 + optimization * 1000 + snooping^2 * 300</p>
-        </div>
-        <div class="arch-cell">
-          <h3 style="color:var(--green)">Walk-Forward</h3>
-          <p>
-            <span class="tr">5 katlı genişleyen pencere. In-sample %70, out-of-sample %30. Maliyetler sonrası 3+ katta kârlı olmalı.</span>
-            <span class="en">5-fold expanding window. In-sample 70%, out-of-sample 30%. Must profit in 3+ folds after costs.</span>
-          </p>
-        </div>
-        <div class="arch-cell">
-          <h3 style="color:var(--red)"><span class="tr">Sızıntı Tespiti</span><span class="en">Leakage Detection</span></h3>
-          <p>
-            <span class="tr">İlk %5 getiri vs geri kalanı. Şüpheli yüksek erken getiri look-ahead bias işaretler. Snooping derecesi takip edilir.</span>
-            <span class="en">First 5% returns vs rest. Suspiciously high early returns flag look-ahead bias. Snooping degree tracked.</span>
-          </p>
-        </div>
-        <div class="arch-cell">
-          <h3 style="color:var(--cyan)"><span class="tr">Rejim Sağlamlığı</span><span class="en">Regime Robustness</span></h3>
-          <p>
-            <span class="tr">3 rejime bölünür. En az 2/3'ünde kârlı olmalı. Salt boğa piyasası sinyalleri başarısız olur.</span>
-            <span class="en">Split into 3 regimes. Must be profitable in at least 2/3. Pure bull-market signals fail.</span>
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROOF CHAIN -->
-    <section class="section reveal">
-      <div class="section-header">
-        <div class="section-eyebrow">04 &mdash; <span class="tr">Denetim İzi</span><span class="en">Audit Trail</span></div>
-        <h2 class="section-title"><span class="tr">Kriptografik Kanıt Zinciri</span><span class="en">Cryptographic Evidence Chain</span></h2>
-        <p class="section-desc">
-          <span class="tr">Her karar hash zincirine bağlıdır. Tek girdiyi kurcala, tüm zincir kırılır. MiFID II / Reg NMS hazır.</span>
-          <span class="en">Every decision is hash-chained. Tamper with one entry, break the entire chain. MiFID II / Reg NMS ready.</span>
-        </p>
-      </div>
-
-      <div class="proof-visual">
-        <div style="font-family:var(--mono);font-size:0.7rem;color:var(--text-secondary);margin-bottom:1rem">
-          <span class="tr">Hash Zincirli WAL (Write-Ahead Log)</span><span class="en">Hash-Chained WAL (Write-Ahead Log)</span>
-        </div>
-        <div class="proof-chain">
-          <span class="proof-block">Decision #1</span>
-          <span class="proof-hash">&rarr; H(policy|input|decision)</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">Decision #2</span>
-          <span class="proof-hash">&rarr; H(prev_hash|entry)</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">Decision #3</span>
-          <span class="proof-hash">&rarr; HMAC-SHA256</span>
-          <span class="proof-arrow">&rarr;</span>
-          <span class="proof-block">...</span>
-        </div>
-        <div style="margin-top:1.5rem;display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;font-family:var(--mono);font-size:0.65rem;">
-          <div>
-            <div style="color:var(--text-dim);margin-bottom:0.3rem"><span class="tr">KORUMA KANITI</span><span class="en">CONSERVATION PROOF</span></div>
-            <div style="color:var(--green)">remaining + reserved + committed = initial</div>
-          </div>
-          <div>
-            <div style="color:var(--text-dim);margin-bottom:0.3rem"><span class="tr">REPLAY DOĞRULAMA</span><span class="en">REPLAY VERIFICATION</span></div>
-            <div style="color:var(--cyan)"><span class="tr">Aynı girdi + politika = aynı karar (her zaman)</span><span class="en">Same input + policy = same decision (always)</span></div>
-          </div>
-          <div>
-            <div style="color:var(--text-dim);margin-bottom:0.3rem"><span class="tr">KAPALI WAL</span><span class="en">FAIL-CLOSED WAL</span></div>
-            <div style="color:var(--amber)"><span class="tr">Geçersiz kararlar kayıta girmez</span><span class="en">Invalid decisions never enter the log</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TECH STACK -->
-    <section class="section reveal">
-      <div class="section-header">
-        <div class="section-eyebrow">05 &mdash; Stack</div>
-        <h2 class="section-title"><span class="tr">Farklı İnşa Edildi</span><span class="en">Built Different</span></h2>
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-        <span class="proof-block">Rust</span>
-        <span class="proof-block">#![forbid(unsafe_code)]</span>
-        <span class="proof-block">Calybris Engine</span>
-        <span class="proof-block">CAS Atomics</span>
-        <span class="proof-block">SHA-256 / HMAC</span>
-        <span class="proof-block">Fixed-Point i64</span>
-        <span class="proof-block">Loom Verified</span>
-        <span class="proof-block">Miri Clean</span>
-        <span class="proof-block">Zero Alloc Hot Path</span>
-        <span class="proof-block">MDL Complexity</span>
-        <span class="proof-block">Walk-Forward</span>
-        <span class="proof-block">gRPC Ready</span>
-        <span class="proof-block">Prometheus Metrics</span>
-        <span class="proof-block">Multi-Tenant</span>
-        <span class="proof-block">Hot-Reload Policy</span>
-        <span class="proof-block">Kill Switch</span>
-      </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta-section reveal">
-      <h2>
-        <span class="tr">Kurumsal masalar için inşa edildi.</span>
-        <span class="en">Built for institutional desks.</span>
-      </h2>
-      <p>
-        <span class="tr">Sub-mikrosaniye pre-trade risk. Aşırı uydurulmuş stratejileri öldüren sinyal denetimi. Düzenleyiciler için kanıt taşıyan denetim izi.</span>
-        <span class="en">Sub-microsecond pre-trade risk. Signal falsification that kills overfitted strategies. Proof-carrying audit trail for regulators.</span>
-      </p>
-      <div class="hero-ctas" style="justify-content:center">
-        <a href="mailto:emirhuseyininci@gmail.com?subject=LuceThemis%20Access%20Request" class="btn btn-primary">
-          <span class="tr">Erişim İste</span><span class="en">Request Access</span>
-        </a>
-        <a href="https://github.com/emirhuseynrmx/calybrisengine" target="_blank" rel="noopener" class="btn btn-ghost">
-          <span class="tr">Motor Kaynağı</span><span class="en">Engine Source</span>
-        </a>
-      </div>
-    </section>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer container">
-    <span>&copy; 2025&ndash;2026 Emir H. Inci</span>
-    <span><a href="/">emirhuseyin.tech</a> &middot; <a href="https://github.com/emirhuseynrmx">GitHub</a></span>
-  </footer>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · LuceThemis · <a href="../">emirhuseyin.tech</a></footer>
 
   <script>
-    /* Custom cursor */
-    (function(){
-      var dot=document.getElementById('c-dot');
-      var ring=document.getElementById('c-ring');
-      if(!dot||!ring)return;
-      var mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
-      document.addEventListener('mousemove',function(e){
-        mx=e.clientX;my=e.clientY;
-        dot.style.transform='translate3d('+(mx-4)+'px,'+(my-4)+'px,0)';
-      });
-      (function loop(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;ring.style.transform='translate3d('+(rx-16)+'px,'+(ry-16)+'px,0)';requestAnimationFrame(loop);})();
-    })();
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-    /* Lang toggle */
-    (function(){
-      var btn=document.getElementById('lang-btn');
-      var html=document.documentElement;
-      if(!btn)return;
-      btn.addEventListener('click',function(){
-        if(html.classList.contains('lang-tr')){html.classList.replace('lang-tr','lang-en');}
-        else{html.classList.replace('lang-en','lang-tr');}
-      });
-    })();
-
-    /* Scroll reveal */
-    (function(){
-      var els = document.querySelectorAll('.reveal');
-      var obs = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
-        });
-      }, {threshold:0.08});
-      els.forEach(function(el){ obs.observe(el); });
-    })();
-
-    /* Count-up */
-    (function(){
-      function fmt(n, decimals, commas) {
-        if(decimals > 0) return n.toFixed(decimals);
-        var s = Math.round(n).toString();
-        return commas ? s.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : s;
-      }
-      function animate(el) {
-        var target = parseFloat(el.getAttribute('data-count'));
-        if(isNaN(target)) return;
-        var decimals = parseInt(el.getAttribute('data-decimals') || '0');
-        var commas = el.getAttribute('data-commas') === 'true';
-        var dur = 1400, start = performance.now();
-        function tick(now) {
-          var p = Math.min((now - start) / dur, 1);
-          var e = 1 - Math.pow(1 - p, 3);
-          el.textContent = fmt(e * target, decimals, commas);
-          if(p < 1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      }
-      var obs = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting) {
-            e.target.querySelectorAll('[data-count]').forEach(animate);
-            obs.unobserve(e.target);
-          }
-        });
-      }, {threshold:0.1});
-      document.querySelectorAll('.hero-metrics, .stats-row').forEach(function(el){ obs.observe(el); });
-      setTimeout(function(){
-        document.querySelectorAll('[data-count]').forEach(function(el){
-          if(el.textContent === '0') animate(el);
-        });
-      }, 2500);
-    })();
+  /* ---- LuceThemis pre-trade gate hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
+    function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
+    function initState(){ var w=s.w,h=s.h; s.st.p=[]; for(var i=0;i<70;i++) s.st.p.push({x:Math.random()*w,y:24+Math.random()*(h-48),sp:2+Math.random()*3.2,fl:Math.random()<.12,pa:0}); }
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===s.w&&h===s.h&&cv.width>0)return true; s.D=d;s.w=w;s.h=h;cv.width=w*d;cv.height=h*d;s.ctx.setTransform(d,0,0,d,0,0); initState(); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function luce(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, gx=w*.58;
+      ctx.strokeStyle='rgba('+CY+',.5)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(gx,h*.12); ctx.lineTo(gx,h*.88); ctx.stroke();
+      nd(ctx,gx,h*.12,2.4,CY,1,10); nd(ctx,gx,h*.88,2.4,CY,1,10);
+      ctx.fillStyle='rgba('+CY+',.85)'; ctx.font='700 9px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('GATE',gx,h*.08);
+      st.p.forEach(function(p){ var pre=p.x<gx; p.x+=p.sp*(pre?1:1.5); if(p.x>w+6){ p.x=-6; p.y=24+Math.random()*(h-48); p.fl=Math.random()<.12; p.pa=0; }
+        if(pre&&p.x>=gx) p.pa=1; var rgb= !pre ? (p.fl?RD:GR) : IN, a=pre?.5:.95;
+        ctx.strokeStyle='rgba('+rgb+','+(a*.5)+')'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(p.x-p.sp*3,p.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+        nd(ctx,p.x,p.y,1.6,rgb,a,5); }); }
+    var T=0;
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); luce(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    loop();
+  })();
   </script>
 </body>
 </html>

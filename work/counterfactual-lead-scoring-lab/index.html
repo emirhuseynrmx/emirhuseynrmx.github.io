@@ -1,394 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Counterfactual Lead Scoring Lab — Emir H. İnci</title>
-  <meta name="description" content="XGBoost lead skor + SHAP neden bu score aldı + DiCE counterfactual bu lead'i nasıl kapatırım. Satış ekibine kör skor değil, aksiyon planı verir."/>
+  <title>Counterfactual Lead Scoring — Emir H. İnci</title>
+  <meta name="description" content="Lead scoring with SHAP driver analysis and DiCE counterfactual action planning — reviewable decisions with the exact change that would move a lead, before you route it to sales."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">Counterfactual Lead Scoring</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/counterfactual-lead-scoring-lab" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">GradientBoosting · binary classification</span>
-        <span class="btag">Counterfactual playbook · leakage scan</span>
-        <span class="btag">Kaggle lead scoring dataset</span>
-      </div>
-      <h1 class="lhero-title">Counterfactual Lead Scoring Lab</h1>
-      <p class="lhero-sub">
-        <span class="tr">Kaggle lead scoring verisi (Mumbai bölgesi CRM'i): Prospect ID, Lead Origin, TotalVisits, Total Time Spent on Website, Asymmetrique Activity/Profile Score (13-20 arası), Converted. GradientBoostingClassifier bu veriyi eğitir, her lead'i hot / warm / nurture olarak tier'lar ve imkânsız alanlar ile değiştirilebilir alanları ayıran bir counterfactual playbook üretir. Her tier için rotasyon aksiyonu, dönüşüm sonrası sütunları yakalayan leakage scan ve per-class en az 5 örnek zorunluluğu dahil.</span>
-        <span class="en">Kaggle lead scoring dataset (Mumbai-area CRM): Prospect ID, Lead Origin, TotalVisits, Total Time Spent on Website, Asymmetrique Activity/Profile Score (13-20 range), Converted. GradientBoostingClassifier trains on this data, tiers every lead as hot / warm / nurture, and produces a counterfactual playbook separating immutable fields from actionable ones with routing actions per tier. Includes a leakage scan that flags post-conversion columns and enforces a minimum of 5 examples per class.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/counterfactual-lead-scoring-lab" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Lead Scoring — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">Lead scores<br>you can question.</span><span class="tr">Sorgulayabildiğin<br>müşteri adayı skorları.</span></h1>
+      <div class="pill-row"><span class="pill">Python</span><span class="pill">SHAP</span><span class="pill">DiCE</span><span class="pill">Litestar</span></div>
+      <p class="lead"><span class="en">Lead scoring with SHAP driver analysis and DiCE counterfactual action planning — reviewable decisions with the exact change that would move a lead, before you route it to sales.</span><span class="tr">Bir müşteri adayını puanlar; hangi etkenin puanı belirlediğini ve o adayı hangi tam değişikliğin harekete geçireceğini gösterir — satışa yönlendirmeden önce her karar gözden geçirilebilir.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">LEAD REPORT — L-4812</div>
-        <div><span style="color:#6b6858">score:</span> <span style="color:#ef4444">0.31</span> <span style="color:#6b6858">tier:</span> <span style="color:#ef4444">COLD</span></div>
-        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── SHAP drivers ──────────────────────</div>
-        <div><span style="color:#ef4444">budget_eur</span>     <span style="color:#6b6858">1200 EUR</span>  <span style="color:#ef4444">-0.38</span> <span style="color:#6b6858">(below threshold)</span></div>
-        <div><span style="color:#ef4444">has_dm_contact</span> <span style="color:#6b6858">False</span>     <span style="color:#ef4444">-0.29</span> <span style="color:#6b6858">(no decision maker)</span></div>
-        <div><span style="color:#f2f0ea">company_size</span>   <span style="color:#6b6858">8</span>         <span style="color:#6b6858">-0.11</span></div>
-        <div style="margin-top:.6rem;color:#6b6858;font-size:.58rem;">── counterfactual ────────────────────</div>
-        <div><span style="color:#10b981">if</span> budget_eur <span style="color:#10b981">&gt;=</span> 2000 <span style="color:#ff4800">&amp;&amp;</span> has_dm_contact <span style="color:#10b981">== True</span></div>
-        <div><span style="color:#6b6858">→</span> score: <span style="color:#10b981">0.74</span> <span style="color:#6b6858">tier:</span> <span style="color:#10b981">QUALIFIED</span></div>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">SHAP drivers</span><span class="tr">Etken analizi</span></h3><p><span class="en">See exactly which factors push a score up or down.</span><span class="tr">Bir puanı neyin yukarı, neyin aşağı çektiğini net görürsün.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">Counterfactuals</span><span class="tr">Gerçekçi senaryolar</span></h3><p><span class="en">The smallest change that would flip a lead's outcome.</span><span class="tr">Bir adayın sonucunu değiştirecek en küçük değişiklik nedir, gösterir.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">Reviewable</span><span class="tr">Gözden geçirilir</span></h3><p><span class="en">Every decision is inspectable before sales acts on it.</span><span class="tr">Satış harekete geçmeden önce her karar incelenebilir.</span></p></div>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>GBM</strong>
-      <span><span class="tr">GradientBoosting</span><span class="en">GradientBoosting</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>3 tier</strong>
-      <span>hot · warm · nurture</span>
-    </div>
-    <div class="lmetric">
-      <strong>playbook</strong>
-      <span><span class="tr">counterfactual aksiyon planı</span><span class="en">counterfactual action plan</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>leakage</strong>
-      <span><span class="tr">dönüşüm sonrası sütun taraması</span><span class="en">post-conversion column scan</span></span>
-    </div>
-  </div>
-
-  <!-- PROBLEM -->
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">Lead scoring örneğinde AUC 0.87 raporlanıyor; 2 ziyaret ve 674 saniye etkileşimli bir lead, 5+ ziyaret ve 1200+ saniye senaryosunda 0.72 hot skora taşınıyor. İş etkisi, skoru satış ekibinin uygulayabileceği bir sonraki aksiyona çevirmek.</span>
-      <span class="en">The lead scoring example reports AUC 0.87; a lead with 2 visits and 674 seconds of engagement becomes a 0.72 hot lead under the 5+ visits and 1200+ seconds counterfactual. The impact is turning a score into the next action sales can execute.</span>
-    </p>
-    <div class="impact-evidence">Evidence: AUC 0.87, SHAP drivers, DiCE counterfactual action plan.</div>
-  </section>
-
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi?</span>
-      <span class="en">What was the problem?</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📋</div>
-        <h3><span class="tr">Kaggle Mumbai lead verisi — hangi lead ne zaman aranacak?</span><span class="en">Kaggle Mumbai lead data — who gets called and when?</span></h3>
-        <p>
-          <span class="tr">Veri seti: Kaggle lead scoring (Mumbai bölgesi) — Lead Origin, Lead Source, Do Not Email, TotalVisits, Total Time Spent on Website, Page Views Per Visit, occupation, City, Asymmetrique Activity Score, Asymmetrique Profile Score, Converted. Activity/Profile skorları 13-20 arası. examples/leads.csv aynı şema ile birlikte geliyor.</span>
-          <span class="en">Dataset: Kaggle lead scoring (Mumbai area) — Lead Origin, Lead Source, Do Not Email, TotalVisits, Total Time Spent on Website, Page Views Per Visit, occupation, City, Asymmetrique Activity Score, Asymmetrique Profile Score, Converted. Activity/Profile scores in the 13-20 range. examples/leads.csv ships with the same schema.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🤷</div>
-        <h3><span class="tr">Skor tek başına işe yaramıyor</span><span class="en">Score alone doesn't help</span></h3>
-        <p>
-          <span class="tr">"Bu lead 0.31 aldı" dersin, satışçı "tamam peki ne yapayım?" der. Skor vermek bir tahmindir, aksiyon planı değil. Satışçının ihtiyacı olan şey: "Bu lead'in bütçesi düşük, karar vericiyle konuşamıyoruz — şu şartlar gerçekleşseydi qualified olurdu."</span>
-          <span class="en">"This lead scored 0.31" means nothing to a rep. A score is a prediction, not an action plan. What the rep needs: "This lead has low budget and we haven't reached the decision maker — it would qualify if these two conditions changed."</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🎯</div>
-        <h3><span class="tr">Problem tipi: ikili sınıflandırma + counterfactual playbook</span><span class="en">Problem type: binary classification + counterfactual playbook</span></h3>
-        <p>
-          <span class="tr">Çıktı ikili: lead convert oldu mu (1/0). GradientBoostingClassifier her lead'e 0-1 arası olasılık verir — hot ≥ 0.7, warm ≥ 0.4, nurture &lt; 0.4. Playbook imkânsız alanları (şehir, meslek gibi) değiştirilebilir alanlardan (site süresi, sayfa görüntüleme gibi) ayırır ve her tier için aksiyon önerir. Leakage scan, eğitimde kazara dönüşüm sonrası sütun kullanılmasını engeller.</span>
-          <span class="en">Binary output: did lead convert (1/0). GradientBoostingClassifier assigns a 0-1 probability to each lead — hot ≥ 0.7, warm ≥ 0.4, nurture &lt; 0.4. The playbook separates immutable fields (city, occupation) from actionable ones (time on site, page views) and prescribes a routing action per tier. Leakage scan prevents accidentally using post-conversion columns during training.</span>
-        </p>
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
+        </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Optuna HPO — neden gerekli?</span>
-      <span class="en">Optuna HPO — why it's needed</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Problem</span><span class="en">Problem</span></span>
-        <span class="tech-val"><span class="tr">GradientBoosting'in n_estimators, max_depth, learning_rate, subsample, min_samples_split ve min_samples_leaf parametreleri birbiriyle etkileşimlidir. Sabit parametreler belirli veri şekilleri için optimum olabilir, genel gelmez. Grid search kombinasyon sayısı üstel büyüdüğü için kullanılmaz.</span><span class="en">GradientBoosting's n_estimators, max_depth, learning_rate, subsample, min_samples_split and min_samples_leaf all interact. Fixed params may be optimal for specific data shapes but don't generalise. Grid search is unusable because the combination count grows exponentially.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Çözüm: TPE</span><span class="en">Solution: TPE</span></span>
-        <span class="tech-val"><span class="tr">Optuna Tree-structured Parzen Estimator geçmiş denemelerden öğrenerek sonraki noktayı akıllıca seçer. 40 trial MedianPruner ile — kötü giden denemeler erken kesilir, toplam çalışma süresi kısalır.</span><span class="en">Optuna Tree-structured Parzen Estimator learns from past trials to pick the next candidate intelligently. 40 trials with MedianPruner — poor-performing trials are stopped early, keeping total runtime low.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Holdout disiplini</span><span class="en">Holdout discipline</span></span>
-        <span class="tech-val"><span class="tr">Her trial yalnızca eğitim setinde 5-katlı StratifiedKFold CV çalıştırır. Holdout seti HPO süresince hiç görülmez. En iyi parametreler bulunduktan sonra full train set'te fit edilir, ilk kez test setinde değerlendirilir. hpo_validation: pass evidence check olarak raporlanır.</span><span class="en">Each trial runs 5-fold StratifiedKFold CV on the training set only. Holdout is never seen during HPO. After best params are found, fit on full train set and evaluated on test set for the first time. hpo_validation: pass reported as an evidence check.</span></span>
-      </div>
-    </div>
-  </section>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · Counterfactual Lead Scoring · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <!-- WHY GRADIENTBOOSTING -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Neden GradientBoosting? Tier'lar nasıl belirlendi?</span>
-      <span class="en">Why GradientBoosting? How are tiers defined?</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key">Logistic Reg.</span>
-        <span class="tech-val"><span class="tr">Doğrusallık varsayımı yapar. TotalVisits × Total Time Spent etkileşimini manuel polynomial feature olmadan yakalayamaz. Asymmetrique Activity/Profile Score'un non-lineer bölge etkisini göremez. Düşük tier ayrımı.</span><span class="en">Assumes linearity. Can't capture TotalVisits × Total Time Spent interaction without manual polynomial features. Misses non-linear region effects of Asymmetrique Activity/Profile Score. Weak tier separation.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key" style="color:#ff4800">GradientBoosting</span>
-        <span class="tech-val"><span class="tr">sklearn GradientBoostingClassifier. Her ağaç öncekinin hatasını düzeltir — Activity Score 13-15 vs 18-20 etkileşimini TotalVisits ile birlikte öğrenir. Per-class en az 5 örnek zorunluluğu; class imbalance varsa uyarır. Olasılık çıktısı: hot ≥ 0.7, warm ≥ 0.4, nurture &lt; 0.4.</span><span class="en">sklearn GradientBoostingClassifier. Each tree corrects the error of the previous one — learns Activity Score 13-15 vs 18-20 interaction with TotalVisits. Enforces minimum 5 examples per class; warns if class imbalance detected. Probability output: hot ≥ 0.7, warm ≥ 0.4, nurture &lt; 0.4.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Counterfactual playbook neden?</span><span class="en">Why a counterfactual playbook?</span></span>
-        <span class="tech-val"><span class="tr">Skor tek başına aksiyon üretmez. Playbook imkânsız alanları (şehir, meslek) değiştirilebilir alanlardan (TotalVisits, Time Spent on Website, Page Views Per Visit) ayırır. Her tier için rotasyon aksiyonu: hot → acil ara, warm → nurture dizisi, nurture → yeniden etkileşim kampanyası.</span><span class="en">A score alone doesn't generate action. The playbook separates immutable fields (city, occupation) from actionable ones (TotalVisits, Time Spent on Website, Page Views Per Visit). Routing action per tier: hot → call immediately, warm → nurture sequence, nurture → re-engagement campaign.</span></span>
-      </div>
-    </div>
-    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
-      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">SHAP — TREEXPLAINER (tam özet)</div>
-      <div><span style="color:#6b6858"># sv shape: (n_samples, n_features) ikili sınıflandırmada</span></div>
-      <div><span style="color:#6b6858"># RandomForest → (n_samples, n_features, n_classes) → sv[:,:,1] al</span></div>
-      <div><span style="color:#f2f0ea">explainer = shap.TreeExplainer(model)</span></div>
-      <div><span style="color:#f2f0ea">sv = explainer.shap_values(X_test)</span></div>
-      <div><span style="color:#f2f0ea">mean_abs = np.abs(sv).mean(axis=<span style="color:#ff4800">0</span>)  <span style="color:#6b6858"># global importance</span></span></div>
-      <div><span style="color:#f2f0ea">individual = sv[lead_idx]  <span style="color:#6b6858"># per-lead explanation</span></span></div>
-    </div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <!-- SCENARIO -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: Kaggle lead, Mumbai bölgesi</span>
-      <span class="en">Step-by-step scenario: Kaggle lead, Mumbai area</span>
-    </h2>
-    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">Lead Origin: "Lead Add Form", occupation: "working professional", TotalVisits: 2, Total Time Spent on Website: 674 saniye, Page Views Per Visit: 1.5, Asymmetrique Activity Score: 14, Profile Score: 15. "Bu lead iyi mi kötü mü?"</span>
-      <span class="en">Lead Origin: "Lead Add Form", occupation: "working professional", TotalVisits: 2, Total Time Spent on Website: 674 seconds, Page Views Per Visit: 1.5, Asymmetrique Activity Score: 14, Profile Score: 15. "Is this lead good or bad?"</span>
-    </p>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">GradientBoosting skoru: 0.38 (warm tier)</span><span class="en">GradientBoosting score: 0.38 (warm tier)</span></h3>
-        <p>
-          <span class="tr">Tier threshold'ları: hot ≥ 0.70, warm ≥ 0.40, nurture &lt; 0.40. 0.38 nurture/warm sınırında — leakage scan önce Converted sütununun modele sızmadığını doğrular, sonra eğitim başlar. Per-class en az 5 örnek zorunluluğu kontrol edilir.</span>
-          <span class="en">Tier thresholds: hot ≥ 0.70, warm ≥ 0.40, nurture &lt; 0.40. Score 0.38 sits on nurture/warm boundary — leakage scan first verifies the Converted column isn't leaking into training, then training begins. Minimum 5 examples per class enforced.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Counterfactual playbook: değiştirilebilir ne?</span><span class="en">Counterfactual playbook: what can change?</span></h3>
-        <p>
-          <span class="tr">Playbook imkânsız alanları ayırır: occupation, City → değiştirilemez. Değiştirilebilir: TotalVisits, Total Time Spent on Website, Page Views Per Visit. Counterfactual: TotalVisits ≥ 5 VE Total Time Spent ≥ 1200 saniye → skor 0.72 (hot). Aksiyon: "İçerik serisi gönder, webinar davet et."</span>
-          <span class="en">Playbook separates immutable fields: occupation, City → cannot change. Actionable: TotalVisits, Total Time Spent on Website, Page Views Per Visit. Counterfactual: TotalVisits ≥ 5 AND Total Time Spent ≥ 1200 seconds → score 0.72 (hot). Action: "Send content series, invite to webinar."</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Leakage scan: model kirlenmeden önce</span><span class="en">Leakage scan: before the model gets dirty</span></h3>
-        <p>
-          <span class="tr">Kaggle verisinde "Asymmetrique Activity/Profile Score" dönüşüm sonrası CRM'e yazılmış olabilir — bu olursa model gelecekten öğrenir. Leakage scan bu sütunları tespit edip uyarır. Temiz eğitim: sadece dönüşüm öncesi sinyal kullanılır. examples/leads.csv ile aynı şemada test edilebilir.</span>
-          <span class="en">In the Kaggle dataset, "Asymmetrique Activity/Profile Score" may have been written to the CRM after conversion — if so, the model learns from the future. The leakage scan detects these columns and raises a warning. Clean training: only pre-conversion signals used. Testable with examples/leads.csv which ships with the same schema.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- DATA VALIDATION + FEATURE ENGINEERING -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Veri doğrulama — CRM'den modele kadar olan yol</span>
-      <span class="en">Data validation — from CRM export to model</span>
-    </h2>
-    <p style="color:#6b6858;margin-bottom:1.5rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">CRM'den gelen lead verisi her zaman temiz değil. Bazı leadler bütçe alanını boş bırakmış, bazıları "5000" yazmış bazıları "beş bin TL", bazı e-postalar geçersiz. Model eğitmeden önce bu sorunları düzeltmek zorundasın — yoksa model çöpü öğrenir.</span>
-      <span class="en">CRM lead data is never clean. Some leads left the budget field empty, some wrote "5000", some "five thousand TL", some emails are invalid. These problems must be fixed before training — otherwise the model learns garbage.</span>
-    </p>
-    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:1.5rem;">
-      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 1 — VERİYİ KEŞFET</div>
-      <div><span style="color:#f2f0ea">df = pd.read_csv(<span style="color:#ff4800">"leads.csv"</span>)</span></div>
-      <div><span style="color:#f2f0ea">print(df.dtypes)  <span style="color:#6b6858"># budget_eur object mi float64 mı?</span></span></div>
-      <div><span style="color:#f2f0ea">print(df.isnull().sum())  <span style="color:#6b6858"># hangi sütunlar eksik?</span></span></div>
-      <div><span style="color:#f2f0ea">print(df[<span style="color:#ff4800">"budget_eur"</span>].value_counts().head(<span style="color:#ff4800">20</span>))  <span style="color:#6b6858"># "5k", "~3000", "-" gibi değerler</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Dönüşüm oranı: pozitif/negatif dengesizlik var mı?</span></div>
-      <div><span style="color:#f2f0ea">print(df[<span style="color:#ff4800">"converted"</span>].value_counts(normalize=<span style="color:#ff4800">True</span>))</span></div>
-      <div><span style="color:#6b6858"># → 0: 0.82, 1: 0.18 → imbalance var, scale_pos_weight ayarla</span></div>
-    </div>
-    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;margin-bottom:1.5rem;">
-      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 2 — NULL VE TİP SORUNLARI</div>
-      <div><span style="color:#6b6858"># budget_eur: boş, "-", "~" prefix'li string'ler → temizle</span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"budget_eur"</span>] = (</span></div>
-      <div><span style="color:#f2f0ea">    df[<span style="color:#ff4800">"budget_eur"</span>]</span></div>
-      <div><span style="color:#f2f0ea">    .str.replace(<span style="color:#ff4800">r"[^0-9.]"</span>, <span style="color:#ff4800">""</span>, regex=<span style="color:#ff4800">True</span>)  <span style="color:#6b6858"># rakam/nokta dışını sil</span></span></div>
-      <div><span style="color:#f2f0ea">    .replace(<span style="color:#ff4800">""</span>, np.nan)  <span style="color:#6b6858"># boş string → NaN</span></span></div>
-      <div><span style="color:#f2f0ea">    .astype(<span style="color:#ff4800">float</span>)</span></div>
-      <div><span style="color:#f2f0ea">)</span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># budget NaN ise: medyanla doldur (silmek yerine)</span></div>
-      <div><span style="color:#f2f0ea">budget_median = df[<span style="color:#ff4800">"budget_eur"</span>].median()  <span style="color:#6b6858"># = 2400 EUR</span></span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"budget_eur"</span>] = df[<span style="color:#ff4800">"budget_eur"</span>].fillna(budget_median)</span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># XGBoost kategorikler için: LabelEncoder veya feature_types</span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"industry"</span>] = LabelEncoder().fit_transform(df[<span style="color:#ff4800">"industry"</span>].fillna(<span style="color:#ff4800">"unknown"</span>))</span></div>
-    </div>
-    <div style="padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.95;">
-      <div style="color:#3a3828;margin-bottom:.8rem;font-size:.58rem;letter-spacing:.1em;">ADIM 3 — FEATURE ENGINEERING (yeni sütunlar türetmek)</div>
-      <div><span style="color:#6b6858"># Zaman bazlı feature: form doldurulma saati iş saati mi?</span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"submitted_at"</span>] = pd.to_datetime(df[<span style="color:#ff4800">"submitted_at"</span>])</span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"hour"</span>] = df[<span style="color:#ff4800">"submitted_at"</span>].dt.hour  <span style="color:#6b6858"># sabah 9-18 arası daha yüksek intent</span></span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"is_business_hours"</span>] = df[<span style="color:#ff4800">"hour"</span>].between(<span style="color:#ff4800">9</span>, <span style="color:#ff4800">18</span>).astype(<span style="color:#ff4800">int</span>)</span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Source etkisi: önceki 30 günde bu source'dan kaç lead geldi?</span></div>
-      <div><span style="color:#f2f0ea">source_counts = df.groupby(<span style="color:#ff4800">"source"</span>)[<span style="color:#ff4800">"converted"</span>].mean()  <span style="color:#6b6858"># conv rate / source</span></span></div>
-      <div><span style="color:#f2f0ea">df[<span style="color:#ff4800">"source_conv_rate"</span>] = df[<span style="color:#ff4800">"source"</span>].map(source_counts)</span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Pydantic ile son doğrulama: modele gitmeden önce şema kontrol</span></div>
-      <div><span style="color:#f2f0ea">validated = [LeadFeatures(**row) <span style="color:#ff4800">for</span> row <span style="color:#ff4800">in</span> df.to_dict(<span style="color:#ff4800">"records"</span>)]</span></div>
-      <div><span style="color:#6b6858"># ValidationError → o satırı log'la, atla, modeli kirletme</span></div>
-    </div>
-  </section>
-
-  <!-- TECHNICAL -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key">ML</span>
-        <span class="tech-val">sklearn GradientBoostingClassifier · binary classification · probability calibration</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Veri</span><span class="en">Dataset</span></span>
-        <span class="tech-val"><span class="tr">Kaggle lead scoring (Mumbai) · 11 özellik · examples/leads.csv aynı şema</span><span class="en">Kaggle lead scoring (Mumbai area) · 11 features · examples/leads.csv ships same schema</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Tier sistemi</span><span class="en">Tier system</span></span>
-        <span class="tech-val">hot ≥ 0.70 · warm ≥ 0.40 · nurture &lt; 0.40 · min 5 examples/class enforced</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Playbook</span>
-        <span class="tech-val"><span class="tr">İmkânsız alanlar (City, occupation) vs değiştirilebilir alanlar (TotalVisits, Time Spent) · tier başına rotasyon aksiyonu</span><span class="en">Immutable fields (City, occupation) vs actionable fields (TotalVisits, Time Spent) · routing action per tier</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Leakage scan</span>
-        <span class="tech-val"><span class="tr">Dönüşüm sonrası sütun tespiti · eğitim öncesi uyarı · temiz sinyal garantisi</span><span class="en">Post-conversion column detection · warning before training · clean signal guarantee</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · Pydantic v2 schema validation · coverage &gt;85% · ruff · CI</span>
-      </div>
-    </div>
-  </section>
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">AUC 0.87</div>
-        <div class="gain-label"><span class="tr">LogReg 0.78'e karşı</span><span class="en">vs logistic regression 0.78</span></div>
-        <p><span class="tr">XGBoost binary:logistic, L1+L2 regularization, histogram method. Aynı veri, aynı feature'lar — sadece model farkı. Daha az yanlış öncelik, daha net HIGH/COLD ayrımı.</span><span class="en">Same data, same features — only model difference. Fewer misprioritized leads, cleaner HIGH/COLD separation.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">SHAP</div>
-        <div class="gain-label"><span class="tr">"neden?" sorusu yanıtlı</span><span class="en">"why?" question answered</span></div>
-        <p><span class="tr">Lead L-4812 neden HOT? SHAP: budget_eur +0.41, company_size +0.28, source_conv_rate +0.19. Satış ekibi modele değil nedene göre aksiyon alır.</span><span class="en">Why is lead L-4812 HOT? SHAP values show budget_eur +0.41, company_size +0.28. Sales acts on reasons, not black-box scores.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">DiCE</div>
-        <div class="gain-label"><span class="tr">COLD lead kurtarma planı</span><span class="en">COLD lead recovery plan</span></div>
-        <p><span class="tr">"L-4812 COLD, ne değişseydi QUALIFIED olurdu?" DiCE: budget_eur ≥ 1.200 EUR ve industry=SaaS. CRM'e not olarak satış ekibine gider.</span><span class="en">"What would L-4812 need to change to reach QUALIFIED?" DiCE outputs: budget_eur ≥ 1,200 and industry=SaaS. Goes as a note in CRM.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">Kara kutu model = satış ekibi güvenmez. SHAP TreeExplainer ile her tahmin için feature katkıları hesaplanır. "Model öyle dedi" yerine "budget yüksek, şirket büyük" diyebilirler.</span><span class="en">Black box model = sales team doesn't trust it. SHAP explains each prediction. They say "budget is high, company is large" not "the model said so."</span></li>
-        <li><span class="tr">DiCE minimum mesafe CF: mevcut lead değerlerine en yakın counterfactual'ı bulur. "En az 2 değişiklikle eşiği geç" senaryosu. Uygulanabilir aksiyon planı.</span><span class="en">DiCE minimum distance CF: finds closest counterfactual to current lead values. "Cross threshold with minimum 2 changes" scenario. Actionable plan.</span></li>
-        <li><span class="tr">XGBoost native NaN: CRM'deki eksik değerler için imputation pipeline gerekmez. XGBoost missing değeri öğrenir. Daha az ön işlem, daha az hata riski.</span><span class="en">XGBoost native NaN: no imputation pipeline needed for missing CRM values. XGBoost learns the missing direction. Less preprocessing, less error risk.</span></li>
-        <li><span class="tr">Teslim formatı: her lead için JSON response (score, tier, shap_values, counterfactuals). CRM'e webhook ile push veya PDF rapor olarak satış ekibine teslim.</span><span class="en">Delivery: JSON response per lead (score, tier, shap_values, counterfactuals). Push to CRM via webhook or deliver as PDF to the sales team.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">Satış ekibinize aksiyon planı vermek ister misiniz?</span>
-      <span class="en">Want to give your sales team an action plan, not just a score?</span>
-    </h2>
-    <p>
-      <span class="tr">CRM'inizden lead verisi alır, XGBoost eğitir, SHAP+DiCE ile her lead için "neden bu skor, nasıl kapatırım" raporu çıkarım.</span>
-      <span class="en">I'll take lead data from your CRM, train XGBoost, and generate a "why this score, how to close it" report for every lead via SHAP+DiCE.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Lead Scoring İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/counterfactual-lead-scoring-lab" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

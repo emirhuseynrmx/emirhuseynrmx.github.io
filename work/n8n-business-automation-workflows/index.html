@@ -1,341 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>n8n Business Automation Workflows — Emir H. İnci</title>
-  <meta name="description" content="n8n ile iş süreçleri otomasyonu. Form lead yakalama, Google Sheets entegrasyon, AI e-posta özeti, Telegram alert, günlük satış digest. Self-hosted, sıfır per-task ücret."/>
+  <title>n8n Business Workflows — Emir H. İnci</title>
+  <meta name="description" content="Lead form to Sheets, email AI summaries, Telegram alert routing, and a daily sales digest — tested, customizable n8n workflow templates that connect the tools a business already uses."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">n8n Business Workflows</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag">n8n · self-hosted</span>
-        <span class="btag">Google Sheets · Telegram</span>
-        <span class="btag">GPT-4o · webhook</span>
-        <span class="btag">€0 per task</span>
-      </div>
-      <h1 class="lhero-title">n8n Business Automation Workflows</h1>
-      <p class="lhero-sub">
-        <span class="tr">3 kaynaktan lead geliyor (Typeform, e-posta, web sitesi), hepsi ayrı yerde duruyor, takipler el ile yapılıyor, hafta sonları atlanıyor. Bu workflow'lar hepsini birleştiriyor: form gönderilince Sheets'e yaz, AI özeti oluştur, Telegram'a bildir, 24 saat içinde yanıt yoksa hatırlat.</span>
-        <span class="en">Leads coming from 3 sources (Typeform, email, website), all stored separately, follow-ups done manually, weekends missed. These workflows unify everything: form submitted → write to Sheets, generate AI summary, notify Telegram, remind after 24 hours with no response.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=n8n Otomasyon — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">The glue between<br>your tools.</span><span class="tr">Araçlarını<br>birbirine bağlar.</span></h1>
+      <div class="pill-row"><span class="pill">n8n</span><span class="pill">Python</span><span class="pill">Google Sheets</span></div>
+      <p class="lead"><span class="en">Lead form to Sheets, email AI summaries, Telegram alert routing, and a daily sales digest — tested, customizable n8n workflow templates that connect the tools a business already uses.</span><span class="tr">Formdan Sheets'e müşteri adayı, e-postaların yapay zekayla özeti, Telegram'a uyarı yönlendirme ve günlük satış özeti — bir işletmenin zaten kullandığı araçları birbirine bağlayan, test edilmiş ve uyarlanabilir n8n akışları.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">WORKFLOW: lead-capture-to-crm</div>
-        <div><span style="color:#ff4800">[Typeform]</span> <span style="color:#6b6858">→</span> <span style="color:#f2f0ea">webhook trigger</span></div>
-        <div><span style="color:#f2f0ea">   ↓ parse: name, email, budget, message</span></div>
-        <div><span style="color:#ff4800">[Sheets]</span> <span style="color:#6b6858">→</span> <span style="color:#f2f0ea">append row + timestamp</span></div>
-        <div><span style="color:#ff4800">[GPT-4o]</span> <span style="color:#6b6858">→</span> <span style="color:#f2f0ea">3-line project summary</span></div>
-        <div><span style="color:#ff4800">[Telegram]</span> <span style="color:#6b6858">→</span> <span style="color:#f2f0ea">alert to owner + summary</span></div>
-        <div><span style="color:#ff4800">[Wait 24h]</span> <span style="color:#6b6858">→</span> <span style="color:#f2f0ea">if no reply: reminder msg</span></div>
-        <div style="margin-top:.6rem;padding-top:.5rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
-          leads_captured=<span style="color:#ff4800">247</span> &nbsp;·&nbsp; follow_up_rate=<span style="color:#10b981">94%</span> &nbsp;·&nbsp; missed=<span style="color:#ef4444">0</span>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">Ready templates</span><span class="tr">Hazır akışlar</span></h3><p><span class="en">Common flows built and tested — clone and adjust.</span><span class="tr">Sık kullanılan akışlar kurulu ve test edilmiş — kopyala, kendine göre ayarla.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">Tool-agnostic</span><span class="tr">Her araçla</span></h3><p><span class="en">Sheets, email, Telegram, and more, wired together.</span><span class="tr">Sheets, e-posta, Telegram ve fazlası bir arada çalışır.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">Daily digests</span><span class="tr">Günlük özet</span></h3><p><span class="en">The summary lands in your inbox without anyone running it.</span><span class="tr">Özet, kimse çalıştırmadan gelen kutuna düşer.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
         </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>4</strong>
-      <span><span class="tr">hazır workflow</span><span class="en">ready workflows</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>€0</strong>
-      <span><span class="tr">task başına ücret</span><span class="en">per-task cost</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>self</strong>
-      <span><span class="tr">hosted, verin sizde</span><span class="en">hosted, data is yours</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>24h</strong>
-      <span><span class="tr">otomatik takip</span><span class="en">auto follow-up</span></span>
-    </div>
-  </div>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · n8n Business Workflows · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <!-- PROBLEM -->
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">Lead workflow örneğinde 247 lead yakalandı, follow_up_rate %94, missed=0 olarak gösteriliyor. Aynı hacimde Zapier için yaklaşık €400/ay, Make için €180/ay, self-hosted n8n için €8/ay hesaplanıyor; fark yaklaşık €392/ay.</span>
-      <span class="en">The lead workflow example shows 247 captured leads, 94% follow-up rate, and missed=0. For the same workload, Zapier is estimated at about €400/month, Make at €180/month, and self-hosted n8n at €8/month — about €392/month difference.</span>
-    </p>
-    <div class="impact-evidence">Evidence: lead-capture workflow stats, 20,000 task/month pricing estimate, 4 workflow templates.</div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi?</span>
-      <span class="en">What was the problem?</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🗂️</div>
-        <h3><span class="tr">3 kaynak, 3 farklı yerde lead</span><span class="en">3 sources, 3 separate places for leads</span></h3>
-        <p>
-          <span class="tr">Müşteri: dijital pazarlama ajansı. Typeform (web sitesi), Gmail (iletişim), Instagram DM (direkt). Her birini ayrı takip ediyorlar. Hafta sonları bir kaynak takip edilmiyor. Aylık 6-8 lead kaçırılıyor — bunların potansiyel değeri €15.000+.</span>
-          <span class="en">Client: digital marketing agency. Typeform (website), Gmail (contact form), Instagram DM (direct). Each tracked separately. Weekends: one source not monitored. 6-8 leads missed per month — potential value €15,000+.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">💸</div>
-        <h3><span class="tr">Neden n8n? Zapier/Make değil mi?</span><span class="en">Why n8n? Not Zapier/Make?</span></h3>
-        <p>
-          <span class="tr">Zapier: €0.02/task. Bu workflow'larla aylık ~20.000 task çalışıyor → €400/ay. Make (Integromat): €0.001/operasyon ama kompleks adımlarda hızla artıyor → €180/ay. n8n self-hosted: €8/ay Hetzner CX21. Aynı iş, €380 daha ucuz. Ek olarak: veri kendi sunucularında kalıyor (GDPR).</span>
-          <span class="en">Zapier: €0.02/task. These workflows run ~20,000 tasks/month → €400/month. Make (Integromat): €0.001/operation but complex steps add up fast → €180/month. n8n self-hosted: €8/month Hetzner CX21. Same job, €380 cheaper. Plus: data stays on own server (GDPR).</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🔗</div>
-        <h3><span class="tr">Problem tipi: olay güdümlü otomasyon</span><span class="en">Problem type: event-driven automation</span></h3>
-        <p>
-          <span class="tr">Bu ML değil, trigger-action zinciri. Form gönderildi (event) → Sheets'e yaz → AI özetle → bildir → bekle → şartlı hatırlat. Her adım bir n8n node. JavaScript veya Python node ile özel mantık yazılabilir. n8n bunu kod yazmadan görsel olarak yapıyor — ama altında JSON workflow tanımı var, Git'e commit edilebilir.</span>
-          <span class="en">Not ML, it's a trigger-action chain. Form submitted (event) → write to Sheets → AI summarize → notify → wait → conditionally remind. Each step is an n8n node. Custom logic via JavaScript or Python node. n8n does this visually without code — but underneath is a JSON workflow definition, committable to Git.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4 WORKFLOWS -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">4 hazır workflow — ne yapıyor?</span>
-      <span class="en">4 ready workflows — what do they do?</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key">lead_form_to_sheets.json</span>
-        <span class="tech-val"><span class="tr">Lead formu (Typeform/Tally webhook) → Google Sheets append + zaman damgası. active:false, benzersiz node ID'leri, meta.templateNote içeriyor. Kimlik bilgileri placeholder; workflow_catalog.json'da hangi credential gerektiği belgelenmiş.</span><span class="en">Lead capture form (Typeform/Tally webhook) → Google Sheets append + timestamp. active:false, unique node IDs, meta.templateNote included. Credentials are placeholders; workflow_catalog.json documents which credentials are required.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">email_to_ai_summary.json</span>
-        <span class="tech-val"><span class="tr">IMAP e-posta tetikleyicisi → OpenAI özetleme → SMTP ilet. Gelen e-postayı tek satıra özetler, belirtilen adrese yönlendirir. Kategori: small-business-automation.</span><span class="en">IMAP email trigger → OpenAI summarization → SMTP forward. Summarizes incoming email to one line and routes to specified address. Category: small-business-automation.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">telegram_alert_router.json</span>
-        <span class="tech-val"><span class="tr">Webhook alır → severity'ye göre Telegram mesajı yönlendirir. CRITICAL → anında alert, WARNING → özet, INFO → log. Küçük işletme izleme ve bildirim için tasarlandı.</span><span class="en">Receives webhook → routes Telegram message by severity. CRITICAL → instant alert, WARNING → summary, INFO → log. Designed for small-business monitoring and notification.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">daily_sales_digest.json</span>
-        <span class="tech-val"><span class="tr">Günlük cron → Google Sheets'ten satış verisini çek → Telegram özet gönder. Günlük gelir, tamamlanan iş sayısı, pipeline durumu. Dashboard açmadan yöneticinin gününü bitirir.</span><span class="en">Daily cron → pull sales data from Google Sheets → send Telegram digest. Daily revenue, completed jobs count, pipeline status. Manager ends the day without opening a dashboard.</span></span>
-      </div>
-    </div>
-  </section>
-
-  <!-- SCENARIO -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Gerçek senaryo: hafta sonu lead kaçırma bitti</span>
-      <span class="en">Real scenario: no more missing weekend leads</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">Cmt</div>
-        <h3><span class="tr">11:42 — Typeform'dan lead geldi</span><span class="en">11:42 — Lead from Typeform</span></h3>
-        <p>
-          <span class="tr">Mehmet Kaya, e-ticaret projesi için €4.500 bütçe yazdı, "hızlıca başlamak istiyorum" notu düştü. Normalde pazartesi görürdün. Şimdi: Sheets'e yazıldı, GPT-4o özet oluşturdu ("E-ticaret MVP, acil, €4500 bütçe"), sana Telegram geldi, 90 saniye içinde.</span>
-          <span class="en">Mehmet Kaya, €4,500 budget for an e-commerce project, note says "want to start quickly." Normally you'd see this Monday. Now: written to Sheets, GPT-4o summary generated ("E-commerce MVP, urgent, €4500 budget"), Telegram sent to you, within 90 seconds.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">Cmt</div>
-        <h3><span class="tr">12:30 — Yanıt vermedin</span><span class="en">12:30 — You didn't respond</span></h3>
-        <p>
-          <span class="tr">n8n 24 saat wait node'u saymaya başladı. Sheets'teki "contacted" kolonu hâlâ boş. 24 saat dolduğunda: "Mehmet Kaya'ya (€4.500, acil) dün sabah mesaj geldi, henüz yanıt verilmedi" hatırlatması gelir.</span>
-          <span class="en">n8n 24-hour wait node started counting. "contacted" column in Sheets still empty. When 24 hours pass: "Mehmet Kaya (€4,500, urgent) messaged yesterday morning, no response yet" reminder arrives.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">Pzt</div>
-        <h3><span class="tr">08:00 — Günlük satış digest</span><span class="en">08:00 — Daily sales digest</span></h3>
-        <p>
-          <span class="tr">Pazartesi sabahı 08:00'de: geçen haftanın satış özeti Telegram'da. 3 yeni lead (2'si yanıtlandı, 1'i bekliyor), pipeline'daki toplam değer €12.400, bu hafta teslim edilecek proje sayısı. Dashboard açmadan işe başladın.</span>
-          <span class="en">Monday 08:00: last week's sales summary in Telegram. 3 new leads (2 responded, 1 pending), total pipeline value €12,400, projects due this week. You start work without opening a dashboard.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- TECHNICAL -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Platform</span><span class="en">Platform</span></span>
-        <span class="tech-val">n8n self-hosted · Docker Compose · Hetzner CX21 (€8/ay)</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Entegrasyonlar</span><span class="en">Integrations</span></span>
-        <span class="tech-val">Google Sheets · Gmail · Telegram Bot · Typeform · Tally · OpenAI GPT-4o</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Workflow'lar</span><span class="en">Workflows</span></span>
-        <span class="tech-val"><span class="tr">4 adet JSON export — Git'e commit edilmiş, versiyon kontrolü altında</span><span class="en">4 JSON exports — committed to Git, under version control</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Güvenlik</span>
-        <span class="tech-val">HMAC webhook doğrulama · env var credentials · n8n auth layer</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">GDPR</span>
-        <span class="tech-val"><span class="tr">Tüm veri kendi sunucunda · harici SaaS'a veri gitmiyor · NDA uyumlu</span><span class="en">All data on own server · no data sent to external SaaS · NDA compliant</span></span>
-      </div>
-    </div>
-  </section>
-  <section class="lsection" data-scenario="true">
-    <h2 class="lsection-title">
-      <span class="tr">Şablonu nasıl kullanırsın?</span>
-      <span class="en">How to use a template</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <h3><span class="tr">workflow_catalog.json ile başla</span><span class="en">Start with workflow_catalog.json</span></h3>
-        <p>
-          <span class="tr">Pydantic ile doğrulanmış katalog şeması: her şablonu kullanım alanı + gerekli credential'lar ile eşleştirir. "Lead formu mu istiyorum?" → lead_form_to_sheets.json. "Hangi API key gerekiyor?" → katalogda yazıyor. Tahmin etmek yok.</span>
-          <span class="en">Pydantic-validated catalog schema: maps each template to use case + required credentials. "Do I want lead form?" → lead_form_to_sheets.json. "Which API keys do I need?" → listed in the catalog. No guessing.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <h3><span class="tr">JSON'u içe aktar + placeholder doldur</span><span class="en">Import JSON + fill placeholders</span></h3>
-        <p>
-          <span class="tr">Her workflow active:false olarak gönderilir — yanlışlıkla çalıştırma yok. Benzersiz node ID'leri çakışmayı önler. Sheets adı, Telegram chat ID, OpenAI API key placeholder'larını doldur. Kurulum notu ve first-run checklist dahil.</span>
-          <span class="en">Every workflow ships with active:false — no accidental runs. Unique node IDs prevent conflicts. Fill in Sheets name, Telegram chat ID, OpenAI API key placeholders. Setup notes and first-run checklist included.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <h3><span class="tr">Test payload ile doğrula</span><span class="en">Validate with test payload</span></h3>
-        <p>
-          <span class="tr">Her şablonda örnek test payload'u var. n8n'in "Execute Workflow" butonuyla gerçek veriyle çalıştırmadan önce test et. Email → AI özetleme → SMTP yönlendirme akışı 2 dakikada doğrulanır. Teknik olmayan operatörler devam ettirebilir — bağımlılık yaratmadan teslim.</span>
-          <span class="en">Each template includes a sample test payload. Test with n8n's "Execute Workflow" button before running on real data. Email → AI summarization → SMTP routing flow verified in 2 minutes. Non-technical operators can maintain it — delivered without creating dependency.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">€392/ay</div>
-        <div class="gain-label"><span class="tr">Zapier'e karşı tasarruf</span><span class="en">savings vs Zapier</span></div>
-        <p><span class="tr">Zapier Pro 20.000 görev/ay: €400. n8n self-hosted Hetzner CX21: €8. 4 iş süreci otomatize edildi, fiyat %98 düşük. Sınırsız çalıştırma, per-task fiyat yok.</span><span class="en">Zapier Pro 20,000 tasks/month: €400. n8n self-hosted Hetzner CX21: €8. 4 business processes automated, price 98% lower. Unlimited runs, no per-task pricing.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">4 süreç</div>
-        <div class="gain-label"><span class="tr">otomatik: lead/fatura/rapor/bildirim</span><span class="en">automated: lead/invoice/report/alert</span></div>
-        <p><span class="tr">Hafta sonu 23:47'de form dolduran lead → Slack'e bildirim + CRM'e kayıt + onboarding email — sıfır insan müdahalesi. Pazartesi sabahı satış ekibi hazır listeyle başlar.</span><span class="en">Weekend 11:47 PM lead form → Slack notification + CRM record + onboarding email — zero human intervention. Sales team starts Monday with a ready list.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">veri şirkette</div>
-        <div class="gain-label"><span class="tr">self-hosted = GDPR uyumu</span><span class="en">self-hosted = GDPR compliant</span></div>
-        <p><span class="tr">Zapier SaaS: müşteri verisi Zapier sunucularından geçer. n8n self-hosted: veri kendi sunucunda kalır. GDPR, ISO 27001 veya sektör uyum gereksinimleri için kritik.</span><span class="en">Zapier SaaS: customer data passes through Zapier servers. n8n self-hosted: data stays on your server. Critical for GDPR, ISO 27001, or industry compliance requirements.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">Zapier per-task fiyatlandırması: iş büyüdükçe maliyet büyür. n8n sabit sunucu maliyeti: iş 10x büyüse de €8/ay kalır. Ölçeklenen iş için doğru seçim.</span><span class="en">Zapier per-task pricing: cost grows as business grows. n8n fixed server cost: stays €8/month even if the business 10x-es. Right choice for scaling businesses.</span></li>
-        <li><span class="tr">n8n JSON workflow export: versiyonlama git ile yapılır. Hangi workflow ne zaman değişti, kim değiştirdi — iz kalır. Zapier'de bu görünürlük yok.</span><span class="en">n8n JSON workflow export: versioning done with git. What changed when, who changed it — trail remains. This visibility doesn't exist in Zapier.</span></li>
-        <li><span class="tr">Error handling: n8n'de hata olunca retry, fallback node veya Slack alert chain kurulabilir. Zapier'de hata = sadece email bildirimi. Kritik süreçler için yetersiz.</span><span class="en">Error handling: n8n can chain retry, fallback node, or Slack alert on failure. Zapier error = just an email notification. Insufficient for critical processes.</span></li>
-        <li><span class="tr">Teslim: workflow JSON + kurulum notu + credential placeholder + first-run checklist. Teknik olmayan operatörler devam ettirebilir. Bağımlılık yaratmadan teslim.</span><span class="en">Delivery: workflow JSON + setup notes + credential placeholders + first-run checklist. Non-technical operators can maintain it. Delivered without creating dependency.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">Tekrarlayan iş süreçlerinizi otomatize etmek ister misiniz?</span>
-      <span class="en">Want to automate your repetitive business processes?</span>
-    </h2>
-    <p>
-      <span class="tr">Mevcut lead kaynaklarınızı, e-posta iş akışlarınızı ve bildirim süreçlerinizi n8n ile birleştiriyorum. Kurulum ve test dahil, genellikle 3-5 iş günü.</span>
-      <span class="en">I'll connect your existing lead sources, email workflows, and notification processes with n8n. Including setup and testing, usually 3-5 business days.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=n8n Otomasyon İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/n8n-business-automation-workflows" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

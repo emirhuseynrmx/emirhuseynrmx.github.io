@@ -1,355 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>RL Pricing Bandit Simulator — Emir H. İnci</title>
-  <meta name="description" content="Thompson Sampling ile fiyat optimizasyonu. A/B testine gerek kalmadan hangi fiyatın en fazla dönüşüm getirdiğini öğrenen canlı algoritma."/>
+  <title>RL Pricing Bandit — Emir H. İnci</title>
+  <meta name="description" content="Run pricing and offer experiments with Thompson Sampling: reward feedback, posterior updates, and an offline policy-replay report to validate a strategy before it touches real revenue."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">RL Pricing Bandit</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">Thompson Sampling · Beta posteriors</span>
-        <span class="btag">Litestar · Pydantic v2</span>
-        <span class="btag">Online learning</span>
-      </div>
-      <h1 class="lhero-title">RL Pricing Bandit Simulator</h1>
-      <p class="lhero-sub">
-        <span class="tr">Geçmiş fiyatlandırma CSV'sini (visitor_id, segment, traffic_source, device, returning_user, converted, observed_price_usd) replay ederek Beta posteriorlarını günceller, hangi fiyat kademesinin (starter $29 / growth $49 / premium $79) en yüksek beklenen marjini verdiğini gösterir, canlıya geçmeden önce kontrollü A/B önerir.</span>
-        <span class="en">Replays historical pricing CSV (visitor_id, segment, traffic_source, device, returning_user, converted, observed_price_usd) to update Beta posteriors, shows which price tier (starter $29 / growth $49 / premium $79) gives highest expected margin, recommends controlled A/B before going live.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Pricing Bandit — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">Price experiments,<br>done right.</span><span class="tr">Fiyat denemeleri,<br>doğru biçimde.</span></h1>
+      <div class="pill-row"><span class="pill">Python</span><span class="pill">Thompson Sampling</span><span class="pill">Litestar</span><span class="pill">RL</span></div>
+      <p class="lead"><span class="en">Run pricing and offer experiments with Thompson Sampling: reward feedback, posterior updates, and an offline policy-replay report to validate a strategy before it touches real revenue.</span><span class="tr">Fiyat ve teklif denemelerini akıllı bir deneme-yanılma yöntemiyle yürütür: sonuçtan öğrenir, kendini günceller ve bir stratejiyi gerçek gelire dokunmadan geçmiş veride sınayan bir rapor üretir.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;line-height:1.9;padding:1.75rem 1.5rem;background:#060504;min-height:260px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">ARM POSTERIOR STATE — round 247</div>
-        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.5rem;">Arm              Price   alpha   beta    Mean    E[margin]</div>
-        <div style="color:#6b6858;font-size:.58rem;margin-bottom:.8rem;">──────────────────────────────────────────────────────────</div>
-        <div><span style="color:#f2f0ea">starter_29</span>   <span style="color:#6b6858">$29</span>    <span style="color:#ff4800">28</span>      <span style="color:#ff4800">192</span>     <span style="color:#f2f0ea">0.127</span>   <span style="color:#f2f0ea">$3.68</span></div>
-        <div><span style="color:#f2f0ea">growth_49</span>    <span style="color:#6b6858">$49</span>    <span style="color:#ff4800">31</span>      <span style="color:#ff4800">138</span>     <span style="color:#10b981">0.183</span>   <span style="color:#10b981">$8.97</span></div>
-        <div><span style="color:#f2f0ea">premium_79</span>   <span style="color:#6b6858">$79</span>    <span style="color:#ff4800">8</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ff4800">55</span>      <span style="color:#f2f0ea">0.127</span>   <span style="color:#ff4800">$10.03</span> ← best</div>
-        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
-          conv_rate=<span style="color:#ff4800">14.8%</span> &nbsp;·&nbsp; revenue=<span style="color:#f2f0ea">$4,831</span> &nbsp;·&nbsp; best_arm=<span style="color:#ff4800">premium_79</span>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">Thompson Sampling</span><span class="tr">Akıllı deneme</span></h3><p><span class="en">Explore and exploit balanced automatically as data arrives.</span><span class="tr">Yeni seçenekleri denemekle iyi bileneni kullanmak arasındaki dengeyi kendi kurar.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">Reward feedback</span><span class="tr">Sonuçtan öğrenme</span></h3><p><span class="en">The bandit learns from real outcomes, not assumptions.</span><span class="tr">Varsayımla değil, gerçek sonuçlarla öğrenir.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">Offline replay</span><span class="tr">Geçmişte sınama</span></h3><p><span class="en">Validate a policy on historical data before going live.</span><span class="tr">Canlıya geçmeden önce stratejiyi geçmiş veride dener.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
         </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>Beta</strong>
-      <span><span class="tr">posterior / arm</span><span class="en">posterior / arm</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>0</strong>
-      <span><span class="tr">A/B test bekleme</span><span class="en">A/B test wait</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>3</strong>
-      <span><span class="tr">fiyat kolu</span><span class="en">price arms</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>CI</strong>
-      <span>GitHub Actions</span>
-    </div>
-  </div>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · RL Pricing Bandit · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <!-- PROBLEM -->
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">Offline replay örneğinde conversion rate %14.8, revenue $4.831 ve best_arm=premium_79 olarak raporlanıyor. Bu, canlı A/B'ye geçmeden önce mevcut fiyat geçmişinden hangi kolun marj beklentisi verdiğini ölçer.</span>
-      <span class="en">The offline replay example reports 14.8% conversion rate, $4,831 revenue, and best_arm=premium_79. That measures expected margin from historical pricing data before sending live traffic into an A/B test.</span>
-    </p>
-    <div class="impact-evidence">Evidence: Beta posteriors, starter/growth/premium arms, offline replay CSV.</div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi?</span>
-      <span class="en">What was the problem?</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">💸</div>
-        <h3><span class="tr">A/B testi çok yavaş</span><span class="en">A/B test too slow</span></h3>
-        <p>
-          <span class="tr">3 fiyat noktasında (%95 güven, %80 güç) istatistiksel anlamlılığa ulaşmak için ~6 hafta ve ~2400 ziyaretçi gerekiyor. Bu sürede ya yanlış fiyatla satıyorsun ya da hiç denemiyorsun. Küçük SaaS'lar için bu lüks yok.</span>
-          <span class="en">Reaching statistical significance across 3 price points (95% confidence, 80% power) needs ~6 weeks and ~2400 visitors. During that time you're either selling at the wrong price or not experimenting at all. Small SaaS can't afford this.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">🎰</div>
-        <h3><span class="tr">Saf exploration kayıp yaratır</span><span class="en">Pure exploration wastes revenue</span></h3>
-        <p>
-          <span class="tr">Rastgele A/B testi her fiyata eşit trafik gönderir. Ama $79 fiyatı açıkça daha iyi performans gösteriyorsa, $29'a trafik göndermek para kaybı. Bandid algoritması bunu çözer: hem öğrenir hem optimize eder, aynı anda.</span>
-          <span class="en">Random A/B sends equal traffic to each price. But if $79 is clearly winning, sending traffic to $29 loses revenue. Bandit algorithms solve this: they learn and optimize simultaneously.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.4rem;margin-bottom:.75rem;">📊</div>
-        <h3><span class="tr">Problem tipi: online optimizasyon</span><span class="en">Problem type: online optimization</span></h3>
-        <p>
-          <span class="tr">Bu ne regresyon ne sınıflandırma. Bu bir <strong>multi-armed bandit</strong> problemi: her turda bir kol seçiyorsun (fiyat), ödül gözlemliyorsun (dönüşüm oldu mu), posterior'ı güncelliyorsun. Daha sonra gelen verilerle modeli yeniden eğitmene gerek yok.</span>
-          <span class="en">This is neither regression nor classification. It's a <strong>multi-armed bandit</strong> problem: each round you pick an arm (price), observe a reward (conversion?), update the posterior. No need to retrain a model on later data.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY THOMPSON SAMPLING -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Neden Thompson Sampling? UCB1 veya epsilon-greedy değil?</span>
-      <span class="en">Why Thompson Sampling? Not UCB1 or epsilon-greedy?</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key">Epsilon-greedy</span>
-        <span class="tech-val"><span class="tr">Basit ama kaba. %ε şans exploration, %1-ε exploitation. ε sabit olursa ya fazla explore eder (gelir kaybı) ya da erken convergence. Dönüşüm oranı düşük ortamlarda (SaaS: %8-15%) çok yavaş öğrenir.</span><span class="en">Simple but crude. ε% chance explore, (1-ε)% exploit. Fixed ε = either over-explores (revenue loss) or converges too early. Learns slowly in low conversion environments (SaaS: 8-15%).</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">UCB1</span>
-        <span class="tech-val"><span class="tr">Üst güven sınırı deterministik: her turda UCB'si en yüksek kolu seçer. Sorun: çok az gözlem varken her kolun UCB'si şişer, hepsini tek tek ziyaret etmek zorunda kalır. Spam-explore dönemi var. Thompson bu dönemi %40 daha kısa tutar.</span><span class="en">Upper confidence bound is deterministic: always picks the arm with highest UCB. Problem: with few observations every arm's UCB inflates — it's forced to visit all arms sequentially. Thompson Sampling cuts this exploration phase ~40% shorter.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key" style="color:#ff4800">Thompson Sampling</span>
-        <span class="tech-val"><span class="tr">Her kol için Beta(α, β) prior tutar. Her turda posteriordan örnek çeker, en yüksek çıkana gider. Matematiksel olarak kanıtlanmış optimal regret (Russo & Van Roy, 2014). Sparse dönüşüm verisinde (100 ziyaretçi, 12 dönüşüm gibi) UCB1'den çok daha iyi çalışır. Seçim nedeni bu.</span><span class="en">Maintains Beta(α, β) posterior per arm. Each round samples from the posterior, routes to the highest sample. Mathematically proven optimal regret (Russo & Van Roy, 2014). Significantly outperforms UCB1 with sparse conversion data (100 visitors, 12 conversions). This is why it was chosen.</span></span>
-      </div>
-    </div>
-    <div style="margin-top:2rem;padding:1.5rem;background:#0d0c0a;border:1px solid #1a1812;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:.72rem;line-height:1.8;">
-      <div style="color:#3a3828;margin-bottom:.6rem;font-size:.58rem;letter-spacing:.1em;">BETA POSTERIOR — ARM UPDATE LOGIC</div>
-      <div><span style="color:#6b6858"># Dönüşüm olduysa: alpha artar</span></div>
-      <div><span style="color:#f2f0ea">arm.alpha += <span style="color:#ff4800">1</span> &nbsp;<span style="color:#6b6858"># success</span></span></div>
-      <div><span style="color:#f2f0ea">arm.beta += <span style="color:#ff4800">0</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Dönüşüm olmadıysa: beta artar</span></div>
-      <div><span style="color:#f2f0ea">arm.alpha += <span style="color:#ff4800">0</span></span></div>
-      <div><span style="color:#f2f0ea">arm.beta += <span style="color:#ff4800">1</span> &nbsp;<span style="color:#6b6858"># failure</span></span></div>
-      <div style="margin-top:.4rem;"><span style="color:#6b6858"># Seçim: her posteriordan örnekle, en yüksek kazanır</span></div>
-      <div><span style="color:#f2f0ea">samples = [beta.rvs(a.alpha, a.beta) <span style="color:#ff4800">*</span> a.margin <span style="color:#6b6858">for</span> a <span style="color:#6b6858">in</span> arms]</span></div>
-      <div><span style="color:#f2f0ea">selected = arms[argmax(samples)]</span></div>
-    </div>
-  </section>
-
-  <!-- SCENARIO -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Gerçek senaryo: SaaS fiyat deneyi</span>
-      <span class="en">Real scenario: SaaS pricing experiment</span>
-    </h2>
-    <p style="color:#6b6858;margin-bottom:2rem;font-size:.9rem;line-height:1.7;">
-      <span class="tr">3 kol: starter_29 ($29, marj $22), growth_49 ($49, marj $38), premium_79 ($79, marj $61). Gerçek dönüşüm oranları: starter %12, growth %9, premium %5.5. min_margin_usd=$10 guard aktif. Segmentler: smb / midmarket / enterprise.</span>
-      <span class="en">3 arms: starter_29 ($29, margin $22), growth_49 ($49, margin $38), premium_79 ($79, margin $61). True conversion rates: starter 12%, growth 9%, premium 5.5%. min_margin_usd=$10 guard active. Segments: smb / midmarket / enterprise.</span>
-    </p>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Başlangıç: tüm kollar eşit (uninformative prior)</span><span class="en">Start: equal arms (uninformative prior)</span></h3>
-        <p>
-          <span class="tr">Alpha=1, beta=1 → Beta(1,1) = uniform dağılım. İlk ziyaretçilere rastgele fiyat gösterilir. Her kol sırayla ziyaret edilerek bilgi toplanır. İlk 30 ziyaretçiden sonra desen ortaya çıkmaya başlar.</span>
-          <span class="en">Alpha=1, beta=1 → Beta(1,1) = uniform distribution. First visitors shown random prices. Each arm visited to gather information. After 30 visitors a pattern begins to emerge.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Round 100: Growth öne çıkıyor</span><span class="en">Round 100: Growth takes the lead</span></h3>
-        <p>
-          <span class="tr">starter_29: α=14/β=72 → %16.3 dönüşüm. growth_49: α=12/β=58 → %17.1. premium_79: α=3/β=28 → %9.7. Algoritma growth_49'a daha fazla trafik göndermeye başlıyor çünkü posteriorundan gelen örnekler daha sık yüksek çıkıyor.</span>
-          <span class="en">starter_29: α=14/β=72 → 16.3% conv. growth_49: α=12/β=58 → 17.1%. premium_79: α=3/β=28 → 9.7%. Algorithm starts routing more traffic to growth_49 because posterior samples come out higher more often.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Round 247: E[margin] analizi karşılaştırması</span><span class="en">Round 247: E[margin] comparison</span></h3>
-        <p>
-          <span class="tr">premium_79: %5.5 gerçek dönüşüm × $61 marj = $3.36 beklenen marj/ziyaretçi. growth_49: %9 × $38 = $3.42. starter_29: %12 × $22 = $2.64. Thompson Sampling bu beklenen marjlara göre daha fazla trafik growth_49'a yönlendirdi. Offline replay canlıya geçmeden önce "bandit ne öğrenirdi?" sorusunu cevapler.</span>
-          <span class="en">premium_79: 5.5% true conv × $61 margin = $3.36 expected margin/visitor. growth_49: 9% × $38 = $3.42. starter_29: 12% × $22 = $2.64. Thompson Sampling routed more traffic to growth_49 based on these expected margins. Offline replay answers "what would the bandit have learned?" before going live.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- TECHNICAL -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Algoritma</span><span class="en">Algorithm</span></span>
-        <span class="tech-val">Thompson Sampling · Beta(α, β) posteriors · expected margin selection</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">API</span>
-        <span class="tech-val">Litestar · async · OpenAPI otodoc</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Doğrulama</span><span class="en">Validation</span></span>
-        <span class="tech-val">Pydantic v2 · ObservedPricingEvent · PricingContext schemas</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Replay</span>
-        <span class="tech-val"><span class="tr">examples/ecommerce_pricing_events.csv · visitor_id, segment (smb/midmarket/enterprise), traffic_source, device, returning_user, converted, observed_price_usd · starter 12% / growth 9% / premium 5.5% gerçek dönüşüm oranları</span><span class="en">examples/ecommerce_pricing_events.csv · visitor_id, segment (smb/midmarket/enterprise), traffic_source, device, returning_user, converted, observed_price_usd · true conversion rates starter 12% / growth 9% / premium 5.5%</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · coverage &gt;85% · ruff · GitHub Actions CI</span>
-      </div>
-    </div>
-  </section>
-  <section class="lsection" data-scenario="true">
-    <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: ecommerce_pricing_events.csv replay</span>
-      <span class="en">Step-by-step scenario: ecommerce_pricing_events.csv replay</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">Kol kurulumu ve CSV yükleme</span><span class="en">Arm setup and CSV load</span></h3>
-        <p>
-          <span class="tr">3 kol: starter_29 ($29, marj $22), growth_49 ($49, marj $38), premium_79 ($79, marj $61). min_margin_usd=$10 guard. examples/ecommerce_pricing_events.csv: visitor_id (UUID), segment (smb/midmarket/enterprise), traffic_source (organic_search/referral/paid_search/product_hunt), device, returning_user (bool), converted (bool), observed_price_usd.</span>
-          <span class="en">3 arms: starter_29 ($29, margin $22), growth_49 ($49, margin $38), premium_79 ($79, margin $61). min_margin_usd=$10 guard. examples/ecommerce_pricing_events.csv: visitor_id (UUID), segment (smb/midmarket/enterprise), traffic_source (organic_search/referral/paid_search/product_hunt), device, returning_user (bool), converted (bool), observed_price_usd.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Offline replay: posterior güncelleme</span><span class="en">Offline replay: posterior update</span></h3>
-        <p>
-          <span class="tr">CSV satırları sırayla replay edildi. Her satırda observed_price_usd hangi kola karşılık geliyorsa o kolun posterioru güncellendi (converted=True → alpha += 1, False → beta += 1). Gerçek dönüşüm oranları: starter %12, growth %9, premium %5.5. Re-randomizasyon yapılmadı — bu saf offline replay.</span>
-          <span class="en">CSV rows replayed sequentially. Each row updated the posterior for the matching arm based on observed_price_usd (converted=True → alpha += 1, False → beta += 1). True conversion rates: starter 12%, growth 9%, premium 5.5%. No re-randomization — this is pure offline replay.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">Korumalı karar: en yüksek beklenen marj</span><span class="en">Guarded decision: highest expected margin</span></h3>
-        <p>
-          <span class="tr">Replay sonrası her koldan Beta örneklendi, marj ile çarpıldı: E[margin] = sample × marj. min_margin_usd=$10 guard geçildi. Hangi tier en yüksek beklenen marjini veriyor — kontrollü A/B öncesi bu tahmin raporlandı. Offline replay "bandit ne öğrenirdi?" sorusunu mevcut veriden cevapar.</span>
-          <span class="en">After replay, Beta sampled per arm, multiplied by margin: E[margin] = sample × margin. min_margin_usd=$10 guard checked. Which tier gives highest expected margin — this estimate reported before a controlled A/B. Offline replay answers "what would the bandit have learned?" from existing data.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">%18</div>
-        <div class="gain-label"><span class="tr">gelir artışı (3.000 SaaS event)</span><span class="en">revenue increase (3,000 SaaS events)</span></div>
-        <p><span class="tr">starter_29/growth_49/premium_79 kolları. Thompson Sampling ilk 400 event'te growth_49'u kazanan olarak tanıdı, trafiği oraya kaydırdı. A/B 6 hafta beklerken bandit anında öğrendi.</span><span class="en">starter_29/growth_49/premium_79 arms. Thompson Sampling identified growth_49 as winner within 400 events, shifted traffic there. A/B waits 6 weeks; bandit learns immediately.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">sürekli</div>
-        <div class="gain-label"><span class="tr">optimizasyon (A/B bekleme yok)</span><span class="en">optimization (no A/B wait)</span></div>
-        <p><span class="tr">Klasik A/B: 6 hafta sabit trafik bölümü, sonra karar. Bandit: her kullanıcıdan öğren, explore/exploit dengesini canlı tut. Kayıp gelir yok.</span><span class="en">Classic A/B: 6 weeks of fixed split, then decide. Bandit: learn from every user, keep explore/exploit balance live. No revenue loss period.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">Beta(α,β)</div>
-        <div class="gain-label"><span class="tr">matematiksel posterior güncelleme</span><span class="en">mathematical posterior update</span></div>
-        <p><span class="tr">Her conversion: α += 1. Her bounce: β += 1. Posterior sample alarak en yüksek beklenti değerindeki fiyat seçilir. Sezgisel değil, istatistiksel.</span><span class="en">Each conversion: α += 1. Each bounce: β += 1. Price with highest expected value selected by posterior sampling. Statistical, not intuitive.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">Thompson Sampling vs UCB1: UCB1 deterministic — aynı state'te hep aynı kolu seçer. Thompson stochastic — exploration doğal olarak oluşur. SaaS'ta daha robust, piyasa değişince hızlı adapte.</span><span class="en">Thompson Sampling vs UCB1: UCB1 is deterministic — always selects the same arm in same state. Thompson is stochastic — exploration happens naturally. More robust in SaaS, adapts quickly to market shifts.</span></li>
-        <li><span class="tr">Margin × posterior: sadece conversion rate değil, contribution margin da hesaba katılır. Yüksek conversion ama düşük marj olan fiyat dezavantajlı kalır. Gerçek gelir optimizasyonu.</span><span class="en">Margin × posterior: not just conversion rate, contribution margin factored in. High conversion but low margin price stays disadvantaged. Real revenue optimization.</span></li>
-        <li><span class="tr">Guardrail: min margin, max price cap kuralları her kol seçiminden önce kontrol edilir. Bandit kazara marjı negatif bir fiyat öneremez. İş kuralları korunur.</span><span class="en">Guardrail: min margin, max price cap rules checked before every arm selection. Bandit can't accidentally suggest negative-margin pricing. Business rules preserved.</span></li>
-        <li><span class="tr">Entegrasyon: Stripe/Paddle/LemonSqueezy price_id ile çalışır. Checkout'tan önce hangi fiyatı göstereceğini API'dan sorar. Mevcut ödeme altyapısı değişmez.</span><span class="en">Integration: works with Stripe/Paddle/LemonSqueezy price_id. Asks API which price to show before checkout. Existing payment infrastructure unchanged.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">Fiyatlandırma deneyinizi optimize etmek ister misiniz?</span>
-      <span class="en">Want to optimize your pricing experiments?</span>
-    </h2>
-    <p>
-      <span class="tr">Mevcut ödeme altyapınıza entegre edilebilir. A/B test beklemeden, her ziyaretçiden öğrenerek en iyi fiyata yakınsayın.</span>
-      <span class="en">Can integrate with your existing payment infrastructure. Converge to optimal price without waiting — learning from every visitor.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=RL Pricing Bandit İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/rl-pricing-bandit-simulator" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

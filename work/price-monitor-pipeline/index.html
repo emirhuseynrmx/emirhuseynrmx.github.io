@@ -1,334 +1,171 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Price Monitor Pipeline — Emir H. İnci</title>
-  <meta name="description" content="watchlist.json'dan çalışan async fiyat takip sistemi. httpx + BeautifulSoup, CSS price_selector, Avrupa/US fiyat formatı, hedef fiyat uyarısı, CSV snapshot + JSON manifest."/>
+  <meta name="description" content="Pulls competitor prices asynchronously, flags anomalies with a lightweight ML model, and serves the results through an idempotent API you can poll safely."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1080px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:88svh; display:flex; align-items:center; overflow:hidden; position:relative; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:.9; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(120% 80% at 78% 30%, transparent 45%, var(--bg) 82%); }
+    .hero .wrap{ position:relative; z-index:2; width:100%; padding-top:5rem; }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); }
+    .pill-row{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.2rem; }
+    .pill{ font-family:var(--mono); font-size:.68rem; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:.32rem .7rem; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.2rem,5vw,3.7rem); line-height:1.04; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.08rem; max-width:56ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+
+    .sec{ padding:clamp(3.5rem,7vw,6rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.6rem,3vw,2.3rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.12rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:1rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,2.2vw,1.8rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; }
+    footer a{ color:var(--indigo); }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/">← EHİ</a>
-    <div class="nav-links">
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../#tools"><span>←</span> <span class="en">All scripts</span><span class="tr">Tüm scriptler</span></a>
+    <span class="brand">Price Monitor Pipeline</span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">GitHub ↗</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python</span>
-        <span class="btag">async httpx · BeautifulSoup</span>
-        <span class="btag">watchlist.json · CSS selectors</span>
-        <span class="btag">CSV snapshot · JSON manifest</span>
-      </div>
-      <h1 class="lhero-title">Price Monitor Pipeline</h1>
-      <p class="lhero-sub">
-        <span class="tr">watchlist.json'u oku (name, URL, CSS price_selector, target_price), httpx ile canlı sayfaları çek, Avrupa ve US fiyat formatlarını parse et, hedef fiyat altına düşünce uyar, her çalıştırmanın CSV snapshot'ını ve JSON manifest'ini yaz. API gerekmez — sadece CSS selector'lar.</span>
-        <span class="en">Read watchlist.json (name, URL, CSS price_selector, target_price), fetch live pages with httpx, parse European and US price formats, alert when price drops to or below target, write CSV snapshot and JSON manifest per run. No API needed — just CSS selectors.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">
-          <span class="tr">Kaynak kodu gör</span>
-          <span class="en">View source</span>
-        </a>
-        <a class="btn-ghost" href="mailto:emirhuseyininci@gmail.com?subject=Price Monitor Pipeline — İş Teklifi">
-          <span class="tr">Bu araç için beni işe al</span>
-          <span class="en">Hire me for this</span>
-        </a>
+  <header class="hero" id="top">
+    <canvas id="scene"></canvas>
+    <div class="wrap">
+      <span class="eyebrow"><span class="en">Script · Deliverable</span><span class="tr">Script · Teslim edilebilir</span></span>
+      <h1><span class="en">Competitor prices,<br>watched for you.</span><span class="tr">Rakip fiyatlarını<br>senin yerine izler.</span></h1>
+      <div class="pill-row"><span class="pill">FastAPI</span><span class="pill">Thompson Sampling</span><span class="pill">ML</span><span class="pill">async</span></div>
+      <p class="lead"><span class="en">Pulls competitor prices asynchronously, flags anomalies with a lightweight ML model, and serves the results through an idempotent API you can poll safely.</span><span class="tr">Rakip fiyatlarını hızlıca toplar, sıra dışı hareketleri hafif bir modelle yakalar ve sonuçları güvenle sorgulayabileceğin bir servisten sunar.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Get this built →</span><span class="tr">Bunu yaptır →</span></a>
+        <a class="btn btn-ghost" href="../../#tools"><span class="en">More scripts</span><span class="tr">Diğer scriptler</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;line-height:1.85;padding:1.75rem 1.5rem;background:#060504;min-height:230px;">
-        <div style="color:#3a3828;margin-bottom:.9rem;letter-spacing:.1em;font-size:.52rem;">PRICE MONITOR — LIVE FEED</div>
-        <div><span style="color:#ff4800">▲</span> AAPL &nbsp;<span style="color:#f2f0ea;font-weight:700">189.42</span>&nbsp; <span style="color:#10b981">+2.3%</span>&nbsp; alert=<span style="color:#f59e0b">threshold_breach</span></div>
-        <div style="color:#6b6858;"><span style="color:#3a3828">▬</span> MSFT &nbsp;<span style="color:#f2f0ea">412.17</span>&nbsp; <span style="color:#6b6858">+0.1%</span>&nbsp; alert=none</div>
-        <div><span style="color:#ef4444">▼</span> NVDA &nbsp;<span style="color:#f2f0ea;font-weight:700">875.30</span>&nbsp; <span style="color:#ef4444">-4.8%</span>&nbsp; alert=<span style="color:#ef4444">anomaly_flag</span></div>
-        <div style="color:#6b6858;"><span style="color:#10b981">▲</span> TSLA &nbsp;<span style="color:#f2f0ea">246.80</span>&nbsp; <span style="color:#10b981">+1.7%</span>&nbsp; alert=none</div>
-        <div style="margin-top:1rem;padding-top:.75rem;border-top:1px solid #1a1812;color:#3a3828;font-size:.55rem;">
-          scraped=<span style="color:#ff4800">4</span> sources &nbsp;·&nbsp; thompson_arm=<span style="color:#ff4800">AAPL</span> &nbsp;·&nbsp; next_check=<span style="color:#6b6858">30s</span>
+  </header>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">WHAT'S INSIDE</span><span class="tr">İÇİNDE NE VAR</span></div>
+        <h2 class="sec-title"><span class="en">Built to hand over and run.</span><span class="tr">Teslim edilip çalıştırılmak üzere yazıldı.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01</div><h3><span class="en">Anomaly flags</span><span class="tr">Sıra dışını yakalar</span></h3><p><span class="en">Sudden price moves surfaced automatically, not buried in a table.</span><span class="tr">Ani fiyat hareketleri tabloya gömülmez, kendiliğinden öne çıkar.</span></p></div>
+        <div class="step rv"><div class="n">02</div><h3><span class="en">Idempotent API</span><span class="tr">Güvenli sorgu</span></h3><p><span class="en">Poll as often as you like — the same request never double-counts.</span><span class="tr">İstediğin sıklıkta sorgula; aynı istek asla iki kez sayılmaz.</span></p></div>
+        <div class="step rv"><div class="n">03</div><h3><span class="en">Async collection</span><span class="tr">Zamanlı toplama</span></h3><p><span class="en">Many sources gathered concurrently on a schedule.</span><span class="tr">Birçok kaynak, belirlediğin aralıklarla aynı anda taranır.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Need this adapted to your data?</span><span class="tr">Bunu kendi verine mi uyarlamalı?</span></h3>
+          <p><span class="en">I ship it tested, documented, and ready to run in your stack.</span><span class="tr">Test edilmiş, dokümanlı ve senin sisteminde çalışmaya hazır teslim ederim.</span></p>
         </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>async</strong>
-      <span><span class="tr">paralel fiyat çekme</span><span class="en">parallel price scraping</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>2</strong>
-      <span><span class="tr">fiyat formatı (EU + US)</span><span class="en">price formats (EU + US)</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>15s</strong>
-      <span><span class="tr">HTTP timeout</span><span class="en">HTTP timeout</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>SHA-256</strong>
-      <span><span class="tr">schema parmak izi</span><span class="en">schema fingerprint</span></span>
-    </div>
-  </div>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · Price Monitor Pipeline · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <section class="business-impact">
-    <div class="impact-label">Business Impact</div>
-    <p>
-      <span class="tr">Son gerçek çalıştırmada 6 canlı ürün URL'si 2.45 saniyede kontrol edildi; snapshot.csv, summary.md ve manifest.json üretildi, alarm sayısı 0 olarak kayda geçti. Bu yapı fiyat kontrolünü tarayıcıda tek tek bakma işinden saatlik cron + izlenebilir çıktı akışına taşır.</span>
-      <span class="en">The latest real run checked 6 live product URLs in 2.45 seconds, writing snapshot.csv, summary.md, and manifest.json with 0 alerts recorded. That turns manual browser checks into an hourly cron job with traceable outputs.</span>
-    </p>
-    <div class="impact-evidence">Evidence: outputs/snapshot.csv with 6 products, outputs/summary.md, outputs/manifest.json.</div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Ne yapar?</span>
-      <span class="en">What it does</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon">📋</div>
-        <h3>watchlist.json</h3>
-        <p>
-          <span class="tr">Her ürün için: name, URL, css price_selector ve target_price. JSON dosyasına yeni satır ekle, pipeline bir sonraki çalıştırmada onu da izlemeye alır. Kod değişmez.</span>
-          <span class="en">Per product: name, URL, css price_selector, and target_price. Add a new entry to the JSON, pipeline picks it up next run. No code change.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🌍</div>
-        <h3><span class="tr">Çift locale fiyat parse</span><span class="en">Dual-locale price parsing</span></h3>
-        <p>
-          <span class="tr">Avrupa formatı: 1.299,99 (nokta binlik, virgül ondalık). US formatı: 1,299.99 (virgül binlik, nokta ondalık). İki formatı da otomatik tanır ve float'a çevirir.</span>
-          <span class="en">European format: 1.299,99 (dot thousands, comma decimal). US format: 1,299.99 (comma thousands, dot decimal). Auto-detects both and converts to float.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🚨</div>
-        <h3><span class="tr">Hedef fiyat uyarısı</span><span class="en">Target price alert</span></h3>
-        <p>
-          <span class="tr">Fiyat ≤ target_price olduğunda uyarı tetiklenir. delta = target_price − price olarak hesaplanır ve rapora yazılır. Her ürün için ayrı eşik.</span>
-          <span class="en">Alert triggers when price ≤ target_price. delta = target_price − price is computed and written to report. Separate threshold per product.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">⏱️</div>
-        <h3>HTTP timeout=15s</h3>
-        <p>
-          <span class="tr">httpx async client ile timeout=15 saniye. Cevap vermeyen siteler pipeline'ı askıda bırakmaz. Timeout olan URL'ler manifest'e hata olarak kaydedilir.</span>
-          <span class="en">httpx async client with timeout=15 seconds. Unresponsive sites don't stall the pipeline. Timed-out URLs logged as errors in the manifest.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">📁</div>
-        <h3><span class="tr">CSV snapshot + JSON manifest</span><span class="en">CSV snapshot + JSON manifest</span></h3>
-        <p>
-          <span class="tr">Her çalıştırma: timestamp'li CSV snapshot (tüm mevcut fiyatlar) ve JSON manifest (schema fingerprint: SHA-256 ilk 16 karakter, kaç URL kontrol edildi, kaç uyarı tetiklendi).</span>
-          <span class="en">Each run: timestamped CSV snapshot (all current prices) and JSON manifest (schema fingerprint: SHA-256 first 16 chars, URLs checked, alerts triggered).</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">🔍</div>
-        <h3><span class="tr">CSS selector tabanlı</span><span class="en">CSS selector-based</span></h3>
-        <p>
-          <span class="tr">API anahtarı yok, scraper aboneliği yok — sadece tarayıcıda inspect et, fiyat elementinin CSS selector'ını al, watchlist'e ekle. BeautifulSoup ile güvenilir parse.</span>
-          <span class="en">No API key, no scraper subscription — just inspect in browser, grab the CSS selector of the price element, add to watchlist. Reliable parsing via BeautifulSoup.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROBLEM + WHY + SCENARIO -->
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Problem neydi? Neden bu yaklaşım?</span>
-      <span class="en">What was the problem? Why this approach?</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Kullanım senaryosu</span><span class="en">Use case</span></span>
-        <span class="tech-val"><span class="tr">Ürün URL'si, CSS price_selector ve hedef fiyat olan bir watchlist'in var. Fiyat hedefin altına düştüğünde haberdar olmak istiyorsun. Elle takip: günde 2 kontrol, hafta sonları yok, rakip indirim açıkken sen uyuyorsun. Bu pipeline bunu otomatikleştirir — API aboneliği olmadan.</span><span class="en">You have a watchlist with product URLs, CSS price selectors, and target prices. You want to be notified when a price drops to your target. Manual tracking: 2 checks a day, nothing on weekends, sleeping when the competitor runs a sale. This pipeline automates it — without API subscriptions.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">BeautifulSoup ←</span>
-        <span class="tech-val"><span class="tr">Fiyat scraping için özel API veya headless browser neden gerekmiyor? Çoğu e-ticaret sitesinde fiyat statik HTML'de render ediliyor — CSS selector ile doğrudan seçilebilir. BeautifulSoup yeterli, Selenium veya Playwright gereksiz yük. httpx timeout=15s ile ağ hataları yönetiliyor.</span><span class="en">Why no dedicated API or headless browser for price scraping? On most e-commerce sites, prices render in static HTML — directly selectable by CSS selector. BeautifulSoup is sufficient, Selenium or Playwright unnecessary overhead. Network errors handled via httpx timeout=15s.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Locale parsing</span>
-        <span class="tech-val"><span class="tr">1.299,99 (Almanya/Türkiye/İspanya) ve 1,299.99 (ABD/İngiltere) formatları — aynı siteyi farklı lokasyondan scrape ettiğinde veya farklı ülke sitelerini izlerken ikisi de çıkabilir. Parser her iki formatı tanır, float'a çevirir ve delta = target_price − price hesaplar.</span><span class="en">1.299,99 (Germany/Turkey/Spain) and 1,299.99 (US/UK) formats — both can appear when scraping the same site from different locations or monitoring international stores. Parser recognizes both, converts to float, and computes delta = target_price − price.</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">SHA-256 fingerprint</span>
-        <span class="tech-val"><span class="tr">Manifest'teki schema fingerprint (SHA-256 ilk 16 karakter) sitede HTML yapısı değişirse tespit eder. Selector artık çalışmıyorsa fiyat None döner — manifest bu URL'yi "selector_miss" olarak işaretler. Sessiz başarısızlık yok.</span><span class="en">Schema fingerprint in manifest (SHA-256 first 16 chars) detects when a site's HTML structure changes. If the selector no longer works, price returns None — manifest marks that URL as "selector_miss." No silent failures.</span></span>
-      </div>
-    </div>
-  </section>
-
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Adım adım senaryo: watchlist'teki ürün hedef fiyata düştü</span>
-      <span class="en">Step-by-step scenario: watchlist product hits target price</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">01</div>
-        <h3><span class="tr">watchlist.json okundu, sayfalar çekildi</span><span class="en">watchlist.json read, pages fetched</span></h3>
-        <p>
-          <span class="tr">watchlist.json'dan 3 ürün yüklendi: her birinde name, URL, css price_selector, target_price. httpx async client (timeout=15s) ile 3 URL paralel olarak çekildi. BeautifulSoup her sayfada price_selector'ı aradı. İki ürün Avrupa formatı (1.299,99), biri US formatı (1,299.99) — her ikisi de parse edildi.</span>
-          <span class="en">3 products loaded from watchlist.json: each with name, URL, css price_selector, target_price. httpx async client (timeout=15s) fetched all 3 URLs in parallel. BeautifulSoup searched for price_selector on each page. Two products European format (1.299,99), one US format (1,299.99) — both parsed correctly.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">02</div>
-        <h3><span class="tr">Uyarı tetiklendi: fiyat ≤ hedef</span><span class="en">Alert triggered: price ≤ target</span></h3>
-        <p>
-          <span class="tr">Ürün A: çekilen fiyat 249,99 €, target_price=259,99 €. Koşul sağlandı: fiyat ≤ hedef. delta = 259,99 − 249,99 = 10,00 € hesaplandı. Uyarı kaydı oluşturuldu. Ürün B ve C: fiyat hedef üstünde, uyarı yok.</span>
-          <span class="en">Product A: fetched price 249.99 €, target_price=259.99 €. Condition met: price ≤ target. delta = 259.99 − 249.99 = 10.00 € computed. Alert record created. Products B and C: price above target, no alert.</span>
-        </p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon" style="font-size:1.1rem;color:#ff4800;font-weight:700;font-family:'JetBrains Mono',monospace;">03</div>
-        <h3><span class="tr">CSV snapshot + JSON manifest yazıldı</span><span class="en">CSV snapshot + JSON manifest written</span></h3>
-        <p>
-          <span class="tr">CSV snapshot: timestamp, name, url, scraped_price, target_price, delta, alert (True/False) — tüm ürünler için. JSON manifest: run_id, timestamp, URLs_checked=3, alerts_triggered=1, schema_fingerprint (SHA-256 ilk 16 karakter). Pipeline reproducible, her çalıştırma izlenebilir.</span>
-          <span class="en">CSV snapshot: timestamp, name, url, scraped_price, target_price, delta, alert (True/False) — for all products. JSON manifest: run_id, timestamp, URLs_checked=3, alerts_triggered=1, schema_fingerprint (SHA-256 first 16 chars). Pipeline reproducible, every run traceable.</span>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="lsection lsection-dark">
-    <h2 class="lsection-title">
-      <span class="tr">Teknik detaylar</span>
-      <span class="en">Technical details</span>
-    </h2>
-    <div class="tech-table">
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Giriş</span><span class="en">Input</span></span>
-        <span class="tech-val">watchlist.json (name, URL, css price_selector, target_price)</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">HTTP</span>
-        <span class="tech-val">httpx (async) · timeout=15s · BeautifulSoup price parse</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Fiyat parse</span><span class="en">Price parsing</span></span>
-        <span class="tech-val"><span class="tr">Avrupa (1.299,99) + US (1,299.99) locale-aware · delta = target − price</span><span class="en">European (1.299,99) + US (1,299.99) locale-aware · delta = target − price</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Çıktı</span><span class="en">Output</span></span>
-        <span class="tech-val"><span class="tr">CSV snapshot (tüm fiyatlar) · JSON manifest (run_id, SHA-256 fingerprint, alerts_triggered)</span><span class="en">CSV snapshot (all prices) · JSON manifest (run_id, SHA-256 fingerprint, alerts_triggered)</span></span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key"><span class="tr">Testler</span><span class="en">Tests</span></span>
-        <span class="tech-val">pytest · pytest-asyncio · coverage</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">CI</span>
-        <span class="tech-val">GitHub Actions · ruff · Python 3.11 &amp; 3.12</span>
-      </div>
-    </div>
-  </section>
-  <!-- GAINS -->
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Müşteri Ne Kazanır</span>
-      <span class="en">What the Client Gets</span>
-    </h2>
-    <div class="gains-grid">
-      <div class="gain-card">
-        <div class="gain-stat">2 dk</div>
-        <div class="gain-label"><span class="tr">rakip değişikliğinde alarm</span><span class="en">alert after competitor changes price</span></div>
-        <p><span class="tr">Cron + webhook ile anlık bildirim. Manuel kontrol döngüsünde 6-8 saat olan gecikme 2 dakikaya iniyor. Fırsatı kaçırmadan tepki verilebiliyor.</span><span class="en">Instant notification via cron + webhook. 6-8 hour delay of manual check cycles drops to 2 minutes. React before missing the opportunity.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">%75</div>
-        <div class="gain-label"><span class="tr">daha az yanlış alarm</span><span class="en">fewer false alerts</span></div>
-        <p><span class="tr">Eşik tabanlı filtre + tarihsel bağlam: ani scraping hatalarından kaynaklanan "fiyat düştü" yanlış alarmları eliminasyonu. Sadece gerçek değişiklikler tetikler.</span><span class="en">Threshold filter + historical context: elimination of false "price dropped" alerts from scraping errors. Only genuine changes trigger.</span></p>
-      </div>
-      <div class="gain-card">
-        <div class="gain-stat">7 ürün</div>
-        <div class="gain-label"><span class="tr">eş zamanlı takip</span><span class="en">tracked simultaneously</span></div>
-        <p><span class="tr">Config dosyasına URL eklenerek sınırsız ürün izlenebilir. Async HTTP ile paralel çekme — sıralı değil. N ürün için N×süre değil, ~1×süre.</span><span class="en">Unlimited products by adding URLs to config. Async HTTP for parallel fetching — not sequential. N products take ~1× time, not N× time.</span></p>
-      </div>
-    </div>
-    <div class="gains-reason">
-      <h3><span class="tr">Neden bu yaklaşım?</span><span class="en">Why this approach?</span></h3>
-      <ul class="gains-list">
-        <li><span class="tr">Tekrarlanan kontrol, tekrarlanan zafer: saatlik cron, her çalıştırma önceki fiyatla karşılaştırma, sadece değişen ürünlerde alarm. Gürültü yok.</span><span class="en">Repeatable check, repeatable win: hourly cron, each run compares against last price, alert only on changed products. No noise.</span></li>
-        <li><span class="tr">İdempotent çalıştırma: aynı URL için iki çalıştırma aynı sonucu üretiyor. Cron çift tetiklense bile duplikat kayıt olmaz, duplikat alarm olmaz.</span><span class="en">Idempotent runs: two runs for the same URL produce the same result. Even if cron fires twice, no duplicate records, no duplicate alerts.</span></li>
-        <li><span class="tr">Tarihsel fiyat verisi: her çalıştırma timestamp ile kaydediliyor. Rakip fiyat trendi analizi ve fırsatçı fiyatlandırma tespiti yapılabiliyor.</span><span class="en">Historical price data: every run saved with timestamp. Competitor price trend analysis and opportunistic pricing detection become possible.</span></li>
-        <li><span class="tr">Alarm kanalı esnekliği: webhook URL değiştirilerek Slack, Telegram, email veya herhangi bir HTTP endpoint'e yönlendirilebilir. Sıfır kod değişikliği.</span><span class="en">Alert channel flexibility: change webhook URL to route to Slack, Telegram, email, or any HTTP endpoint. Zero code change.</span></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="lcta">
-    <h2>
-      <span class="tr">Rakip fiyatlarını takip etmek istiyor musun?</span>
-      <span class="en">Need to monitor competitor prices?</span>
-    </h2>
-    <p>
-      <span class="tr">Hangi siteyi, hangi sıklıkla, hangi formatta — söyle, kuralım. Scraping + ML + API, teslim edilebilir paket.</span>
-      <span class="en">Which site, how often, what format — tell me and we'll set it up. Scraping + ML + API in a deliverable package.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="mailto:emirhuseyininci@gmail.com?subject=Price Monitor İşi">
-        <span class="tr">Teklif al</span>
-        <span class="en">Get a quote</span>
-      </a>
-      <a class="btn-ghost" href="https://github.com/emirhuseynrmx/price-monitor-pipeline" target="_blank" rel="noopener">
-        <span class="tr">GitHub'da incele</span>
-        <span class="en">View on GitHub</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/">← <span class="tr">Ana sayfaya dön</span><span class="en">Back to home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Hüseyin İnci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- shared node-field hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var ctx=cv.getContext('2d'), W=0,H=0, pts=[];
+    var CY='34,211,238', IN='129,140,248';
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===W&&h===H&&cv.width>0)return true; W=w;H=h;cv.width=w*d;cv.height=h*d;ctx.setTransform(d,0,0,d,0,0);
+      pts=[]; var N=Math.min(52,Math.floor(w*h/14000)); for(var i=0;i<N;i++) pts.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.28,vy:(Math.random()-.5)*.28}); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function frame(){ if(size()){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<pts.length;i++){ var p=pts[i]; p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+        for(var j=i+1;j<pts.length;j++){ var q=pts[j], dx=p.x-q.x, dy=p.y-q.y, dd=dx*dx+dy*dy; if(dd<12000){ var a=(1-dd/12000)*.16; ctx.strokeStyle='rgba('+IN+','+a+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y); ctx.stroke(); } } }
+      for(var k=0;k<pts.length;k++){ ctx.fillStyle='rgba('+CY+',.5)'; ctx.beginPath(); ctx.arc(pts[k].x,pts[k].y,1.4,0,6.28); ctx.fill(); } }
+      requestAnimationFrame(frame); }
+    frame();
+  })();
+  </script>
 </body>
 </html>

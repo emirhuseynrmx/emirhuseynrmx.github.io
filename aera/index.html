@@ -1,669 +1,220 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>AeraCFO — Otonom AI CFO Platformu</title>
-  <meta name="description" content="CSV veya XLSX yükle. 3 ajan (Planner → Executor → Critic) analiz eder, tahmin üretir, anomali işaretler, teşvik eşleştirir. Çıktı: board-ready A4 PDF."/>
-  <meta name="robots" content="index, follow"/>
-  <meta name="author" content="Emir Hüseyin İnci"/>
-  <link rel="canonical" href="https://emirhuseyin.tech/aera/"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:title" content="AeraCFO — Autonomous AI CFO Platform for SMEs"/>
-  <meta property="og:description" content="Upload CSV or XLSX. 3-agent pipeline generates analysis, forecasts, and board-ready PDF reports in seconds."/>
-  <meta property="og:url" content="https://emirhuseyin.tech/aera/"/>
-  <meta name="twitter:card" content="summary"/>
-  <meta name="theme-color" content="#060504"/>
+  <title>AeraCFO — An autonomous CFO for SMEs</title>
+  <meta name="description" content="AeraCFO is an autonomous AI CFO for SMEs: upload a CSV, a three-agent pipeline (Planner, Executor, Critic) forecasts, flags anomalies, and returns a board-ready PDF."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
 
-    :root {
-      --bg: #060504;
-      --card: #0c0a08;
-      --border: #1a1812;
-      --border-hover: #2a2818;
-      --accent: #ff4800;
-      --accent-dim: rgba(255,72,0,0.08);
-      --text: #f2f0ea;
-      --text-sec: #989688;
-      --text-dim: #4a4840;
-      --mono: 'JetBrains Mono', monospace;
-      --sans: 'Inter', sans-serif;
-    }
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
 
-    html { scroll-behavior: smooth; }
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+    .hero{ min-height:100svh; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:2rem; overflow:hidden; position:relative; }
+    .hero-copy{ position:relative; z-index:3; padding:7rem 0 3rem; }
+    .hero-vis{ position:relative; min-height:60vh; height:100%; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(50% 60% at 80% 45%, rgba(129,140,248,.10), transparent 65%); }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cyan); }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.4rem,5vw,4rem); line-height:1.03; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.1rem; max-width:44ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+    .vis-legend{ position:absolute; z-index:2; bottom:1.2rem; left:1.2rem; display:flex; gap:1rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; }
+    .vis-legend span{ display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); }
+    .vis-legend i{ width:8px; height:8px; border-radius:50%; }
+    @media(max-width:900px){ .hero{ grid-template-columns:1fr; } .hero-vis{ min-height:44vh; order:2; } .hero-copy{ padding-top:6rem; } }
 
-    /* ── CURSOR ── */
-    .c-dot {
-      position: fixed; top: 0; left: 0; z-index: 9999;
-      width: 8px; height: 8px; border-radius: 50%;
-      background: #ff4800; pointer-events: none;
-      transform: translate3d(-50%, -50%, 0);
-    }
-    .c-ring {
-      position: fixed; top: 0; left: 0; z-index: 9998;
-      width: 32px; height: 32px; border-radius: 50%;
-      border: 1.5px solid rgba(255,72,0,.45); pointer-events: none;
-      transform: translate3d(-50%, -50%, 0);
-    }
+    .sec{ padding:clamp(4rem,8vw,7rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.5rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .sec-lead{ color:var(--muted); max-width:60ch; margin-top:1rem; font-size:1.02rem; }
 
-    /* ── NAV ── */
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 2rem; height: 52px;
-      background: rgba(6,5,4,0.9);
-      backdrop-filter: blur(20px) saturate(1.5);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-brand {
-      font-family: var(--mono);
-      font-weight: 800; font-size: .9rem;
-      color: var(--text);
-      text-decoration: none;
-      letter-spacing: -0.02em;
-    }
-    .nav-brand span { color: var(--accent); }
-    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-    .nav-links a {
-      font-family: var(--mono); font-size: 0.7rem;
-      color: var(--text-dim); text-decoration: none;
-      transition: color 0.2s; text-transform: uppercase; letter-spacing: 0.06em;
-    }
-    .nav-links a:hover { color: var(--text-sec); }
-    .nav-end { display: flex; gap: .75rem; align-items: center; }
-    .lang-btn {
-      background: none; border: 1px solid var(--border);
-      color: var(--text-dim); font-family: var(--mono);
-      font-size: .6rem; font-weight: 700; letter-spacing: .08em;
-      padding: .3rem .7rem; border-radius: 4px; cursor: pointer;
-      transition: border-color .2s, color .2s;
-    }
-    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
 
-    .en { display: none; }
-    .lang-en .tr { display: none; }
-    .lang-en .en { display: inline; }
+    .out{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .out .o{ border:1px solid var(--line); border-radius:14px; padding:1.4rem; background:var(--bg-2); }
+    .out .o .big{ font-family:var(--disp); font-weight:700; font-size:1.5rem; color:var(--head); }
+    .out .o .big .u{ color:var(--cyan); }
+    .out .o p{ color:var(--muted); font-size:.86rem; margin-top:.5rem; }
+    @media(max-width:760px){ .out{ grid-template-columns:1fr; } }
 
-    .accent-line {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      margin-top: 52px;
-    }
+    .cta-band{ margin-top:3rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.4rem,2.4vw,2rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
 
-    .container { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; margin-top:4rem; }
+    footer a{ color:var(--indigo); }
 
-    /* ── HERO ── */
-    .hero { padding: 5.5rem 0 3.5rem; text-align: center; }
-    .hero-kicker {
-      display: inline-flex; align-items: center; gap: .5rem;
-      font-family: var(--mono); font-size: 0.62rem;
-      letter-spacing: .12em; text-transform: uppercase;
-      color: var(--accent); border: 1px solid rgba(255,72,0,.25);
-      padding: .3rem .9rem; border-radius: 100px; margin-bottom: 1.75rem;
-    }
-    .hero h1 {
-      font-family: var(--mono);
-      font-size: clamp(2.8rem, 7vw, 5rem); font-weight: 800;
-      letter-spacing: -0.04em; line-height: 1;
-      color: var(--text); margin-bottom: .75rem;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero-tagline {
-      font-family: var(--mono); font-size: .8rem;
-      color: var(--text-sec); letter-spacing: .04em; margin-bottom: 1.25rem;
-    }
-    .hero-sub {
-      font-size: 1rem; color: var(--text-sec);
-      max-width: 640px; margin: 0 auto 2.5rem; line-height: 1.75;
-    }
-    .hero-ctas { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; }
-    .btn {
-      font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
-      padding: .65rem 1.75rem; border-radius: 6px; text-decoration: none;
-      transition: all 0.2s; cursor: pointer; border: none; letter-spacing: .04em;
-    }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #cc3300; transform: translateY(-1px); }
-    .btn-ghost { background: transparent; color: var(--text-sec); border: 1px solid var(--border); }
-    .btn-ghost:hover { border-color: var(--border-hover); color: var(--text); transform: translateY(-1px); }
-
-    /* ── DEMO WINDOW ── */
-    .demo-wrap {
-      max-width: 860px; margin: 3rem auto 0;
-      border-radius: 14px; overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--card);
-    }
-    .demo-bar {
-      display: flex; align-items: center; gap: 6px;
-      padding: 10px 14px; background: #0a0806;
-      border-bottom: 1px solid var(--border);
-    }
-    .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .demo-dot.r { background: #ff5f57; }
-    .demo-dot.y { background: #febc2e; }
-    .demo-dot.g { background: #28c840; }
-    .demo-wrap img { width: 100%; display: block; }
-
-    /* ── SECTION ── */
-    .section { padding: 4.5rem 0; }
-    .section-label {
-      font-family: var(--mono); font-size: 0.6rem;
-      color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em;
-      margin-bottom: 2.25rem; display: flex; align-items: center; gap: 0.75rem;
-    }
-    .section-label em { color: var(--accent); font-style: normal; font-weight: 700; }
-    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .section-title {
-      font-family: var(--mono); font-size: clamp(1.4rem, 3vw, 2rem);
-      font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: .75rem;
-    }
-    .section-desc {
-      color: var(--text-sec); max-width: 540px; margin-bottom: 2.5rem;
-      font-size: .9rem; line-height: 1.7;
-    }
-
-    /* ── AGENT FLOW ── */
-    .agent-flow {
-      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
-      gap: 0; align-items: center; margin-bottom: 2.5rem;
-    }
-    .agent-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 1.75rem 1.5rem; text-align: center;
-    }
-    .agent-card:hover { border-color: var(--border-hover); }
-    .agent-num {
-      font-family: var(--mono); font-size: .58rem; font-weight: 700;
-      color: var(--accent); margin-bottom: .5rem; letter-spacing: .08em;
-    }
-    .agent-name {
-      font-family: var(--mono); font-size: 1.05rem; font-weight: 800;
-      color: var(--text); margin-bottom: .5rem; letter-spacing: -.02em;
-    }
-    .agent-desc { font-size: .78rem; color: var(--text-sec); line-height: 1.55; }
-    .agent-arrow {
-      font-family: var(--mono); font-size: 1.4rem;
-      color: var(--accent); text-align: center; padding: 0 .5rem;
-    }
-
-    /* ── STATS ── */
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 1px; border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden; margin-bottom: 2.5rem;
-    }
-    .stat-card {
-      background: var(--card); padding: 1.5rem; text-align: center;
-      border-right: 1px solid var(--border);
-    }
-    .stat-card:last-child { border-right: 0; }
-    .stat-value {
-      font-family: var(--mono); font-size: 1.75rem; font-weight: 700;
-      font-variant-numeric: tabular-nums; color: var(--accent); margin-bottom: 0.3rem;
-    }
-    .stat-label {
-      font-family: var(--mono); font-size: 0.62rem;
-      color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em;
-    }
-
-    /* ── FEATURE GRID ── */
-    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .feature-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.5rem; transition: border-color 0.2s;
-    }
-    .feature-card:hover { border-color: var(--border-hover); }
-    .feature-label {
-      font-family: var(--mono); font-size: 0.58rem;
-      color: var(--accent); text-transform: uppercase;
-      letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 700;
-    }
-    .feature-card h3 {
-      font-family: var(--mono); font-size: 0.88rem;
-      font-weight: 700; margin-bottom: 0.5rem; color: var(--text);
-    }
-    .feature-card p { font-size: 0.82rem; color: var(--text-sec); line-height: 1.65; }
-
-    /* ── ARCH ── */
-    .arch {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 2rem; font-family: var(--mono); overflow-x: auto;
-    }
-    .arch-title {
-      font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase;
-      letter-spacing: 0.1em; margin-bottom: 1.75rem;
-    }
-    .arch-layer {
-      display: flex; align-items: center; gap: 1rem; margin-bottom: .5rem;
-    }
-    .arch-layer-label {
-      font-size: 0.62rem; color: var(--text-dim);
-      min-width: 90px; text-align: right;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    .arch-nodes { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .arch-node {
-      font-size: 0.72rem; padding: .45rem .9rem;
-      border: 1px solid var(--border); border-radius: 6px;
-      color: var(--text-sec); background: rgba(255,72,0,0.04);
-    }
-    .arch-arrow { color: var(--accent); font-size: 1rem; padding-left: 100px; margin: .35rem 0; }
-
-    /* ── TECH BADGES ── */
-    .tech-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
-    .tech-badge {
-      font-family: var(--mono); font-size: 0.65rem; font-weight: 500;
-      padding: .32rem .8rem; border: 1px solid var(--border);
-      border-radius: 100px; color: var(--text-sec); background: var(--card);
-      transition: border-color 0.2s;
-    }
-    .tech-badge:hover { border-color: var(--border-hover); color: var(--text); }
-
-    /* ── CTA ── */
-    .cta-section { text-align: center; padding: 4.5rem 0; }
-    .cta-section h2 {
-      font-family: var(--mono); font-size: clamp(1.4rem, 3vw, 1.9rem);
-      font-weight: 700; letter-spacing: -.02em; margin-bottom: .75rem; color: var(--text);
-    }
-    .cta-section p {
-      color: var(--text-sec); margin-bottom: 2rem; max-width: 460px;
-      margin-left: auto; margin-right: auto; font-size: .9rem; line-height: 1.7;
-    }
-
-    /* ── FOOTER ── */
-    .footer {
-      border-top: 1px solid var(--border); padding: 1.75rem 2rem;
-      text-align: center; font-family: var(--mono);
-      font-size: 0.65rem; color: var(--text-dim);
-    }
-    .footer a { color: var(--text-sec); text-decoration: none; }
-    .footer a:hover { color: var(--accent); }
-
-    /* ── REVEAL ── */
-    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 860px) {
-      .feature-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-grid { grid-template-columns: repeat(3, 1fr); }
-      .agent-flow { grid-template-columns: 1fr; gap: 0; }
-      .agent-arrow { transform: rotate(90deg); text-align: left; padding: .25rem 0; }
-    }
-    @media (max-width: 600px) {
-      .feature-grid { grid-template-columns: 1fr; }
-      .stats-grid { grid-template-columns: 1fr; }
-      .stat-card { border-right: 0; border-bottom: 1px solid var(--border); }
-      .stat-card:last-child { border-bottom: 0; }
-      .hero { padding: 4rem 0 2.5rem; }
-      .container { padding: 0 1.25rem; }
-    }
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
   </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a href="/" class="nav-brand"><span>Aera</span>CFO</a>
-    <div class="nav-links">
-      <a href="/">← <span class="tr">portfolyo</span><span class="en">portfolio</span></a>
-      <a href="https://github.com/emirhuseynrmx/aera" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
+    <a class="back" href="../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <span class="brand">AeraCFO</span>
     <div class="nav-end">
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
-  <div class="accent-line"></div>
 
-  <div class="container">
+  <header class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">AI Agents · Finance · PDF</span>
+      <h1><span class="en">An autonomous<br><span class="grad">CFO for SMEs.</span></span><span class="tr">KOBİ'ler için<br><span class="grad">otonom CFO.</span></span></h1>
+      <p class="lead"><span class="en">Upload a CSV. Three agents — <b>Planner, Executor, Critic</b> — forecast your numbers, flag anomalies, and hand back a board-ready PDF. The finance function of a much bigger company, without the headcount.</span><span class="tr">Bir CSV yükle. Üç yapay zeka ajanı — <b>Planlayıcı, Uygulayıcı, Denetleyici</b> — rakamlarını öngörür, sıra dışı olanları yakalar ve yönetime sunulmaya hazır bir PDF çıkarır. Çok daha büyük bir şirketin finans ekibi, o kadroyu tutmadan.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
+        <a class="btn btn-ghost" href="../#contact"><span class="en">Talk to me</span><span class="tr">İletişime geç</span></a>
+      </div>
+    </div>
+    <div class="hero-vis">
+      <canvas id="scene"></canvas>
+      <div class="vis-legend">
+        <span><i style="background:var(--indigo)"></i><span class="en">agents</span><span class="tr">ajanlar</span></span>
+        <span><i style="background:var(--cyan)"></i><span class="en">report</span><span class="tr">rapor</span></span>
+        <span><i style="background:var(--proof)"></i><span class="en">active</span><span class="tr">aktif</span></span>
+      </div>
+    </div>
+  </header>
 
-    <!-- ── HERO ── -->
-    <section class="hero">
-      <div class="hero-kicker">Autonomous AI CFO</div>
-      <h1><span>Aera</span>CFO</h1>
-      <p class="hero-tagline">
-        <span class="tr">CSV yükle → 3 ajan analiz eder → board-ready PDF</span>
-        <span class="en">Upload CSV → 3 agents analyze → board-ready PDF</span>
-      </p>
-      <p class="hero-sub">
-        <span class="tr">
-          KOBİ'ler için otonom AI CFO platformu. Planner, Executor ve Critic ajanları sırayla çalışır — nakit akışı tahmini, anomali tespiti, KOSGEB/TÜBİTAK teşvik eşleştirmesi ve saniyeler içinde A4 PDF raporu.
-        </span>
-        <span class="en">
-          Autonomous AI CFO platform for SMEs. Planner, Executor, and Critic agents run sequentially — cash flow forecasting, anomaly detection, KOSGEB/TÜBİTAK incentive matching, and A4 PDF report in seconds.
-        </span>
-      </p>
-      <div class="hero-ctas">
-        <a href="./app/" class="btn btn-primary">
-          <span class="tr">Uygulamayı Dene →</span>
-          <span class="en">Try the App →</span>
-        </a>
-        <a href="mailto:emirhuseyininci@gmail.com?subject=AeraCFO%20Demo" class="btn btn-ghost">
-          <span class="tr">İletişime Geç</span>
-          <span class="en">Get in Touch</span>
-        </a>
-        <a href="https://github.com/emirhuseynrmx/aera" target="_blank" rel="noopener" class="btn btn-ghost">GitHub →</a>
+  <section class="sec" id="problem">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
+        <h2 class="sec-title"><span class="en">SMEs fly blind on their own numbers.</span><span class="tr">Küçük işletmeler kendi rakamlarına kör.</span></h2>
+        <p class="sec-lead"><span class="en">A growing business generates plenty of financial data but can't afford a CFO to make sense of it. Spreadsheets don't forecast cash, don't catch the anomaly buried in row 4,000, and don't produce something leadership can take to a board. So decisions get made on gut feel — and the warning signs show up only after the money is gone.</span><span class="tr">Büyüyen bir işletme bir sürü finansal veri üretir ama bunu anlamlandıracak bir finans müdürünü karşılayamaz. Tablolar nakit akışını öngörmez, dört bininci satıra gömülü sıra dışı hareketi yakalamaz ve yönetime sunabileceğin bir şey üretmez. Böylece kararlar sezgiyle verilir — uyarı işaretleri ise ancak para gittikten sonra ortaya çıkar.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
+        <h2 class="sec-title"><span class="en">Planner → Executor → Critic.</span><span class="tr">Planner → Executor → Critic.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step rv"><div class="n">01 · PLANLA</div><h3><span class="en">Frame the analysis</span><span class="tr">Analizi kurgula</span></h3><p><span class="en">The Planner reads your CSV and decides which forecasts, ratios, and checks the business actually needs.</span><span class="tr">Planlayıcı verini okur ve işletmenin asıl hangi öngörülere, oranlara ve kontrollere ihtiyacı olduğuna karar verir.</span></p></div>
+        <div class="step rv"><div class="n">02 · UYGULA</div><h3><span class="en">Run the numbers</span><span class="tr">Rakamları işle</span></h3><p><span class="en">The Executor computes forecasts and scans for anomalies — the actual financial analysis, done.</span><span class="tr">Uygulayıcı öngörüleri hesaplar ve sıra dışı hareketleri tarar — asıl finansal analizin kendisi.</span></p></div>
+        <div class="step rv"><div class="n">03 · DENETLE</div><h3><span class="en">Check &amp; report</span><span class="tr">Denetle ve raporla</span></h3><p><span class="en">The Critic reviews the work for errors, then assembles a clean, board-ready PDF.</span><span class="tr">Denetleyici işi hatalara karşı gözden geçirir, sonra derli toplu, yönetime hazır bir PDF hazırlar.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="impact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">03 — <span class="en">WHAT YOU GET</span><span class="tr">NE ELDE EDERSİN</span></div>
+        <h2 class="sec-title"><span class="en">CSV in, board-ready PDF out.</span><span class="tr">CSV girer, yönetime hazır PDF çıkar.</span></h2>
+      </div>
+      <div class="out">
+        <div class="o rv"><div class="big"><span class="en">Cash <span class="u">forecasts</span></span><span class="tr">Nakit <span class="u">öngörüsü</span></span></div><p><span class="en">Forward-looking projections built from your own history.</span><span class="tr">Kendi geçmiş verinden kurulan, ileriye dönük tahminler.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Anomaly <span class="u">flags</span></span><span class="tr">Sıra dışı <span class="u">uyarılar</span></span></div><p><span class="en">The outliers and warning signs a spreadsheet would never surface.</span><span class="tr">Bir tablonun asla gösteremeyeceği aykırı değerler ve uyarı işaretleri.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Board <span class="u">PDF</span></span><span class="tr">Yönetim <span class="u">PDF'i</span></span></div><p><span class="en">A clean, shareable report leadership can act on.</span><span class="tr">Yönetimin görüp harekete geçebileceği, derli toplu bir rapor.</span></p></div>
       </div>
 
-      <!-- Demo window -->
-      <div class="demo-wrap reveal">
-        <div class="demo-bar">
-          <span class="demo-dot r"></span>
-          <span class="demo-dot y"></span>
-          <span class="demo-dot g"></span>
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">Want a CFO without the headcount?</span><span class="tr">Kadro tutmadan bir finans müdürü ister misin?</span></h3>
+          <p><span class="en">Let's turn your spreadsheets into decisions leadership can trust.</span><span class="tr">Tablolarını, yönetimin güvenebileceği kararlara çevirelim.</span></p>
         </div>
-        <img src="/assets/aera-demo.gif" alt="AeraCFO Demo" loading="lazy"/>
+        <a class="btn btn-primary" href="../#contact"><span class="en">Start a project →</span><span class="tr">Projeye başla →</span></a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ── 01 AGENTS ── -->
-    <section class="section reveal">
-      <div class="section-label"><em>01</em> <span class="tr">3 Ajan Pipeline</span><span class="en">3-Agent Pipeline</span></div>
-      <h2 class="section-title">
-        <span class="tr">Planner → Executor → Critic</span>
-        <span class="en">Planner → Executor → Critic</span>
-      </h2>
-      <p class="section-desc">
-        <span class="tr">Her ajan bir sonrakini doğrular ve geliştirir. Tek seferlik LLM çağrısı değil — iteratif, eleştirel bir süreç.</span>
-        <span class="en">Each agent validates and refines the previous one. Not a single LLM call — an iterative, critical process.</span>
-      </p>
-      <div class="agent-flow">
-        <div class="agent-card">
-          <div class="agent-num">AGT 01</div>
-          <div class="agent-name">
-            <span class="tr">Planlayıcı</span>
-            <span class="en">Planner</span>
-          </div>
-          <p class="agent-desc">
-            <span class="tr">Veriyi tarar, analiz stratejisini belirler, hangi modüllerin çalışacağına karar verir.</span>
-            <span class="en">Scans data, defines analysis strategy, decides which modules to activate.</span>
-          </p>
-        </div>
-        <div class="agent-arrow">→</div>
-        <div class="agent-card">
-          <div class="agent-num">AGT 02</div>
-          <div class="agent-name">
-            <span class="tr">Yürütücü</span>
-            <span class="en">Executor</span>
-          </div>
-          <p class="agent-desc">
-            <span class="tr">Tahmin, anomali, teşvik eşleştirme ve PDF oluşturmayı yürütür.</span>
-            <span class="en">Runs forecasting, anomaly detection, incentive matching, and PDF generation.</span>
-          </p>
-        </div>
-        <div class="agent-arrow">→</div>
-        <div class="agent-card">
-          <div class="agent-num">AGT 03</div>
-          <div class="agent-name">
-            <span class="tr">Eleştirmen</span>
-            <span class="en">Critic</span>
-          </div>
-          <p class="agent-desc">
-            <span class="tr">Çıktıyı iş mantığı ve tutarlılık açısından doğrular, gerekirse revize eder.</span>
-            <span class="en">Validates output for business logic and consistency, revises if needed.</span>
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── 02 FEATURES ── -->
-    <section class="section reveal">
-      <div class="section-label"><em>02</em> <span class="tr">Özellikler</span><span class="en">Features</span></div>
-      <h2 class="section-title">
-        <span class="tr">Kapsamlı Finansal Analiz</span>
-        <span class="en">Comprehensive Financial Analysis</span>
-      </h2>
-      <p class="section-desc">
-        <span class="tr">KOBİ'ler için finansal karar almayı hızlandıran altı çekirdek modül.</span>
-        <span class="en">Six core modules that accelerate financial decision-making for SMEs.</span>
-      </p>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="feature-label">Forecasting</div>
-          <h3>
-            <span class="tr">Holt Projeksiyonu</span>
-            <span class="en">Holt Projection</span>
-          </h3>
-          <p>
-            <span class="tr">Üstel yumuşatma ile trend ve mevsimsellik tahmini. 3-6-12 aylık nakit akışı projeksiyonları, güven aralıklarıyla birlikte.</span>
-            <span class="en">Exponential smoothing for trend and seasonality forecasting. 3-6-12 month cash flow projections with confidence intervals.</span>
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-label">Anomaly</div>
-          <h3>
-            <span class="tr">Anomali Tespiti</span>
-            <span class="en">Anomaly Detection</span>
-          </h3>
-          <p>
-            <span class="tr">Z-score ve IQR tabanlı anomali tespiti. Beklenmedik gider artışlarını ve gelir düşüşlerini otomatik işaretler, bağlam açıklamasıyla sunar.</span>
-            <span class="en">Z-score and IQR-based detection. Automatically flags unexpected expense spikes and revenue drops with context explanations.</span>
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-label">Incentives</div>
-          <h3>KOSGEB / TÜBİTAK</h3>
-          <p>
-            <span class="tr">Şirket profilinize uygun KOSGEB, TÜBİTAK ve sektörel teşvik programlarını otomatik eşleştirir. Başvuru gereksinimlerini özetler.</span>
-            <span class="en">Automatically matches KOSGEB, TÜBİTAK, and sectoral incentive programs to your company profile. Summarizes application requirements.</span>
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-label">Report</div>
-          <h3>
-            <span class="tr">Board-Ready PDF</span>
-            <span class="en">Board-Ready PDF</span>
-          </h3>
-          <p>
-            <span class="tr">Tek tıkla profesyonel A4 PDF raporu. Grafikler, tablolar, yönetici özeti. Gemini 2.5 Flash ile doğal dil yorumlama eklenmiş.</span>
-            <span class="en">One-click professional A4 PDF with charts, tables, and executive summary. Gemini 2.5 Flash adds natural language interpretation.</span>
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-label">Demos</div>
-          <h3>
-            <span class="tr">23 Sektör Demo</span>
-            <span class="en">23 Industry Demos</span>
-          </h3>
-          <p>
-            <span class="tr">Perakende, üretim, teknoloji dahil 23 sektör için hazır demo dataset'leri ve analiz şablonları. Sıfırdan başlamak zorunda değilsiniz.</span>
-            <span class="en">Ready-made demo datasets and templates for 23 industries including retail, manufacturing, and technology. No need to start from scratch.</span>
-          </p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-label">Input</div>
-          <h3>CSV / XLSX</h3>
-          <p>
-            <span class="tr">CSV veya Excel dosyası yükle, geri kalanını Polars tabanlı pipeline yönetir. Şema doğrulama, otomatik tip çıkarımı, eksik değer işleme.</span>
-            <span class="en">Upload CSV or Excel — Polars-based pipeline handles the rest. Schema validation, automatic type inference, missing value handling.</span>
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── 03 STATS + TECH ── -->
-    <section class="section reveal">
-      <div class="section-label"><em>03</em> Technology</div>
-      <h2 class="section-title">
-        <span class="tr">Sağlam Altyapı</span>
-        <span class="en">Robust Infrastructure</span>
-      </h2>
-      <p class="section-desc">
-        <span class="tr">Rust + Axum backend, Polars veri motoru, Gemini 2.5 Flash LLM entegrasyonu.</span>
-        <span class="en">Rust + Axum backend, Polars data engine, Gemini 2.5 Flash LLM integration.</span>
-      </p>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value" data-target="63" data-suffix="/63">0</div>
-          <div class="stat-label">Tests</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" data-target="3" data-suffix="">0</div>
-          <div class="stat-label">Agents</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" data-target="23" data-suffix="">0</div>
-          <div class="stat-label">Industry Demos</div>
-        </div>
-      </div>
-
-      <!-- Architecture -->
-      <div class="arch">
-        <div class="arch-title">AeraCFO — System Architecture</div>
-        <div class="arch-layer">
-          <div class="arch-layer-label">Frontend</div>
-          <div class="arch-nodes">
-            <div class="arch-node">Next.js</div>
-            <div class="arch-node">Dashboard</div>
-            <div class="arch-node">Upload UI</div>
-          </div>
-        </div>
-        <div class="arch-arrow">↓</div>
-        <div class="arch-layer">
-          <div class="arch-layer-label">API</div>
-          <div class="arch-nodes">
-            <div class="arch-node">Axum 0.7</div>
-            <div class="arch-node">REST Endpoints</div>
-            <div class="arch-node">Auth</div>
-          </div>
-        </div>
-        <div class="arch-arrow">↓</div>
-        <div class="arch-layer">
-          <div class="arch-layer-label">Agents</div>
-          <div class="arch-nodes">
-            <div class="arch-node">Planner</div>
-            <div class="arch-node">Executor</div>
-            <div class="arch-node">Critic</div>
-          </div>
-        </div>
-        <div class="arch-arrow">↓</div>
-        <div class="arch-layer">
-          <div class="arch-layer-label">Infra</div>
-          <div class="arch-nodes">
-            <div class="arch-node">Polars</div>
-            <div class="arch-node">Gemini 2.5 Flash</div>
-            <div class="arch-node">Incentive DB</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tech-badges">
-        <span class="tech-badge">Rust</span>
-        <span class="tech-badge">Axum 0.7</span>
-        <span class="tech-badge">Polars</span>
-        <span class="tech-badge">Gemini 2.5 Flash</span>
-        <span class="tech-badge">Next.js</span>
-        <span class="tech-badge">MIT License</span>
-        <span class="tech-badge">Docker</span>
-      </div>
-    </section>
-
-    <!-- ── CTA ── -->
-    <section class="cta-section reveal">
-      <h2>
-        <span class="tr">Demo veya pilot için iletişime geçin</span>
-        <span class="en">Get in touch for a demo or pilot</span>
-      </h2>
-      <p>
-        <span class="tr">AeraCFO'nun KOBİniz için neler yapabileceğini birlikte keşfedelim.</span>
-        <span class="en">Let's discover what AeraCFO can do for your SME together.</span>
-      </p>
-      <div class="hero-ctas">
-        <a href="./app/" class="btn btn-primary">
-          <span class="tr">Uygulamayı Dene →</span>
-          <span class="en">Try the App →</span>
-        </a>
-        <a href="mailto:emirhuseyininci@gmail.com?subject=AeraCFO%20Demo" class="btn btn-ghost">
-          <span class="tr">İletişime Geç</span>
-          <span class="en">Get in Touch</span>
-        </a>
-        <a href="https://github.com/emirhuseynrmx/aera" target="_blank" rel="noopener" class="btn btn-ghost">GitHub →</a>
-      </div>
-    </section>
-
-  </div>
-
-  <footer class="footer">
-    <p>&copy; 2025–2026 Emir H. İnci · <a href="/">emirhuseyin.tech</a></p>
-  </footer>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · AeraCFO · <a href="../">emirhuseyin.tech</a></footer>
 
   <script>
-    /* ── Custom cursor ── */
-    (function(){
-      var dot=document.getElementById('c-dot');
-      var ring=document.getElementById('c-ring');
-      if(!dot||!ring)return;
-      var mx=window.innerWidth/2,my=window.innerHeight/2;
-      var rx=mx,ry=my;
-      document.addEventListener('mousemove',function(e){
-        mx=e.clientX;my=e.clientY;
-        dot.style.transform='translate3d('+(mx-4)+'px,'+(my-4)+'px,0)';
-      });
-      (function loop(){
-        rx+=(mx-rx)*.15;ry+=(my-ry)*.15;
-        ring.style.transform='translate3d('+(rx-16)+'px,'+(ry-16)+'px,0)';
-        requestAnimationFrame(loop);
-      })();
-    })();
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-    /* ── Lang toggle ── */
-    (function(){
-      var btn=document.getElementById('lang-btn');
-      var html=document.documentElement;
-      btn.addEventListener('click',function(){
-        if(html.classList.contains('lang-tr')){
-          html.classList.replace('lang-tr','lang-en');
-        } else {
-          html.classList.replace('lang-en','lang-tr');
-        }
-      });
-    })();
-
-    /* ── Scroll reveal ── */
-    (function(){
-      var els=document.querySelectorAll('.reveal');
-      var obs=new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}
-        });
-      },{threshold:0.08,rootMargin:'0px 0px -30px 0px'});
-      els.forEach(function(el){obs.observe(el);});
-    })();
-
-    /* ── Count-up ── */
-    (function(){
-      var stats=document.querySelectorAll('.stat-value[data-target]');
-      var obs=new IntersectionObserver(function(entries){
-        entries.forEach(function(e){if(e.isIntersecting){run(e.target);obs.unobserve(e.target);}});
-      },{threshold:0.1});
-      stats.forEach(function(el){obs.observe(el);});
-      function run(el){
-        var target=parseFloat(el.getAttribute('data-target'));
-        var suffix=el.getAttribute('data-suffix')||'';
-        var start=performance.now();
-        (function tick(now){
-          var p=Math.min((now-start)/1200,1);
-          var v=Math.round(target*(1-Math.pow(1-p,3)));
-          el.textContent=v+suffix;
-          if(p<1)requestAnimationFrame(tick);
-        })(start);
-      }
-    })();
+  /* ---- AeraCFO three-agent hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', RD='251,113,133';
+    function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+    function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
+    function initState(){ s.st.fill=0; }
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===s.w&&h===s.h&&cv.width>0)return true; s.D=d;s.w=w;s.h=h;cv.width=w*d;cv.height=h*d;s.ctx.setTransform(d,0,0,d,0,0); initState(); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function aera(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, ax=w*.2, dy=h*.5, ags=[h*.3,h*.5,h*.7], lab=['P','E','C'];
+      var dw=w*.28, dh=h*.5, drx=w*.58, dry=dy-dh/2;
+      ctx.strokeStyle='rgba('+IN+',.5)'; ctx.lineWidth=1.3; roundRect(ctx,drx,dry,dw,dh,6); ctx.stroke();
+      st.fill=(st.fill+.004)%1.35; var lines=Math.floor(Math.min(1,st.fill)*6);
+      for(var i=0;i<lines;i++){ ctx.strokeStyle='rgba('+CY+',.55)'; ctx.lineWidth=1.3; var ly=dry+12+i*(dh-24)/6; ctx.beginPath(); ctx.moveTo(drx+10,ly); ctx.lineTo(drx+dw-10-(i===lines-1?dw*.4:0),ly); ctx.stroke(); }
+      var active=Math.floor(t/45)%3;
+      ags.forEach(function(ay,i){ var act=active===i; nd(ctx,ax,ay,act?7:4.5,act?GR:IN,act?1:.6,act?14:6);
+        ctx.fillStyle='rgba('+(act?GR:IN)+',.95)'; ctx.font='700 10px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText(lab[i],ax,ay+3.5);
+        if(act){ var pt=(t%45)/45, px=ax+(drx-ax)*pt, py=ay+(dy-ay)*pt; nd(ctx,px,py,2.2,CY,.9,7); } });
+      ctx.fillStyle='rgba('+CY+',.85)'; ctx.font='700 9px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('BOARD PDF',drx+dw/2,dry+dh+16); }
+    var T=0;
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); aera(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    loop();
+  })();
   </script>
 </body>
 </html>

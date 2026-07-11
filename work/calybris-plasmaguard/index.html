@@ -1,259 +1,235 @@
 <!doctype html>
-<html lang="tr" class="lang-tr">
+<html lang="en" class="lang-en">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Calybris PlasmaGuard — Upcoming Project</title>
-  <meta name="description" content="Calybris PlasmaGuard: FAIR-MAST gerçek tokamak verisiyle disruption riski, conformal ML, Rust replay engine, Calybris policy gates ve verified WAL."/>
+  <title>Calybris PlasmaGuard — Tokamak Disruption Guard</title>
+  <meta name="description" content="PlasmaGuard learns disruption risk from real FAIR-MAST tokamak shots, quantizes it in a Rust replay engine, and turns it into auditable CONTINUE / MITIGATE / ABORT decisions — fail-closed and uncertainty-aware."/>
+  <meta name="theme-color" content="#070810"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="../../main.css"/>
-  <link rel="stylesheet" href="../../work.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{
+      --bg:#070810; --bg-2:#0a0c16; --panel:#0f1220; --panel-2:#141828;
+      --line:#1d2236; --line-2:#2a3150;
+      --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --dim:#5b6084;
+      --cyan:#22d3ee; --indigo:#818cf8; --proof:#34d399; --warn:#fbbf24; --red:#fb7185;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif;
+      --glow:0 0 40px rgba(34,211,238,.25);
+    }
+    html{ scroll-behavior:smooth; }
+    html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    ::selection{ background:rgba(34,211,238,.22); color:#fff; }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
+
+    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
+    .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
+    .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
+    @media(hover:none){ body{cursor:auto} .cur,.cur-r{display:none} }
+
+    .nav{ position:fixed; inset:0 0 auto 0; z-index:100; display:flex; align-items:center; justify-content:space-between;
+      padding:.85rem clamp(1.1rem,4vw,2.2rem); backdrop-filter:blur(12px); background:rgba(7,8,16,.55); border-bottom:1px solid transparent; transition:.3s; }
+    .nav.scrolled{ border-color:var(--line); background:rgba(7,8,16,.85); }
+    .back{ font-family:var(--mono); font-size:.76rem; color:var(--muted); display:flex; align-items:center; gap:.5rem; transition:color .2s; }
+    .back:hover{ color:var(--cyan); }
+    .brand{ font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.01em; }
+    .badge{ font-family:var(--mono); font-size:.6rem; color:var(--warn); border:1px solid rgba(251,191,36,.4); background:rgba(251,191,36,.1); border-radius:99px; padding:.2rem .5rem; margin-left:.5rem; letter-spacing:.08em; }
+    .nav-end{ display:flex; align-items:center; gap:.8rem; }
+    .lang-tog{ font-family:var(--mono); font-size:.7rem; color:var(--muted); background:transparent; border:1px solid var(--line-2); border-radius:7px; padding:.4rem .6rem; cursor:pointer; transition:.2s; }
+    .lang-tog:hover{ color:var(--text); border-color:var(--cyan); }
+    .nav-cta{ font-family:var(--mono); font-size:.72rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.5rem .9rem; border-radius:8px; border:1px solid var(--line-2); transition:.2s; }
+    .nav-cta:hover{ border-color:var(--cyan); box-shadow:var(--glow); }
+
+    .hero{ min-height:100svh; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:2rem; overflow:hidden; position:relative; }
+    .hero-copy{ position:relative; z-index:3; padding:7rem 0 3rem; }
+    .hero-vis{ position:relative; min-height:60vh; height:100%; }
+    #scene{ position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+    .hero::after{ content:''; position:absolute; inset:0; z-index:0; pointer-events:none; background:radial-gradient(50% 60% at 80% 45%, rgba(129,140,248,.10), transparent 65%); }
+    .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.24em; text-transform:uppercase; color:var(--cyan); }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(2.4rem,5vw,4rem); line-height:1.03; letter-spacing:-.03em; color:var(--head); margin:1.1rem 0 0; }
+    h1 .grad{ background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .lead{ margin-top:1.3rem; color:var(--muted); font-size:1.1rem; max-width:44ch; }
+    .lead b{ color:var(--text); font-weight:600; }
+    .cta-row{ display:flex; gap:.8rem; margin-top:2rem; flex-wrap:wrap; }
+    .btn{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; padding:.85rem 1.4rem; border-radius:9px; display:inline-flex; align-items:center; gap:.5rem; transition:transform .18s,box-shadow .25s,background .2s,border-color .2s; }
+    .btn-primary{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; box-shadow:0 8px 40px rgba(34,211,238,.28); }
+    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 55px rgba(34,211,238,.45); }
+    .btn-ghost{ border:1px solid var(--line-2); color:var(--text); }
+    .btn-ghost:hover{ border-color:var(--cyan); transform:translateY(-3px); }
+    .vis-legend{ position:absolute; z-index:2; bottom:1.2rem; left:1.2rem; display:flex; gap:1rem; font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; }
+    .vis-legend span{ display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); }
+    .vis-legend i{ width:8px; height:8px; border-radius:50%; }
+    @media(max-width:900px){ .hero{ grid-template-columns:1fr; } .hero-vis{ min-height:44vh; order:2; } .hero-copy{ padding-top:6rem; } }
+
+    .sec{ padding:clamp(4rem,8vw,7rem) 0; border-top:1px solid var(--line); }
+    .sec-num{ font-family:var(--mono); font-size:.72rem; color:var(--cyan); letter-spacing:.2em; }
+    .sec-title{ font-family:var(--disp); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.5rem); letter-spacing:-.02em; color:var(--head); margin:.5rem 0 0; }
+    .sec-lead{ color:var(--muted); max-width:60ch; margin-top:1rem; font-size:1.02rem; }
+
+    .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .step{ background:linear-gradient(160deg,var(--panel),var(--bg-2)); border:1px solid var(--line); border-radius:16px; padding:1.6rem; position:relative; overflow:hidden; }
+    .step::before{ content:''; position:absolute; left:1.6rem; right:1.6rem; top:0; height:2px; background:linear-gradient(90deg,var(--cyan),transparent); }
+    .step .n{ font-family:var(--mono); font-size:.72rem; color:var(--indigo); letter-spacing:.1em; }
+    .step h3{ font-family:var(--disp); font-weight:600; font-size:1.2rem; color:var(--head); margin:.6rem 0 .5rem; }
+    .step p{ color:var(--muted); font-size:.9rem; }
+    @media(max-width:760px){ .steps{ grid-template-columns:1fr; } }
+
+    .out{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.1rem; margin-top:2.4rem; }
+    .out .o{ border:1px solid var(--line); border-radius:14px; padding:1.4rem; background:var(--bg-2); }
+    .out .o .big{ font-family:var(--disp); font-weight:700; font-size:1.5rem; color:var(--head); }
+    .out .o .big .u{ color:var(--cyan); }
+    .out .o p{ color:var(--muted); font-size:.86rem; margin-top:.5rem; }
+    @media(max-width:760px){ .out{ grid-template-columns:1fr; } }
+
+    .cta-band{ margin-top:3rem; border:1px solid var(--line); border-radius:20px; background:radial-gradient(70% 130% at 100% 0%, rgba(34,211,238,.10), transparent 60%), var(--panel); padding:clamp(1.8rem,3vw,2.6rem); display:flex; align-items:center; justify-content:space-between; gap:1.4rem; flex-wrap:wrap; }
+    .cta-band h3{ font-family:var(--disp); font-weight:700; font-size:clamp(1.4rem,2.4vw,2rem); color:var(--head); }
+    .cta-band p{ color:var(--muted); margin-top:.4rem; }
+
+    footer{ border-top:1px solid var(--line); padding:2.4rem 0; text-align:center; color:var(--dim); font-family:var(--mono); font-size:.72rem; margin-top:4rem; }
+    footer a{ color:var(--indigo); }
+
+    .rv{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1); }
+    .rv.in{ opacity:1; transform:none; }
+  </style>
 </head>
 <body>
-
-  <div class="c-dot" id="c-dot" aria-hidden="true"></div>
-  <div class="c-ring" id="c-ring" aria-hidden="true"></div>
+  <div class="cur" id="cur"></div>
+  <div class="cur-r" id="curR"></div>
 
   <nav class="nav" id="nav">
-    <a class="nav-brand" href="/"><- EHI</a>
-    <div class="nav-links">
-      <a href="/#upcoming"><span class="tr">upcoming</span><span class="en">upcoming</span></a>
-      <a href="/#work"><span class="tr">işlere dön</span><span class="en">all work</span></a>
-    </div>
+    <a class="back" href="../../"><span>←</span> <span class="en">All systems</span><span class="tr">Tüm sistemler</span></a>
+    <span class="brand">PlasmaGuard<span class="badge"><span class="en">UPCOMING</span><span class="tr">YAKINDA</span></span></span>
     <div class="nav-end">
-      <a class="btn-ghost btn-sm" href="../../calybris/">Calybris Core</a>
-      <button class="lang-btn" id="lang-btn">TR / EN</button>
+      <button class="lang-tog" id="lang" type="button">TR</button>
+      <a class="nav-cta" href="../../#contact"><span class="en">Work with me</span><span class="tr">Birlikte çalış</span></a>
     </div>
   </nav>
 
-  <section class="lhero">
-    <div class="lhero-inner">
-      <div class="lhero-kicker">
-        <span class="btag btag-py">Python ML</span>
-        <span class="btag">Rust replay</span>
-        <span class="btag">FAIR-MAST</span>
-        <span class="btag">Calybris Core</span>
-      </div>
-      <h1 class="lhero-title">Calybris PlasmaGuard</h1>
-      <p class="lhero-sub">
-        <span class="tr">Gerçek tokamak shot'larından disruption riski çıkaran ve bu riski denetlenebilir CONTINUE / MITIGATE / ABORT karar zincirine çeviren Calybris dikeyi.</span>
-        <span class="en">A Calybris vertical that learns disruption risk from real tokamak shots and turns it into auditable CONTINUE / MITIGATE / ABORT decisions.</span>
-      </p>
-      <div class="lhero-actions">
-        <a class="btn-primary" href="#architecture">
-          <span class="tr">Sistemi gör</span>
-          <span class="en">View system</span>
-        </a>
-        <a class="btn-ghost" href="#roadmap">
-          <span class="tr">Roadmap</span>
-          <span class="en">Roadmap</span>
-        </a>
+  <header class="hero wrap" id="top">
+    <div class="hero-copy">
+      <span class="eyebrow">Calybris PlasmaGuard · Fusion Safety</span>
+      <h1><span class="en">Disruption risk,<br><span class="grad">decided safely.</span></span><span class="tr">Disruption riski,<br><span class="grad">güvenle kararı.</span></span></h1>
+      <p class="lead"><span class="en">PlasmaGuard learns disruption risk from <b>real FAIR-MAST tokamak shots</b>, quantizes it in a Rust replay engine, and turns it into auditable <b>CONTINUE / MITIGATE / ABORT</b> decisions — uncertainty-aware and fail-closed.</span><span class="tr">PlasmaGuard, plazma çökmesi riskini <b>gerçek FAIR-MAST tokamak deneylerinden</b> öğrenir; Rust tabanlı bir motorda sabit değere çevirip denetlenebilir <b>DEVAM / ÖNLEM AL / DURDUR</b> kararlarına dönüştürür — belirsizliği hesaba katar ve şüphede güvenli tarafta kalır.</span></p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#how"><span class="en">How it works ↓</span><span class="tr">Nasıl çalışır ↓</span></a>
+        <a class="btn btn-ghost" href="../../#contact"><span class="en">Talk to me</span><span class="tr">İletişime geç</span></a>
       </div>
     </div>
-    <div class="lhero-preview">
-      <div class="project-console">
-        <div class="console-label">shot replay stream</div>
-        <div class="console-row"><span class="console-key">source</span><span class="console-val">FAIR-MAST · 11,573 public shots · Zarr signal archive</span></div>
-        <div class="console-row"><span class="console-key">t=-84ms</span><span class="console-val">risk=4210 bps · conformal_hi=5300 · action=CONTINUE</span></div>
-        <div class="console-row"><span class="console-key">t=-57ms</span><span class="console-val hot">risk=7420 bps · conformal_hi=8810 · action=MITIGATE</span></div>
-        <div class="console-row"><span class="console-key">t=-41ms</span><span class="console-val hot">risk=9130 bps · Ip collapse window detected · action=ABORT</span></div>
-        <div class="console-row"><span class="console-key">verify</span><span class="console-val ok">golden replay digest stable · WAL chain valid</span></div>
+    <div class="hero-vis">
+      <canvas id="scene"></canvas>
+      <div class="vis-legend">
+        <span><i style="background:var(--proof)"></i><span class="en">continue</span><span class="tr">devam</span></span>
+        <span><i style="background:var(--warn)"></i><span class="en">mitigate</span><span class="tr">azalt</span></span>
+        <span><i style="background:var(--red)"></i><span class="en">abort</span><span class="tr">durdur</span></span>
+      </div>
+    </div>
+  </header>
+
+  <section class="sec" id="problem">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">01 — <span class="en">THE PROBLEM</span><span class="tr">PROBLEM</span></div>
+        <h2 class="sec-title"><span class="en">In fusion, an unsafe call is a wrecked machine.</span><span class="tr">Füzyonda hatalı bir karar, hurdaya çıkan bir makine demektir.</span></h2>
+        <p class="sec-lead"><span class="en">A tokamak disruption can damage a device that costs a fortune and months to rebuild. An ML model can estimate disruption risk, but a floating-point probability is not a safety decision — and a model that's confidently wrong under uncertainty is worse than none. What's missing is a control layer that is deterministic, replayable, and biased toward safety.</span><span class="tr">Bir tokamakta plazmanın çökmesi, servet değerindeki ve yeniden yapımı aylar süren bir cihaza zarar verebilir. Bir yapay zeka modeli bu riski tahmin edebilir; ama ondalık bir olasılık, bir güvenlik kararı değildir — belirsizlik altında kendinden emin biçimde yanılan bir model ise, hiç olmamasından kötüdür. Eksik olan şey; kararı belirli, yeniden oynatılabilen ve her zaman güvenlikten yana ağırlığını koyan bir kontrol katmanıdır.</span></p>
       </div>
     </div>
   </section>
 
-  <div class="lmetrics">
-    <div class="lmetric">
-      <strong>11.5k</strong>
-      <span><span class="tr">MAST shot</span><span class="en">MAST shots</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>39</strong>
-      <span><span class="tr">sinyal ailesi</span><span class="en">signal families</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>1ms</strong>
-      <span><span class="tr">ortak zaman grid'i</span><span class="en">shared time grid</span></span>
-    </div>
-    <div class="lmetric">
-      <strong>3</strong>
-      <span><span class="tr">policy action</span><span class="en">policy actions</span></span>
-    </div>
-  </div>
-
-  <section class="business-impact">
-    <div class="impact-label">Upcoming Build</div>
-    <p>
-      <span class="tr">PlasmaGuard, Calybris'i finans dışında bir alanda çalıştırıyor: ML riski floating-point'te tahmin ediyor, Rust motoru bunu fixed-point bps'e indiriyor ve aynı shot her oynatıldığında aynı denetlenebilir karar zincirini üretiyor.</span>
-      <span class="en">PlasmaGuard runs Calybris in a domain outside finance: ML estimates risk in floating point, the Rust engine quantizes it to fixed-point bps, and the same shot always replays into the same auditable decision chain.</span>
-    </p>
-    <div class="impact-evidence">Evidence target: FAIR-MAST public data, reproducible current-quench labels, LightGBM + conformal bands, Calybris policy gates, verified WAL replay.</div>
-  </section>
-
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Ne yapıyor?</span>
-      <span class="en">What it does</span>
-    </h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="flow-num">01</div>
-        <h3><span class="tr">Gerçek fizik verisi</span><span class="en">Real physics data</span></h3>
-        <p><span class="tr">Kaynak FAIR-MAST: halka açık MAST tokamak shot arşivi, metadata API ve Zarr sinyal verisi. Demo sentetik sinyal değil.</span><span class="en">The source is FAIR-MAST: public MAST tokamak shots, metadata API, and Zarr signal data. The demo is not synthetic telemetry.</span></p>
+  <section class="sec" id="how">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">02 — <span class="en">HOW IT WORKS</span><span class="tr">NASIL ÇALIŞIR</span></div>
+        <h2 class="sec-title"><span class="en">Estimate → quantize → decide.</span><span class="tr">Tahmin et → kuantize et → karar ver.</span></h2>
       </div>
-      <div class="feature">
-        <div class="flow-num">02</div>
-        <h3><span class="tr">Belirsizliğe göre tedbir</span><span class="en">Uncertainty-aware safety</span></h3>
-        <p><span class="tr">Conformal üst sınır eşiği geçerse sistem "emin değilim" diye rahatlamaz; MITIGATE tarafına fail-closed yaklaşır.</span><span class="en">If the conformal upper bound crosses the threshold, the system does not relax; it moves toward fail-closed MITIGATE behavior.</span></p>
-      </div>
-      <div class="feature">
-        <div class="flow-num">03</div>
-        <h3><span class="tr">İş bölümü net</span><span class="en">Clear separation</span></h3>
-        <p><span class="tr">ML riski üretiyor, kararı Calybris veriyor. Float dünyası karar sınırının dışında kaldığı için replay deterministik ve denetlenebilir kalıyor.</span><span class="en">ML produces the risk; Calybris makes the decision. Floats stay outside the decision boundary, so replays remain deterministic and auditable.</span></p>
+      <div class="steps">
+        <div class="step rv"><div class="n">01 · TAHMİN ET</div><h3><span class="en">Conformal ML</span><span class="tr">Güven aralıklı model</span></h3><p><span class="en">A model estimates disruption risk with a conformal upper bound — uncertainty made explicit.</span><span class="tr">Model, çökme riskini bir güven üst sınırıyla birlikte tahmin eder — belirsizlik açıkça ortaya konur.</span></p></div>
+        <div class="step rv"><div class="n">02 · SABİTLE</div><h3><span class="en">Rust replay engine</span><span class="tr">Rust motoru</span></h3><p><span class="en">Risk is quantized from float to fixed-point bps, so the same shot always replays into the same chain.</span><span class="tr">Risk, ondalıktan sabit bir değere çevrilir; böylece aynı deney her zaman aynı karar zincirini üretir.</span></p></div>
+        <div class="step rv"><div class="n">03 · KARAR VER</div><h3><span class="en">Fail-closed verdict</span><span class="tr">Güvenli tarafta kal</span></h3><p><span class="en">If the conformal bound crosses the threshold, it moves toward MITIGATE or ABORT — never relaxes.</span><span class="tr">Güven sınırı eşiği aşarsa sistem ÖNLEM AL ya da DURDUR'a yönelir — asla gevşemez.</span></p></div>
       </div>
     </div>
   </section>
 
-  <section class="lsection lsection-dark" id="architecture">
-    <h2 class="lsection-title">
-      <span class="tr">Sistem akışı</span>
-      <span class="en">System flow</span>
-    </h2>
-    <div class="project-flow">
-      <div class="flow-step">
-        <span class="flow-num">DATA</span>
-        <h3>FAIR-MAST</h3>
-        <p><span class="tr">Metadata API + Zarr sinyalleri; seçici indirme ve parquet cache.</span><span class="en">Metadata API + Zarr signals; selective download and parquet cache.</span></p>
+  <section class="sec" id="impact">
+    <div class="wrap">
+      <div class="rv">
+        <div class="sec-num">03 — <span class="en">WHAT IT SHOWS</span><span class="tr">NE GÖSTERİR</span></div>
+        <h2 class="sec-title"><span class="en">Calybris, in a domain outside finance.</span><span class="tr">Calybris, finans dışında bir alanda.</span></h2>
       </div>
-      <div class="flow-step">
-        <span class="flow-num">LABEL</span>
-        <h3>Current Quench</h3>
-        <p><span class="tr">Ip sinyalinden flat-top sonrası collapse etiketi, versiyonlu ve QC edilebilir.</span><span class="en">Current-collapse labels from Ip after flat-top, versioned and QC-ready.</span></p>
+      <div class="out">
+        <div class="o rv"><div class="big"><span class="en">Real <span class="u">shots</span></span><span class="tr">Gerçek <span class="u">deneyler</span></span></div><p><span class="en">Built on public FAIR-MAST MAST tokamak data — not synthetic telemetry.</span><span class="tr">Halka açık FAIR-MAST tokamak verisiyle kuruldu — uydurma veriyle değil.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Fail <span class="u">closed</span></span><span class="tr">Şüphede <span class="u">durdurur</span></span></div><p><span class="en">Under uncertainty the system tightens toward MITIGATE, never toward risk.</span><span class="tr">Belirsizlik arttıkça sistem önlem almaya yönelir, asla riske değil.</span></p></div>
+        <div class="o rv"><div class="big"><span class="en">Replayable <span class="u">chain</span></span><span class="tr">Oynatılabilir <span class="u">zincir</span></span></div><p><span class="en">Every shot reproduces the exact same auditable decision chain.</span><span class="tr">Her deney, aynı denetlenebilir karar zincirini birebir yeniden üretir.</span></p></div>
       </div>
-      <div class="flow-step">
-        <span class="flow-num">MODEL</span>
-        <h3>Conformal ML</h3>
-        <p><span class="tr">LightGBM, isotonic calibration, split-conformal risk bandı.</span><span class="en">LightGBM, isotonic calibration, split-conformal risk bands.</span></p>
-      </div>
-      <div class="flow-step">
-        <span class="flow-num">ENGINE</span>
-        <h3>Calybris Replay</h3>
-        <p><span class="tr">Fixed-point bps risk, policy gates, hysteresis, verified WAL.</span><span class="en">Fixed-point bps risk, policy gates, hysteresis, verified WAL.</span></p>
-      </div>
-    </div>
-    <div class="tech-table" style="margin-top:2rem">
-      <div class="tech-row">
-        <span class="tech-key">Signals</span>
-        <span class="tech-val">Ip · density / Greenwald · radiation · D-alpha · vertical motion · li / EFIT · Mirnov · NBI power</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Actions</span>
-        <span class="tech-val">CONTINUE · MITIGATE · ABORT, with risk threshold, hysteresis, conformal upper bound, and missing-signal fallback</span>
-      </div>
-      <div class="tech-row">
-        <span class="tech-key">Dashboard</span>
-        <span class="tech-val">shot replay · risk curve + conformal band · gate decision strip · warning-time badge · WAL chain status</span>
+
+      <div class="cta-band rv">
+        <div>
+          <h3><span class="en">A safety-critical decision problem?</span><span class="tr">Güvenliğin kritik olduğu bir karar problemi mi?</span></h3>
+          <p><span class="en">Let's talk about deterministic, replayable, fail-closed decisioning.</span><span class="tr">Kararı belirli, oynatılabilir ve güvenli tarafta kalan bir sistem konuşalım.</span></p>
+        </div>
+        <a class="btn btn-primary" href="../../#contact"><span class="en">Start a conversation →</span><span class="tr">Konuşmaya başla →</span></a>
       </div>
     </div>
   </section>
 
-  <section class="lsection">
-    <h2 class="lsection-title">
-      <span class="tr">Faul-injection testleri</span>
-      <span class="en">Fault-injection tests</span>
-    </h2>
-    <div class="proof-grid">
-      <div class="proof-card">
-        <span>missing signal</span>
-        <h3><span class="tr">Eksik sinyal</span><span class="en">Missing signal</span></h3>
-        <p><span class="tr">Kilit sinyal yoksa sistem CONTINUE üretmez; fail-closed MITIGATE kararı ve audit event çıkar.</span><span class="en">If a critical signal is missing, the system does not continue normally; it emits fail-closed MITIGATE and an audit event.</span></p>
-      </div>
-      <div class="proof-card">
-        <span>uncertainty</span>
-        <h3><span class="tr">Geniş conformal band</span><span class="en">Wide conformal band</span></h3>
-        <p><span class="tr">Tahmin ortalaması düşük ama üst sınır tehlikeliyse policy belirsizliği risk gibi ele alır.</span><span class="en">When mean risk is low but the upper bound is dangerous, the policy treats uncertainty as risk.</span></p>
-      </div>
-      <div class="proof-card">
-        <span>replay</span>
-        <h3><span class="tr">Digest uyuşmazlığı</span><span class="en">Digest mismatch</span></h3>
-        <p><span class="tr">Aynı shot ikinci replay'de farklı WAL digest üretirse test kırılır; determinism ürün şartıdır.</span><span class="en">If the same shot produces a different WAL digest on replay, the test fails; determinism is a product requirement.</span></p>
-      </div>
-      <div class="proof-card">
-        <span>provenance</span>
-        <h3><span class="tr">İmzasız policy</span><span class="en">Unsigned policy</span></h3>
-        <p><span class="tr">Eşik değişikliği Ed25519 provenance taşımıyorsa replay kabul edilmez ve dashboard zinciri güvensiz işaretler.</span><span class="en">If threshold changes lack Ed25519 provenance, replay is rejected and the dashboard marks the chain unsafe.</span></p>
-      </div>
-    </div>
-  </section>
+  <footer>© <span id="yr"></span> Emir Hüseyin İnci · Calybris PlasmaGuard · <a href="../../">emirhuseyin.tech</a></footer>
 
-  <section class="lsection lsection-dark" id="roadmap">
-    <h2 class="lsection-title">
-      <span class="tr">Roadmap</span>
-      <span class="en">Roadmap</span>
-    </h2>
-    <div class="roadmap-list">
-      <div class="roadmap-item"><b>Phase 0</b><span><span class="tr">Monorepo, Rust/Python CI, DATA_CARD ve policy taslağı.</span><span class="en">Monorepo, Rust/Python CI, DATA_CARD and policy draft.</span></span></div>
-      <div class="roadmap-item"><b>Phase 1</b><span><span class="tr">FAIR-MAST fetcher, sinyal matrisi, current-quench labeler.</span><span class="en">FAIR-MAST fetcher, signal matrix, current-quench labeler.</span></span></div>
-      <div class="roadmap-item"><b>Phase 2</b><span><span class="tr">1ms özellik grid'i, LightGBM, calibration, conformal bands.</span><span class="en">1ms feature grid, LightGBM, calibration, conformal bands.</span></span></div>
-      <div class="roadmap-item"><b>Phase 3</b><span><span class="tr">Rust engine, policy gates, WAL, golden replay.</span><span class="en">Rust engine, policy gates, WAL, golden replay.</span></span></div>
-      <div class="roadmap-item"><b>Phase 4</b><span><span class="tr">Shot-replay dashboard, warning-time metrics, demo GIF.</span><span class="en">Shot-replay dashboard, warning-time metrics, demo GIF.</span></span></div>
-    </div>
-    <div class="honest-note">
-      <span class="tr">Kapsam: disruption etiketi metadata'da hazır gelmiyor. Ip current-quench algoritmasıyla türetiliyor, eşikler versiyonlanıyor ve örnekler manuel QC'den geçiyor. Bu iş, projenin güven kazandığı yerin bir parçası.</span>
-      <span class="en">Scope: disruption labels aren't provided in the metadata. They're derived from the Ip current-quench algorithm, thresholds are versioned, and samples go through manual QC. That work is part of how the project earns trust.</span>
-    </div>
-  </section>
+  <script>
+  document.getElementById('yr').textContent=new Date().getFullYear();
+  (function(){ var h=document.documentElement,b=document.getElementById('lang');
+    function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
+    set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+    var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+    addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
+    (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
+    document.querySelectorAll('a,button').forEach(function(el){ el.addEventListener('mouseenter',function(){r.classList.add('big');}); el.addEventListener('mouseleave',function(){r.classList.remove('big');}); }); })();
+  var nav=document.getElementById('nav'); addEventListener('scroll',function(){ nav.classList.toggle('scrolled',scrollY>20); },{passive:true});
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} }); },{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
 
-  <section class="lcta">
-    <h2>
-      <span class="tr">Calybris'in füzyon güvenliği tarafındaki karşılığı.</span>
-      <span class="en">Calybris, applied to fusion safety.</span>
-    </h2>
-    <p>
-      <span class="tr">Gerçek shot verisi, belirsizlik ölçümü, deterministik replay ve audit zinciri tek bir sistemde bir araya geliyor.</span>
-      <span class="en">Real shot data, measured uncertainty, deterministic replay, and an audit chain come together in one system.</span>
-    </p>
-    <div class="lcta-actions">
-      <a class="btn-primary" href="../../calybris/">Calybris Core</a>
-      <a class="btn-ghost" href="/#upcoming"><span class="tr">Upcoming'e dön</span><span class="en">Back to upcoming</span></a>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <a href="/"><- <span class="tr">Ana sayfa</span><span class="en">Home</span></a>
-    <span class="footer-dot">·</span>
-    <span>Emir Huseyin Inci</span>
-    <span class="footer-dot">·</span>
-    <a href="mailto:emirhuseyininci@gmail.com">emirhuseyininci@gmail.com</a>
-  </footer>
-
-  <script src="../../work-interactions.js"></script>
-<script>
-(function(){
-  var H=document.documentElement;
-  var lang=localStorage.getItem('ehi-lang')||'tr';
-  H.classList.remove('lang-tr','lang-en');H.classList.add('lang-'+lang);
-  document.getElementById('lang-btn').addEventListener('click',function(){
-    var en=H.classList.contains('lang-en');
-    H.classList.toggle('lang-en',!en);H.classList.toggle('lang-tr',en);
-    localStorage.setItem('ehi-lang',en?'tr':'en');
-  });
-  var dot=document.getElementById('c-dot'),ring=document.getElementById('c-ring');
-  var mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',function(e){
-    mx=e.clientX;my=e.clientY;
-    dot.style.cssText='transform:translate('+(mx-4)+'px,'+(my-4)+'px)';
-  });
-  !function raf(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.cssText='transform:translate('+(rx-18)+'px,'+(ry-18)+'px)';requestAnimationFrame(raf);}();
-  document.querySelectorAll('a,button').forEach(function(el){
-    el.addEventListener('mouseenter',function(){ring.classList.add('c-hover');});
-    el.addEventListener('mouseleave',function(){ring.classList.remove('c-hover');});
-  });
-  var nav=document.getElementById('nav'),lastY=0;
-  window.addEventListener('scroll',function(){var y=window.scrollY;nav.classList.toggle('nav-scrolled',y>40);nav.classList.toggle('nav-hidden',y>120&&y>lastY);lastY=y;},{passive:true});
-})();
-</script>
+  /* ---- PlasmaGuard tokamak + risk-gauge hero animation ---- */
+  (function(){
+    var cv=document.getElementById('scene'); if(!cv) return;
+    var s={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,D:1,st:{}};
+    var CY='34,211,238', IN='129,140,248', GR='52,211,153', AM='251,191,36', RD='251,113,133';
+    function nd(ctx,x,y,r,rgb,a,gl){ ctx.save(); ctx.shadowColor='rgba('+rgb+',1)'; ctx.shadowBlur=gl||8; ctx.fillStyle='rgba('+rgb+','+(a||1)+')'; ctx.beginPath(); ctx.arc(x,y,r,0,6.28); ctx.fill(); ctx.restore(); }
+    function initState(){ s.st.risk=.2; s.st.tgt=.2; s.st.plasma=[]; for(var i=0;i<40;i++) s.st.plasma.push({a:Math.random()*6.28,sp:.01+Math.random()*.02,r:.7+Math.random()*.3}); }
+    function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth,h=cv.clientHeight; if(w<2||h<2)return false; if(w===s.w&&h===s.h&&cv.width>0)return true; s.D=d;s.w=w;s.h=h;cv.width=w*d;cv.height=h*d;s.ctx.setTransform(d,0,0,d,0,0); initState(); return true; }
+    if('ResizeObserver' in window) new ResizeObserver(size).observe(cv); addEventListener('load',size); addEventListener('resize',size);
+    function plasma(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, cx=w*.42, cy=h*.44, rx=Math.min(w*.24,h*.22), ry=rx*.42;
+      // torus rings
+      ctx.strokeStyle='rgba('+IN+',.4)'; ctx.lineWidth=1.4; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,6.28); ctx.stroke();
+      ctx.strokeStyle='rgba('+IN+',.22)'; ctx.beginPath(); ctx.ellipse(cx,cy,rx*.5,ry*.5,0,0,6.28); ctx.stroke();
+      // plasma particles orbiting
+      st.plasma.forEach(function(p){ p.a+=p.sp; var col= st.risk>.75?RD: st.risk>.45?AM:CY;
+        var x=cx+Math.cos(p.a)*rx*p.r, y=cy+Math.sin(p.a)*ry*p.r; nd(ctx,x,y,1.5,col,.85,6); });
+      nd(ctx,cx,cy,3,CY,1,14);
+      // risk gauge (vertical) on right
+      var gx=w*.8, gy0=h*.16, gy1=h*.72, gh=gy1-gy0, thr=.7;
+      ctx.strokeStyle='rgba('+IN+',.3)'; ctx.lineWidth=1; ctx.strokeRect(gx-9,gy0,18,gh);
+      // threshold line
+      var ty=gy1-gh*thr; ctx.strokeStyle='rgba('+RD+',.7)'; ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(gx-16,ty); ctx.lineTo(gx+16,ty); ctx.stroke(); ctx.setLineDash([]);
+      // animate risk toward a wandering target
+      if(t%90===0) st.tgt=Math.random(); st.risk+=(st.tgt-st.risk)*.02;
+      var rr=Math.max(0,Math.min(1,st.risk)), fy=gy1-gh*rr, col= rr>.75?RD: rr>.45?AM:GR;
+      ctx.fillStyle='rgba('+col+',.5)'; ctx.fillRect(gx-9,fy,18,gy1-fy);
+      // conformal band (uncertainty) above fill
+      ctx.fillStyle='rgba('+col+',.18)'; ctx.fillRect(gx-9,Math.max(gy0,fy-gh*.12),18,gh*.12);
+      nd(ctx,gx,fy,2.4,col,1,8);
+      ctx.fillStyle='rgba('+IN+',.6)'; ctx.font='7px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('RISK',gx,gy0-8);
+      // verdict
+      var verdict = rr>.75?['ABORT',RD]: rr>.45?['MITIGATE',AM]:['CONTINUE',GR];
+      ctx.fillStyle='rgba('+verdict[1]+',1)'; ctx.font='700 15px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText(verdict[0], cx, h*.86);
+      ctx.fillStyle='rgba('+CY+',.6)'; ctx.font='700 8px JetBrains Mono,monospace'; ctx.fillText('FAIR-MAST · REPLAY-VERIFIED', cx, h*.93); }
+    var T=0;
+    function loop(){ T++; if(size()){ try{ s.ctx.clearRect(0,0,s.w,s.h); plasma(s,T);}catch(e){} } requestAnimationFrame(loop); }
+    loop();
+  })();
+  </script>
 </body>
 </html>
