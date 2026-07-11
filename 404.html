@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>404 — Not found · Emir H. İnci</title>
+  <meta name="robots" content="noindex, follow"/>
+  <meta name="theme-color" content="#070810"/>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+  <link rel="manifest" href="/site.webmanifest"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+    :root{ --bg:#070810; --line-2:#2a3150; --text:#eef0f8; --head:#f6f7fc; --muted:#9aa0be; --cyan:#22d3ee; --indigo:#818cf8;
+      --mono:'JetBrains Mono',monospace; --sans:'Inter',system-ui,sans-serif; --disp:'Space Grotesk','Inter',sans-serif; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100svh; display:grid; place-items:center; text-align:center; padding:2rem; overflow:hidden; }
+    .code{ font-family:var(--disp); font-weight:700; font-size:clamp(5rem,20vw,12rem); line-height:1; letter-spacing:-.04em;
+      background:linear-gradient(100deg,var(--cyan),var(--indigo)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    h1{ font-family:var(--disp); font-weight:700; font-size:clamp(1.3rem,3vw,2rem); color:var(--head); margin:.4rem 0 .6rem; }
+    p{ color:var(--muted); max-width:44ch; margin:0 auto 2rem; }
+    .row{ display:flex; gap:.7rem; justify-content:center; flex-wrap:wrap; }
+    a{ font-family:var(--mono); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; text-decoration:none;
+      padding:.8rem 1.3rem; border-radius:9px; border:1px solid var(--line-2); color:var(--text); transition:.2s; }
+    a.p{ background:linear-gradient(120deg,var(--cyan),var(--indigo)); color:#05121a; border-color:transparent; }
+    a:hover{ border-color:var(--cyan); transform:translateY(-2px); box-shadow:0 0 40px rgba(34,211,238,.25); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="code">404</div>
+    <h1>This page didn't build.</h1>
+    <p>The link is broken or the page has moved. Every other page here ships with proof — let's get you back to one that does.</p>
+    <div class="row">
+      <a class="p" href="/">← Home</a>
+      <a href="/#systems">Systems</a>
+      <a href="/writing/">Writing</a>
+      <a href="/#contact">Contact</a>
+    </div>
+  </main>
+</body>
+</html>
