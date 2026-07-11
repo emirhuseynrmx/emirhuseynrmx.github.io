@@ -21,12 +21,12 @@
     }
     html{ scroll-behavior:smooth; }
     html.lang-en .tr{ display:none; } html.lang-tr .en{ display:none; }
-    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:none; }
+    body{ background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; cursor:auto; }
     ::selection{ background:rgba(34,211,238,.22); color:#fff; }
     a{ color:inherit; text-decoration:none; }
     .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(1.1rem,4vw,2.2rem); }
 
-    .cur,.cur-r{ position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
+    .cur,.cur-r{ display:none; position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%; will-change:transform; }
     .cur{ width:7px; height:7px; background:var(--cyan); box-shadow:0 0 12px var(--cyan); }
     .cur-r{ width:34px; height:34px; border:1px solid rgba(129,140,248,.5); z-index:9998; transition:width .18s,height .18s,border-color .18s; }
     .cur-r.big{ width:60px; height:60px; border-color:rgba(34,211,238,.7); }
@@ -182,7 +182,7 @@
   (function(){ var h=document.documentElement,b=document.getElementById('lang');
     function set(l){ h.classList.remove('lang-en','lang-tr'); h.classList.add('lang-'+l); h.lang=l; localStorage.setItem('ehi-lang',l); b.textContent=l==='en'?'TR':'EN'; }
     set(localStorage.getItem('ehi-lang')||'en'); b.onclick=function(){ set(h.classList.contains('lang-en')?'tr':'en'); }; })();
-  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); if(!matchMedia('(hover:hover)').matches)return;
+  (function(){ var d=document.getElementById('cur'),r=document.getElementById('curR'); return;
     var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
     addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY; d.style.transform='translate('+(mx-3.5)+'px,'+(my-3.5)+'px)'; });
     (function lp(){ rx+=(mx-rx)*.18; ry+=(my-ry)*.18; r.style.transform='translate('+(rx-17)+'px,'+(ry-17)+'px)'; requestAnimationFrame(lp); })();
@@ -193,7 +193,7 @@
 
   /* ---- Aegis causal-engine hero animation ---- */
   (function(){
-    var cv=document.getElementById('scene'); if(!cv) return;
+    var cv=document.getElementById('scene'); if(!cv||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
     var ctx=cv.getContext('2d'), W=0,H=0,D=1;
     function size(){ var d=Math.min(2,devicePixelRatio||1), w=cv.clientWidth, h=cv.clientHeight; if(w<2||h<2)return false;
       if(w===W&&h===H&&cv.width>0)return true; D=d;W=w;H=h; cv.width=w*d; cv.height=h*d; ctx.setTransform(d,0,0,d,0,0); return true; }
