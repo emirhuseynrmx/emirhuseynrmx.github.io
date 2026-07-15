@@ -316,7 +316,7 @@
             </div>
             <a class="case-cta" href="https://github.com/emirhuseynrmx/proofframe" target="_blank" rel="noopener">Explore ProofFrame on GitHub →</a>
           </div>
-          <div class="case-vis"><canvas class="cvis" data-anim="calybris"></canvas><span class="vis-cap">fingerprint · diff · proof</span></div>
+          <div class="case-vis"><canvas class="cvis" data-anim="proofframe"></canvas><span class="vis-cap">fingerprint · diff · proof</span></div>
         </article>
 
         <article class="case tilt rv">
@@ -560,7 +560,8 @@
       else if(k==='calybris'){ s.st.sw=0; }
       else if(k==='luce'){ s.st.p=[]; for(var i=0;i<64;i++) s.st.p.push({x:Math.random()*w,y:24+Math.random()*(h-48),sp:2.2+Math.random()*3.4,fl:Math.random()<.1,pa:0}); }
       else if(k==='aera'){ s.st.p=[]; s.st.fill=0; }
-      else if(k==='goveris'){ s.st.bar=[.2,.45,.3]; s.st.tok=[]; } }
+      else if(k==='goveris'){ s.st.bar=[.2,.45,.3]; s.st.tok=[]; }
+      else if(k==='proofframe'){ s.st.sp=0; s.st.rows=[{fp:0,diff:0},{fp:0,diff:-1},{fp:0,diff:0},{fp:0,diff:1},{fp:0,diff:0}]; } }
     function size(s){ var d=Math.min(2,devicePixelRatio||1), w=s.cv.clientWidth, h=s.cv.clientHeight;
       if(w<2||h<2) return false; if(w===s.w&&h===s.h&&s.cv.width>0) return true;
       s.D=d; s.w=w; s.h=h; s.cv.width=w*d; s.cv.height=h*d; s.ctx.setTransform(d,0,0,d,0,0); initState(s); return true; }
@@ -613,9 +614,25 @@
       ctx.strokeStyle='rgba('+IN+',.35)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(m,base); ctx.lineTo(w-m,base); ctx.stroke();
       st.tok=st.tok.filter(function(k){ var bx=m+k.tb*(bw+14)+bw/2; k.y+=k.v*1.6; k.x+=(bx-k.x)*.04; nd(ctx,k.x,k.y,1.8,cols[k.tb],.9,5); return k.y<base-4; }); }
 
+    function proofframe(s,t){ var ctx=s.ctx,w=s.w,h=s.h,st=s.st, n=st.rows.length, m=h*.14, gap=6, ch=(h-m*2)/n-gap, x=w*.08, cw=w*.5, spineX=w*.8;
+      st.sp+=.006; if(st.sp>1.15){ st.sp=-.12; for(var q=0;q<n;q++) st.rows[q].fp=0; }
+      var head=m+st.sp*(h-m*2);
+      ctx.strokeStyle='rgba('+CY+',.38)'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(spineX,m-8); ctx.lineTo(spineX,h-m+8); ctx.stroke();
+      for(var i=0;i<n;i++){ var cy=m+i*(ch+gap), cyc=cy+ch/2, r=st.rows[i], passed=head>=cyc;
+        if(passed) r.fp=Math.min(1,r.fp+.05); var locked=r.fp>=1, col=passed?GR:IN, a=passed?.9:.4;
+        ctx.strokeStyle='rgba('+col+','+a+')'; ctx.lineWidth=1.4; roundRect(ctx,x,cy,cw,ch,5); ctx.stroke();
+        if(passed){ ctx.fillStyle='rgba('+GR+',.10)'; roundRect(ctx,x,cy,cw,ch,5); ctx.fill(); }
+        var hex = locked ? ('pf'+i+'a3f'+i).slice(0,7) : ('00000'+Math.floor(Math.random()*0xffffff).toString(16)).slice(-6);
+        ctx.fillStyle='rgba('+(passed?GR:IN)+','+(passed?.9:.5)+')'; ctx.font='9px JetBrains Mono,monospace'; ctx.textAlign='left'; ctx.fillText(hex,x+10,cyc+3);
+        if(passed){ ctx.fillStyle='rgba('+GR+',1)'; ctx.font='700 11px JetBrains Mono,monospace'; ctx.textAlign='right'; ctx.fillText('✓',x+cw-8,cyc+4); }
+        if(r.diff!==0 && passed){ var dcol=r.diff>0?GR:RD; nd(ctx,x+cw+16,cyc,2.6,dcol,.9,6); }
+        if(passed){ ctx.strokeStyle='rgba('+CY+',.32)'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x+cw+(r.diff?26:14),cyc); ctx.lineTo(spineX,cyc); ctx.stroke(); nd(ctx,spineX,cyc,2,CY,.8,5); } }
+      var hy=Math.max(m,Math.min(h-m,head)); ctx.strokeStyle='rgba('+CY+',.85)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x-10,hy); ctx.lineTo(x+cw+12,hy); ctx.stroke(); nd(ctx,x-10,hy,2.5,CY,1,10);
+      var by=h-m+8; nd(ctx,spineX,by,4,GR,1,12); ctx.fillStyle='rgba('+GR+',1)'; ctx.font='700 10px JetBrains Mono,monospace'; ctx.textAlign='center'; ctx.fillText('✓',spineX,by+3); }
+
     function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 
-    var fns={aegis:aegis,calybris:calybris,luce:luce,aera:aera,goveris:goveris};
+    var fns={aegis:aegis,calybris:calybris,luce:luce,aera:aera,goveris:goveris,proofframe:proofframe};
     var T=0;
     function loop(){ T++; for(var i=0;i<scenes.length;i++){ var s=scenes[i]; if(s.on&&size(s)){ try{ s.ctx.clearRect(0,0,s.w,s.h); fns[s.k](s,T); }catch(e){} } } requestAnimationFrame(loop); }
     addEventListener('load',function(){ scenes.forEach(size); });
