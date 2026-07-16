@@ -129,6 +129,7 @@
     <div class="hero-copy">
       <span class="eyebrow">Rust + Python · Data Quality · OSS</span>
       <h1>Evidence for<br><span class="grad">your data.</span></h1>
+      <p style="margin-top:.7rem;font-family:var(--mono);font-size:.8rem;letter-spacing:.02em;color:var(--indigo)">“Ruff, but for your data.”</p>
       <p class="lead">ProofFrame is an Arrow-native data-quality engine for Rust and Python. Profile a dataset, check it against a contract, diff two versions by key — and get a canonical <b>BLAKE3 fingerprint</b> plus an <b>Ed25519 signed receipt</b> that proves exactly what was checked.</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#how">How it works ↓</a>
@@ -165,6 +166,17 @@
         <div class="step rv"><div class="n">01 · PROFILE</div><h3>Fingerprint the data</h3><p>Every profile emits a canonical <b>pf-fp-v1</b> BLAKE3 fingerprint from typed bytes — not Arrow display — so the exact dataset can always be identified again.</p></div>
         <div class="step rv"><div class="n">02 · VALIDATE</div><h3>Bounded, row-level evidence</h3><p>Contracts return the failing rows, a total violation count, and truncation status — never a vague pass/fail that hides real failures.</p></div>
         <div class="step rv"><div class="n">03 · PROVE</div><h3>Sign the result</h3><p>Ed25519 signed receipts (RFC 8785 + BLAKE3) turn a check into a verifiable, tamper-evident record anyone can re-check later.</p></div>
+      </div>
+      <div class="rv" style="margin-top:1.6rem;border:1px solid var(--line);border-radius:14px;background:#05060c;overflow:hidden">
+        <div style="padding:.6rem 1.1rem;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">30-second demo · Python</div>
+        <pre style="margin:0;padding:1.1rem 1.25rem;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.7;color:var(--text)"><span style="color:var(--indigo)">import</span> proofframe <span style="color:var(--indigo)">as</span> pf
+
+profile = pf.profile(df)                <span style="color:var(--dim)"># canonical pf-fp-v1 fingerprint</span>
+report  = pf.validate(df, contract)     <span style="color:var(--dim)"># bounded, row-level evidence</span>
+receipt = report.sign(secret_key)       <span style="color:var(--dim)"># Ed25519 signed receipt</span>
+
+<span style="color:var(--cyan)">print</span>(profile.fingerprint)             <span style="color:var(--dim)"># pf-fp-v1:9a3f…e2</span>
+<span style="color:var(--cyan)">print</span>(report.passed, report.violation_count)  <span style="color:var(--proof)"># False  3</span></pre>
       </div>
     </div>
   </section>
@@ -224,6 +236,21 @@
         <a class="btn btn-ghost" href="https://docs.rs/proofframe" target="_blank" rel="noopener">docs.rs ↗</a>
         <a class="btn btn-ghost" href="https://github.com/emirhuseynrmx/proofframe" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
+      <p style="margin-top:1.4rem;font-size:.88rem;color:var(--muted)">Apache-2.0 for everyone. Need <b style="color:var(--text)">commercial support</b>, custom data contracts, or an SLA? <a href="../#contact" style="color:var(--indigo)">Get in touch →</a></p>
+    </div>
+  </section>
+
+  <section class="wrap" aria-label="Built by" style="margin-top:3.5rem">
+    <div style="border:1px solid var(--line);border-radius:16px;background:linear-gradient(160deg,var(--panel),transparent);padding:1.4rem 1.6rem;display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:.95rem;min-width:0">
+        <span style="flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--indigo));display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:700;color:#05121a;font-size:1rem">EH</span>
+        <span style="line-height:1.4">
+          <span style="display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Built by</span>
+          <span style="display:block;font-family:var(--disp);font-weight:600;color:var(--head);font-size:1.06rem">Emir Hüseyin İnci</span>
+          <span style="display:block;font-size:.82rem;color:var(--muted)">Product owner &amp; systems builder — Rust, Python &amp; decision engines.</span>
+        </span>
+      </div>
+      <a href="../#contact" style="flex:none;font-family:var(--mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:.7rem 1.1rem;border-radius:9px;border:1px solid var(--indigo);color:var(--text)">Work with me →</a>
     </div>
   </section>
 
